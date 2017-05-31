@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 
 const api = require('./server/routes/api');
 
+require('./server/modules/zeromq');
+
 const app = express();
 
 // app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));

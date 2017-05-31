@@ -23,12 +23,13 @@
     "@angular/router": "^4.0.0",
     "body-parser": "^1.17.2",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
     "core-js": "^2.4.1",
+    "debug": "~2.2.0",
     "express": "^4.15.3",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.0",
     "rxjs": "^5.1.0",
+    "serve-favicon": "~2.3.0",
+    "zmq": "^2.15.3",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
