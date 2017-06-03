@@ -1,13 +1,27 @@
+"use strict";
+
 const express = require('express');
 const path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const api = require('./server/routes/api');
+const bodies = require('./server/routes/bodies');
+const commodities = require('./server/routes/commodities');
+const factions = require('./server/routes/factions');
+const populatedSystems = require('./server/routes/populated_systems');
+const stations = require('./server/routes/stations');
+const systems = require('./server/routes/systems');
 
-require('./server/modules/zeromq');
+// require('./server/modules/eddn');
+let eddb = require('./server/modules/eddb');
+eddb.bodies.import();
+eddb.commodities.import();
+eddb.factions.import();
+eddb.populated_systems.import();
+eddb.stations.import();
+eddb.systems.import();
 
 const app = express();
 
@@ -18,11 +32,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.use('/api', api);
+app.use('/api/bodies', bodies);
+app.use('/api/commodities', commodities);
+app.use('/api/factions', factions);
+app.use('/api/populatedsystems', populatedSystems);
+app.use('/api/stations', stations);
+app.use('/api/systems', systems);
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-});
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'dist/index.html'));
+// });
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -38,7 +57,7 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', {
+        res.send({
             message: err.message,
             error: err
         });
@@ -49,7 +68,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.send({
         message: err.message,
         error: {}
     });
