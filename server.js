@@ -13,15 +13,10 @@ const factions = require('./server/routes/factions');
 const populatedSystems = require('./server/routes/populated_systems');
 const stations = require('./server/routes/stations');
 const systems = require('./server/routes/systems');
+const downloadDumps = require('./server/routes/download_dumps');
+const insertDumps = require('./server/routes/insert_dumps');
 
 // require('./server/modules/eddn');
-let eddb = require('./server/modules/eddb');
-eddb.bodies.import();
-eddb.commodities.import();
-eddb.factions.import();
-eddb.populated_systems.import();
-eddb.stations.import();
-eddb.systems.import();
 
 const app = express();
 
@@ -38,6 +33,8 @@ app.use('/api/factions', factions);
 app.use('/api/populatedsystems', populatedSystems);
 app.use('/api/stations', stations);
 app.use('/api/systems', systems);
+app.use('/api/downloaddumps', downloadDumps);
+app.use('/api/insertdumps', insertDumps);
 
 // app.get('*', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'dist/index.html'));

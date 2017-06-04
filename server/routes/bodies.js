@@ -16,7 +16,24 @@ router.get('/', (req, res) => {
                 })
         })
         .catch(err => {
-            console.log("here");
+            console.log(err);
+            res.json(err);
+        });
+});
+
+router.get('/name/:name', (req, res) => {
+    require('../models/bodies')
+        .then(bodies => {
+            let name = req.params.name;
+            bodies.find({ name: name })
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.json(err);
+                })
+        })
+        .catch(err => {
             console.log(err);
             res.json(err);
         });

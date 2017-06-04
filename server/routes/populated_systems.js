@@ -21,4 +21,22 @@ router.get('/', (req, res) => {
         });
 });
 
+router.get('/name/:name', (req, res) => {
+    require('../models/populated_systems')
+        .then(bodies => {
+            let name = req.params.name;
+            bodies.find({ name: name })
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    res.json(err);
+                })
+        })
+        .catch(err => {
+            console.log(err);
+            res.json(err);
+        });
+});
+
 module.exports = router;

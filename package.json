@@ -32,6 +32,7 @@
     "mongoose": "^4.10.4",
     "morgan": "~1.7.0",
     "ndjson": "^1.5.0",
+    "request": "^2.81.0",
     "rxjs": "^5.1.0",
     "serve-favicon": "~2.3.0",
     "zmq": "^2.15.3",
