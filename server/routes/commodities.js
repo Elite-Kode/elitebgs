@@ -6,8 +6,8 @@ let router = express.Router();
 
 router.get('/', (req, res) => {
     require('../models/commodities')
-        .then(bodies => {
-            bodies.find({})
+        .then(commodities => {
+            commodities.find({})
                 .then(result => {
                     res.json(result);
                 })
@@ -23,9 +23,9 @@ router.get('/', (req, res) => {
 
 router.get('/id/:commodityid', (req, res) => {
     require('../models/commodities')
-        .then(bodies => {
+        .then(commodities => {
             let id = req.params.commodityid;
-            bodies.find({ commodity_id: id })
+            commodities.find({ commodity_id: id })
                 .then(result => {
                     res.json(result);
                 })

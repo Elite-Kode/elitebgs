@@ -6,8 +6,8 @@ let router = express.Router();
 
 router.get('/', (req, res) => {
     require('../models/populated_systems')
-        .then(bodies => {
-            bodies.find({})
+        .then(populatedSystem => {
+            populatedSystem.find({})
                 .then(result => {
                     res.json(result);
                 })
@@ -23,9 +23,9 @@ router.get('/', (req, res) => {
 
 router.get('/name/:name', (req, res) => {
     require('../models/populated_systems')
-        .then(bodies => {
+        .then(populatedSystem => {
             let name = req.params.name;
-            bodies.find({ name: name })
+            populatedSystem.find({ name: name })
                 .then(result => {
                     res.json(result);
                 })
