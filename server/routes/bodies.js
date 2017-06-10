@@ -7,7 +7,24 @@ let router = express.Router();
 router.get('/', (req, res) => {
     require('../models/bodies')
         .then(bodies => {
-            bodies.find({})
+            let query = new Object;
+
+            if (req.query.ringtype) {
+                query.ring_type_id = req.query.ringtype;
+            }
+            if (req.query.system) {
+                query.system_id = req.query.system;
+            }
+            if (req.query.bodygroup) {
+                query.group_id = req.query.bodygroup;
+            }
+            if (req.query.distancearrival) {
+                query.distance_to_arrival = req.query.distancearrival;
+            }
+            if (req.query.landable) {
+                query.is_landable = req.query.landable;
+            }
+            bodies.find(query)
                 .then(result => {
                     res.json(result);
                 })

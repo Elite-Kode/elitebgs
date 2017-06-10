@@ -7,7 +7,21 @@ let router = express.Router();
 router.get('/', (req, res) => {
     require('../models/stations')
         .then(stations => {
-            stations.find({})
+            let query = new Object;
+
+            if (req.query.controllingfaction) {
+                query.controlling_minor_faction_id = req.query.controllingfaction;
+            }
+            if (req.query.allegiance) {
+                query.allegiance_id = req.query.allegiance;
+            }
+            if (req.query.government) {
+                query.government_id = req.query.government;
+            }
+            if (req.query.planetary) {
+                query.is_planetary = req.query.planetary;
+            }
+            factions.find(query)
                 .then(result => {
                     res.json(result);
                 })
