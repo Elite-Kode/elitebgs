@@ -17,10 +17,12 @@
 "use strict";
 
 const express = require('express');
+const passport = require('passport');
+const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
     require('../models/commodities')
         .then(commodities => {
             commodities.find({})

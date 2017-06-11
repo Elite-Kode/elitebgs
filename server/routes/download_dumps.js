@@ -20,67 +20,92 @@ const express = require('express');
 const request = require('request');
 const fs = require('fs-extra');
 const path = require('path');
+const passport = require('passport');
 
 let router = express.Router();
 
-router.get('/body', (req, res) => {
-    download('https://eddb.io/archive/v5/bodies.jsonl', '../dumps/bodies.jsonl', 'body')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/bodies.jsonl', '../dumps/bodies.jsonl', 'body')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/commodity', (req, res) => {
-    download('https://eddb.io/archive/v5/listings.csv', '../dumps/listings.csv', 'commodity')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/listings.csv', '../dumps/listings.csv', 'commodity')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/faction', (req, res) => {
-    download('https://eddb.io/archive/v5/factions.json', '../dumps/factions.json', 'faction')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/factions.json', '../dumps/factions.json', 'faction')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/station', (req, res) => {
-    download('https://eddb.io/archive/v5/stations.json', '../dumps/stations.json', 'station')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/stations.json', '../dumps/stations.json', 'station')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/populatedSystem', (req, res) => {
-    download('https://eddb.io/archive/v5/systems_populated.json', '../dumps/systems_populated.json', 'populated system')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/systems_populated.json', '../dumps/systems_populated.json', 'populated system')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/system', (req, res) => {
-    download('https://eddb.io/archive/v5/systems.csv', '../dumps/systems.csv', 'system')
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        download('https://eddb.io/archive/v5/systems.csv', '../dumps/systems.csv', 'system')
+            .then(msg => {
+                res.json(msg);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
 function download(pathFrom, pathTo, type) {

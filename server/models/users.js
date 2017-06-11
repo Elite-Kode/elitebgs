@@ -16,32 +16,20 @@
 
 "use strict";
 
-let mongoose = require('mongoose');
+module.exports = new Promise((resolve, reject) => {
+    let db = require('../db');
+    let mongoose = db.mongoose;
+    let Schema = mongoose.Schema;
 
-let user = process.env.db_uname || require('../secrets.js').db_user;
-let pass = process.env.db_pass || require('../secrets.js').db_pwd;
-
-let url = process.env.dbURL || "mongodb://localhost:27017/elite_bgs";
-
-let options = {
-    server: {
-        socketOptions: {
-            keepAlive: 120
-        }
-    },
-    user,
-    pass
-}
-
-function connect() {
-    mongoose.connect(url, options, (err, db) => {
-        if (err) {
-            return console.log(err);
-        }
+    let user = new Schema({
+        username: String,
+        password: String,
+        clearance: Number
     });
-}
 
-connect();
+    // user.plugin(require('basic-auth-mongoose'));
 
-module.exports.mongoose = mongoose;
-module.exports.connect = connect;
+    let model = mongoose.model('user', user);
+
+    resolve(model);
+})

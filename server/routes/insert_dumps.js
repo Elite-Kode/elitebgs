@@ -17,93 +17,118 @@
 "use strict";
 
 const express = require('express');
+const passport = require('passport');
 
 let router = express.Router();
 
 let eddb = require('../modules/eddb');
 
-router.get('/body', (req, res) => {
-    eddb.bodies.import()
-        .then(() => {
-            console.log("Bodies records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'body'
+router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.bodies.import()
+            .then(() => {
+                console.log("Bodies records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'body'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/commodity', (req, res) => {
-    eddb.commodities.import()
-        .then(() => {
-            console.log("Commodities records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'commodity'
+router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.commodities.import()
+            .then(() => {
+                console.log("Commodities records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'commodity'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/faction', (req, res) => {
-    eddb.factions.import()
-        .then(() => {
-            console.log("Factions records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'faction'
+router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.factions.import()
+            .then(() => {
+                console.log("Factions records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'faction'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/station', (req, res) => {
-    eddb.stations.import()
-        .then(() => {
-            console.log("Stations records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'station'
+router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.stations.import()
+            .then(() => {
+                console.log("Stations records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'station'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/populatedSystem', (req, res) => {
-    eddb.populatedSystems.import()
-        .then(() => {
-            console.log("Populated systems records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'populated system'
+router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.populatedSystems.import()
+            .then(() => {
+                console.log("Populated systems records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'populated system'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
-router.get('/system', (req, res) => {
-    eddb.systems.import()
-        .then(() => {
-            console.log("Systems records updated from EDDB");
-            res.json({
-                updated: true,
-                type: 'system'
+router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        eddb.systems.import()
+            .then(() => {
+                console.log("Systems records updated from EDDB");
+                res.json({
+                    updated: true,
+                    type: 'system'
+                });
+            })
+            .catch(err => {
+                res.json(err);
             });
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    } else {
+        res.json({ Error: "Permission Denied" });
+    }
 });
 
 module.exports = router;

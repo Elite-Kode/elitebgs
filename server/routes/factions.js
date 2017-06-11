@@ -17,10 +17,12 @@
 "use strict";
 
 const express = require('express');
+const passport = require('passport');
+const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
     require('../models/factions')
         .then(factions => {
             let query = new Object;
@@ -39,6 +41,9 @@ router.get('/', (req, res) => {
             }
             if (req.query.homesystem) {
                 query.home_system_id = req.query.homesystem;
+            }
+            if (_.isEmpty(query) && req.user.clearance !== 0) {
+                throw new Error("Add at least 1 query parameter to limit traffic");
             }
             factions.find(query)
                 .then(result => {

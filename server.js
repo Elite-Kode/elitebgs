@@ -22,6 +22,8 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const basicStrategy = require('passport-http').BasicStrategy;
 
 const bodies = require('./server/routes/bodies');
 const commodities = require('./server/routes/commodities');
@@ -42,6 +44,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/bodies', bodies);
 app.use('/api/commodities', commodities);
@@ -51,10 +55,6 @@ app.use('/api/stations', stations);
 app.use('/api/systems', systems);
 app.use('/api/downloaddumps', downloadDumps);
 app.use('/api/insertdumps', insertDumps);
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'dist/index.html'));
-// });
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -86,5 +86,26 @@ app.use(function (err, req, res, next) {
         error: {}
     });
 });
+
+require('./server/models/users')
+    .then(user => {
+        passport.use(new basicStrategy((username, password, callback) => {
+            user.findOne({ username: username })
+                .then(user => {
+                    if (user.password === password) {
+                        return callback(null, user);
+                    } else {
+                        return callback(null, false);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    callback(err);
+                })
+        }));
+    })
+    .catch(err => {
+        console.log(err);
+    })
 
 module.exports = app;
