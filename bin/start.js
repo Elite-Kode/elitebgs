@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-
+"use strict";
 /**
  * Module dependencies.
  */
 
 var app = require('../server');
-var debug = require('debug')('elitebgs:server');
 var http = require('http');
 
 /**
@@ -86,5 +85,6 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+    console.log(`Listening to ${bind}`);
+    console.log('Environment: ' + app.get('env'));
 }
