@@ -24,7 +24,7 @@ module.exports.withPath = filePath => {
         exponent: 1,
         standard: "iec"
     }
-    return fileSize(fs.statSync(filePath), fileSizeOptions);
+    return fileSize(fs.statSync(filePath).size, fileSizeOptions);
 }
 
 module.exports.withValue = value => {
