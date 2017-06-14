@@ -30,4 +30,16 @@ module.exports.import = () => {
                 });
         });
     })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        require('../utilities').download('https://eddb.io/archive/v5/systems_populated.json', '../../dumps/systems_populated.json', 'populated system')
+            .then(msg => {
+                resolve(msg);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    })
 }

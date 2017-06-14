@@ -37,4 +37,16 @@ module.exports.import = () => {
                 reject(err);
             })
     })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        require('../utilities').download('https://eddb.io/archive/v5/bodies.jsonl', '../../dumps/bodies.jsonl', 'body')
+            .then(msg => {
+                resolve(msg);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    })
 }

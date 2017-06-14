@@ -24,9 +24,11 @@ const passport = require('passport');
 
 let router = express.Router();
 
+let eddb = require('../modules/eddb');
+
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/bodies.jsonl', '../dumps/bodies.jsonl', 'body')
+        eddb.bodies.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -40,7 +42,7 @@ router.get('/body', passport.authenticate('basic', { session: false }), (req, re
 
 router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/listings.csv', '../dumps/listings.csv', 'commodity')
+        eddb.commodities.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -54,7 +56,7 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
 
 router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/factions.json', '../dumps/factions.json', 'faction')
+        eddb.factions.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -68,7 +70,7 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
 
 router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/stations.json', '../dumps/stations.json', 'station')
+        eddb.stations.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -82,7 +84,7 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
 
 router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/systems_populated.json', '../dumps/systems_populated.json', 'populated system')
+        eddb.populatedSystems.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -96,7 +98,7 @@ router.get('/populatedSystem', passport.authenticate('basic', { session: false }
 
 router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        download('https://eddb.io/archive/v5/systems.csv', '../dumps/systems.csv', 'system')
+        eddb.systems.download()
             .then(msg => {
                 res.json(msg);
             })
@@ -107,27 +109,5 @@ router.get('/system', passport.authenticate('basic', { session: false }), (req, 
         res.json({ Error: "Permission Denied" });
     }
 });
-
-function download(pathFrom, pathTo, type) {
-    return new Promise((resolve, reject) => {
-        request.get(pathFrom)
-            .on('response', response => {
-                console.log("EDDB " + type + " dump reported with status code " + response.statusCode);
-            })
-            .on('error', err => {
-                reject(err);
-            })
-            .pipe(fs.createWriteStream(path.resolve(__dirname, pathTo))
-                .on('finish', () => {
-                    resolve({
-                        downloaded: true,
-                        type: type
-                    });
-                })
-                .on('error', error => {
-                    reject(error);
-                }));
-    })
-}
 
 module.exports = router;

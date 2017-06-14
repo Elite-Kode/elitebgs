@@ -37,4 +37,16 @@ module.exports.import = () => {
                 reject(err);
             })
     })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        require('../utilities').download('https://eddb.io/archive/v5/listings.csv', '../../dumps/listings.csv', 'commodity')
+            .then(msg => {
+                resolve(msg);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    })
 }
