@@ -35,7 +35,7 @@ module.exports = (pathFrom, pathTo, type) => {
             })
             .on('progress', status => {
                 if (process.env.NODE_ENV === 'development') {
-                    console.log(`Downloading File of size ${fileSize.withValue(status.size.total)}\nTime Elapsed: ${status.time.elapsed}\t Time Remaining: ${status.time.remaining}\n${status.percent.toFixed(2)}% completed\t ${fileSize.withValue(status.size.transferred)} data transferred`);
+                    console.log(`Downloading File of size ${fileSize.withValue(status.size.total)}\nTime Elapsed: ${status.time.elapsed}\t Time Remaining: ${status.time.remaining}\n${(status.percent * 100).toFixed(2)}% completed\t ${fileSize.withValue(status.size.transferred)} data transferred`);
                 }
                 progressPercent = status.percent;
             })
