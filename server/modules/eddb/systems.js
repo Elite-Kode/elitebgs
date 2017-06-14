@@ -41,7 +41,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/systems.csv', '../../dumps/systems.csv', 'system')
+        require('../utilities').download('https://eddb.io/archive/v5/systems.csv', path.resolve(__dirname, '../../dumps/systems.csv'), 'system')
             .then(msg => {
                 resolve(msg);
             })

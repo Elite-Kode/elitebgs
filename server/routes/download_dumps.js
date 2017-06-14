@@ -17,9 +17,6 @@
 "use strict";
 
 const express = require('express');
-const request = require('request');
-const fs = require('fs-extra');
-const path = require('path');
 const passport = require('passport');
 
 let router = express.Router();

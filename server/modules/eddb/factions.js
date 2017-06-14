@@ -16,6 +16,7 @@
 
 "use strict";
 
+const path = require('path');
 const factionsModel = require('../../models/factions');
 
 module.exports.import = () => {
@@ -34,7 +35,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/factions.json', '../../dumps/factions.json', 'faction')
+        require('../utilities').download('https://eddb.io/archive/v5/factions.json', path.resolve(__dirname, '../../dumps/factions.json'), 'faction')
             .then(msg => {
                 resolve(msg);
             })

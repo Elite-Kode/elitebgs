@@ -17,27 +17,41 @@
 "use strict";
 
 const request = require('request');
+const progress = require('request-progress');
 const fs = require('fs-extra');
-const path = require('path');
+
+let fileSize = require('../utilities/file_size');
 
 module.exports = (pathFrom, pathTo, type) => {
     return new Promise((resolve, reject) => {
-        request.get(pathFrom)
+        let progressPercent = 0.0;
+        progress(request.get(pathFrom))
             .on('response', response => {
-                console.log("EDDB " + type + " dump reported with status code " + response.statusCode);
+                console.log(`EDDB ${type} dump reported with status code ${response.statusCode}`);
+                resolve({
+                    download: "started",
+                    type: type
+                });
+            })
+            .on('progress', status => {
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`Downloading File of size ${fileSize.withValue(status.size.total)}\nTime Elapsed: ${status.time.elapsed}\t Time Remaining: ${status.time.remaining}\n${status.percent.toFixed(2)}% completed\t ${fileSize.withValue(status.size.transferred)} data transferred`);
+                }
+                progressPercent = status.percent;
             })
             .on('error', err => {
-                reject(err);
+                reject({
+                    error: err,
+                    progress: progressPercent
+                });
             })
-            .pipe(fs.createWriteStream(path.resolve(__dirname, pathTo))
+            .pipe(fs.createWriteStream(pathTo)
                 .on('finish', () => {
-                    resolve({
-                        downloaded: true,
-                        type: type
-                    });
+                    console.log(`EDDB ${type} dump saved successfully with file size ${fileSize.withPath(pathTo)}`)
                 })
                 .on('error', error => {
-                    reject(error);
+                    console.log("Progress", progressPercent);
+                    console.log(error);
                 }));
     })
 }

@@ -41,7 +41,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/bodies.jsonl', '../../dumps/bodies.jsonl', 'body')
+        require('../utilities').download('https://eddb.io/archive/v5/bodies.jsonl', path.resolve(__dirname, '../../dumps/bodies.jsonl'), 'body')
             .then(msg => {
                 resolve(msg);
             })

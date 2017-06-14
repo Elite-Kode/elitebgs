@@ -16,6 +16,7 @@
 
 "use strict";
 
+const path = require('path');
 const populatedSystemsModel = require('../../models/populated_systems');
 
 module.exports.import = () => {
@@ -34,7 +35,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/systems_populated.json', '../../dumps/systems_populated.json', 'populated system')
+        require('../utilities').download('https://eddb.io/archive/v5/systems_populated.json', path.resolve(__dirname, '../../dumps/systems_populated.json'), 'populated system')
             .then(msg => {
                 resolve(msg);
             })
