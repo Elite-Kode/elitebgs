@@ -18,10 +18,11 @@
 
 const path = require('path');
 const bodiesModel = require('../../models/bodies');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+        utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
             .then(json => {
                 bodiesModel.then(model => {
                     model.insertMany(json)
@@ -41,7 +42,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/bodies.jsonl', path.resolve(__dirname, '../../dumps/bodies.jsonl'), 'body')
+        utilities.download('https://eddb.io/archive/v5/bodies.jsonl', path.resolve(__dirname, '../../dumps/bodies.jsonl'), 'body')
             .then(msg => {
                 resolve(msg);
             })

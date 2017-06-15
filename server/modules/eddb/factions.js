@@ -18,24 +18,28 @@
 
 const path = require('path');
 const factionsModel = require('../../models/factions');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
     return new Promise((resolve, reject) => {
-        factionsModel.then(model => {
-            model.insertMany(require('../../dumps/factions.json'))
-                .then(() => {
-                    resolve();
-                })
-                .catch((err) => {
-                    reject(err);
+        utilities.jsonParse(path.resolve(__dirname, '../../dumps/factions.json'))
+            .then(json => {
+                factionsModel.then(model => {
+                    model.insertMany(json)
+                        .then(() => {
+                            resolve();
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
                 });
-        });
+            })
     })
 };
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/factions.json', path.resolve(__dirname, '../../dumps/factions.json'), 'faction')
+        utilities.download('https://eddb.io/archive/v5/factions.json', path.resolve(__dirname, '../../dumps/factions.json'), 'faction')
             .then(msg => {
                 resolve(msg);
             })

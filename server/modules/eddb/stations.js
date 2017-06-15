@@ -18,24 +18,28 @@
 
 const path = require('path');
 const stationsModel = require('../../models/stations');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
     return new Promise((resolve, reject) => {
-        stationsModel.then(model => {
-            model.insertMany(require('../../dumps/stations.json'))
-                .then(() => {
-                    resolve();
-                })
-                .catch((err) => {
-                    reject(err);
+        utilities.jsonParse(path.resolve(__dirname, '../../dumps/stations.json'))
+            .then(json => {
+                stationsModel.then(model => {
+                    model.insertMany(json)
+                        .then(() => {
+                            resolve();
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
                 });
-        });
+            })
     })
 };
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
+        utilities.download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
             .then(msg => {
                 resolve(msg);
             })

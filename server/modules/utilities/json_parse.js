@@ -16,8 +16,22 @@
 
 "use strict";
 
-module.exports.csvToJson = require('./csv_to_json');
-module.exports.jsonlToJson = require('./jsonl_to_json');
-module.exports.jsonParse = require('./json_parse');
-module.exports.download = require('./download');
-module.exports.fileSize = require('./file_size');
+const fs = require('fs-extra');
+const jsonStream = require('JSONStream');
+
+module.exports = path => {
+    return new Promise((resolve, reject) => {
+        let jsonArray = [];
+        fs.createReadStream(path)
+            .pipe(jsonStream.parse('*'))
+            .on('data', json => {
+                jsonArray.push(json);
+            })
+            .on('end', () => {
+                resolve(jsonArray);
+            })
+            .on('error', error => {
+                reject(error);
+            })
+    })
+}

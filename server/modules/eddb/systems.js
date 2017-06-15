@@ -18,10 +18,11 @@
 
 const path = require('path');
 const systemsModel = require('../../models/systems');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
+        utilities.csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
             .then(json => {
                 systemsModel.then(model => {
                     model.insertMany(json)
@@ -41,7 +42,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/systems.csv', path.resolve(__dirname, '../../dumps/systems.csv'), 'system')
+        utilities.download('https://eddb.io/archive/v5/systems.csv', path.resolve(__dirname, '../../dumps/systems.csv'), 'system')
             .then(msg => {
                 resolve(msg);
             })

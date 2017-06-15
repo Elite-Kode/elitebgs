@@ -18,10 +18,11 @@
 
 const path = require('path');
 const commoditiesModel = require('../../models/commodities');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+        utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
             .then(json => {
                 commoditiesModel.then(model => {
                     model.insertMany(json)
@@ -41,7 +42,7 @@ module.exports.import = () => {
 
 module.exports.download = () => {
     return new Promise((resolve, reject) => {
-        require('../utilities').download('https://eddb.io/archive/v5/listings.csv', path.resolve(__dirname, '../../dumps/listings.csv'), 'commodity')
+        utilities.download('https://eddb.io/archive/v5/listings.csv', path.resolve(__dirname, '../../dumps/listings.csv'), 'commodity')
             .then(msg => {
                 resolve(msg);
             })
