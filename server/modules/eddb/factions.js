@@ -21,18 +21,30 @@ const factionsModel = require('../../models/factions');
 const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        utilities.jsonParse(path.resolve(__dirname, '../../dumps/factions.json'))
-            .then(json => {
-                factionsModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                });
+        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/factions.json'))
+            .on('json', json => {
+                factionsModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                resolve(recordsInserted);
+            })
+            .on('error', err => {
+                reject(err);
             })
     })
 };

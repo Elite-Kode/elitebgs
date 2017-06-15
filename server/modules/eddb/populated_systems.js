@@ -21,18 +21,30 @@ const populatedSystemsModel = require('../../models/populated_systems');
 const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        utilities.jsonParse(path.resolve(__dirname, '../../dumps/systems_populated.json'))
-            .then(json => {
-                populatedSystemsModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                });
+        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/systems_populated.json'))
+            .on('json', json => {
+                populatedSystemsModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                resolve(recordsInserted);
+            })
+            .on('error', err => {
+                reject(err);
             })
     })
 };

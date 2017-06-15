@@ -30,6 +30,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     res.json(result);
                 })
                 .catch(err => {
+                    console.log(err);
                     res.json(err);
                 })
         })
@@ -48,6 +49,7 @@ router.get('/id/:commodityid', (req, res) => {
                     res.json(result);
                 })
                 .catch(err => {
+                    console.log(err);
                     res.json(err);
                 })
         })

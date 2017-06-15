@@ -21,20 +21,29 @@ const bodiesModel = require('../../models/bodies');
 const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
-            .then(json => {
-                bodiesModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                });
+        new utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+            .on('json', json => {
+                bodiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
             })
-            .catch(err => {
+            .on('end', () => {
+                resolve(recordsInserted);
+            })
+            .on('error', err => {
                 reject(err);
             })
     })

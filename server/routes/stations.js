@@ -47,6 +47,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     res.json(result);
                 })
                 .catch(err => {
+                    console.log(err);
                     res.json(err);
                 })
         })
@@ -65,6 +66,7 @@ router.get('/name/:name', (req, res) => {
                     res.json(result);
                 })
                 .catch(err => {
+                    console.log(err);
                     res.json(err);
                 })
         })

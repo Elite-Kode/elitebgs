@@ -18,20 +18,24 @@
 
 const fs = require('fs-extra');
 const ndjson = require('ndjson');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports = path => {
-    return new Promise((resolve, reject) => {
-        let jsonArray = [];
-        fs.createReadStream(path)
-            .pipe(ndjson.parse())
-            .on('data', json => {
-                jsonArray.push(json);
-            })
-            .on('end', () => {
-                resolve(jsonArray);
-            })
-            .on('error', error => {
-                reject(error);
-            })
-    })
+module.exports = JsonlToJson;
+
+function JsonlToJson(path) {
+    eventEmmiter.call(this);
+    fs.createReadStream(path)
+        .pipe(ndjson.parse())
+        .on('data', json => {
+            this.emit('json', json);
+        })
+        .on('end', () => {
+            this.emit('end');
+        })
+        .on('error', error => {
+            this.emit('error', error);
+        })
 }
+
+inherits(JsonlToJson, eventEmmiter);

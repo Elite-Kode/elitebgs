@@ -30,6 +30,7 @@ router.get('/body', passport.authenticate('basic', { session: false }), (req, re
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -44,6 +45,7 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -58,6 +60,7 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -72,6 +75,7 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -86,6 +90,7 @@ router.get('/populatedSystem', passport.authenticate('basic', { session: false }
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -100,6 +105,7 @@ router.get('/system', passport.authenticate('basic', { session: false }), (req, 
                 res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {

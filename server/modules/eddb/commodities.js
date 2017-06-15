@@ -21,20 +21,29 @@ const commoditiesModel = require('../../models/commodities');
 const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
-            .then(json => {
-                commoditiesModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
-                });
+        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+            .on('json', json => {
+                commoditiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
             })
-            .catch(err => {
+            .on('end', () => {
+                resolve(recordsInserted);
+            })
+            .on('error', err => {
                 reject(err);
             })
     })
