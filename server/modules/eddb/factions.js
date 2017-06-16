@@ -24,6 +24,13 @@ module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {
         new utilities.jsonParse(path.resolve(__dirname, '../../dumps/factions.json'))
+            .on('start', () => {
+                console.log(`EDDB faction dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'faction'
+                });
+            })
             .on('json', json => {
                 factionsModel
                     .then(model => {
@@ -41,7 +48,7 @@ module.exports.import = () => {
                     });
             })
             .on('end', () => {
-                resolve(recordsInserted);
+                console.log(`${recordsInserted} records inserted`);
             })
             .on('error', err => {
                 reject(err);

@@ -25,9 +25,14 @@ module.exports = JsonlToJson;
 
 function JsonlToJson(path) {
     eventEmmiter.call(this);
+    let firstData = true;
     fs.createReadStream(path)
         .pipe(ndjson.parse())
         .on('data', json => {
+            if (firstData) {
+                firstData = !firstData;
+                this.emit('start');
+            }
             this.emit('json', json);
         })
         .on('end', () => {

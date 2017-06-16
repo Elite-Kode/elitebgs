@@ -25,9 +25,14 @@ module.exports = CsvToJson;
 
 function CsvToJson(path) {
     eventEmmiter.call(this);
+    let firstData = true;
     csvtojson()
         .fromStream(fs.createReadStream(path))
         .on('json', json => {
+            if (firstData) {
+                firstData = !firstData;
+                this.emit('start');
+            }
             this.emit('json', json);
         })
         .on('done', (error) => {

@@ -24,6 +24,13 @@ module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {
         new utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+            .on('start', () => {
+                console.log(`EDDB body dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'body'
+                });
+            })
             .on('json', json => {
                 bodiesModel
                     .then(model => {
@@ -41,7 +48,7 @@ module.exports.import = () => {
                     });
             })
             .on('end', () => {
-                resolve(recordsInserted);
+                console.log(`${recordsInserted} records inserted`);
             })
             .on('error', err => {
                 reject(err);

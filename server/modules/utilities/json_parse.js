@@ -25,9 +25,14 @@ module.exports = JsonParse;
 
 function JsonParse(path) {
     eventEmmiter.call(this);
+    let firstData = true;
     fs.createReadStream(path)
         .pipe(jsonStream.parse('*'))
         .on('data', json => {
+            if (firstData) {
+                firstData = false;
+                this.emit('start');
+            }
             this.emit('json', json);
         })
         .on('end', () => {

@@ -24,6 +24,13 @@ module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {
         new utilities.jsonParse(path.resolve(__dirname, '../../dumps/systems_populated.json'))
+            .on('start', () => {
+                console.log(`EDDB populated system dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'populated system'
+                });
+            })
             .on('json', json => {
                 populatedSystemsModel
                     .then(model => {
@@ -41,7 +48,7 @@ module.exports.import = () => {
                     });
             })
             .on('end', () => {
-                resolve(recordsInserted);
+                console.log(`${recordsInserted} records inserted`);
             })
             .on('error', err => {
                 reject(err);
