@@ -20,6 +20,48 @@ const path = require('path');
 const bodiesModel = require('../../models/bodies');
 const utilities = require('../utilities');
 
+module.exports.update = () => {
+    let recordsUpdated = 0;
+    return new Promise((resolve, reject) => {
+        new utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+            .on('start', () => {
+                console.log(`EDDB body dump update reported`);
+                resolve({
+                    update: "started",
+                    type: 'body'
+                });
+            })
+            .on('json', json => {
+                bodiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.findOneAndUpdate(
+                            { id: document.id },
+                            document,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                recordsUpdated++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsUpdated} records updated`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
 module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {

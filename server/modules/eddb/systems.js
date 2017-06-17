@@ -20,6 +20,48 @@ const path = require('path');
 const systemsModel = require('../../models/systems');
 const utilities = require('../utilities');
 
+module.exports.update = () => {
+    let recordsUpdated = 0;
+    return new Promise((resolve, reject) => {
+        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
+            .on('start', () => {
+                console.log(`EDDB system dump update reported`);
+                resolve({
+                    update: "started",
+                    type: 'system'
+                });
+            })
+            .on('json', json => {
+                bodiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.findOneAndUpdate(
+                            { id: document.id },
+                            document,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                recordsUpdated++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsUpdated} records updated`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
 module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {
