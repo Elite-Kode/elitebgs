@@ -2,7 +2,7 @@
 
 A website to track the background simulation in Elite Dangerous
 
-## This is a work in progress. More features will be added.
+## This is a work in progress. More features will be added. Some may change. Not ready for production yet.
 
 Currently [EDDB](https://eddb.io/) is the greatest treasure of information of the galaxy and it is a user friendly tool for many pilots. But it lacks an API for developers. Elite BGS is an attempt to fill this gap by providing an API for EDDB data sources.
 
@@ -72,6 +72,15 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 - http://elitebgs.kodeblox.com/api/insertdumps/station
 - http://elitebgs.kodeblox.com/api/insertdumps/populatedsystem
 - http://elitebgs.kodeblox.com/api/insertdumps/system
+
+### Update database from downloaded dumps*
+
+- http://elitebgs.kodeblox.com/api/updatedumps/body
+- http://elitebgs.kodeblox.com/api/updatedumps/commodity
+- http://elitebgs.kodeblox.com/api/updatedumps/faction
+- http://elitebgs.kodeblox.com/api/updatedumps/station
+- http://elitebgs.kodeblox.com/api/updatedumps/populatedsystem
+- http://elitebgs.kodeblox.com/api/updatedumps/system
 
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 

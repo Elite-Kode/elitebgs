@@ -20,6 +20,48 @@ const path = require('path');
 const commoditiesModel = require('../../models/commodities');
 const utilities = require('../utilities');
 
+module.exports.update = () => {
+    let recordsUpdated = 0;
+    return new Promise((resolve, reject) => {
+        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+            .on('start', () => {
+                console.log(`EDDB commodity dump update reported`);
+                resolve({
+                    update: "started",
+                    type: 'commodity'
+                });
+            })
+            .on('json', json => {
+                bodiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.findOneAndUpdate(
+                            { id: document.id },
+                            document,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                recordsUpdated++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsUpdated} records updated`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
 module.exports.import = () => {
     let recordsInserted = 0;
     return new Promise((resolve, reject) => {

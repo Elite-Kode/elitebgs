@@ -33,6 +33,7 @@ const stations = require('./server/routes/stations');
 const systems = require('./server/routes/systems');
 const downloadDumps = require('./server/routes/download_dumps');
 const insertDumps = require('./server/routes/insert_dumps');
+const updateDumps = require('./server/routes/update_dumps');
 
 // require('./server/modules/eddn');
 
@@ -55,6 +56,7 @@ app.use('/api/stations', stations);
 app.use('/api/systems', systems);
 app.use('/api/downloaddumps', downloadDumps);
 app.use('/api/insertdumps', insertDumps);
+app.use('/api/updatedumps', updateDumps);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
