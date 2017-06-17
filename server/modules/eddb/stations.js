@@ -16,18 +16,54 @@
 
 "use strict";
 
+const path = require('path');
 const stationsModel = require('../../models/stations');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        stationsModel.then(model => {
-            model.insertMany(require('../../dumps/stations.json'))
-                .then(() => {
-                    resolve();
-                })
-                .catch((err) => {
-                    reject(err);
+        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/stations.json'))
+            .on('start', () => {
+                console.log(`EDDB station dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'station'
                 });
-        });
+            })
+            .on('json', json => {
+                stationsModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsInserted} records inserted`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        utilities.download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
+            .then(msg => {
+                resolve(msg);
+            })
+            .catch(err => {
+                reject(err);
+            });
     })
 }

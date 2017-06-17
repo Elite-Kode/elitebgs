@@ -75,6 +75,20 @@ module.exports = new Promise((resolve, reject) => {
         }
     });
 
+    station.pre('save', function (next) {
+        this.updated_at = this.updated_at * 1000;
+        if (this.shipyard_updated_at) {
+            this.shipyard_updated_at = this.shipyard_updated_at * 1000;
+        }
+        if (this.outfitting_updated_at) {
+            this.outfitting_updated_at = this.outfitting_updated_at * 1000;
+        }
+        if (this.market_updated_at) {
+            this.market_updated_at = this.market_updated_at * 1000;
+        }
+        next();
+    });
+
     let model = mongoose.model('station', station);
 
     resolve(model);

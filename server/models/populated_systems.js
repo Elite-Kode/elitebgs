@@ -68,6 +68,11 @@ module.exports = new Promise((resolve, reject) => {
         }]
     });
 
+    populatedSystem.pre('save', function (next) {
+        this.updated_at = this.updated_at * 1000;
+        next();
+    });
+
     let model = mongoose.model('populatedSystem', populatedSystem);
 
     resolve(model);

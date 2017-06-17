@@ -16,8 +16,21 @@
 
 "use strict";
 
-module.exports.csvToJson = require('./csv_to_json');
-module.exports.jsonlToJson = require('./jsonl_to_json');
-module.exports.jsonParse = require('./json_parse');
-module.exports.download = require('./download');
-module.exports.fileSize = require('./file_size');
+const fs = require('fs-extra');
+const fileSize = require('filesize');
+
+module.exports.withPath = filePath => {
+    let fileSizeOptions = {
+        exponent: 1,
+        standard: "iec"
+    }
+    return fileSize(fs.statSync(filePath).size, fileSizeOptions);
+}
+
+module.exports.withValue = value => {
+    let fileSizeOptions = {
+        exponent: 1,
+        standard: "iec"
+    }
+    return fileSize(value);
+}

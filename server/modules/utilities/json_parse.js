@@ -17,20 +17,20 @@
 "use strict";
 
 const fs = require('fs-extra');
-const ndjson = require('ndjson');
+const jsonStream = require('JSONStream');
 const eventEmmiter = require('events').EventEmitter;
 const inherits = require('util').inherits;
 
-module.exports = JsonlToJson;
+module.exports = JsonParse;
 
-function JsonlToJson(path) {
+function JsonParse(path) {
     eventEmmiter.call(this);
     let firstData = true;
     fs.createReadStream(path)
-        .pipe(ndjson.parse())
+        .pipe(jsonStream.parse('*'))
         .on('data', json => {
             if (firstData) {
-                firstData = !firstData;
+                firstData = false;
                 this.emit('start');
             }
             this.emit('json', json);
@@ -40,7 +40,7 @@ function JsonlToJson(path) {
         })
         .on('error', error => {
             this.emit('error', error);
-        })
+        });
 }
 
-inherits(JsonlToJson, eventEmmiter);
+inherits(JsonParse, eventEmmiter);

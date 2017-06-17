@@ -38,6 +38,11 @@ module.exports = new Promise((resolve, reject) => {
         collected_at: Date
     });
 
+    commodity.pre('save', function (next) {
+        this.collected_at = this.collected_at * 1000;
+        next();
+    });
+
     let model = mongoose.model('commodity', commodity);
 
     resolve(model);

@@ -18,23 +18,52 @@
 
 const path = require('path');
 const commoditiesModel = require('../../models/commodities');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        require('../utilities').csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
-            .then(json => {
-                commoditiesModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
+        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+            .on('start', () => {
+                console.log(`EDDB commodity dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'commodity'
                 });
+            })
+            .on('json', json => {
+                commoditiesModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsInserted} records inserted`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        utilities.download('https://eddb.io/archive/v5/listings.csv', path.resolve(__dirname, '../../dumps/listings.csv'), 'commodity')
+            .then(msg => {
+                resolve(msg);
             })
             .catch(err => {
                 reject(err);
-            })
+            });
     })
 }

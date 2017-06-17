@@ -16,18 +16,54 @@
 
 "use strict";
 
+const path = require('path');
 const populatedSystemsModel = require('../../models/populated_systems');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        populatedSystemsModel.then(model => {
-            model.insertMany(require('../../dumps/systems_populated.json'))
-                .then(() => {
-                    resolve();
-                })
-                .catch((err) => {
-                    reject(err);
+        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/systems_populated.json'))
+            .on('start', () => {
+                console.log(`EDDB populated system dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'populated system'
                 });
-        });
+            })
+            .on('json', json => {
+                populatedSystemsModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsInserted} records inserted`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        utilities.download('https://eddb.io/archive/v5/systems_populated.json', path.resolve(__dirname, '../../dumps/systems_populated.json'), 'populated system')
+            .then(msg => {
+                resolve(msg);
+            })
+            .catch(err => {
+                reject(err);
+            });
     })
 }

@@ -26,14 +26,11 @@ let eddb = require('../modules/eddb');
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.bodies.import()
-            .then(() => {
-                console.log("Bodies records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'body'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -44,14 +41,11 @@ router.get('/body', passport.authenticate('basic', { session: false }), (req, re
 router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.commodities.import()
-            .then(() => {
-                console.log("Commodities records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'commodity'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -62,14 +56,11 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
 router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.factions.import()
-            .then(() => {
-                console.log("Factions records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'faction'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -80,14 +71,11 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
 router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.stations.import()
-            .then(() => {
-                console.log("Stations records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'station'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -98,14 +86,11 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
 router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.populatedSystems.import()
-            .then(() => {
-                console.log("Populated systems records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'populated system'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {
@@ -116,14 +101,11 @@ router.get('/populatedSystem', passport.authenticate('basic', { session: false }
 router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         eddb.systems.import()
-            .then(() => {
-                console.log("Systems records updated from EDDB");
-                res.json({
-                    updated: true,
-                    type: 'system'
-                });
+            .then(msg => {
+                res.json(msg);
             })
             .catch(err => {
+                console.log(err);
                 res.json(err);
             });
     } else {

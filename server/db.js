@@ -17,6 +17,7 @@
 "use strict";
 
 let mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 let user = process.env.db_uname || require('../secrets.js').db_user;
 let pass = process.env.db_pass || require('../secrets.js').db_pwd;

@@ -106,6 +106,18 @@ module.exports = new Promise((resolve, reject) => {
         is_landable: Boolean
     });
 
+    body.pre('save', function (next) {
+        this.created_at = this.created_at * 1000;
+        this.updated_at = this.updated_at * 1000;
+        if (this.rings) {
+            this.rings.forEach((ring, index, rings) => {
+                rings[index].created_at = ring.created_at * 1000;
+                rings[index].updated_at = ring.updated_at * 1000;
+            }, this);
+        }
+        next();
+    });
+
     let model = mongoose.model('body', body);
 
     resolve(model);

@@ -18,21 +18,30 @@
 
 const fs = require('fs-extra');
 const csvtojson = require('csvtojson');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports = path => {
-    return new Promise((resolve, reject) => {
-        let jsonArray = [];
-        csvtojson()
-            .fromStream(fs.createReadStream(path))
-            .on('json', json => {
-                jsonArray.push(json);
-            })
-            .on('done', (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(jsonArray);
-                }
-            })
-    })
+module.exports = CsvToJson;
+
+function CsvToJson(path) {
+    eventEmmiter.call(this);
+    let firstData = true;
+    csvtojson()
+        .fromStream(fs.createReadStream(path))
+        .on('json', json => {
+            if (firstData) {
+                firstData = !firstData;
+                this.emit('start');
+            }
+            this.emit('json', json);
+        })
+        .on('done', (error) => {
+            if (error) {
+                this.emit('error', error);
+            } else {
+                this.emit('end');
+            }
+        });
 }
+
+inherits(CsvToJson, eventEmmiter);

@@ -38,6 +38,11 @@ module.exports = new Promise((resolve, reject) => {
         is_player_faction: Boolean
     });
 
+    faction.pre('save', function (next) {
+        this.updated_at = this.updated_at * 1000;
+        next();
+    });
+
     let model = mongoose.model('faction', faction);
 
     resolve(model);

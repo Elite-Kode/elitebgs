@@ -18,23 +18,52 @@
 
 const path = require('path');
 const systemsModel = require('../../models/systems');
+const utilities = require('../utilities');
 
 module.exports.import = () => {
+    let recordsInserted = 0;
     return new Promise((resolve, reject) => {
-        require('../utilities').csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
-            .then(json => {
-                systemsModel.then(model => {
-                    model.insertMany(json)
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch((err) => {
-                            reject(err);
-                        });
+        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
+            .on('start', () => {
+                console.log(`EDDB system dump insertion reported`);
+                resolve({
+                    insertion: "started",
+                    type: 'system'
                 });
+            })
+            .on('json', json => {
+                systemsModel
+                    .then(model => {
+                        let document = new model(json);
+                        document.save()
+                            .then(() => {
+                                recordsInserted++;
+                            })
+                            .catch((err) => {
+                                reject(err);
+                            });
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsInserted} records inserted`);
+            })
+            .on('error', err => {
+                reject(err);
+            })
+    })
+};
+
+module.exports.download = () => {
+    return new Promise((resolve, reject) => {
+        utilities.download('https://eddb.io/archive/v5/systems.csv', path.resolve(__dirname, '../../dumps/systems.csv'), 'system')
+            .then(msg => {
+                resolve(msg);
             })
             .catch(err => {
                 reject(err);
-            })
+            });
     })
 }
