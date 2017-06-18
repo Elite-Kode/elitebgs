@@ -37,6 +37,7 @@ function Commodities() {
             .on('start', () => {
                 console.log(`EDDB commodity dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'commodity'
                 });
@@ -77,6 +78,7 @@ function Commodities() {
             .on('start', () => {
                 console.log(`EDDB commodity dump insertion reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'commodity'
                 });
@@ -111,6 +113,7 @@ function Commodities() {
             .on('start', response => {
                 console.log(`EDDB commodity dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'commodity'
                 });

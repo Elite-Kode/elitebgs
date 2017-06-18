@@ -37,6 +37,7 @@ function Factions() {
             .on('start', () => {
                 console.log(`EDDB faction dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'faction'
                 });
@@ -77,6 +78,7 @@ function Factions() {
             .on('start', () => {
                 console.log(`EDDB faction dump insertion reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'faction'
                 });
@@ -111,6 +113,7 @@ function Factions() {
             .on('start', response => {
                 console.log(`EDDB faction dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'faction'
                 });

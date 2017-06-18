@@ -23,23 +23,31 @@ let router = express.Router();
 
 let eddb = require('../modules/eddb');
 
+router.get('/all', passport.authenticate('basic', { session: false }), (req, res) => {
+    if (req.user.clearance === 0) {
+        // TODO: call all routes one by one
+    } else {
+        res.status(403).json({ Error: "Permission Denied" });
+    }
+});
+
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let bodies = new eddb.bodies();
         bodies.update();
         bodies
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
@@ -49,17 +57,17 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
         commodities.update();
         commodities
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
@@ -69,17 +77,17 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
         factions.update();
         factions
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
@@ -89,17 +97,17 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
         stations.update();
         stations
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
@@ -109,17 +117,17 @@ router.get('/populatedSystem', passport.authenticate('basic', { session: false }
         populatedSystems.update();
         populatedSystems
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
@@ -129,17 +137,17 @@ router.get('/system', passport.authenticate('basic', { session: false }), (req, 
         systems.update();
         systems
             .on('started', msg => {
-                res.json(msg);
+                res.status(msg.statusCode).json(msg);
             })
             .on('done', () => {
                 console.log('Done');
             })
             .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 

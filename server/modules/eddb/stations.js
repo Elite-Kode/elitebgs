@@ -39,6 +39,7 @@ function Stations() {
             .on('start', () => {
                 console.log(`EDDB station dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'station'
                 });
@@ -78,7 +79,8 @@ function Stations() {
         new utilities.jsonParse(pathToFile)
             .on('start', () => {
                 console.log(`EDDB station dump insertion reported`);
-                resolve({
+                this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'station'
                 });
@@ -113,6 +115,7 @@ function Stations() {
             .on('start', response => {
                 console.log(`EDDB station reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'station'
                 });

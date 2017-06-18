@@ -37,6 +37,7 @@ function PopulatedSystems() {
             .on('start', () => {
                 console.log(`EDDB populated system dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'populated system'
                 });
@@ -77,6 +78,7 @@ function PopulatedSystems() {
             .on('start', () => {
                 console.log(`EDDB populated system dump insertion reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'populated system'
                 });
@@ -111,6 +113,7 @@ function PopulatedSystems() {
             .on('start', response => {
                 console.log(`EDDB populated system dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'populated system'
                 });

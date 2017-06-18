@@ -37,6 +37,7 @@ function Bodies() {
             .on('start', () => {
                 console.log(`EDDB body dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'body'
                 });
@@ -77,6 +78,7 @@ function Bodies() {
             .on('start', () => {
                 console.log(`EDDB body dump insertion reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'body'
                 });
@@ -111,6 +113,7 @@ function Bodies() {
             .on('start', response => {
                 console.log(`EDDB body dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'body'
                 });

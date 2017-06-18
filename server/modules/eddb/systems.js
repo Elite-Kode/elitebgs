@@ -37,6 +37,7 @@ function Systems() {
             .on('start', () => {
                 console.log(`EDDB system dump update reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'system'
                 });
@@ -77,6 +78,7 @@ function Systems() {
             .on('start', () => {
                 console.log(`EDDB system dump insertion reported`);
                 this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'system'
                 });
@@ -111,6 +113,7 @@ function Systems() {
             .on('start', response => {
                 console.log(`EDDB system dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
+                    response: response,
                     insertion: "started",
                     type: 'system'
                 });
