@@ -19,25 +19,36 @@
 const path = require('path');
 const stationsModel = require('../../models/stations');
 const utilities = require('../utilities');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports.update = () => {
-    let recordsUpdated = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/stations.json'))
+let fileSize = require('../utilities/file_size');
+
+module.exports = Stations;
+
+const pathToFile = path.resolve(__dirname, '../../dumps/stations.json');
+
+module.exports = Stations;
+
+function Stations() {
+    eventEmmiter.call(this);
+
+    this.update = function () {
+        let recordsUpdated = 0;
+        new utilities.jsonParse(pathToFile)
             .on('start', () => {
                 console.log(`EDDB station dump update reported`);
-                resolve({
+                this.emit('started', {
                     update: "started",
                     type: 'station'
                 });
             })
             .on('json', json => {
-                bodiesModel
+                stationsModel
                     .then(model => {
-                        let document = new model(json);
-                        document.findOneAndUpdate(
-                            { id: document.id },
-                            document,
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
                             {
                                 upsert: true,
                                 runValidators: true
@@ -46,26 +57,25 @@ module.exports.update = () => {
                                 recordsUpdated++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.import = () => {
-    let recordsInserted = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.jsonParse(path.resolve(__dirname, '../../dumps/stations.json'))
+    this.import = function () {
+        let recordsInserted = 0;
+        new utilities.jsonParse(pathToFile)
             .on('start', () => {
                 console.log(`EDDB station dump insertion reported`);
                 resolve({
@@ -82,30 +92,39 @@ module.exports.import = () => {
                                 recordsInserted++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsInserted} records inserted`);
+                this.emit('done', recordsInserted);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.download = () => {
-    return new Promise((resolve, reject) => {
-        utilities.download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
-            .then(msg => {
-                resolve(msg);
+    this.download = function () {
+        new utilities.download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
+            .on('start', response => {
+                console.log(`EDDB station reported with status code ${response.statusCode}`);
+                this.emit('started', {
+                    insertion: "started",
+                    type: 'station'
+                });
             })
-            .catch(err => {
-                reject(err);
-            });
-    })
+            .on('end', () => {
+                console.log(`EDDB station dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
+                this.emit('done');
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
+    }
 }
+
+inherits(Stations, eventEmmiter);

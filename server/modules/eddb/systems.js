@@ -19,25 +19,34 @@
 const path = require('path');
 const systemsModel = require('../../models/systems');
 const utilities = require('../utilities');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports.update = () => {
-    let recordsUpdated = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
+let fileSize = require('../utilities/file_size');
+
+module.exports = Systems;
+
+const pathToFile = path.resolve(__dirname, '../../dumps/systems.csv');
+
+function Systems() {
+    eventEmmiter.call(this);
+
+    this.update = function () {
+        let recordsUpdated = 0;
+        new utilities.csvToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB system dump update reported`);
-                resolve({
+                this.emit('started', {
                     update: "started",
                     type: 'system'
                 });
             })
             .on('json', json => {
-                bodiesModel
+                systemsModel
                     .then(model => {
-                        let document = new model(json);
-                        document.findOneAndUpdate(
-                            { id: document.id },
-                            document,
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
                             {
                                 upsert: true,
                                 runValidators: true
@@ -46,29 +55,28 @@ module.exports.update = () => {
                                 recordsUpdated++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.import = () => {
-    let recordsInserted = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/systems.csv'))
+    this.import = function () {
+        let recordsInserted = 0;
+        new utilities.csvToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB system dump insertion reported`);
-                resolve({
+                this.emit('started', {
                     insertion: "started",
                     type: 'system'
                 });
@@ -82,30 +90,39 @@ module.exports.import = () => {
                                 recordsInserted++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsInserted} records inserted`);
+                this.emit('done', recordsInserted);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.download = () => {
-    return new Promise((resolve, reject) => {
-        utilities.download('https://eddb.io/archive/v5/systems.csv', path.resolve(__dirname, '../../dumps/systems.csv'), 'system')
-            .then(msg => {
-                resolve(msg);
+    this.download = function () {
+        new utilities.download('https://eddb.io/archive/v5/systems.json', pathToFile)
+            .on('start', response => {
+                console.log(`EDDB system dump reported with status code ${response.statusCode}`);
+                this.emit('started', {
+                    insertion: "started",
+                    type: 'system'
+                });
             })
-            .catch(err => {
-                reject(err);
-            });
-    })
+            .on('end', () => {
+                console.log(`EDDB system dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
+                this.emit('done');
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
+    }
 }
+
+inherits(Systems, eventEmmiter);

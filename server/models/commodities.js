@@ -39,7 +39,12 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     commodity.pre('save', function (next) {
-        this.collected_at = this.collected_at * 1000;
+        this.collected_at *= 1000;
+        next();
+    });
+
+    commodity.pre('findOneAndUpdate', function (next) {
+        this._update.collected_at *= 1000;
         next();
     });
 

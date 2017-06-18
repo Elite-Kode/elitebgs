@@ -76,15 +76,29 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     station.pre('save', function (next) {
-        this.updated_at = this.updated_at * 1000;
+        this.updated_at *= 1000;
         if (this.shipyard_updated_at) {
-            this.shipyard_updated_at = this.shipyard_updated_at * 1000;
+            this.shipyard_updated_at *= 1000;
         }
         if (this.outfitting_updated_at) {
-            this.outfitting_updated_at = this.outfitting_updated_at * 1000;
+            this.outfitting_updated_at *= 1000;
         }
         if (this.market_updated_at) {
-            this.market_updated_at = this.market_updated_at * 1000;
+            this.market_updated_at *= 1000;
+        }
+        next();
+    });
+
+    station.pre('findOneAndUpdate', function (next) {
+        this._update.updated_at *= 1000;
+        if (this._update.shipyard_updated_at) {
+            this._update.shipyard_updated_at *= 1000;
+        }
+        if (this._update.outfitting_updated_at) {
+            this._update.outfitting_updated_at *= 1000;
+        }
+        if (this._update.market_updated_at) {
+            this._update.market_updated_at *= 1000;
         }
         next();
     });

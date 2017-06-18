@@ -19,25 +19,34 @@
 const path = require('path');
 const commoditiesModel = require('../../models/commodities');
 const utilities = require('../utilities');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports.update = () => {
-    let recordsUpdated = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+let fileSize = require('../utilities/file_size');
+
+module.exports = Commodities;
+
+const pathToFile = path.resolve(__dirname, '../../dumps/listings.csv');
+
+function Commodities() {
+    eventEmmiter.call(this);
+
+    this.update = function () {
+        let recordsUpdated = 0;
+        new utilities.csvToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB commodity dump update reported`);
-                resolve({
+                this.emit('started', {
                     update: "started",
                     type: 'commodity'
                 });
             })
             .on('json', json => {
-                bodiesModel
+                commoditiesModel
                     .then(model => {
-                        let document = new model(json);
-                        document.findOneAndUpdate(
-                            { id: document.id },
-                            document,
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
                             {
                                 upsert: true,
                                 runValidators: true
@@ -46,29 +55,28 @@ module.exports.update = () => {
                                 recordsUpdated++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.import = () => {
-    let recordsInserted = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.csvToJson(path.resolve(__dirname, '../../dumps/listings.csv'))
+    this.import = function () {
+        let recordsInserted = 0;
+        new utilities.csvToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB commodity dump insertion reported`);
-                resolve({
+                this.emit('started', {
                     insertion: "started",
                     type: 'commodity'
                 });
@@ -82,30 +90,39 @@ module.exports.import = () => {
                                 recordsInserted++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsInserted} records inserted`);
+                this.emit('done', recordsInserted);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.download = () => {
-    return new Promise((resolve, reject) => {
-        utilities.download('https://eddb.io/archive/v5/listings.csv', path.resolve(__dirname, '../../dumps/listings.csv'), 'commodity')
-            .then(msg => {
-                resolve(msg);
+    this.download = function () {
+        new utilities.download('https://eddb.io/archive/v5/listings.csv', pathToFile)
+            .on('start', response => {
+                console.log(`EDDB commodity dump reported with status code ${response.statusCode}`);
+                this.emit('started', {
+                    insertion: "started",
+                    type: 'commodity'
+                });
             })
-            .catch(err => {
-                reject(err);
-            });
-    })
+            .on('end', () => {
+                console.log(`EDDB commodity dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
+                this.emit('done');
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
+    }
 }
+
+inherits(Commodities, eventEmmiter);

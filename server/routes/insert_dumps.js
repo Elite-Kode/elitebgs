@@ -25,11 +25,16 @@ let eddb = require('../modules/eddb');
 
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.bodies.import()
-            .then(msg => {
+        let bodies = new eddb.bodies();
+        bodies.import();
+        bodies
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
@@ -40,11 +45,16 @@ router.get('/body', passport.authenticate('basic', { session: false }), (req, re
 
 router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.commodities.import()
-            .then(msg => {
+        let commodities = new eddb.commodities();
+        commodities.import();
+        commodities
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
@@ -55,11 +65,16 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
 
 router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.factions.import()
-            .then(msg => {
+        let factions = new eddb.factions();
+        factions.import();
+        factions
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
@@ -70,11 +85,16 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
 
 router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.stations.import()
-            .then(msg => {
+        let stations = new eddb.stations();
+        stations.import();
+        stations
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
@@ -85,11 +105,16 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
 
 router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.populatedSystems.import()
-            .then(msg => {
+        let populatedSystems = new eddb.populatedSystems();
+        populatedSystems.import();
+        populatedSystems
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
@@ -100,11 +125,16 @@ router.get('/populatedSystem', passport.authenticate('basic', { session: false }
 
 router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.systems.import()
-            .then(msg => {
+        let systems = new eddb.systems();
+        systems.import();
+        systems
+            .on('started', msg => {
                 res.json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
                 res.json(err);
             });
