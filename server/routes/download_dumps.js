@@ -17,7 +17,6 @@
 "use strict";
 
 const request = require('request-promise-native');
-const url = require('url');
 const express = require('express');
 const passport = require('passport');
 
