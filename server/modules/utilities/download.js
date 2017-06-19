@@ -31,7 +31,7 @@ function Download(pathFrom, pathTo) {
     let progressPercent = 0.0;
     progress(request.get(pathFrom))
         .on('response', response => {
-            response.statusCode = 500;
+            response.statusCode = 200;
             this.emit('start', response);
         })
         .on('progress', status => {

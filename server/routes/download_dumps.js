@@ -16,7 +16,8 @@
 
 "use strict";
 
-const request = require('request');
+const request = require('request-promise-native');
+const url = require('url');
 const express = require('express');
 const passport = require('passport');
 
@@ -26,7 +27,47 @@ let eddb = require('../modules/eddb');
 
 router.get('/all', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        // TODO: call all routes one by one
+        let secrets = require('../../secrets');
+        let protocol = req.protocol;
+        let host = req.headers.host;
+        let baseUrl = req.baseUrl;
+        let authHeader = req.headers.authorization;
+        let options = {
+            url: `${protocol}://${host}${baseUrl}/body`,
+            headers: {
+                Authorization: authHeader
+            },
+            json: true
+        }
+
+        request(options)
+            .then(msg => {
+                options.url = `${protocol}://${host}${baseUrl}/commodity`;
+                return request(options);
+            })
+            .then(msg => {
+                options.url = `${protocol}://${host}${baseUrl}/faction`;
+                return request(options);
+            })
+            .then(msg => {
+                options.url = `${protocol}://${host}${baseUrl}/station`;
+                return request(options);
+            })
+            .then(msg => {
+                options.url = `${protocol}://${host}${baseUrl}/populatedsystem`;
+                return request(options);
+            })
+            .then(msg => {
+                options.url = `${protocol}://${host}${baseUrl}/system`;
+                return request(options);
+            })
+            .then(msg => {
+                res.status(200).json({ response: "all downloads started" });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json(err);
+            })
     } else {
         res.status(403).json({ Error: "Permission Denied" });
     }
@@ -112,7 +153,7 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
     }
 });
 
-router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/populatedsystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let populatedSystems = new eddb.populatedSystems();
         populatedSystems.download();
