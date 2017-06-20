@@ -111,7 +111,7 @@ function Stations() {
     };
 
     this.download = function () {
-        new utilities.download('https://eddb.io/archive/v5/stations.json', path.resolve(__dirname, '../../dumps/stations.json'), 'station')
+        new utilities.download('https://eddb.io/archive/v5/stations.json', pathToFile)
             .on('start', response => {
                 console.log(`EDDB station reported with status code ${response.statusCode}`);
                 this.emit('started', {

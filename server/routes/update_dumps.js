@@ -24,54 +24,6 @@ let router = express.Router();
 
 let eddb = require('../modules/eddb');
 
-router.get('/all', passport.authenticate('basic', { session: false }), (req, res) => {
-    if (req.user.clearance === 0) {
-        let secrets = require('../../secrets');
-        let protocol = req.protocol;
-        let host = req.headers.host;
-        let baseUrl = req.baseUrl;
-        let authHeader = req.headers.authorization;
-        let options = {
-            url: `${protocol}://${host}${baseUrl}/body`,
-            headers: {
-                Authorization: authHeader
-            },
-            json: true
-        }
-
-        request(options)
-            .then(msg => {
-                options.url = `${protocol}://${host}${baseUrl}/commodity`;
-                return request(options);
-            })
-            .then(msg => {
-                options.url = `${protocol}://${host}${baseUrl}/faction`;
-                return request(options);
-            })
-            .then(msg => {
-                options.url = `${protocol}://${host}${baseUrl}/station`;
-                return request(options);
-            })
-            .then(msg => {
-                options.url = `${protocol}://${host}${baseUrl}/populatedsystem`;
-                return request(options);
-            })
-            .then(msg => {
-                options.url = `${protocol}://${host}${baseUrl}/system`;
-                return request(options);
-            })
-            .then(msg => {
-                res.status(200).json({ response: "all updates started" });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(500).json(err);
-            })
-    } else {
-        res.status(403).json({ Error: "Permission Denied" });
-    }
-});
-
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let bodies = new eddb.bodies();

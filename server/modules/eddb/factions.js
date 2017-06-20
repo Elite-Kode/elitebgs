@@ -119,7 +119,7 @@ function Factions() {
                 });
             })
             .on('end', () => {
-                console.log(`EDDB fction dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
+                console.log(`EDDB faction dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
                 this.emit('done');
             })
             .on('error', err => {
