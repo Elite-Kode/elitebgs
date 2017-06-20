@@ -27,17 +27,46 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(bodies => {
             let query = new Object;
 
-            if (req.query.ringtype) {
-                query.ring_type_id = req.query.ringtype;
+            if (req.query.name) {
+                query.name = req.query.name;
             }
-            if (req.query.system) {
-                query.system_id = req.query.system;
+            if (req.query.systemname || req.query.reservetypename || req.query.ispopulated || req.query.power) {
+                require('../models/systems')
+                    .then(systems => {
+                        let systemQuery = new Object;
+
+                        if (req.query.systemname) {
+                            systemQuery.name = req.query.systemname;
+                            systemQuery.reserve_type = req.query.reservetypename;
+                            systemQuery.is_populated = req.query.ispopulated;
+                            systemQuery.power = req.query.power;
+                        }
+                        systems.find(systemQuery)
+                            .then(result => {
+                                query.system_id = result.id;
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             }
-            if (req.query.bodygroup) {
-                query.group_id = req.query.bodygroup;
+            if (req.query.ringtypename) {
+                query.ring_type_name = req.query.ringtypename;
+            }
+            if (req.query.bodygroupname) {
+                query.group_name = req.query.bodygroupname;
+            }
+            if (req.query.bodytypename) {
+                query.type = req.query.bodytypename;
             }
             if (req.query.distancearrival) {
                 query.distance_to_arrival = req.query.distancearrival;
+            }
+            if (req.query.ismainstar) {
+                query.is_main_star = req.query.ismainstar;
             }
             if (req.query.landable) {
                 query.is_landable = req.query.landable;
