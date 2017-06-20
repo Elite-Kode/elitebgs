@@ -27,20 +27,38 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(factions => {
             let query = new Object;
 
-            if (req.query.allegiance) {
-                query.allegiance_id = req.query.allegiance;
+            if (req.query.allegiancename) {
+                query.allegiance = req.query.allegiance;
             }
-            if (req.query.government) {
-                query.government_id = req.query.government;
+            if (req.query.governmentname) {
+                query.government = req.query.governmentname;
             }
-            if (req.query.state) {
-                query.state_id = req.query.state;
+            if (req.query.statename) {
+                query.state = req.query.statename;
             }
             if (req.query.playerfaction) {
                 query.is_player_faction = req.query.playerfaction;
             }
-            if (req.query.homesystem) {
-                query.home_system_id = req.query.homesystem;
+            if (req.query.homesystemname || req.query.power) {
+                require('../models/systems')
+                    .then(systems => {
+                        let systemQuery = new Object;
+
+                        if (req.query.systemname) {
+                            systemQuery.name = req.query.homesystemname;
+                            systemQuery.power = req.query.power;
+                        }
+                        systems.find(systemQuery)
+                            .then(result => {
+                                query.system_id = result.id;
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");

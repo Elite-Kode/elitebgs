@@ -30,11 +30,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.controllingfaction) {
                 query.controlling_minor_faction_id = req.query.controllingfaction;
             }
-            if (req.query.allegiance) {
-                query.allegiance_id = req.query.allegiance;
+            if (req.query.allegiancename) {
+                query.allegiance = req.query.allegiance;
             }
-            if (req.query.government) {
-                query.government_id = req.query.government;
+            if (req.query.governmentname) {
+                query.government = req.query.governmentname;
             }
             if (req.query.planetary) {
                 query.is_planetary = req.query.planetary;

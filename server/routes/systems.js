@@ -27,23 +27,29 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(systems => {
             let query = new Object;
 
-            if (req.query.allegiance) {
-                query.allegiance_id = req.query.allegiance;
+            if (req.query.allegiancename) {
+                query.allegiance = req.query.allegiance;
             }
-            if (req.query.government) {
-                query.government_id = req.query.government;
+            if (req.query.governmentname) {
+                query.government = req.query.governmentname;
             }
-            if (req.query.state) {
-                query.state_id = req.query.state;
+            if (req.query.statename) {
+                query.state = req.query.statename;
             }
-            if (req.query.primaryeconomy) {
-                query.primary_economy_id = req.query.primaryeconomy;
+            if (req.query.primaryeconomyname) {
+                query.primary_economy = req.query.primaryeconomyname;
+            }
+            if (req.query.power) {
+                query.power = req.query.power;
+            }
+            if (req.query.powerstatename) {
+                query.power_state = req.query.powerstatename;
             }
             if (req.query.permit) {
                 query.needs_permit = req.query.permit;
             }
-            if (req.query.security) {
-                query.security_id = req.query.security;
+            if (req.query.securityname) {
+                query.security = req.query.securityname;
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
