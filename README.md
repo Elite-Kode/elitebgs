@@ -82,6 +82,14 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 - http://elitebgs.kodeblox.com/api/updatedumps/populatedsystem
 - http://elitebgs.kodeblox.com/api/updatedumps/system
 
+### Download and insert dumps*
+
+- http://elitebgs.kodeblox.com/api/downloadinsert
+
+### Download and update dumps*
+
+- http://elitebgs.kodeblox.com/api/downloadupdate
+
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 
 For more deatils please refer the [wiki](https://github.com/SayakMukhopadhyay/elitebgs/wiki "EliteBGS Wiki")

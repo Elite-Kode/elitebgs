@@ -62,7 +62,12 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     system.pre('save', function (next) {
-        this.updated_at = this.updated_at * 1000;
+        this.updated_at *= 1000;
+        next();
+    });
+
+    system.pre('findOneAndUpdate', function (next) {
+        this._update.updated_at *= 1000;
         next();
     });
 

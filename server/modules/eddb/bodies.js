@@ -19,14 +19,25 @@
 const path = require('path');
 const bodiesModel = require('../../models/bodies');
 const utilities = require('../utilities');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
-module.exports.update = () => {
-    let recordsUpdated = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+let fileSize = require('../utilities/file_size');
+
+module.exports = Bodies;
+
+const pathToFile = path.resolve(__dirname, '../../dumps/bodies.jsonl');
+
+function Bodies() {
+    eventEmmiter.call(this);
+
+    this.update = function () {
+        let recordsUpdated = 0;
+        new utilities.jsonlToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB body dump update reported`);
-                resolve({
+                this.emit('started', {
+                    statusCode: 200,
                     update: "started",
                     type: 'body'
                 });
@@ -34,10 +45,9 @@ module.exports.update = () => {
             .on('json', json => {
                 bodiesModel
                     .then(model => {
-                        let document = new model(json);
-                        document.findOneAndUpdate(
-                            { id: document.id },
-                            document,
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
                             {
                                 upsert: true,
                                 runValidators: true
@@ -46,29 +56,29 @@ module.exports.update = () => {
                                 recordsUpdated++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.import = () => {
-    let recordsInserted = 0;
-    return new Promise((resolve, reject) => {
-        new utilities.jsonlToJson(path.resolve(__dirname, '../../dumps/bodies.jsonl'))
+    this.import = function () {
+        let recordsInserted = 0;
+        new utilities.jsonlToJson(pathToFile)
             .on('start', () => {
                 console.log(`EDDB body dump insertion reported`);
-                resolve({
+                this.emit('started', {
+                    statusCode: 200,
                     insertion: "started",
                     type: 'body'
                 });
@@ -82,30 +92,40 @@ module.exports.import = () => {
                                 recordsInserted++;
                             })
                             .catch((err) => {
-                                reject(err);
+                                this.emit('error', err);
                             });
                     })
                     .catch(err => {
-                        reject(err);
+                        this.emit('error', err);
                     });
             })
             .on('end', () => {
                 console.log(`${recordsInserted} records inserted`);
+                this.emit('done', recordsInserted);
             })
             .on('error', err => {
-                reject(err);
+                this.emit('error', err);
             })
-    })
-};
+    };
 
-module.exports.download = () => {
-    return new Promise((resolve, reject) => {
-        utilities.download('https://eddb.io/archive/v5/bodies.jsonl', path.resolve(__dirname, '../../dumps/bodies.jsonl'), 'body')
-            .then(msg => {
-                resolve(msg);
+    this.download = function () {
+        new utilities.download('https://eddb.io/archive/v5/bodies.jsonl', pathToFile)
+            .on('start', response => {
+                console.log(`EDDB body dump reported with status code ${response.statusCode}`);
+                this.emit('started', {
+                    response: response,
+                    insertion: "started",
+                    type: 'body'
+                });
             })
-            .catch(err => {
-                reject(err);
-            });
-    })
+            .on('end', () => {
+                console.log(`EDDB body dump saved successfully with file size ${fileSize.withPath(pathToFile)}`)
+                this.emit('done');
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
+    }
 }
+
+inherits(Bodies, eventEmmiter);

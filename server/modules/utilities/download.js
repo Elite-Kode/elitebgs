@@ -19,39 +19,43 @@
 const request = require('request');
 const progress = require('request-progress');
 const fs = require('fs-extra');
+const eventEmmiter = require('events').EventEmitter;
+const inherits = require('util').inherits;
 
 let fileSize = require('../utilities/file_size');
 
-module.exports = (pathFrom, pathTo, type) => {
-    return new Promise((resolve, reject) => {
-        let progressPercent = 0.0;
-        progress(request.get(pathFrom))
-            .on('response', response => {
-                console.log(`EDDB ${type} dump reported with status code ${response.statusCode}`);
-                resolve({
-                    download: "started",
-                    type: type
-                });
+module.exports = Download;
+
+function Download(pathFrom, pathTo) {
+    eventEmmiter.call(this);
+    let progressPercent = 0.0;
+    progress(request.get(pathFrom))
+        .on('response', response => {
+            response.statusCode = 200;
+            this.emit('start', response);
+        })
+        .on('progress', status => {
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`Downloading File of size ${fileSize.withValue(status.size.total)}\nTime Elapsed: ${status.time.elapsed}\t Time Remaining: ${status.time.remaining}\n${(status.percent * 100).toFixed(2)}% completed\t ${fileSize.withValue(status.size.transferred)} data transferred`);
+            }
+            progressPercent = status.percent * 100;
+        })
+        .on('error', err => {
+            this.emit('error', {
+                error: err,
+                progress: progressPercent
+            });
+        })
+        .pipe(fs.createWriteStream(pathTo)
+            .on('finish', () => {
+                this.emit('end');
             })
-            .on('progress', status => {
-                if (process.env.NODE_ENV === 'development') {
-                    console.log(`Downloading File of size ${fileSize.withValue(status.size.total)}\nTime Elapsed: ${status.time.elapsed}\t Time Remaining: ${status.time.remaining}\n${(status.percent * 100).toFixed(2)}% completed\t ${fileSize.withValue(status.size.transferred)} data transferred`);
-                }
-                progressPercent = status.percent;
-            })
-            .on('error', err => {
-                reject({
+            .on('error', error => {
+                this.emit('error', {
                     error: err,
                     progress: progressPercent
                 });
-            })
-            .pipe(fs.createWriteStream(pathTo)
-                .on('finish', () => {
-                    console.log(`EDDB ${type} dump saved successfully with file size ${fileSize.withPath(pathTo)}`)
-                })
-                .on('error', error => {
-                    console.log("Progress", progressPercent);
-                    console.log(error);
-                }));
-    })
+            }));
 }
+
+inherits(Download, eventEmmiter);

@@ -27,16 +27,16 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(commodities => {
             commodities.find({})
                 .then(result => {
-                    res.json(result);
+                    res.status(200).json(result);
                 })
                 .catch(err => {
                     console.log(err);
-                    res.json(err);
+                    res.status(500).json(err);
                 })
         })
         .catch(err => {
             console.log(err);
-            res.json(err);
+            res.status(500).json(err);
         });
 });
 
@@ -46,16 +46,16 @@ router.get('/id/:commodityid', (req, res) => {
             let id = req.params.commodityid;
             commodities.find({ commodity_id: id })
                 .then(result => {
-                    res.json(result);
+                    res.status(200).json(result);
                 })
                 .catch(err => {
                     console.log(err);
-                    res.json(err);
+                    res.status(500).json(err);
                 })
         })
         .catch(err => {
             console.log(err);
-            res.json(err);
+            res.status(500).json(err);
         });
 });
 

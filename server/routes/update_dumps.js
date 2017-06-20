@@ -16,6 +16,7 @@
 
 "use strict";
 
+const request = require('request-promise-native');
 const express = require('express');
 const passport = require('passport');
 
@@ -25,91 +26,121 @@ let eddb = require('../modules/eddb');
 
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.bodies.update()
-            .then(msg => {
-                res.json(msg);
+        let bodies = new eddb.bodies();
+        bodies.update();
+        bodies
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
 router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.commodities.update()
-            .then(msg => {
-                res.json(msg);
+        let commodities = new eddb.commodities();
+        commodities.update();
+        commodities
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
 router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.factions.update()
-            .then(msg => {
-                res.json(msg);
+        let factions = new eddb.factions();
+        factions.update();
+        factions
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
 router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.stations.update()
-            .then(msg => {
-                res.json(msg);
+        let stations = new eddb.stations();
+        stations.update();
+        stations
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
-router.get('/populatedSystem', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/populatedsystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.populatedSystems.update()
-            .then(msg => {
-                res.json(msg);
+        let populatedSystems = new eddb.populatedSystems();
+        populatedSystems.update();
+        populatedSystems
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 
 router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
-        eddb.systems.update()
-            .then(msg => {
-                res.json(msg);
+        let systems = new eddb.systems();
+        systems.update();
+        systems
+            .on('started', msg => {
+                res.status(msg.statusCode).json(msg);
             })
-            .catch(err => {
+            .on('done', () => {
+                console.log('Done');
+            })
+            .on('error', err => {
                 console.log(err);
-                res.json(err);
+                res.status(500).json(err);
             });
     } else {
-        res.json({ Error: "Permission Denied" });
+        res.status(403).json({ Error: "Permission Denied" });
     }
 });
 

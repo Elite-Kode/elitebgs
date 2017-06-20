@@ -107,12 +107,24 @@ module.exports = new Promise((resolve, reject) => {
     });
 
     body.pre('save', function (next) {
-        this.created_at = this.created_at * 1000;
-        this.updated_at = this.updated_at * 1000;
+        this.created_at *= 1000;
+        this.updated_at *= 1000;
         if (this.rings) {
             this.rings.forEach((ring, index, rings) => {
-                rings[index].created_at = ring.created_at * 1000;
-                rings[index].updated_at = ring.updated_at * 1000;
+                rings[index].created_at *= 1000;
+                rings[index].updated_at *= 1000;
+            }, this);
+        }
+        next();
+    });
+
+    body.pre('findOneAndUpdate', function (next) {
+        this._update.created_at *= 1000;
+        this._update.updated_at *= 1000;
+        if (this._update.rings) {
+            this._update.rings.forEach((ring, index, rings) => {
+                rings[index].created_at *= 1000;
+                rings[index].updated_at *= 1000;
             }, this);
         }
         next();

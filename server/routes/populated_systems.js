@@ -50,16 +50,16 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             }
             populatedSystems.find(query)
                 .then(result => {
-                    res.json(result);
+                    res.status(200).json(result);
                 })
                 .catch(err => {
                     console.log(err);
-                    res.json(err);
+                    res.status(500).json(err);
                 })
         })
         .catch(err => {
             console.log(err);
-            res.json(err);
+            res.status(500).json(err);
         });
 });
 
@@ -69,16 +69,16 @@ router.get('/name/:name', (req, res) => {
             let name = req.params.name;
             populatedSystem.find({ name: name })
                 .then(result => {
-                    res.json(result);
+                    res.status(200).json(result);
                 })
                 .catch(err => {
                     console.log(err);
-                    res.json(err);
+                    res.status(500).json(err);
                 })
         })
         .catch(err => {
             console.log(err);
-            res.json(err);
+            res.status(500).json(err);
         });
 });
 
