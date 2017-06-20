@@ -109,7 +109,7 @@ function Systems() {
     };
 
     this.download = function () {
-        new utilities.download('https://eddb.io/archive/v5/systems.json', pathToFile)
+        new utilities.download('https://eddb.io/archive/v5/systems.csv', pathToFile)
             .on('start', response => {
                 console.log(`EDDB system dump reported with status code ${response.statusCode}`);
                 this.emit('started', {
