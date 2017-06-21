@@ -27,14 +27,17 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(factions => {
             let query = new Object;
 
+            if (req.query.name) {
+                query.name_lower = req.query.name.toLowerCase();
+            }
             if (req.query.allegiancename) {
-                query.allegiance = req.query.allegiance;
+                query.allegiance = req.query.allegiancename.toLowerCase();
             }
             if (req.query.governmentname) {
-                query.government = req.query.governmentname;
+                query.government = req.query.governmentname.toLowerCase();
             }
             if (req.query.statename) {
-                query.state = req.query.statename;
+                query.state = req.query.statename.toLowerCase();
             }
             if (req.query.playerfaction) {
                 query.is_player_faction = req.query.playerfaction;
@@ -44,9 +47,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     .then(systems => {
                         let systemQuery = new Object;
 
-                        if (req.query.systemname) {
-                            systemQuery.name = req.query.homesystemname;
-                            systemQuery.power = req.query.power;
+                        if (req.query.homesystemname) {
+                            systemQuery.name_lower = req.query.homesystemname.toLowerCase();
+                        }
+                        if (req.query.power) {
+                            systemQuery.power = req.query.power.toLowerCase();
                         }
                         systems.find(systemQuery)
                             .then(result => {
@@ -81,6 +86,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 router.get('/name/:name', (req, res) => {
     require('../models/factions')
         .then(factions => {
+            let name = req.params.name;
             factions.find({ name: name })
                 .then(result => {
                     res.status(200).json(result);

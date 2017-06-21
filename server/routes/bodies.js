@@ -28,7 +28,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             let query = new Object;
 
             if (req.query.name) {
-                query.name = req.query.name;
+                query.name_lower = req.query.name.toLowerCase();
             }
             if (req.query.systemname || req.query.reservetypename || req.query.ispopulated || req.query.power) {
                 require('../models/systems')
@@ -36,10 +36,16 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         let systemQuery = new Object;
 
                         if (req.query.systemname) {
-                            systemQuery.name = req.query.systemname;
-                            systemQuery.reserve_type = req.query.reservetypename;
+                            systemQuery.name_lower = req.query.systemname.toLowerCase();
+                        }
+                        if (req.query.reservetypename) {
+                            systemQuery.reserve_type = req.query.reservetypename.toLowerCase();
+                        }
+                        if (req.query.ispopulated) {
                             systemQuery.is_populated = req.query.ispopulated;
-                            systemQuery.power = req.query.power;
+                        }
+                        if (req.query.power) {
+                            systemQuery.power = req.query.power.toLowerCase();
                         }
                         systems.find(systemQuery)
                             .then(result => {

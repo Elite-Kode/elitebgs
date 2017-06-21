@@ -22,59 +22,64 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let populatedSystem = new Schema({
-        id: {
-            type: Number,
-            unique: true
-        },
+        id: { type: Number, unique: true },
         edsm_id: Number,
         name: String,
+        name_lower: { type: String, lowercase: true },
         x: Number,
         y: Number,
         z: Number,
         population: Number,
         is_populated: Boolean,
         government_id: Number,
-        government: String,
+        government: { type: String, lowercase: true },
         allegiance_id: Number,
-        allegiance: String,
+        allegiance: { type: String, lowercase: true },
         state_id: Number,
-        state: String,
+        state: { type: String, lowercase: true },
         security_id: Number,
-        security: String,
+        security: { type: String, lowercase: true },
         primary_economy_id: Number,
-        primary_economy: String,
-        power: String,
-        power_state: String,
+        primary_economy: { type: String, lowercase: true },
+        power: { type: String, lowercase: true },
+        power_state: { type: String, lowercase: true },
         power_state_id: Number,
         needs_permit: Boolean,
         updated_at: Date,
-        simbad_ref: String,
-        controlling_minor_faction_id: {
-            type: Number,
-            ref: 'faction.id'
-        },
-        controlling_minor_faction: {
-            type: String,
-            ref: 'faction.name'
-        },
+        simbad_ref: { type: String, lowercase: true },
+        controlling_minor_faction_id: { type: Number, ref: 'faction.id' },
+        controlling_minor_faction: { type: String, lowercase: true, ref: 'faction.name_lower' },
         reserve_type_id: Number,
-        reserve_type: String,
+        reserve_type: { type: String, lowercase: true },
         minor_faction_presences: [{
             name: String,
-            government: String,
-            state: String,
+            name_lower: { type: String, lowercase: true },
+            government: { type: String, lowercase: true },
+            state: { type: String, lowercase: true },
             influence: Number,
-            allegiance: String
+            allegiance: { type: String, lowercase: true },
         }]
     });
 
-    populatedSystem.pre('save', function (next) {
+    populatedSystem.pre('save', function(next) {
         this.updated_at *= 1000;
+        this.name_lower = this.name;
+        if (this.minor_faction_presences) {
+            this.minor_faction_presences.forEach((faction, index, factions) => {
+                factions[index].name_lower = faction.name;
+            }, this);
+        }
         next();
     });
 
-    populatedSystem.pre('findOneAndUpdate', function (next) {
+    populatedSystem.pre('findOneAndUpdate', function(next) {
         this._update.updated_at *= 1000;
+        this._update.name_lower = this._update.name;
+        if (this._update.minor_faction_presences) {
+            this._update.minor_faction_presences.forEach((faction, index, factions) => {
+                factions[index].name_lower = faction.name;
+            }, this);
+        }
         next();
     });
 
