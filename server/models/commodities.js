@@ -22,14 +22,8 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let commodity = new Schema({
-        id: {
-            type: Number,
-            unique: true
-        },
-        station_id: {
-            type: Number,
-            ref: 'station.id'
-        },
+        id: { type: Number, unique: true },
+        station_id: { type: Number, ref: 'station.id' },
         commodity_id: Number,
         supply: Number,
         buy_price: Number,

@@ -22,26 +22,21 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let station = new Schema({
-        id: {
-            type: Number,
-            unique: true
-        },
+        id: { type: Number, unique: true },
         name: String,
-        system_id: {
-            type: Number,
-            ref: 'system.id'
-        },
+        name_lower: { type: String, lowercase: true },
+        system_id: { type: Number, ref: 'system.id' },
         updated_at: Date,
-        max_landing_pad_size: String,
+        max_landing_pad_size: { type: String, lowercase: true },
         distance_to_star: Number,
         government_id: Number,
-        government: String,
+        government: { type: String, lowercase: true },
         allegiance_id: Number,
-        allegiance: String,
+        allegiance: { type: String, lowercase: true },
         state_id: Number,
-        state: String,
+        state: { type: String, lowercase: true },
         type_id: Number,
-        type: String,
+        type: { type: String, lowercase: true },
         has_blackmarket: Boolean,
         has_market: Boolean,
         has_refuel: Boolean,
@@ -51,32 +46,27 @@ module.exports = new Promise((resolve, reject) => {
         has_shipyard: Boolean,
         has_docking: Boolean,
         has_commodities: Boolean,
-        import_commodities: [String],
-        export_commodities: [String],
-        prohibited_commodities: [String],
-        economies: [String],
+        import_commodities: [{ type: String, lowercase: true }],
+        export_commodities: [{ type: String, lowercase: true }],
+        prohibited_commodities: [{ type: String, lowercase: true }],
+        economies: [{ type: String, lowercase: true }],
         shipyard_updated_at: Date,
         outfitting_updated_at: Date,
         market_updated_at: Date,
         is_planetary: Boolean,
-        selling_ships: [String],
+        selling_ships: [{ type: String, lowercase: true }],
         selling_modules: [Number],
         settlement_size_id: Number,
-        settlement_size: String,
+        settlement_size: { type: String, lowercase: true },
         settlement_security_id: Number,
-        settlement_security: String,
-        body_id: {
-            type: Number,
-            ref: 'body.id'
-        },
-        controlling_minor_faction_id: {
-            type: Number,
-            ref: 'faction.id'
-        }
+        settlement_security: { type: String, lowercase: true },
+        body_id: { type: Number, ref: 'body.id' },
+        controlling_minor_faction_id: { type: Number, ref: 'faction.id' }
     });
 
-    station.pre('save', function (next) {
+    station.pre('save', function(next) {
         this.updated_at *= 1000;
+        this.name_lower = this.name;
         if (this.shipyard_updated_at) {
             this.shipyard_updated_at *= 1000;
         }
@@ -89,8 +79,9 @@ module.exports = new Promise((resolve, reject) => {
         next();
     });
 
-    station.pre('findOneAndUpdate', function (next) {
+    station.pre('findOneAndUpdate', function(next) {
         this._update.updated_at *= 1000;
+        this._update.name_lower = this._update.name;
         if (this._update.shipyard_updated_at) {
             this._update.shipyard_updated_at *= 1000;
         }

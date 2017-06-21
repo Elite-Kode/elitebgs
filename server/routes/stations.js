@@ -27,14 +27,14 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(stations => {
             let query = new Object;
 
-            if (req.query.controllingfaction) {
-                query.controlling_minor_faction_id = req.query.controllingfaction;
+            if (req.query.name) {
+                query.name_lower = req.query.name.toLowerCase();
             }
             if (req.query.allegiancename) {
-                query.allegiance = req.query.allegiance;
+                query.allegiance = req.query.allegiancename.toLowerCase();
             }
             if (req.query.governmentname) {
-                query.government = req.query.governmentname;
+                query.government = req.query.governmentname.toLowerCase();
             }
             if (req.query.planetary) {
                 query.is_planetary = req.query.planetary;
