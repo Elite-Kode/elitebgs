@@ -17,6 +17,7 @@
 "use strict";
 
 const path = require('path');
+const fs = require('fs-extra');
 const systemsModel = require('../../models/systems');
 const utilities = require('../utilities');
 const eventEmmiter = require('events').EventEmitter;
@@ -65,6 +66,9 @@ function Systems() {
             })
             .on('end', () => {
                 console.log(`${recordsUpdated} records updated`);
+                fs.unlink(pathToFile, () => {
+                    console.log('System Dump deleted');
+                });
                 this.emit('done', recordsUpdated);
             })
             .on('error', err => {
@@ -101,6 +105,9 @@ function Systems() {
             })
             .on('end', () => {
                 console.log(`${recordsInserted} records inserted`);
+                fs.unlink(pathToFile, () => {
+                    console.log('System Dump deleted');
+                });
                 this.emit('done', recordsInserted);
             })
             .on('error', err => {
