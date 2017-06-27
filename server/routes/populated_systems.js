@@ -24,7 +24,7 @@ let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
     require('../models/populated_systems')
-        .then(populatedSystem => {
+        .then(populatedSystems => {
             let query = new Object;
 
             if (req.query.name) {
@@ -74,9 +74,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 
 router.get('/name/:name', (req, res) => {
     require('../models/populated_systems')
-        .then(populatedSystem => {
+        .then(populatedSystems => {
             let name = req.params.name;
-            populatedSystem.find({ name: name })
+            populatedSystems.find({ name: name })
                 .then(result => {
                     res.status(200).json(result);
                 })
