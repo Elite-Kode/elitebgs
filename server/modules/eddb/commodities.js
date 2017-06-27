@@ -51,7 +51,8 @@ function Commodities() {
                             json,
                             {
                                 upsert: true,
-                                runValidators: true
+                                runValidators: true,
+                                runSettersOnQuery: true
                             })
                             .then(() => {
                                 recordsUpdated++;
