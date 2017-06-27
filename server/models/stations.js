@@ -62,9 +62,9 @@ module.exports = new Promise((resolve, reject) => {
         settlement_security: { type: String, lowercase: true },
         body_id: { type: Number, ref: 'body.id' },
         controlling_minor_faction_id: { type: Number, ref: 'faction.id' }
-    });
+    }, { runSettersOnQuery: true });
 
-    station.pre('save', function(next) {
+    station.pre('save', function (next) {
         this.updated_at *= 1000;
         this.name_lower = this.name;
         if (this.shipyard_updated_at) {
@@ -79,7 +79,7 @@ module.exports = new Promise((resolve, reject) => {
         next();
     });
 
-    station.pre('findOneAndUpdate', function(next) {
+    station.pre('findOneAndUpdate', function (next) {
         this._update.updated_at *= 1000;
         this._update.name_lower = this._update.name;
         if (this._update.shipyard_updated_at) {

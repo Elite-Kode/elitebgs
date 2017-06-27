@@ -51,15 +51,15 @@ module.exports = new Promise((resolve, reject) => {
         controlling_minor_faction: { type: String, lowercase: true, ref: 'faction.name' },
         reserve_type_id: Number,
         reserve_type: { type: String, lowercase: true },
-    });
+    }, { runSettersOnQuery: true });
 
-    system.pre('save', function(next) {
+    system.pre('save', function (next) {
         this.updated_at *= 1000;
         this.name_lower = this.name;
         next();
     });
 
-    system.pre('findOneAndUpdate', function(next) {
+    system.pre('findOneAndUpdate', function (next) {
         this._update.updated_at *= 1000;
         this._update.name_lower = this._update.name;
         next();

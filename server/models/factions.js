@@ -34,15 +34,15 @@ module.exports = new Promise((resolve, reject) => {
         state: { type: String, lowercase: true },
         home_system_id: Number,
         is_player_faction: Boolean
-    });
+    }, { runSettersOnQuery: true });
 
-    faction.pre('save', function(next) {
+    faction.pre('save', function (next) {
         this.updated_at *= 1000;
         this.name_lower = this.name;
         next();
     });
 
-    faction.pre('findOneAndUpdate', function(next) {
+    faction.pre('findOneAndUpdate', function (next) {
         this._update.updated_at *= 1000;
         this._update.name_lower = this._update.name;
         next();

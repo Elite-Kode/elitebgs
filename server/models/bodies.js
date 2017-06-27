@@ -100,9 +100,9 @@ module.exports = new Promise((resolve, reject) => {
             material_name: { type: String, lowercase: true },
         }],
         is_landable: Boolean
-    });
+    }, { runSettersOnQuery: true });
 
-    body.pre('save', function(next) {
+    body.pre('save', function (next) {
         this.created_at *= 1000;
         this.updated_at *= 1000;
         this.name_lower = this.name;
@@ -116,7 +116,7 @@ module.exports = new Promise((resolve, reject) => {
         next();
     });
 
-    body.pre('findOneAndUpdate', function(next) {
+    body.pre('findOneAndUpdate', function (next) {
         this._update.created_at *= 1000;
         this._update.updated_at *= 1000;
         this._update.name_lower = this._update.name;

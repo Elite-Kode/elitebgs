@@ -30,7 +30,7 @@ module.exports = new Promise((resolve, reject) => {
         sell_price: Number,
         demand: Number,
         collected_at: Date
-    });
+    }, { runSettersOnQuery: true });
 
     commodity.pre('save', function (next) {
         this.collected_at *= 1000;
