@@ -59,9 +59,9 @@ module.exports = new Promise((resolve, reject) => {
             influence: Number,
             allegiance: { type: String, lowercase: true },
         }]
-    });
+    }, { runSettersOnQuery: true });
 
-    populatedSystem.pre('save', function(next) {
+    populatedSystem.pre('save', function (next) {
         this.updated_at *= 1000;
         this.name_lower = this.name;
         if (this.minor_faction_presences) {
@@ -72,7 +72,7 @@ module.exports = new Promise((resolve, reject) => {
         next();
     });
 
-    populatedSystem.pre('findOneAndUpdate', function(next) {
+    populatedSystem.pre('findOneAndUpdate', function (next) {
         this._update.updated_at *= 1000;
         this._update.name_lower = this._update.name;
         if (this._update.minor_faction_presences) {
