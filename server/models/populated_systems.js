@@ -52,12 +52,10 @@ module.exports = new Promise((resolve, reject) => {
         reserve_type_id: Number,
         reserve_type: { type: String, lowercase: true },
         minor_faction_presences: [{
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            government: { type: String, lowercase: true },
+            minor_faction_id:Number,
+            state_id:Number,
             state: { type: String, lowercase: true },
-            influence: Number,
-            allegiance: { type: String, lowercase: true },
+            influence: Number
         }]
     }, { runSettersOnQuery: true });
 
