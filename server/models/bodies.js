@@ -103,34 +103,38 @@ module.exports = new Promise((resolve, reject) => {
     }, { runSettersOnQuery: true });
 
     body.pre('save', function (next) {
-        this.created_at *= 1000;
-        this.updated_at *= 1000;
-        this.name_lower = this.name;
-        if (this.rings) {
-            this.rings.forEach((ring, index, rings) => {
-                rings[index].created_at *= 1000;
-                rings[index].updated_at *= 1000;
-                rings[index].name_lower = ring.name;
-            }, this);
-        }
+        lowerify(this);
+        millisecondify(this);
         next();
     });
 
     body.pre('findOneAndUpdate', function (next) {
-        this._update.created_at *= 1000;
-        this._update.updated_at *= 1000;
-        this._update.name_lower = this._update.name;
-        if (this._update.rings) {
-            this._update.rings.forEach((ring, index, rings) => {
-                rings[index].created_at *= 1000;
-                rings[index].updated_at *= 1000;
-                rings[index].name_lower = ring.name;
-            }, this);
-        }
+        lowerify(this._update);
+        millisecondify(this._update);
         next();
     });
 
     let model = mongoose.model('body', body);
+
+    let lowerify = ref => {
+        ref.name_lower = ref.name;
+        if (ref.rings) {
+            ref.rings.forEach((ring, index, rings) => {
+                rings[index].name_lower = ring.name;
+            }, ref);
+        }
+    }
+
+    let millisecondify = ref => {
+        ref.created_at *= 1000;
+        ref.updated_at *= 1000;
+        if (ref.rings) {
+            ref.rings.forEach((ring, index, rings) => {
+                rings[index].created_at *= 1000;
+                rings[index].updated_at *= 1000;
+            }, ref);
+        }
+    }
 
     resolve(model);
 })

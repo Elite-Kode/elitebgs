@@ -37,16 +37,12 @@ module.exports = new Promise((resolve, reject) => {
     }, { runSettersOnQuery: true });
 
     faction.pre('save', function (next) {
-        // this.updated_at *= 1000;
-        // this.name_lower = this.name;
         lowerify(this);
         millisecondify(this);
         next();
     });
 
     faction.pre('findOneAndUpdate', function (next) {
-        // this._update.updated_at *= 1000;
-        // this._update.name_lower = this._update.name;
         lowerify(this._update);
         millisecondify(this._update);
         next();
