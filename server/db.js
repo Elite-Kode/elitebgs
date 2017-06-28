@@ -19,10 +19,10 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-let user = process.env.db_uname || require('../secrets.js').db_user;
-let pass = process.env.db_pass || require('../secrets.js').db_pwd;
+let user = process.env.db_uname || require('../secrets').db_user;
+let pass = process.env.db_pass || require('../secrets').db_pwd;
 
-let url = process.env.dbURL || "mongodb://localhost:27017/elite_bgs";
+let url = process.env.dbURL || require('../secrets').db_url;
 
 let options = {
     server: {
