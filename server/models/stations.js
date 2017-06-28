@@ -80,38 +80,24 @@ module.exports = new Promise((resolve, reject) => {
     }, { runSettersOnQuery: true });
 
     station.pre('save', function(next) {
-        // this.updated_at *= 1000;
-        // this.name_lower = this.name;
-        // if (this.shipyard_updated_at) {
-        //     this.shipyard_updated_at *= 1000;
-        // }
-        // if (this.outfitting_updated_at) {
-        //     this.outfitting_updated_at *= 1000;
-        // }
-        // if (this.market_updated_at) {
-        //     this.market_updated_at *= 1000;
-        // }
         lowerify(this);
         millisecondify(this);
-
+        objectify(this.import_commodities);
+        objectify(this.export_commodities);
+        objectify(this.prohibited_commodities);
+        objectify(this.economies);
+        objectify(this.selling_ships);
         next();
     });
 
     station.pre('findOneAndUpdate', function(next) {
-        // this._update.updated_at *= 1000;
-        // this._update.name_lower = this._update.name;
-        // if (this._update.shipyard_updated_at) {
-        //     this._update.shipyard_updated_at *= 1000;
-        // }
-        // if (this._update.outfitting_updated_at) {
-        //     this._update.outfitting_updated_at *= 1000;
-        // }
-        // if (this._update.market_updated_at) {
-        //     this._update.market_updated_at *= 1000;
-        // }
-
         lowerify(this._update);
         millisecondify(this._update);
+        objectify(this._update.import_commodities);
+        objectify(this._update.export_commodities);
+        objectify(this._update.prohibited_commodities);
+        objectify(this._update.economies);
+        objectify(this._update.selling_ships);
         next();
     });
 
@@ -132,6 +118,17 @@ module.exports = new Promise((resolve, reject) => {
         if (ref.market_updated_at) {
             ref.market_updated_at *= 1000;
         }
+    }
+
+    let objectify = ref => {
+        let entities = ref;
+        ref = [];
+        entities.forEach((entity, index, allEntities) => {
+            ref.push({
+                name: entity,
+                name_lower: entity.toLower()
+            });
+        }, this);
     }
 
     resolve(model);

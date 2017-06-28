@@ -60,28 +60,31 @@ module.exports = new Promise((resolve, reject) => {
     }, { runSettersOnQuery: true });
 
     populatedSystem.pre('save', function (next) {
-        this.updated_at *= 1000;
-        this.name_lower = this.name;
-        if (this.minor_faction_presences) {
-            this.minor_faction_presences.forEach((faction, index, factions) => {
-                factions[index].name_lower = faction.name;
-            }, this);
-        }
+        lowerify(this);
+        millisecondify(this);
         next();
     });
 
     populatedSystem.pre('findOneAndUpdate', function (next) {
-        this._update.updated_at *= 1000;
-        this._update.name_lower = this._update.name;
-        if (this._update.minor_faction_presences) {
-            this._update.minor_faction_presences.forEach((faction, index, factions) => {
-                factions[index].name_lower = faction.name;
-            }, this);
-        }
+        lowerify(this._update);
+        millisecondify(this._update);
         next();
     });
 
     let model = mongoose.model('populatedSystem', populatedSystem);
+
+    let lowerify = ref => {
+        ref.name_lower = ref.name;
+        if (ref.minor_faction_presences) {
+            ref.minor_faction_presences.forEach((faction, index, factions) => {
+                factions[index].name_lower = faction.name;
+            }, ref);
+        }
+    }
+
+    let millisecondify = ref => {
+        ref.updated_at *= 1000;
+    }
 
     resolve(model);
 })

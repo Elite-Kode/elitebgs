@@ -33,16 +33,20 @@ module.exports = new Promise((resolve, reject) => {
     }, { runSettersOnQuery: true });
 
     commodity.pre('save', function (next) {
-        this.collected_at *= 1000;
+        millisecondify(this);
         next();
     });
 
     commodity.pre('findOneAndUpdate', function (next) {
-        this._update.collected_at *= 1000;
+        millisecondify(this._update);
         next();
     });
 
     let model = mongoose.model('commodity', commodity);
+
+    let millisecondify = ref => {
+        ref.collected_at *= 1000;
+    }
 
     resolve(model);
 })
