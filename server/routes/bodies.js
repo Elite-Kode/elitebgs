@@ -30,6 +30,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
+            if (req.query.materials) {
+                let materials = arrayfy(req.query.materials);
+                query["materials.material_name"] = { $all: materials };
+            }
             if (req.query.systemname || req.query.reservetypename || req.query.ispopulated || req.query.power) {
                 require('../models/systems')
                     .then(systems => {
@@ -47,7 +51,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         if (req.query.power) {
                             systemQuery.power = req.query.power.toLowerCase();
                         }
-                        systems.find(systemQuery)
+                        systems.find(systemQuery).lean()
                             .then(result => {
                                 query.system_id = result.id;
                             })
@@ -113,5 +117,16 @@ router.get('/name/:name', (req, res) => {
             res.status(500).json(err);
         });
 });
+
+let arrayfy = requestParam => {
+    let regex = /\s*,\s*/;
+    let mainArray = requestParam.split(regex);
+
+    mainArray.forEach((element, index, allElements) => {
+        allElements[index] = element.toLowerCase();
+    }, this);
+
+    return mainArray;
+}
 
 module.exports = router;
