@@ -126,7 +126,7 @@ module.exports = new Promise((resolve, reject) => {
         entities.forEach((entity, index, allEntities) => {
             ref.push({
                 name: entity,
-                name_lower: entity.toLower()
+                name_lower: entity
             });
         }, this);
     }
