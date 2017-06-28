@@ -46,15 +46,30 @@ module.exports = new Promise((resolve, reject) => {
         has_shipyard: Boolean,
         has_docking: Boolean,
         has_commodities: Boolean,
-        import_commodities: [{ type: String, lowercase: true }],
-        export_commodities: [{ type: String, lowercase: true }],
-        prohibited_commodities: [{ type: String, lowercase: true }],
-        economies: [{ type: String, lowercase: true }],
+        import_commodities: [{
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
+        export_commodities: [{
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
+        prohibited_commodities: [{
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
+        economies: [{
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
         shipyard_updated_at: Date,
         outfitting_updated_at: Date,
         market_updated_at: Date,
         is_planetary: Boolean,
-        selling_ships: [{ type: String, lowercase: true }],
+        selling_ships: [{
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
         selling_modules: [Number],
         settlement_size_id: Number,
         settlement_size: { type: String, lowercase: true },
@@ -64,37 +79,60 @@ module.exports = new Promise((resolve, reject) => {
         controlling_minor_faction_id: { type: Number, ref: 'faction.id' }
     }, { runSettersOnQuery: true });
 
-    station.pre('save', function (next) {
-        this.updated_at *= 1000;
-        this.name_lower = this.name;
-        if (this.shipyard_updated_at) {
-            this.shipyard_updated_at *= 1000;
-        }
-        if (this.outfitting_updated_at) {
-            this.outfitting_updated_at *= 1000;
-        }
-        if (this.market_updated_at) {
-            this.market_updated_at *= 1000;
-        }
+    station.pre('save', function(next) {
+        // this.updated_at *= 1000;
+        // this.name_lower = this.name;
+        // if (this.shipyard_updated_at) {
+        //     this.shipyard_updated_at *= 1000;
+        // }
+        // if (this.outfitting_updated_at) {
+        //     this.outfitting_updated_at *= 1000;
+        // }
+        // if (this.market_updated_at) {
+        //     this.market_updated_at *= 1000;
+        // }
+        lowerify(this);
+        millisecondify(this);
+
         next();
     });
 
-    station.pre('findOneAndUpdate', function (next) {
-        this._update.updated_at *= 1000;
-        this._update.name_lower = this._update.name;
-        if (this._update.shipyard_updated_at) {
-            this._update.shipyard_updated_at *= 1000;
-        }
-        if (this._update.outfitting_updated_at) {
-            this._update.outfitting_updated_at *= 1000;
-        }
-        if (this._update.market_updated_at) {
-            this._update.market_updated_at *= 1000;
-        }
+    station.pre('findOneAndUpdate', function(next) {
+        // this._update.updated_at *= 1000;
+        // this._update.name_lower = this._update.name;
+        // if (this._update.shipyard_updated_at) {
+        //     this._update.shipyard_updated_at *= 1000;
+        // }
+        // if (this._update.outfitting_updated_at) {
+        //     this._update.outfitting_updated_at *= 1000;
+        // }
+        // if (this._update.market_updated_at) {
+        //     this._update.market_updated_at *= 1000;
+        // }
+
+        lowerify(this._update);
+        millisecondify(this._update);
         next();
     });
 
     let model = mongoose.model('station', station);
+
+    let lowerify = ref => {
+        ref.name_lower = ref.name;
+    }
+
+    let millisecondify = ref => {
+        ref.updated_at *= 1000;
+        if (ref.shipyard_updated_at) {
+            ref.shipyard_updated_at *= 1000;
+        }
+        if (ref.outfitting_updated_at) {
+            ref.outfitting_updated_at *= 1000;
+        }
+        if (ref.market_updated_at) {
+            ref.market_updated_at *= 1000;
+        }
+    }
 
     resolve(model);
 })
