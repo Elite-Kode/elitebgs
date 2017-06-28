@@ -26,7 +26,7 @@ module.exports = new Promise((resolve, reject) => {
         created_at: Date,
         updated_at: Date,
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         system_id: { type: Number, ref: 'system.id' },
         group_id: Number,
         group_name: { type: String, lowercase: true },
