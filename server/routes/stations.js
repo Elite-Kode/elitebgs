@@ -42,7 +42,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            stations.find(query)
+            stations.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -61,7 +61,7 @@ router.get('/name/:name', (req, res) => {
     require('../models/stations')
         .then(stations => {
             let name = req.params.name;
-            stations.find({ name: name })
+            stations.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

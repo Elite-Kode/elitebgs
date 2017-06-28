@@ -25,7 +25,7 @@ module.exports = new Promise((resolve, reject) => {
         id: { type: Number, unique: true },
         edsm_id: Number,
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         x: Number,
         y: Number,
         z: Number,
