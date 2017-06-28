@@ -25,7 +25,7 @@ let router = express.Router();
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
     require('../models/commodities')
         .then(commodities => {
-            commodities.find({})
+            commodities.find({}).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -44,7 +44,7 @@ router.get('/id/:commodityid', (req, res) => {
     require('../models/commodities')
         .then(commodities => {
             let id = req.params.commodityid;
-            commodities.find({ commodity_id: id })
+            commodities.find({ commodity_id: id }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

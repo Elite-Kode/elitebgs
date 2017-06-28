@@ -80,7 +80,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            bodies.find(query)
+            bodies.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -99,7 +99,7 @@ router.get('/name/:name', (req, res) => {
     require('../models/bodies')
         .then(bodies => {
             let name = req.params.name;
-            bodies.find({ name: name })
+            bodies.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

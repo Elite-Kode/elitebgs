@@ -53,7 +53,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         if (req.query.power) {
                             systemQuery.power = req.query.power.toLowerCase();
                         }
-                        systems.find(systemQuery)
+                        systems.find(systemQuery).lean()
                             .then(result => {
                                 query.system_id = result.id;
                             })
@@ -87,7 +87,7 @@ router.get('/name/:name', (req, res) => {
     require('../models/factions')
         .then(factions => {
             let name = req.params.name;
-            factions.find({ name: name })
+            factions.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

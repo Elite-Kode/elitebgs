@@ -57,7 +57,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            populatedSystems.find(query)
+            populatedSystems.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -76,7 +76,7 @@ router.get('/name/:name', (req, res) => {
     require('../models/populated_systems')
         .then(populatedSystems => {
             let name = req.params.name;
-            populatedSystems.find({ name: name })
+            populatedSystems.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
