@@ -82,22 +82,12 @@ module.exports = new Promise((resolve, reject) => {
     station.pre('save', function(next) {
         lowerify(this);
         millisecondify(this);
-        objectify(this.import_commodities);
-        objectify(this.export_commodities);
-        objectify(this.prohibited_commodities);
-        objectify(this.economies);
-        objectify(this.selling_ships);
         next();
     });
 
     station.pre('findOneAndUpdate', function(next) {
         lowerify(this._update);
         millisecondify(this._update);
-        objectify(this._update.import_commodities);
-        objectify(this._update.export_commodities);
-        objectify(this._update.prohibited_commodities);
-        objectify(this._update.economies);
-        objectify(this._update.selling_ships);
         next();
     });
 
@@ -118,17 +108,6 @@ module.exports = new Promise((resolve, reject) => {
         if (ref.market_updated_at) {
             ref.market_updated_at *= 1000;
         }
-    }
-
-    let objectify = ref => {
-        let entities = ref;
-        ref = [];
-        entities.forEach((entity, index, allEntities) => {
-            ref.push({
-                name: entity,
-                name_lower: entity
-            });
-        }, this);
     }
 
     resolve(model);

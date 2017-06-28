@@ -46,6 +46,11 @@ function Stations() {
                 });
             })
             .on('json', json => {
+                json.import_commodities = objectify(json.import_commodities);
+                json.export_commodities = objectify(json.export_commodities);
+                json.prohibited_commodities = objectify(json.prohibited_commodities);
+                json.economies = objectify(json.economies);
+                json.selling_ships = objectify(json.selling_ships);
                 stationsModel
                     .then(model => {
                         model.findOneAndUpdate(
@@ -90,6 +95,11 @@ function Stations() {
                 });
             })
             .on('json', json => {
+                json.import_commodities = objectify(json.import_commodities);
+                json.export_commodities = objectify(json.export_commodities);
+                json.prohibited_commodities = objectify(json.prohibited_commodities);
+                json.economies = objectify(json.economies);
+                json.selling_ships = objectify(json.selling_ships);
                 stationsModel
                     .then(model => {
                         let document = new model(json);
@@ -134,6 +144,18 @@ function Stations() {
             .on('error', err => {
                 this.emit('error', err);
             })
+    }
+
+    let objectify = ref => {
+        let entities = ref;
+        ref = [];
+        entities.forEach((entity, index, allEntities) => {
+            ref.push({
+                name: entity,
+                name_lower: entity.toLowerCase()
+            });
+        }, this);
+        return ref;
     }
 }
 
