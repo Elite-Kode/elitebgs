@@ -22,7 +22,7 @@ const passport = require('passport');
 
 let router = express.Router();
 
-let eddb = require('../modules/eddb');
+let eddb = require('../../../modules/eddb');
 
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {

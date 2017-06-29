@@ -23,8 +23,8 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/populated_systems')
-        .then(populatedSystems => {
+    require('../../../models/stations')
+        .then(stations => {
             let query = new Object;
 
             if (req.query.name) {
@@ -36,28 +36,13 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.governmentname) {
                 query.government = req.query.governmentname.toLowerCase();
             }
-            if (req.query.statename) {
-                query.state = req.query.statename.toLowerCase();
-            }
-            if (req.query.primaryeconomyname) {
-                query.primary_economy = req.query.primaryeconomyname.toLowerCase();
-            }
-            if (req.query.power) {
-                query.power = req.query.power.toLowerCase();
-            }
-            if (req.query.powerstatename) {
-                query.power_state = req.query.powerstatename.toLowerCase();
-            }
-            if (req.query.permit) {
-                query.needs_permit = req.query.permit;
-            }
-            if (req.query.securityname) {
-                query.security = req.query.securityname.toLowerCase();
+            if (req.query.planetary) {
+                query.is_planetary = req.query.planetary;
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            populatedSystems.find(query).lean()
+            stations.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -73,10 +58,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 });
 
 router.get('/name/:name', (req, res) => {
-    require('../models/populated_systems')
-        .then(populatedSystems => {
+    require('../../../models/stations')
+        .then(stations => {
             let name = req.params.name;
-            populatedSystems.find({ name: name }).lean()
+            stations.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

@@ -23,7 +23,7 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/factions')
+    require('../../../models/factions')
         .then(factions => {
             let query = new Object;
 
@@ -43,7 +43,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query.is_player_faction = req.query.playerfaction;
             }
             if (req.query.homesystemname || req.query.power) {
-                require('../models/systems')
+                require('../../../models/systems')
                     .then(systems => {
                         let systemQuery = new Object;
 
@@ -84,7 +84,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 });
 
 router.get('/name/:name', (req, res) => {
-    require('../models/factions')
+    require('../../../models/factions')
         .then(factions => {
             let name = req.params.name;
             factions.find({ name: name }).lean()

@@ -23,8 +23,8 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/stations')
-        .then(stations => {
+    require('../../../models/populated_systems')
+        .then(populatedSystems => {
             let query = new Object;
 
             if (req.query.name) {
@@ -36,13 +36,55 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.governmentname) {
                 query.government = req.query.governmentname.toLowerCase();
             }
-            if (req.query.planetary) {
-                query.is_planetary = req.query.planetary;
+            if (req.query.statename) {
+                query.state = req.query.statename.toLowerCase();
+            }
+            if (req.query.primaryeconomyname) {
+                query.primary_economy = req.query.primaryeconomyname.toLowerCase();
+            }
+            if (req.query.power) {
+                query.power = req.query.power.toLowerCase();
+            }
+            if (req.query.powerstatename) {
+                query.power_state = req.query.powerstatename.toLowerCase();
+            }
+            if (req.query.permit) {
+                query.needs_permit = req.query.permit;
+            }
+            if (req.query.securityname) {
+                query.security = req.query.securityname.toLowerCase();
+            }
+            if (req.query.factionname) {
+                let presencetype = 'presence';
+                if (req.query.presencetype) {
+                    presencetype = req.query.presencetype.toLowerCase();
+                }
+                if (presencetype === 'controlling') {
+                    query.controlling_minor_faction = req.query.factionname.toLowerCase();
+                } else if (presencetype === 'presence') {
+                    require('../../../models/factions')
+                        .then(factions => {
+                            let factionQuery = new Object;
+
+                            factionQuery.name_lower = req.query.factionname;
+
+                            factions.find(factionQuery).lean()
+                                .then(result => {
+                                    query["minor_faction_presences.minor_faction_id"] = result.id;
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                }
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            stations.find(query).lean()
+            populatedSystems.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -58,10 +100,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 });
 
 router.get('/name/:name', (req, res) => {
-    require('../models/stations')
-        .then(stations => {
+    require('../../../models/populated_systems')
+        .then(populatedSystems => {
             let name = req.params.name;
-            stations.find({ name: name }).lean()
+            populatedSystems.find({ name: name }).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })

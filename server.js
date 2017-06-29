@@ -25,17 +25,17 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
 
-const bodies = require('./server/routes/bodies');
-const commodities = require('./server/routes/commodities');
-const factions = require('./server/routes/factions');
-const populatedSystems = require('./server/routes/populated_systems');
-const stations = require('./server/routes/stations');
-const systems = require('./server/routes/systems');
-const downloadDumps = require('./server/routes/download_dumps');
-const insertDumps = require('./server/routes/insert_dumps');
-const updateDumps = require('./server/routes/update_dumps');
-const downloadInsert = require('./server/routes/download_insert');
-const downloadUpdate = require('./server/routes/download_update');
+const bodiesV1 = require('./server/routes/eddb_api/v1/bodies');
+const commoditiesV1 = require('./server/routes/eddb_api/v1/commodities');
+const factionsV1 = require('./server/routes/eddb_api/v1/factions');
+const populatedSystemsV1 = require('./server/routes/eddb_api/v1/populated_systems');
+const stationsV1 = require('./server/routes/eddb_api/v1/stations');
+const systemsV1 = require('./server/routes/eddb_api/v1/systems');
+const downloadDumpsV1 = require('./server/routes/eddb_api/v1/download_dumps');
+const insertDumpsV1 = require('./server/routes/eddb_api/v1/insert_dumps');
+const updateDumpsV1 = require('./server/routes/eddb_api/v1/update_dumps');
+const downloadInsertV1 = require('./server/routes/eddb_api/v1/download_insert');
+const downloadUpdateV1 = require('./server/routes/eddb_api/v1/download_update');
 
 // require('./server/modules/eddn');
 
@@ -50,17 +50,17 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/bodies', bodies);
-app.use('/api/commodities', commodities);
-app.use('/api/factions', factions);
-app.use('/api/populatedsystems', populatedSystems);
-app.use('/api/stations', stations);
-app.use('/api/systems', systems);
-app.use('/api/downloaddumps', downloadDumps);
-app.use('/api/insertdumps', insertDumps);
-app.use('/api/updatedumps', updateDumps);
-app.use('/api/downloadinsert', downloadInsert);
-app.use('/api/downloadupdate', downloadUpdate);
+app.use('/api/eddb/v1/bodies', bodiesV1);
+app.use('/api/eddb/v1/commodities', commoditiesV1);
+app.use('/api/eddb/v1/factions', factionsV1);
+app.use('/api/eddb/v1/populatedsystems', populatedSystemsV1);
+app.use('/api/eddb/v1/stations', stationsV1);
+app.use('/api/eddb/v1/systems', systemsV1);
+app.use('/api/eddb/v1/downloaddumps', downloadDumpsV1);
+app.use('/api/eddb/v1/insertdumps', insertDumpsV1);
+app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
+app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
+app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -22,12 +22,12 @@ const passport = require('passport');
 
 let router = express.Router();
 
-let eddb = require('../modules/eddb');
+let eddb = require('../../../modules/eddb');
 
 router.get('/body', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let bodies = new eddb.bodies();
-        bodies.update();
+        bodies.import();
         bodies
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);
@@ -47,7 +47,7 @@ router.get('/body', passport.authenticate('basic', { session: false }), (req, re
 router.get('/commodity', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let commodities = new eddb.commodities();
-        commodities.update();
+        commodities.import();
         commodities
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);
@@ -67,7 +67,7 @@ router.get('/commodity', passport.authenticate('basic', { session: false }), (re
 router.get('/faction', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let factions = new eddb.factions();
-        factions.update();
+        factions.import();
         factions
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);
@@ -87,7 +87,7 @@ router.get('/faction', passport.authenticate('basic', { session: false }), (req,
 router.get('/station', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let stations = new eddb.stations();
-        stations.update();
+        stations.import();
         stations
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);
@@ -107,7 +107,7 @@ router.get('/station', passport.authenticate('basic', { session: false }), (req,
 router.get('/populatedsystem', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let populatedSystems = new eddb.populatedSystems();
-        populatedSystems.update();
+        populatedSystems.import();
         populatedSystems
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);
@@ -127,7 +127,7 @@ router.get('/populatedsystem', passport.authenticate('basic', { session: false }
 router.get('/system', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
         let systems = new eddb.systems();
-        systems.update();
+        systems.import();
         systems
             .on('started', msg => {
                 res.status(msg.statusCode).json(msg);

@@ -23,7 +23,7 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/systems')
+    require('../../../models/systems')
         .then(systems => {
             let query = new Object;
 
@@ -73,7 +73,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 });
 
 router.get('/name/:name', (req, res) => {
-    require('../models/systems')
+    require('../../../models/systems')
         .then(systems => {
             let name = req.params.name;
             systems.find({ name: name }).lean()
