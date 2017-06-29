@@ -18,6 +18,7 @@
 
 const express = require('express');
 const passport = require('passport');
+const bluePromise = require('bluebird');
 const _ = require('lodash');
 
 let router = express.Router();
@@ -27,6 +28,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         .then(stations => {
             let query = new Object;
             let factionSearch = null;
+            let systemSearch = null;
 
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
@@ -56,10 +58,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                                     resolve(ids);
                                 })
                                 .catch(err => {
+                                    err.place = 'faction';
                                     reject(err);
                                 });
                         })
                         .catch(err => {
+                            err.place = 'faction';
                             reject(err);
                         });
                 })
@@ -119,6 +123,43 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.economyname) {
                 query['economies.name_lower'] = req.query.economyname.toLowerCase();
             }
+            if (req.query.permit || req.query.power || req.query.powerstatename) {
+                systemSearch = new Promise((resolve, reject) => {
+                    require('../../../models/systems')
+                        .then(systems => {
+                            let systemQuery = new Object;
+
+                            if (req.query.permit) {
+                                systemQuery.needs_permit = boolify(req.query.permit);
+                            }
+                            if (req.query.power) {
+                                let powers = arrayfy(req.query.power);
+                                systemQuery.power = { $in: powers };
+                            }
+                            if (req.query.powerstatename) {
+                                let powerStates = arrayfy(req.query.powerstatename);
+                                systemQuery.power_state = { $in: powerStates };
+                            }
+
+                            systems.find(systemQuery).lean()
+                                .then(result => {
+                                    let ids = [];
+                                    result.forEach(doc => {
+                                        ids.push(doc.id);
+                                    }, this);
+                                    resolve(ids);
+                                })
+                                .catch(err => {
+                                    err.place = 'system';
+                                    reject(err);
+                                });
+                        })
+                        .catch(err => {
+                            err.place = 'system';
+                            reject(err);
+                        });
+                })
+            }
 
             let stationSearch = () => {
                 if (_.isEmpty(query) && req.user.clearance !== 0) {
@@ -134,7 +175,28 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     })
             }
 
-            if (factionSearch instanceof Promise) {
+            if (factionSearch instanceof Promise && systemSearch instanceof Promise) {
+                let searches = {
+                    faction: factionSearch,
+                    system: systemSearch
+                };
+                bluePromise.props(Object.keys(searches).reduce((promiseObject, key) => {
+                    promiseObject[key] = searches[key].reflect();
+                    return promiseObject;
+                }, {})).then(searches => {
+                    if (searches.faction.isFulfilled()) {
+                        query.controlling_minor_faction_id = { $in: searches.faction.value() };
+                    } else {
+                        console.log(searches.faction.reason());
+                    }
+                    if (searches.system.isFulfilled()) {
+                        query.system_id = { $in: searches.system.value() };
+                    } else {
+                        console.log(searches.system.reason());
+                    }
+                    stationSearch();
+                })
+            } else if (factionSearch instanceof Promise) {
                 factionSearch
                     .then(ids => {
                         query.controlling_minor_faction_id = { $in: ids };
@@ -143,7 +205,17 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     .catch(err => {
                         console.log(err);
                         stationSearch();
+                    });
+            } else if (systemSearch instanceof Promise) {
+                systemSearch
+                    .then(ids => {
+                        query.system_id = { $in: ids };
+                        stationSearch();
                     })
+                    .catch(err => {
+                        console.log(err);
+                        stationSearch();
+                    });
             } else {
                 stationSearch();
             }
