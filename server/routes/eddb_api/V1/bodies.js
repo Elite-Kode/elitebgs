@@ -133,7 +133,6 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             } else {
                 bodySearch();
             }
-
         })
         .catch(err => {
             console.log(err);

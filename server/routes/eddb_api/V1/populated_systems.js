@@ -26,6 +26,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
     require('../../../models/populated_systems')
         .then(populatedSystems => {
             let query = new Object;
+            let factionSearch = null;
 
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
@@ -43,13 +44,15 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query.primary_economy = req.query.primaryeconomyname.toLowerCase();
             }
             if (req.query.power) {
-                query.power = req.query.power.toLowerCase();
+                let powers = arrayfy(req.query.power);
+                query.power = { $in: powers };
             }
             if (req.query.powerstatename) {
-                query.power_state = req.query.powerstatename.toLowerCase();
+                let powerStates = arrayfy(req.query.powerstatename);
+                query.power_state = { $in: powerStates };
             }
             if (req.query.permit) {
-                query.needs_permit = req.query.permit;
+                query.needs_permit = boolify(req.query.permit);
             }
             if (req.query.securityname) {
                 query.security = req.query.securityname.toLowerCase();
@@ -62,36 +65,60 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 if (presencetype === 'controlling') {
                     query.controlling_minor_faction = req.query.factionname.toLowerCase();
                 } else if (presencetype === 'presence') {
-                    require('../../../models/factions')
-                        .then(factions => {
-                            let factionQuery = new Object;
+                    factionSearch = new Promise((resolve, reject) => {
+                        require('../../../models/factions')
+                            .then(factions => {
+                                let factionQuery = new Object;
 
-                            factionQuery.name_lower = req.query.factionname;
+                                factionQuery.name_lower = req.query.factionname.toLowerCase();
 
-                            factions.find(factionQuery).lean()
-                                .then(result => {
-                                    query["minor_faction_presences.minor_faction_id"] = result.id;
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                });
+                                factions.find(factionQuery).lean()
+                                    .then(result => {
+                                        let ids = [];
+                                        result.forEach(doc => {
+                                            ids.push(doc.id);
+                                        }, this);
+                                        resolve(ids);
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    });
+                            })
+                            .catch(err => {
+                                reject(err);
+                            });
+                    })
+                }
+
+                let systemSearch = () => {
+                    if (_.isEmpty(query) && req.user.clearance !== 0) {
+                        throw new Error("Add at least 1 query parameter to limit traffic");
+                    }
+                    populatedSystems.find(query).lean()
+                        .then(result => {
+                            res.status(200).json(result);
                         })
                         .catch(err => {
                             console.log(err);
-                        });
+                            res.status(500).json(err);
+                        })
                 }
             }
-            if (_.isEmpty(query) && req.user.clearance !== 0) {
-                throw new Error("Add at least 1 query parameter to limit traffic");
+
+            if (factionSearch instanceof Promise) {
+                factionSearch
+                    .then(ids => {
+                        query["minor_faction_presences.minor_faction_id"] = { $in: ids };
+                        systemSearch();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        systemSearch();
+                    })
+            } else {
+                systemSearch();
             }
-            populatedSystems.find(query).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
+
         })
         .catch(err => {
             console.log(err);
@@ -99,23 +126,25 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         });
 });
 
-router.get('/name/:name', (req, res) => {
-    require('../../../models/populated_systems')
-        .then(populatedSystems => {
-            let name = req.params.name;
-            populatedSystems.find({ name: name }).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
-});
+let arrayfy = requestParam => {
+    let regex = /\s*,\s*/;
+    let mainArray = requestParam.split(regex);
+
+    mainArray.forEach((element, index, allElements) => {
+        allElements[index] = element.toLowerCase();
+    }, this);
+
+    return mainArray;
+}
+
+let boolify = requestParam => {
+    if (requestParam.toLowerCase() === "true") {
+        return true;
+    } else if (requestParam.toLowerCase() === "false") {
+        return false;
+    } else {
+        return false;
+    }
+}
 
 module.exports = router;

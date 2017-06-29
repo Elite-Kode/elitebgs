@@ -26,6 +26,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
     require('../../../models/factions')
         .then(factions => {
             let query = new Object;
+            let systemSearch = null;
 
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
@@ -40,42 +41,65 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query.state = req.query.statename.toLowerCase();
             }
             if (req.query.playerfaction) {
-                query.is_player_faction = req.query.playerfaction;
+                query.is_player_faction = boolify(req.query.playerfaction);
             }
             if (req.query.homesystemname || req.query.power) {
-                require('../../../models/systems')
-                    .then(systems => {
-                        let systemQuery = new Object;
+                systemSearch = new Promise((resolve, reject) => {
+                    require('../../../models/systems')
+                        .then(systems => {
+                            let systemQuery = new Object;
 
-                        if (req.query.homesystemname) {
-                            systemQuery.name_lower = req.query.homesystemname.toLowerCase();
-                        }
-                        if (req.query.power) {
-                            systemQuery.power = req.query.power.toLowerCase();
-                        }
-                        systems.find(systemQuery).lean()
-                            .then(result => {
-                                query.system_id = result.id;
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            })
+                            if (req.query.homesystemname) {
+                                systemQuery.name_lower = req.query.homesystemname.toLowerCase();
+                            }
+                            if (req.query.power) {
+                                systemQuery.power = req.query.power.toLowerCase();
+                            }
+                            systems.find(systemQuery).lean()
+                                .then(result => {
+                                    let ids = [];
+                                    result.forEach(doc => {
+                                        ids.push(doc.id);
+                                    }, this);
+                                    resolve(ids);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        })
+                        .catch(err => {
+                            reject(err);
+                        });
+                })
+            }
+
+            let factionSearch = () => {
+                if (_.isEmpty(query) && req.user.clearance !== 0) {
+                    throw new Error("Add at least 1 query parameter to limit traffic");
+                }
+                factions.find(query).lean()
+                    .then(result => {
+                        res.status(200).json(result);
                     })
                     .catch(err => {
                         console.log(err);
+                        res.status(500).json(err);
                     })
             }
-            if (_.isEmpty(query) && req.user.clearance !== 0) {
-                throw new Error("Add at least 1 query parameter to limit traffic");
+
+            if (systemSearch instanceof Promise) {
+                systemSearch
+                    .then(ids => {
+                        query.system_id = { $in: ids };
+                        factionSearch();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        factionSearch();
+                    })
+            } else {
+                factionSearch();
             }
-            factions.find(query).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
         })
         .catch(err => {
             console.log(err);
@@ -83,23 +107,14 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         });
 });
 
-router.get('/name/:name', (req, res) => {
-    require('../../../models/factions')
-        .then(factions => {
-            let name = req.params.name;
-            factions.find({ name: name }).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
-});
+let boolify = requestParam => {
+    if (requestParam.toLowerCase() === "true") {
+        return true;
+    } else if (requestParam.toLowerCase() === "false") {
+        return false;
+    } else {
+        return false;
+    }
+}
 
 module.exports = router;

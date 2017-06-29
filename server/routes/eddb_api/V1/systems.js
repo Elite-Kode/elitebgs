@@ -43,13 +43,15 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query.primary_economy = req.query.primaryeconomyname.toLowerCase();
             }
             if (req.query.power) {
-                query.power = req.query.power.toLowerCase();
+                let powers = arrayfy(req.query.power);
+                query.power = { $in: powers };
             }
             if (req.query.powerstatename) {
-                query.power_state = req.query.powerstatename.toLowerCase();
+                let powerStates = arrayfy(req.query.powerstatename);
+                query.power_state = { $in: powerStates };
             }
             if (req.query.permit) {
-                query.needs_permit = req.query.permit;
+                query.needs_permit = boolify(req.query.permit);
             }
             if (req.query.securityname) {
                 query.security = req.query.securityname.toLowerCase();
@@ -72,23 +74,25 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         });
 });
 
-router.get('/name/:name', (req, res) => {
-    require('../../../models/systems')
-        .then(systems => {
-            let name = req.params.name;
-            systems.find({ name: name }).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
-});
+let arrayfy = requestParam => {
+    let regex = /\s*,\s*/;
+    let mainArray = requestParam.split(regex);
+
+    mainArray.forEach((element, index, allElements) => {
+        allElements[index] = element.toLowerCase();
+    }, this);
+
+    return mainArray;
+}
+
+let boolify = requestParam => {
+    if (requestParam.toLowerCase() === "true") {
+        return true;
+    } else if (requestParam.toLowerCase() === "false") {
+        return false;
+    } else {
+        return false;
+    }
+}
 
 module.exports = router;
