@@ -18,7 +18,7 @@
 
 const express = require('express');
 const passport = require('passport');
-const bluePromise = require('bluebird');
+const BluePromise = require('bluebird');
 const _ = require('lodash');
 
 let router = express.Router();
@@ -42,7 +42,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query.selling_modules = { $all: modules };
             }
             if (req.query.controllingfactionname) {
-                factionSearch = new Promise((resolve, reject) => {
+                factionSearch = new BluePromise((resolve, reject) => {
                     require('../../../models/factions')
                         .then(factions => {
                             let factionQuery = new Object;
@@ -124,7 +124,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 query['economies.name_lower'] = req.query.economyname.toLowerCase();
             }
             if (req.query.permit || req.query.power || req.query.powerstatename) {
-                systemSearch = new Promise((resolve, reject) => {
+                systemSearch = new BluePromise((resolve, reject) => {
                     require('../../../models/systems')
                         .then(systems => {
                             let systemQuery = new Object;
@@ -180,7 +180,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     faction: factionSearch,
                     system: systemSearch
                 };
-                bluePromise.props(Object.keys(searches).reduce((promiseObject, key) => {
+                BluePromise.props(Object.keys(searches).reduce((promiseObject, key) => {
                     promiseObject[key] = searches[key].reflect();
                     return promiseObject;
                 }, {})).then(searches => {
