@@ -175,7 +175,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     })
             }
 
-            if (factionSearch instanceof Promise && systemSearch instanceof Promise) {
+            if (factionSearch instanceof BluePromise && systemSearch instanceof BluePromise) {
                 let searches = {
                     faction: factionSearch,
                     system: systemSearch
@@ -196,7 +196,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     }
                     stationSearch();
                 })
-            } else if (factionSearch instanceof Promise) {
+            } else if (factionSearch instanceof BluePromise) {
                 factionSearch
                     .then(ids => {
                         query.controlling_minor_faction_id = { $in: ids };
@@ -206,7 +206,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         console.log(err);
                         stationSearch();
                     });
-            } else if (systemSearch instanceof Promise) {
+            } else if (systemSearch instanceof BluePromise) {
                 systemSearch
                     .then(ids => {
                         query.system_id = { $in: ids };
