@@ -85,7 +85,7 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 
-For more deatils please refer the [wiki](https://github.com/SayakMukhopadhyay/elitebgs/wiki "EliteBGS Wiki")
+For more details please refer the [wiki](https://github.com/SayakMukhopadhyay/elitebgs/wiki "EliteBGS Wiki")
 
 ## Contributing
 
@@ -95,7 +95,8 @@ If you are willing to contribute to the project, please work on a fork and creat
 
 ## Credits
 
-For the CMDRs by a CMDR. Created by CMDR Garud for an awesome gaming community. Also, a great thanks to the developers of [EDDB](https://eddb.io/) without which this project would not have started.
+For the CMDRs by a CMDR. Created by [CMDR Garud](https://forums.frontier.co.uk/member.php/136073-Garud) for an awesome gaming community. 
+A great thanks to the developers of [EDDB](https://eddb.io/) without which this project would not have started. Special mention for the awesome group I am in, [Knights of Karma](http://knightsofkarma.com/), whose members had to put up with me making no contribution during development. And last but not the least, [CMDR Blood Drunk](https://forums.frontier.co.uk/member.php/125031-Blood-Drunk), for making me MEAN and guiding me through all the troubles faced by me at all odd times!
 
 ## License
 
