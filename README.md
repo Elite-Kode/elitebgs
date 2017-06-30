@@ -21,74 +21,69 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 ### Bodies
 
-- http://elitebgs.kodeblox.com/api/bodies*
-- http://elitebgs.kodeblox.com/api/bodies?\<params>
-- http://elitebgs.kodeblox.com/api/bodies/name/\<body name>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/bodies*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/bodies?<params>`
 
 ### Commodities
 
-- http://elitebgs.kodeblox.com/api/commodities*
-- http://elitebgs.kodeblox.com/api/commodities?\<params>
-- http://elitebgs.kodeblox.com/api/commodities/id/\<commodity id>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/commodities*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/commodities?<params>`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/commodities/id/<commodity id>`
 
 ### Factions
 
-- http://elitebgs.kodeblox.com/api/factions*
-- http://elitebgs.kodeblox.com/api/factions?\<params>
-- http://elitebgs.kodeblox.com/api/factions/name/\<faction name>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/factions*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/factions?<params>`
 
 ### Populated Systems
 
-- http://elitebgs.kodeblox.com/api/populatedsystems*
-- http://elitebgs.kodeblox.com/api/populatedsystems?\<params>
-- http://elitebgs.kodeblox.com/api/populatedsystems/name/\<system name>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems?<params>`
 
 ### Stations
 
-- http://elitebgs.kodeblox.com/api/stations*
-- http://elitebgs.kodeblox.com/api/stations?\<params>
-- http://elitebgs.kodeblox.com/api/stations/name/\<station name>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/stations*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/stations?<params>`
 
 ### Systems
 
-- http://elitebgs.kodeblox.com/api/systems*
-- http://elitebgs.kodeblox.com/api/systems?\<params>
-- http://elitebgs.kodeblox.com/api/systems/name/\<system name>
+- `http://elitebgs.kodeblox.com/api/eddb/v1/systems*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/systems?<params>`
 
 ### Download dumps from EDDB*
 
-- http://elitebgs.kodeblox.com/api/downloaddumps/body
-- http://elitebgs.kodeblox.com/api/downloaddumps/commodity
-- http://elitebgs.kodeblox.com/api/downloaddumps/faction
-- http://elitebgs.kodeblox.com/api/downloaddumps/station
-- http://elitebgs.kodeblox.com/api/downloaddumps/populatedsystem
-- http://elitebgs.kodeblox.com/api/downloaddumps/system
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/body`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/commodity`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/faction`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/station`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/populatedsystem`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloaddumps/system`
 
 ### Insert downloaded dumps*
 
-- http://elitebgs.kodeblox.com/api/insertdumps/body
-- http://elitebgs.kodeblox.com/api/insertdumps/commodity
-- http://elitebgs.kodeblox.com/api/insertdumps/faction
-- http://elitebgs.kodeblox.com/api/insertdumps/station
-- http://elitebgs.kodeblox.com/api/insertdumps/populatedsystem
-- http://elitebgs.kodeblox.com/api/insertdumps/system
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/body`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/commodity`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/faction`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/station`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/populatedsystem`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/insertdumps/system`
 
 ### Update database from downloaded dumps*
 
-- http://elitebgs.kodeblox.com/api/updatedumps/body
-- http://elitebgs.kodeblox.com/api/updatedumps/commodity
-- http://elitebgs.kodeblox.com/api/updatedumps/faction
-- http://elitebgs.kodeblox.com/api/updatedumps/station
-- http://elitebgs.kodeblox.com/api/updatedumps/populatedsystem
-- http://elitebgs.kodeblox.com/api/updatedumps/system
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/body`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/commodity`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/faction`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/station`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/populatedsystem`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/updatedumps/system`
 
 ### Download and insert dumps*
 
-- http://elitebgs.kodeblox.com/api/downloadinsert
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloadinsert`
 
 ### Download and update dumps*
 
-- http://elitebgs.kodeblox.com/api/downloadupdate
+- `http://elitebgs.kodeblox.com/api/eddb/v1/downloadupdate`
 
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 
