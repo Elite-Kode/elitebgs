@@ -89,20 +89,20 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                             });
                     })
                 }
+            }
 
-                let systemSearch = () => {
-                    if (_.isEmpty(query) && req.user.clearance !== 0) {
-                        throw new Error("Add at least 1 query parameter to limit traffic");
-                    }
-                    populatedSystems.find(query).lean()
-                        .then(result => {
-                            res.status(200).json(result);
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.status(500).json(err);
-                        })
+            let systemSearch = () => {
+                if (_.isEmpty(query) && req.user.clearance !== 0) {
+                    throw new Error("Add at least 1 query parameter to limit traffic");
                 }
+                populatedSystems.find(query).lean()
+                    .then(result => {
+                        res.status(200).json(result);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json(err);
+                    })
             }
 
             if (factionSearch instanceof Promise) {
