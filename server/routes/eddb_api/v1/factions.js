@@ -90,7 +90,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (systemSearch instanceof Promise) {
                 systemSearch
                     .then(ids => {
-                        query.system_id = { $in: ids };
+                        query.home_system_id = { $in: ids };
                         factionSearch();
                     })
                     .catch(err => {
