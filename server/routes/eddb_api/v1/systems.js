@@ -59,7 +59,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            systems.find(query).lean()
+            systems.find(query).limit(10).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
