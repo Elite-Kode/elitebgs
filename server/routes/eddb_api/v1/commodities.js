@@ -23,7 +23,7 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/commodities')
+    require('../../../models/commodities')
         .then(commodities => {
             commodities.find({}).lean()
                 .then(result => {
@@ -41,7 +41,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
 });
 
 router.get('/id/:commodityid', (req, res) => {
-    require('../models/commodities')
+    require('../../../models/commodities')
         .then(commodities => {
             let id = req.params.commodityid;
             commodities.find({ commodity_id: id }).lean()

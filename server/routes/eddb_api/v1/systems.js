@@ -23,8 +23,8 @@ const _ = require('lodash');
 let router = express.Router();
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
-    require('../models/factions')
-        .then(factions => {
+    require('../../../models/systems')
+        .then(systems => {
             let query = new Object;
 
             if (req.query.name) {
@@ -39,36 +39,27 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.statename) {
                 query.state = req.query.statename.toLowerCase();
             }
-            if (req.query.playerfaction) {
-                query.is_player_faction = req.query.playerfaction;
+            if (req.query.primaryeconomyname) {
+                query.primary_economy = req.query.primaryeconomyname.toLowerCase();
             }
-            if (req.query.homesystemname || req.query.power) {
-                require('../models/systems')
-                    .then(systems => {
-                        let systemQuery = new Object;
-
-                        if (req.query.homesystemname) {
-                            systemQuery.name_lower = req.query.homesystemname.toLowerCase();
-                        }
-                        if (req.query.power) {
-                            systemQuery.power = req.query.power.toLowerCase();
-                        }
-                        systems.find(systemQuery).lean()
-                            .then(result => {
-                                query.system_id = result.id;
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            })
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
+            if (req.query.power) {
+                let powers = arrayfy(req.query.power);
+                query.power = { $in: powers };
+            }
+            if (req.query.powerstatename) {
+                let powerStates = arrayfy(req.query.powerstatename);
+                query.power_state = { $in: powerStates };
+            }
+            if (req.query.permit) {
+                query.needs_permit = boolify(req.query.permit);
+            }
+            if (req.query.securityname) {
+                query.security = req.query.securityname.toLowerCase();
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            factions.find(query).lean()
+            systems.find(query).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
@@ -83,23 +74,25 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
         });
 });
 
-router.get('/name/:name', (req, res) => {
-    require('../models/factions')
-        .then(factions => {
-            let name = req.params.name;
-            factions.find({ name: name }).lean()
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
-});
+let arrayfy = requestParam => {
+    let regex = /\s*,\s*/;
+    let mainArray = requestParam.split(regex);
+
+    mainArray.forEach((element, index, allElements) => {
+        allElements[index] = element.toLowerCase();
+    }, this);
+
+    return mainArray;
+}
+
+let boolify = requestParam => {
+    if (requestParam.toLowerCase() === "true") {
+        return true;
+    } else if (requestParam.toLowerCase() === "false") {
+        return false;
+    } else {
+        return false;
+    }
+}
 
 module.exports = router;

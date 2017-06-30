@@ -22,7 +22,7 @@ const passport = require('passport');
 
 let router = express.Router();
 
-let eddb = require('../modules/eddb');
+let eddb = require('../../../modules/eddb');
 
 router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
     if (req.user.clearance === 0) {
@@ -112,10 +112,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let bodiesUpdate = () => {
+        let bodiesInsert = () => {
             return new Promise((resolve, reject) => {
                 let bodies = new eddb.bodies();
-                bodies.update();
+                bodies.import();
                 bodies
                     .on('done', () => {
                         resolve();
@@ -126,10 +126,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let commoditiesUpdate = () => {
+        let commoditiesInsert = () => {
             return new Promise((resolve, reject) => {
                 let commodities = new eddb.commodities();
-                commodities.update();
+                commodities.import();
                 commodities
                     .on('done', () => {
                         resolve();
@@ -140,10 +140,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let factionsUpdate = () => {
+        let factionsInsert = () => {
             return new Promise((resolve, reject) => {
                 let factions = new eddb.factions();
-                factions.update();
+                factions.import();
                 factions
                     .on('done', () => {
                         resolve();
@@ -154,10 +154,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let stationsUpdate = () => {
+        let stationsInsert = () => {
             return new Promise((resolve, reject) => {
                 let stations = new eddb.stations();
-                stations.update();
+                stations.import();
                 stations
                     .on('done', () => {
                         resolve();
@@ -168,10 +168,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let populatedSystemsUpdate = () => {
+        let populatedSystemsInsert = () => {
             return new Promise((resolve, reject) => {
                 let populatedSystems = new eddb.populatedSystems();
-                populatedSystems.update();
+                populatedSystems.import();
                 populatedSystems
                     .on('done', () => {
                         resolve();
@@ -182,10 +182,10 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             });
         }
 
-        let systemsUpdate = () => {
+        let systemsInsert = () => {
             return new Promise((resolve, reject) => {
                 let systems = new eddb.systems();
-                systems.update();
+                systems.import();
                 systems
                     .on('done', () => {
                         resolve();
@@ -202,12 +202,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             .then(stationsDownload)
             .then(populatedSystemsDownload)
             .then(systemsDownload)
-            .then(bodiesUpdate)
-            .then(commoditiesUpdate)
-            .then(factionsUpdate)
-            .then(stationsUpdate)
-            .then(populatedSystemsUpdate)
-            .then(systemsUpdate)
+            .then(bodiesInsert)
+            .then(commoditiesInsert)
+            .then(factionsInsert)
+            .then(stationsInsert)
+            .then(populatedSystemsInsert)
+            .then(systemsInsert)
             .catch(err => {
                 console.log(err);
             });
