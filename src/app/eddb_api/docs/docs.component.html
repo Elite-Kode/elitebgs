@@ -1,7 +1,11 @@
-<div class="mat-app-background eddb-api-container">
+<div class="mat-app-background eddb-api-container" [class.dark-theme]="isDarkTheme" [class.light-theme]="isLightTheme">
     <md-toolbar color="primary">
+        <a routerLink="/">
+            <md-icon svgIcon="favorite" class="toolbar-icon"></md-icon>
+        </a>
         {{title}}
         <span class="app-toolbar-filler"></span>
+        <button md-raised-button (click)="onClickThemeSwitch()">Switch to {{switchTheme}} theme</button>
         <a md-button routerLink="..">Home</a>
         <a md-button routerLink=".">Docs</a>
     </md-toolbar>

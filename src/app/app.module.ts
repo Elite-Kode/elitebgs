@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
+import { MdToolbarModule, MdButtonModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { EddbApiModule } from './eddb_api/eddb-api.module';
@@ -21,7 +22,9 @@ import { HomeComponent } from './home.component';
         FormsModule,
         HttpModule,
         EddbApiModule,
-        AppRoutingModule
+        AppRoutingModule,
+        MdToolbarModule,
+        MdButtonModule,
     ],
     providers: [],
     bootstrap: [AppComponent]
