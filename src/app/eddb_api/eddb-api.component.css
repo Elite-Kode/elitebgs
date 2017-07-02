@@ -1,0 +1,14 @@
+.app-toolbar-filler {
+    flex: auto;
+}
+
+.eddb-api-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.normal-text {
+    color: #fff;
+    font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
+}
