@@ -2,7 +2,7 @@
 
 @import './dark-theme';
 @import './light-theme';
-@import './app/eddb_api/eddb-api.theme';
+@import './app/app.theme';
 @mixin custom-components-theme($theme) {
     @include eddb-api-component-theme($theme);
 }

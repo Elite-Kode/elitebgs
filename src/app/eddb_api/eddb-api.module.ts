@@ -6,6 +6,7 @@ import { MdToolbarModule, MdButtonModule, MdCardModule, MdListModule, MdIconModu
 import { EddbApiComponent } from './eddb-api.component';
 import { EddbApiRoutingModule } from './eddb-api-routing.module';
 import { DocsComponent } from './docs/docs.component';
+import { SharedModule } from './../shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { DocsComponent } from './docs/docs.component';
         MdButtonModule,
         MdCardModule,
         MdListModule,
-        MdIconModule
+        MdIconModule,
+        SharedModule
     ],
     providers: [],
     exports: [EddbApiComponent]

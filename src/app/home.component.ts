@@ -1,25 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
+import { ToolbarService } from './shared/toolbar.service';
+import { ToolbarButton } from './shared/toolbar-button';
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
-    title = 'Elite BGS';
-    isLightTheme = true;
-    isDarkTheme = false;
-    switchTheme = 'Dark';
+export class HomeComponent implements AfterViewInit {
+    toolbarButtons: ToolbarButton[];
+    constructor(private toolbarService: ToolbarService) { }
 
-    onClickThemeSwitch() {
-        if (this.isLightTheme) {
-            this.isLightTheme = false;
-            this.isDarkTheme = true;
-            this.switchTheme = 'Light';
-        } else if (this.isDarkTheme) {
-            this.isLightTheme = true;
-            this.isDarkTheme = false;
-            this.switchTheme = 'Dark';
-        }
+    ngAfterViewInit() {
+        this.toolbarButtons = [
+            new ToolbarButton("text", "EDDB API", "./api/eddb")
+        ];
+
+        this.toolbarService.makeButtons(this.toolbarButtons);
+        this.toolbarService.setTitle('Elite BGS');
+        this.toolbarService.setShowBack(false);
     }
 }

@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<div class="mat-app-background" [class.dark-theme]="isDarkTheme" [class.light-theme]="isLightTheme">
+    <div class="eddb-api-container">
+        <toolbar></toolbar>
+        <router-outlet>
+        </router-outlet>
+    </div>
+</div>

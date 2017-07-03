@@ -1,28 +1,14 @@
-<div class="mat-app-background" [class.dark-theme]="isDarkTheme" [class.light-theme]="isLightTheme">
-    <div class="eddb-api-container">
-        <md-toolbar color="primary">
-            <a routerLink="/">
-                <md-icon svgIcon="favorite" class="toolbar-icon"></md-icon>
-            </a>
-            {{title}}
-            <span class="app-toolbar-filler"></span>
-            <button md-raised-button (click)="onClickThemeSwitch()">Switch to {{switchTheme}} theme</button>
-            <a md-button routerLink=".">Home</a>
-            <a md-button routerLink="./docs">Docs</a>
-        </md-toolbar>
-        <div class="normal-body">
-            <h1 class="normal-text">The complete RESTful API for EDDB</h1>
-            <md-card>
-                <md-card-title>Access</md-card-title>
-                <md-card-content>
-                    The API endpoints are access restricted. There are 2 users:
-                    <md-list>
-                        <md-list-item>admin</md-list-item>
-                        <md-list-item>guest</md-list-item>
-                    </md-list>
-                    Consumers must make a GET request at any endpoint using Basic HTTP authentication with username guest and password secret.
-                </md-card-content>
-            </md-card>
-        </div>
-    </div>
+<div class="normal-body">
+    <h1 class="normal-text">The complete RESTful API for EDDB</h1>
+    <md-card>
+        <md-card-title>Access</md-card-title>
+        <md-card-content>
+            The API endpoints are access restricted. There are 2 users:
+            <md-list>
+                <md-list-item>admin</md-list-item>
+                <md-list-item>guest</md-list-item>
+            </md-list>
+            Consumers must make a GET request at any endpoint using Basic HTTP authentication with username guest and password secret.
+        </md-card-content>
+    </md-card>
 </div>
