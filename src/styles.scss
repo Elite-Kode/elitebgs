@@ -4,7 +4,7 @@
 @import './light-theme';
 @import './app/app.theme';
 @mixin custom-components-theme($theme) {
-    @include eddb-api-component-theme($theme);
+    @include app-theme($theme);
 }
 
 .dark-theme {

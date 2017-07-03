@@ -1,8 +1,10 @@
 <md-toolbar color="primary">
     <a routerLink="{{backLink}}" *ngIf="toBeShown">
-        <md-icon svgIcon="favorite" class="toolbar-icon"></md-icon>
+        <md-icon>chevron_left</md-icon>
     </a>
-    {{title}}
+    <div>
+        {{title}}
+    </div>
     <span class="app-toolbar-filler"></span>
     <button md-raised-button (click)="onClickThemeSwitch()">Switch to {{switchToTheme}} theme</button>
     <toolbar-buttons></toolbar-buttons>
