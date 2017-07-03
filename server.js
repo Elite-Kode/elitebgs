@@ -62,11 +62,10 @@ app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+// Pass all 404 errors called by browser to angular
+app.all('*', (req, res) => {
+    console.log(`Server 404 request: ${req.originalUrl}`);
+    res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
 });
 
 // error handlers
