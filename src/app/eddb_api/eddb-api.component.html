@@ -1,14 +1,15 @@
 <div class="normal-body">
-    <h1 class="normal-text">The complete RESTful API for EDDB</h1>
+    <h1>The complete RESTful API for EDDB</h1>
+    <h3>
+        Currently <a href="https://eddb.io/">EDDB</a> is the greatest treasure of information of the galaxy and it is a user
+        friendly tool for many pilots. But it lacks an API for developers. Elite BGS is an attempt to fill this gap by providing
+        an API for EDDB data sources.
+    </h3>
+    <h2>API</h2>
     <md-card>
         <md-card-title>Access</md-card-title>
         <md-card-content>
-            The API endpoints are access restricted. There are 2 users:
-            <md-list>
-                <md-list-item>admin</md-list-item>
-                <md-list-item>guest</md-list-item>
-            </md-list>
-            Consumers must make a GET request at any endpoint using Basic HTTP authentication with username 
+            Consumers must make a GET request at any endpoint using Basic HTTP authentication with username
             <code>guest</code> and password <code>secret</code>.
         </md-card-content>
     </md-card>
@@ -16,15 +17,17 @@
         <md-card-title>Endpoints</md-card-title>
         <md-card-content>
             <h3>Bodies</h3>
-            <md-list>
-                <md-list-item><code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies</code>*</md-list-item>
-                <md-list-item><code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies?&lt;params&gt;</code></md-list-item>
-            </md-list>
-            <h3>Bodies</h3>
-            <md-list>
-                <md-list-item><code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies</code>*</md-list-item>
-                <md-list-item><code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies?&lt;params&gt;</code></md-list-item>
-            </md-list>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies?&lt;params&gt;</code>
+            <h3>Commodities</h3>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/commodities/id/&lt;commodity-id&gt;</code>
+            <h3>Factions</h3>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/factions?&lt;params&gt;</code>
+            <h3>Populated Systems</h3>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems?&lt;params&gt;</code>
+            <h3>Stations</h3>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/stations?&lt;params&gt;</code>
+            <h3>Systems</h3>
+            <code>http://elitebgs.kodeblox.com/api/eddb/v1/systems?&lt;params&gt;</code>
         </md-card-content>
     </md-card>
 </div>
