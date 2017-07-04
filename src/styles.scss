@@ -1,21 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import './dark-theme';
-@import './light-theme';
-@import './app/app.theme';
-@mixin custom-components-theme($theme) {
-    @include app-theme($theme);
-}
-
-.dark-theme {
-    @include angular-material-theme($dark-theme);
-    @include custom-components-theme($dark-theme);
-}
-
-.light-theme {
-    @include angular-material-theme($light-theme);
-    @include custom-components-theme($light-theme);
-}
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 body {
     margin: 0 !important;

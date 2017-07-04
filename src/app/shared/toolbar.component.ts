@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { ToolbarService } from './toolbar.service';
 
 @Component({
@@ -7,22 +7,12 @@ import { ToolbarService } from './toolbar.service';
     providers: [],
     styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements AfterViewInit {
     title = 'Elite BGS';
-    switchToTheme = 'Light';
     toBeShown = true;
     backLink = "/";
 
     constructor(private toolbarService: ToolbarService) { }
-
-    onClickThemeSwitch() {
-        this.toolbarService.switchTheme(this.switchToTheme);
-        if (this.switchToTheme === 'Dark') {
-            this.switchToTheme = 'Light';
-        } else if (this.switchToTheme === 'Light') {
-            this.switchToTheme = 'Dark';
-        }
-    }
 
     ngAfterViewInit() {
         this.toolbarService.getTitle().subscribe((title: string) => {

@@ -5,9 +5,6 @@ import { ToolbarButton } from './toolbar-button';
 
 @Injectable()
 export class ToolbarService {
-    private currentTheme = "Dark";
-    private themeSubject: Subject<string> = new Subject<string>();
-
     private buttonObjects: ToolbarButton[];
     private buttonSubject: Subject<ToolbarButton[]> = new Subject<ToolbarButton[]>();
 
@@ -16,14 +13,6 @@ export class ToolbarService {
 
     private showBack = false;
     private showBackSubject: Subject<boolean> = new Subject<boolean>();
-
-    switchTheme(switchToTheme: string): void {
-        this.currentTheme = switchToTheme;
-        this.themeSubject.next(this.currentTheme);
-    }
-    getTheme(): Observable<string> {
-        return this.themeSubject.asObservable();
-    }
 
     makeButtons(buttonObjects: ToolbarButton[]): void {
         this.buttonObjects = buttonObjects;
