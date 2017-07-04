@@ -19,33 +19,33 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 ### Bodies
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/bodies*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/bodies`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/bodies?<params>`
 
 ### Commodities
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/commodities*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/commodities`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/commodities?<params>`
 - `http://elitebgs.kodeblox.com/api/eddb/v1/commodities/id/<commodity id>`
 
 ### Factions
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/factions*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/factions`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/factions?<params>`
 
 ### Populated Systems
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems?<params>`
 
 ### Stations
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/stations*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/stations`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/stations?<params>`
 
 ### Systems
 
-- `http://elitebgs.kodeblox.com/api/eddb/v1/systems*`
+- `http://elitebgs.kodeblox.com/api/eddb/v1/systems`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/systems?<params>`
 
 ### Download dumps from EDDB*

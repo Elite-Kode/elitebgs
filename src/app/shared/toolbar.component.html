@@ -1,6 +1,6 @@
 <md-toolbar color="primary">
-    <a routerLink="{{backLink}}" *ngIf="toBeShown">
-        <md-icon>chevron_left</md-icon>
+    <a md-icon-button routerLink="{{backLink}}" *ngIf="toBeShown">
+        <md-icon>arrow_back</md-icon>
     </a>
     <div>
         {{title}}

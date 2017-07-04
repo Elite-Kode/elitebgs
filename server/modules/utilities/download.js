@@ -50,7 +50,7 @@ function Download(pathFrom, pathTo) {
             .on('finish', () => {
                 this.emit('end');
             })
-            .on('error', error => {
+            .on('error', err => {
                 this.emit('error', {
                     error: err,
                     progress: progressPercent
