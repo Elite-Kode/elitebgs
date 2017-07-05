@@ -1,0 +1,10 @@
+<md-toolbar color="primary">
+    <a md-icon-button routerLink="{{backLink}}" *ngIf="toBeShown">
+        <md-icon>arrow_back</md-icon>
+    </a>
+    <div>
+        {{title}}
+    </div>
+    <span class="app-toolbar-filler"></span>
+    <toolbar-buttons></toolbar-buttons>
+</md-toolbar>
