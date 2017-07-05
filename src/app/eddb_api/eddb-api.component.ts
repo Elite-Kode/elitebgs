@@ -13,8 +13,8 @@ export class EddbApiComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.toolbarButtons = [
-            new ToolbarButton("text", "Home", "/api/eddb"),
-            new ToolbarButton("text", "Docs", "/api/eddb/docs")
+            new ToolbarButton("text", "Home", "router", "/api/eddb"),
+            new ToolbarButton("text", "Docs", "external", "https://github.com/SayakMukhopadhyay/elitebgs/wiki")
         ];
 
         this.toolbarService.makeButtons(this.toolbarButtons);

@@ -5,13 +5,11 @@ import { MdToolbarModule, MdButtonModule, MdCardModule, MdListModule, MdIconModu
 
 import { EddbApiComponent } from './eddb-api.component';
 import { EddbApiRoutingModule } from './eddb-api-routing.module';
-import { DocsComponent } from './docs/docs.component';
 import { SharedModule } from './../shared/shared.module';
 
 @NgModule({
     declarations: [
-        EddbApiComponent,
-        DocsComponent
+        EddbApiComponent
     ],
     imports: [
         CommonModule,

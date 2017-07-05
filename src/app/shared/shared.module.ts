@@ -5,15 +5,17 @@ import { FormsModule } from '@angular/forms';
 import { MdToolbarModule, MdButtonModule, MdIconModule } from '@angular/material';
 import { ToolbarComponent } from './toolbar.component';
 import { ToolbarButtonsComponent } from './toolbar-buttons.component';
-import { ButtonComponent } from './button.component';
+import { ButtonRouterComponent } from './button-router.component';
+import { ButtonExternalComponent } from './button-external.component';
 import { ToolbarButtonsDirective } from './toolbar-buttons.directive';
 
 @NgModule({
-    entryComponents: [ButtonComponent],
+    entryComponents: [ButtonRouterComponent, ButtonExternalComponent],
     declarations: [
         ToolbarComponent,
         ToolbarButtonsComponent,
-        ButtonComponent,
+        ButtonRouterComponent,
+        ButtonExternalComponent,
         ToolbarButtonsDirective
     ],
     imports: [

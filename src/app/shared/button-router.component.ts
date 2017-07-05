@@ -4,6 +4,6 @@ import { ToolbarButton } from './toolbar-button'
 @Component({
     template: `<a md-button routerLink="{{button.link}}">{{button.text}}</a>`
 })
-export class ButtonComponent {
+export class ButtonRouterComponent {
     button: ToolbarButton;
 }

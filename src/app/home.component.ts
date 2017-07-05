@@ -13,7 +13,7 @@ export class HomeComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.toolbarButtons = [
-            new ToolbarButton("text", "EDDB API", "./api/eddb")
+            new ToolbarButton("text", "EDDB API", "router", "./api/eddb")
         ];
 
         this.toolbarService.makeButtons(this.toolbarButtons);

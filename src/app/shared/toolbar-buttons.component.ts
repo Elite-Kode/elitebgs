@@ -2,7 +2,8 @@ import { Component, ViewChild, ComponentFactoryResolver, OnInit, AfterViewInit }
 import { ToolbarButton } from './toolbar-button';
 import { ToolbarButtonsDirective } from './toolbar-buttons.directive';
 import { ToolbarService } from './toolbar.service';
-import { ButtonComponent } from './button.component';
+import { ButtonRouterComponent } from './button-router.component';
+import { ButtonExternalComponent } from './button-external.component';
 
 @Component({
     selector: 'toolbar-buttons',
@@ -25,14 +26,19 @@ export class ToolbarButtonsComponent implements AfterViewInit {
     }
 
     loadButtons(): void {
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(ButtonComponent);
+        let ButtonRouterFactory = this.componentFactoryResolver.resolveComponentFactory(ButtonRouterComponent);
+        let ButtonExternalFactory = this.componentFactoryResolver.resolveComponentFactory(ButtonExternalComponent)
         let viewContainerRef = this.buttonHost.viewConatinerRef;
         viewContainerRef.clear();
 
         this.toolbarButtons.forEach(button => {
-            let componentRef = viewContainerRef.createComponent(componentFactory);
-
-            (<ButtonComponent>componentRef.instance).button = button;
+            if (button.linkType === "router") {
+                let componentRef = viewContainerRef.createComponent(ButtonRouterFactory);
+                (<ButtonRouterComponent>componentRef.instance).button = button;
+            } else if (button.linkType === "external") {
+                let componentRef = viewContainerRef.createComponent(ButtonExternalFactory);
+                (<ButtonExternalComponent>componentRef.instance).button = button;
+            }
         });
     }
 }
