@@ -54,7 +54,7 @@ function Download(pathFrom, pathTo) {
                     error: err,
                     progress: progressPercent
                 });
-        }));
+            }));
 }
 
 inherits(Download, eventEmmiter);
