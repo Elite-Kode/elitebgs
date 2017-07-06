@@ -29,8 +29,7 @@ module.exports = Download;
 
 function Download(pathFrom, pathTo) {
     eventEmmiter.call(this);
-    let progressPercent = 0.0;
-    progress(request.get(pathFrom, {headers: {'Accept-Encoding': 'gzip, deflate, sdch'}}))
+    progress(request.get(pathFrom, {headers: {'Accept-Encoding': 'gzip, deflate, sdch'}, gzip: true}))
         .on('response', response => {
             response.statusCode = 200;
             this.emit('start', response);
@@ -47,16 +46,17 @@ function Download(pathFrom, pathTo) {
                 progress: progressPercent
             });
         })
-        .pipe(ungzip
-            .on('finish', () => {
-                this.emit('end');
-            })
-            .on('error', err => {
-                this.emit('error', {
-                    error: err,
-                    progress: progressPercent
-                });
-            })).pipe(fs.createWriteStream(pathTo))
+        .pipe(fs.createWriteStream(pathTo)
+        .on('finish', () => {
+            this.emit('end');
+        })
+        .on('error', err => {
+            this.emit('error', {
+                error: err,
+                progress: progressPercent
+            });
+        }))
+    let progressPercent = 0.0;
 }
 
 inherits(Download, eventEmmiter);
