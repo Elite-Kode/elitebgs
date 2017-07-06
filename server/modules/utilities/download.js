@@ -29,6 +29,7 @@ module.exports = Download;
 
 function Download(pathFrom, pathTo) {
     eventEmmiter.call(this);
+    let progressPercent = 0.0;
     progress(request.get(pathFrom, {headers: {'Accept-Encoding': 'gzip, deflate, sdch'}, gzip: true}))
         .on('response', response => {
             response.statusCode = 200;
@@ -56,7 +57,6 @@ function Download(pathFrom, pathTo) {
                 progress: progressPercent
             });
         }))
-    let progressPercent = 0.0;
 }
 
 inherits(Download, eventEmmiter);
