@@ -46,15 +46,15 @@ function Download(pathFrom, pathTo) {
             });
         })
         .pipe(fs.createWriteStream(pathTo)
-        .on('finish', () => {
-            this.emit('end');
-        })
-        .on('error', err => {
-            this.emit('error', {
-                error: err,
-                progress: progressPercent
-            });
-        }))
+            .on('finish', () => {
+                this.emit('end');
+            })
+            .on('error', err => {
+                this.emit('error', {
+                    error: err,
+                    progress: progressPercent
+                });
+        }));
 }
 
 inherits(Download, eventEmmiter);
