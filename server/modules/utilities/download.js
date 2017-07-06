@@ -21,10 +21,8 @@ const progress = require('request-progress');
 const fs = require('fs-extra');
 const eventEmmiter = require('events').EventEmitter;
 const inherits = require('util').inherits;
-const zlib = require('zlib');
 
 let fileSize = require('../utilities/file_size');
-const ungzip = zlib.createGunzip();
 module.exports = Download;
 
 function Download(pathFrom, pathTo) {
