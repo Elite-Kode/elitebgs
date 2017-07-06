@@ -21,16 +21,14 @@ const progress = require('request-progress');
 const fs = require('fs-extra');
 const eventEmmiter = require('events').EventEmitter;
 const inherits = require('util').inherits;
-const zlib = require('zlib');
 
 let fileSize = require('../utilities/file_size');
-const ungzip = zlib.createGunzip();
 module.exports = Download;
 
 function Download(pathFrom, pathTo) {
     eventEmmiter.call(this);
     let progressPercent = 0.0;
-    progress(request.get(pathFrom, {headers: {'Accept-Encoding': 'gzip, deflate, sdch'}}))
+    progress(request.get(pathFrom, {headers: {'Accept-Encoding': 'gzip, deflate, sdch'}, gzip: true}))
         .on('response', response => {
             response.statusCode = 200;
             this.emit('start', response);
@@ -47,7 +45,7 @@ function Download(pathFrom, pathTo) {
                 progress: progressPercent
             });
         })
-        .pipe(ungzip
+        .pipe(fs.createWriteStream(pathTo)
             .on('finish', () => {
                 this.emit('end');
             })
@@ -56,7 +54,7 @@ function Download(pathFrom, pathTo) {
                     error: err,
                     progress: progressPercent
                 });
-            })).pipe(fs.createWriteStream(pathTo))
+            }));
 }
 
 inherits(Download, eventEmmiter);
