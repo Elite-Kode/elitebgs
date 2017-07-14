@@ -19,46 +19,42 @@
 const zlib = require('zlib');
 const zmq = require('zmq');
 const ajv = require('ajv');
+
 const schemas = require('./schemas');
-const travel = require('./travel');
 
 const sock = zmq.socket('sub');
 
-sock.connect('tcp://eddn-relay.elite-markets.net:9500');
-console.log('Worker connected to port 9500');
+sock.connect('tcp://eddn.edcd.io:9500');
+console.log('Connected to EDDN relay at port 9500');
 
 sock.subscribe('');
+console.log('Subscribed to EDDN');
 
 sock.on('message', topic => {
     let message = JSON.parse(zlib.inflateSync(topic));
+    let journal = new schemas.journal();
 
-    let messageHeader = message.header;
-    let messageSchema = message.$schemaRef;
-    let messageBody = message.message;
-    // console.log("Header ------");
-    // console.log(messageHeader);
-    // console.log("Schema ------");
-    // console.log(messageSchema);
-    // console.log("Body --------");
-    // console.log(messageBody);
-
-    let ajvObj = (() => {
-        let metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
-
-        let ajvRet = new ajv({ meta: false });
-        ajvRet.addMetaSchema(metaSchema);
-        ajvRet._opts.defaultMeta = metaSchema.id;
-        ajvRet._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema';
-        ajvRet.removeKeyword('propertyNames');
-        ajvRet.removeKeyword('contains');
-        ajvRet.removeKeyword('const');
-
-        return ajvRet;
-    })();
-
-    if (ajvObj.validate(schemas.journalV1, message)) {
-        if (messageBody.event === "FSDJump") {
-            travel.fsdjump(messageBody);
-        }
+    switch (message['$schemaRef']) {
+        // case Blackmarket.schemaId:
+        //     let blackmarket = new Blackmarket(message.message);
+        // blackmarket.display();
+        // break;
+        // case Commodity.schemaId:
+        // let commodity = new Commodity(message.message);
+        // commodity.display();
+        // break;
+        case journal.schemaId:
+            journal.trackSystem(message.message);
+            // journal.display();
+            break;
+        // case Outfitting.schemaId:
+        // let outfitting = new Outfitting(message.message);
+        // outfitting.display();
+        // break;
+        // case Shipyard.schemaId:
+        // let shipyard = new Shipyard(message.message);
+        // shipyard.display();
+        // break;
+        default: console.log("Schema not Found" + message['$schemaRef']);
     }
 });

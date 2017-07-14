@@ -37,7 +37,7 @@ const updateDumpsV1 = require('./server/routes/eddb_api/v1/update_dumps');
 const downloadInsertV1 = require('./server/routes/eddb_api/v1/download_insert');
 const downloadUpdateV1 = require('./server/routes/eddb_api/v1/download_update');
 
-// require('./server/modules/eddn');
+require('./server/modules/eddn');
 
 const app = express();
 
