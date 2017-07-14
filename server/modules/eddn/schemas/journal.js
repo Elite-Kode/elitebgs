@@ -18,7 +18,6 @@
 
 const ebgsFactionsModel = require('../../../models/ebgs_factions');
 const ebgsSystemsModel = require('../../../models/ebgs_systems');
-const ebgsFactionHistoryModel = require('../../../models/ebgs_faction_history');
 
 module.exports = Journal;
 
@@ -44,9 +43,9 @@ function Journal() {
                 };
 
                 if (message.Powers) {
-                    systemObject.powers = [];
+                    systemObject.power = [];
                     message.Powers.forEach((power) => {
-                        systemObject.powers.push(power.toLowerCase());
+                        systemObject.power.push(power.toLowerCase());
                     });
                     systemObject.power_state = message.PowerplayState;
                 }
@@ -54,12 +53,12 @@ function Journal() {
                 let factionArray = [];
 
                 message.Factions.forEach((faction) => {
-                    let factionObject = {
+                    factionArray.push({
                         name: faction.Name,
                         name_lower: faction.Name.toLowerCase()
-                    };
+                    });
 
-                    let historyObject = {
+                    let historySubObject = {
                         updated_at: new Date(),
                         system: message.StarSystem,
                         system_lower: message.StarSystem.toLowerCase(),
@@ -67,65 +66,42 @@ function Journal() {
                         influence: faction.Influence
                     }
 
-                    historyObject.pending_states = [];
+                    historySubObject.pending_states = [];
                     if (faction.PendingStates) {
                         faction.PendingStates.forEach(pendingState => {
                             let pendingStateObject = {
                                 state: pendingState.State,
                                 trend: pendingState.Trend
                             };
-                            historyObject.pending_states.push(pendingStateObject);
+                            historySubObject.pending_states.push(pendingStateObject);
                         });
                     }
-                    historyObject.recovering_states = [];
+                    historySubObject.recovering_states = [];
                     if (faction.RecoveringStates) {
                         faction.RecoveringStates.forEach(recoveringState => {
                             let recoveringStateObject = {
                                 state: recoveringState.State,
                                 trend: recoveringState.Trend
                             };
-                            historyObject.recovering_states.push(recoveringStateObject);
+                            historySubObject.recovering_states.push(recoveringStateObject);
                         });
-                    }
-                    factionArray.push(factionObject);
-                    console.log(factionObject);
-                });
-                systemObject.minor_faction_presences = factionArray;
-                // console.log(systemObject);
-                ebgsSystemsModel
-                    .then(model => {
-                        model.findOneAndUpdate(
-                            { name: systemObject.name },
-                            systemObject,
-                            {
-                                upsert: true,
-                                runValidators: true
-                            })
-                            .then(() => {
-                                console.log("Inserted");
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            })
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                    };
 
-                message.Factions.forEach((faction) => {
                     let factionObject = {
                         name: faction.Name,
                         name_lower: faction.Name.toLowerCase(),
                         updated_at: new Date(),
                         government: faction.Government,
                         allegiance: faction.Allegiance,
-                        faction_presence: {
-                            $addToSet: {
+                        $addToSet: {
+                            faction_presence: {
                                 system_name: message.StarSystem,
                                 system_name_lower: message.StarSystem.toLowerCase()
-                            }
+                            },
+                            history: historySubObject
                         }
-                    }
+                    };
+
                     ebgsFactionsModel
                         .then(model => {
                             model.findOneAndUpdate(
@@ -135,9 +111,7 @@ function Journal() {
                                     upsert: true,
                                     runValidators: true
                                 })
-                                .then(() => {
-                                    console.log("Inserted");
-                                })
+                                .exec()
                                 .catch((err) => {
                                     console.log(err);
                                 })
@@ -145,24 +119,25 @@ function Journal() {
                         .catch(err => {
                             console.log(err);
                         });
-
-                    ebgsFactionHistoryModel
-                        .then(model => {
-                            model.findOneAndUpdate(
-                                { name: faction.Name },
-                                historyObject,
-                                {
-                                    upsert: true,
-                                    runValidators: true
-                                })
-                                .then(() => {
-                                    console.log("Inserted");
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                })
-                        })
-                })
+                });
+                systemObject.minor_faction_presences = factionArray;
+                ebgsSystemsModel
+                    .then(model => {
+                        model.findOneAndUpdate(
+                            { name: systemObject.name },
+                            systemObject,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .exec()
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             }
         }
     }

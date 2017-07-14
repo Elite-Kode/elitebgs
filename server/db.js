@@ -19,33 +19,64 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-let user = process.env.db_uname || require('../secrets').db_user;
-let pass = process.env.db_pass || require('../secrets').db_pwd;
+let eddb_api_user = require('../secrets').eddb_api_db_user;
+let eddb_api_pass = require('../secrets').eddb_api_db_pwd;
+let eddb_api_url = require('../secrets').eddb_api_db_url;
 
-let url = process.env.dbURL || require('../secrets').db_url;
+let elite_bgs_user = require('../secrets').elite_bgs_db_user;
+let elite_bgs_pass = require('../secrets').elite_bgs_db_pwd;
+let elite_bgs_url = require('../secrets').elite_bgs_db_url;
 
-let options = {
+let eddb_api_connection;
+let elite_bgs_connection;
+
+let eddb_api_options = {
     server: {
         socketOptions: {
             keepAlive: 120
         }
     },
-    user,
-    pass
+    eddb_api_user,
+    eddb_api_pass
+};
+
+let elite_bgs_options = {
+    server: {
+        socketOptions: {
+            keepAlive: 120
+        }
+    },
+    elite_bgs_user,
+    elite_bgs_pass
+};
+
+function connect() {
+    eddb_api_connection = mongoose.createConnection(eddb_api_url, eddb_api_options);
+    elite_bgs_connection = mongoose.createConnection(elite_bgs_url, elite_bgs_options);
 }
 
-mongoose.connection.on('connected', () => {
-    console.log(`Connected to ${url}`);
+connect();
+
+eddb_api_connection.on('connected', () => {
+    console.log(`Connected to ${eddb_api_url}`);
 });
 
-mongoose.connection.on('error', err => {
+eddb_api_connection.on('error', err => {
+    console.log(`Mongoose error ${err}`);
+});
+
+elite_bgs_connection.on('connected', () => {
+    console.log(`Connected to ${elite_bgs_url}`);
+});
+
+elite_bgs_connection.on('error', err => {
     console.log(`Mongoose error ${err}`);
 });
 
 (function () {
     let tracker = 0;
-    mongoose.connection.on('disconnected', () => {
-        console.log('Mongoose connection disconnected');
+    eddb_api_connection.on('disconnected', () => {
+        console.log(`Mongoose connection to ${eddb_api_url} disconnected`);
         if (tracker < 5) {
             console.log('Mongoose disconnected. Reconnecting in 5 seconds');
             tracker++;
@@ -59,24 +90,37 @@ mongoose.connection.on('error', err => {
             }, 5000);
         }
     })
-})
-
-process.on('SIGINT', () => {
-    mongoose.connection.close(() => {
-        console.log('Connection closed via app termination');
-        process.exit(0);
-    });
 });
 
-function connect() {
-    mongoose.connect(url, options, (err, db) => {
-        if (err) {
-            return console.log(err);
+(function () {
+    let tracker = 0;
+    elite_bgs_connection.on('disconnected', () => {
+        console.log(`Mongoose connection to ${elite_bgs_url} disconnected`);
+        if (tracker < 5) {
+            console.log('Mongoose disconnected. Reconnecting in 5 seconds');
+            tracker++;
+
+            setTimeout(() => {
+                tracker--;
+            }, 60000);
+
+            setTimeout(() => {
+                connect();
+            }, 5000);
         }
+    })
+});
+
+process.on('SIGINT', () => {
+    eddb_api_connection.close(() => {
+        console.log(`Connection to ${eddb_api_url} closed via app termination`);
     });
-}
+    elite_bgs_connection.close(() => {
+        console.log(`Connection to ${elite_bgs_url} closed via app termination`);
+    });
+    process.exit(0);
+});
 
-connect();
-
+module.exports.eddb_api = eddb_api_connection;
+module.exports.elite_bgs = elite_bgs_connection;
 module.exports.mongoose = mongoose;
-module.exports.connect = connect;

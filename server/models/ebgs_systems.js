@@ -18,6 +18,7 @@
 
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
+    let connection = db.elite_bgs;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
 
@@ -49,7 +50,7 @@ module.exports = new Promise((resolve, reject) => {
         }]
     }, { runSettersOnQuery: true });
 
-    let model = mongoose.model('ebgsSystem', ebgsSystem);
+    let model = connection.model('ebgsSystem', ebgsSystem);
 
     resolve(model);
 })
