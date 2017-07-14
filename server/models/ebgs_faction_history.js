@@ -21,35 +21,30 @@ module.exports = new Promise((resolve, reject) => {
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
 
-    let ebgsSystem = new Schema({
+    let ebgsFactionHistory = new Schema({
         eddb_id: Number,
-        edsm_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true },
-        x: Number,
-        y: Number,
-        z: Number,
-        population: Number,
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
-        state: { type: String, lowercase: true },
-        security: { type: String, lowercase: true },
-        primary_economy: { type: String, lowercase: true },
-        power: [{ type: String, lowercase: true }],
-        power_state: { type: String, lowercase: true },
-        needs_permit: Boolean,
         updated_at: Date,
-        simbad_ref: { type: String, lowercase: true },
-        controlling_minor_faction: { type: String, lowercase: true },
-        reserve_type: { type: String, lowercase: true },
-        minor_faction_presences: [{
+        history: [{
             _id: false,
-            name: String,
-            name_lower: { type: String, lowercase: true }
+            updated_at: Date,
+            system: String,
+            system_lower: { type: String, lowercase: true },
+            state: { type: String, lowercase: true },
+            influence: Number,
+            pending_states: [{
+                state: { type: String, lowercase: true },
+                trend: Number
+            }],
+            recovering_states: [{
+                state: { type: String, lowercase: true },
+                trend: Number
+            }]
         }]
     }, { runSettersOnQuery: true });
 
-    let model = mongoose.model('ebgsSystem', ebgsSystem);
+    let model = mongoose.model('ebgsFactionHistory', ebgsFactionHistory);
 
     resolve(model);
 })

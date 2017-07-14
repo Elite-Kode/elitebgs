@@ -18,6 +18,7 @@
 
 const ebgsFactionsModel = require('../../../models/ebgs_factions');
 const ebgsSystemsModel = require('../../../models/ebgs_systems');
+const ebgsFactionHistoryModel = require('../../../models/ebgs_faction_history');
 
 module.exports = Journal;
 
@@ -58,33 +59,34 @@ function Journal() {
                         name_lower: faction.Name.toLowerCase()
                     };
 
-                    let recordObject = {
+                    let historyObject = {
                         updated_at: new Date(),
+                        system: message.StarSystem,
+                        system_lower: message.StarSystem.toLowerCase(),
                         state: faction.FactionState,
                         influence: faction.Influence
                     }
 
-                    recordObject.pending_states = [];
+                    historyObject.pending_states = [];
                     if (faction.PendingStates) {
                         faction.PendingStates.forEach(pendingState => {
                             let pendingStateObject = {
                                 state: pendingState.State,
                                 trend: pendingState.Trend
                             };
-                            recordObject.pending_states.push(pendingStateObject);
+                            historyObject.pending_states.push(pendingStateObject);
                         });
                     }
-                    recordObject.recovering_states = [];
+                    historyObject.recovering_states = [];
                     if (faction.RecoveringStates) {
                         faction.RecoveringStates.forEach(recoveringState => {
                             let recoveringStateObject = {
                                 state: recoveringState.State,
                                 trend: recoveringState.Trend
                             };
-                            recordObject.recovering_states.push(recoveringStateObject);
+                            historyObject.recovering_states.push(recoveringStateObject);
                         });
                     }
-                    factionObject.records = { $addToSet: recordObject };
                     factionArray.push(factionObject);
                     console.log(factionObject);
                 });
@@ -143,6 +145,23 @@ function Journal() {
                         .catch(err => {
                             console.log(err);
                         });
+
+                    ebgsFactionHistoryModel
+                        .then(model => {
+                            model.findOneAndUpdate(
+                                { name: faction.Name },
+                                historyObject,
+                                {
+                                    upsert: true,
+                                    runValidators: true
+                                })
+                                .then(() => {
+                                    console.log("Inserted");
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                })
+                        })
                 })
             }
         }
