@@ -19,40 +19,15 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-let eddb_api_user = require('../secrets').eddb_api_db_user;
-let eddb_api_pass = require('../secrets').eddb_api_db_pwd;
 let eddb_api_url = require('../secrets').eddb_api_db_url;
-
-let elite_bgs_user = require('../secrets').elite_bgs_db_user;
-let elite_bgs_pass = require('../secrets').elite_bgs_db_pwd;
 let elite_bgs_url = require('../secrets').elite_bgs_db_url;
 
 let eddb_api_connection;
 let elite_bgs_connection;
 
-let eddb_api_options = {
-    server: {
-        socketOptions: {
-            keepAlive: 120
-        }
-    },
-    eddb_api_user,
-    eddb_api_pass
-};
-
-let elite_bgs_options = {
-    server: {
-        socketOptions: {
-            keepAlive: 120
-        }
-    },
-    elite_bgs_user,
-    elite_bgs_pass
-};
-
 function connect() {
-    eddb_api_connection = mongoose.createConnection(eddb_api_url, eddb_api_options);
-    elite_bgs_connection = mongoose.createConnection(elite_bgs_url, elite_bgs_options);
+    eddb_api_connection = mongoose.createConnection(eddb_api_url);
+    elite_bgs_connection = mongoose.createConnection(elite_bgs_url);
 }
 
 connect();
