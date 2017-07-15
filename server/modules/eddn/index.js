@@ -55,6 +55,6 @@ sock.on('message', topic => {
         // let shipyard = new Shipyard(message.message);
         // shipyard.display();
         // break;
-        default: console.log("Schema not Found" + message['$schemaRef']);
+        default: //console.log("Schema not Found" + message['$schemaRef']);
     }
 });

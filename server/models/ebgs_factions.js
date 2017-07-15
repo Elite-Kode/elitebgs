@@ -29,7 +29,7 @@ module.exports = new Promise((resolve, reject) => {
         updated_at: Date,
         government: { type: String, lowercase: true },
         allegiance: { type: String, lowercase: true },
-        home_system_name: String,
+        home_system_name: { type: String, lowercase: true },
         is_player_faction: Boolean,
         faction_presence: [{
             _id: false,
