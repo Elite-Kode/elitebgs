@@ -2,7 +2,15 @@
 
 A website to track the background simulation in Elite Dangerous
 
-Currently [EDDB](https://eddb.io/) is the greatest treasure of information of the galaxy and it is a user friendly tool for many pilots. But it lacks an API for developers. Elite BGS is an attempt to fill this gap by providing an API for EDDB data sources.
+Elite BGS is a project that attempts to fill a gap of APIs for the treasure trove of information online. Currently it is operating in 2 seperate modules.
+
+## EDDB API
+
+Currently [EDDB](https://eddb.io/) is the greatest treasure of information of the galaxy and it is a user friendly tool for many pilots. But it lacks an API for developers. EDDB API is an attempt to fill this gap by providing an API for EDDB data sources.
+
+## ELITE BGS API
+
+For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a step in that direction. It stores information which changes regularly in a historical format. Thus, one can always look up the events that led to the current Civil War for instance.
 
 # API
 
@@ -32,6 +40,7 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 - `http://elitebgs.kodeblox.com/api/eddb/v1/factions`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/factions?<params>`
+- `http://elitebgs.kodeblox.com/api/ebgs/v1/factions?<params>`
 
 ### Populated Systems
 
