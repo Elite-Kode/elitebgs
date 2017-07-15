@@ -23,7 +23,7 @@ The API endpoints are access restricted. There are 2 users:
 
 Consumers must make a GET request at any endpoint using Basic HTTP authentication with username `guest` and password `secret`.
 
-## Endpoints
+## EDDB API Endpoints
 
 ### Bodies
 
@@ -40,7 +40,6 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 - `http://elitebgs.kodeblox.com/api/eddb/v1/factions`*
 - `http://elitebgs.kodeblox.com/api/eddb/v1/factions?<params>`
-- `http://elitebgs.kodeblox.com/api/ebgs/v1/factions?<params>`
 
 ### Populated Systems
 
@@ -91,6 +90,11 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 ### Download and update dumps*
 
 - `http://elitebgs.kodeblox.com/api/eddb/v1/downloadupdate`
+
+## Elite BGS Endpoints
+
+- `http://elitebgs.kodeblox.com/api/ebgs/v1/factions?<params>`
+- `http://elitebgs.kodeblox.com/api/ebgs/v1/systems?<params>`
 
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 
