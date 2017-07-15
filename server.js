@@ -37,7 +37,10 @@ const updateDumpsV1 = require('./server/routes/eddb_api/v1/update_dumps');
 const downloadInsertV1 = require('./server/routes/eddb_api/v1/download_insert');
 const downloadUpdateV1 = require('./server/routes/eddb_api/v1/download_update');
 
-// require('./server/modules/eddn');
+const ebgsFactionsV1 = require('./server/routes/elite_bgs_api/v1/factions');
+const ebgsSystemsV1 = require('./server/routes/elite_bgs_api/v1/systems');
+
+require('./server/modules/eddn');
 
 const app = express();
 
@@ -61,6 +64,9 @@ app.use('/api/eddb/v1/insertdumps', insertDumpsV1);
 app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
+
+app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
+app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {

@@ -18,6 +18,7 @@
 
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
+    let connection = db.eddb_api;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
 
@@ -27,9 +28,7 @@ module.exports = new Promise((resolve, reject) => {
         clearance: Number
     });
 
-    // user.plugin(require('basic-auth-mongoose'));
-
-    let model = mongoose.model('user', user);
+    let model = connection.model('user', user);
 
     resolve(model);
 })

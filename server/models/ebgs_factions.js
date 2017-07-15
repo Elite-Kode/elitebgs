@@ -18,46 +18,45 @@
 
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
-    let connection = db.eddb_api;
+    let connection = db.elite_bgs;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
 
-    let faction = new Schema({
-        id: { type: Number, unique: true },
+    let ebgsFaction = new Schema({
+        eddb_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true },
         updated_at: Date,
-        government_id: Number,
         government: { type: String, lowercase: true },
-        allegiance_id: Number,
         allegiance: { type: String, lowercase: true },
-        state_id: Number,
-        state: { type: String, lowercase: true },
-        home_system_id: Number,
-        is_player_faction: Boolean
+        home_system_name: { type: String, lowercase: true },
+        is_player_faction: Boolean,
+        faction_presence: [{
+            _id: false,
+            system_name: String,
+            system_name_lower: { type: String, lowercase: true }
+        }],
+        history: [{
+            _id: false,
+            updated_at: Date,
+            system: String,
+            system_lower: { type: String, lowercase: true },
+            state: { type: String, lowercase: true },
+            influence: Number,
+            pending_states: [{
+                _id: false,
+                state: { type: String, lowercase: true },
+                trend: Number
+            }],
+            recovering_states: [{
+                _id: false,
+                state: { type: String, lowercase: true },
+                trend: Number
+            }]
+        }]
     }, { runSettersOnQuery: true });
 
-    faction.pre('save', function (next) {
-        lowerify(this);
-        millisecondify(this);
-        next();
-    });
-
-    faction.pre('findOneAndUpdate', function (next) {
-        lowerify(this._update);
-        millisecondify(this._update);
-        next();
-    });
-
-    let model = connection.model('faction', faction);
-
-    let lowerify = ref => {
-        ref.name_lower = ref.name;
-    }
-
-    let millisecondify = ref => {
-        ref.updated_at *= 1000;
-    }
+    let model = connection.model('ebgsFaction', ebgsFaction);
 
     resolve(model);
 })

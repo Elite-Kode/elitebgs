@@ -18,6 +18,7 @@
 
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
+    let connection = db.eddb_api;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
 
@@ -42,7 +43,7 @@ module.exports = new Promise((resolve, reject) => {
         next();
     });
 
-    let model = mongoose.model('commodity', commodity);
+    let model = connection.model('commodity', commodity);
 
     let millisecondify = ref => {
         ref.collected_at *= 1000;

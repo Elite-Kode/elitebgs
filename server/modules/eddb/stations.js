@@ -29,8 +29,6 @@ module.exports = Stations;
 
 const pathToFile = path.resolve(__dirname, '../../dumps/stations.json');
 
-module.exports = Stations;
-
 function Stations() {
     eventEmmiter.call(this);
 
