@@ -43,7 +43,8 @@ sock.on('message', topic => {
         // let commodity = new Commodity(message.message);
         // commodity.display();
         // break;
-        case journal.schemaId:
+        case journal.schemaId[0]:
+        case journal.schemaId[1]:
             journal.trackSystem(message.message);
             // journal.display();
             break;

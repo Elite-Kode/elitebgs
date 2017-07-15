@@ -22,7 +22,10 @@ const ebgsSystemsModel = require('../../../models/ebgs_systems');
 module.exports = Journal;
 
 function Journal() {
-    this.schemaId = "http://schemas.elite-markets.net/eddn/journal/1";
+    this.schemaId = [
+        "http://schemas.elite-markets.net/eddn/journal/1",
+        "https://eddn.edcd.io/schemas/journal/1"
+    ];
 
     this.trackSystem = function (message) {
         if (message.event === "FSDJump") {
@@ -38,7 +41,7 @@ function Journal() {
                     state: message.FactionState,
                     security: message.SystemSecurity,
                     primary_economy: message.SystemEconomy,
-                    updated_at: new Date(),
+                    updated_at: message.timestamp,
                     controlling_minor_faction: message.SystemFaction
                 };
 
@@ -59,7 +62,7 @@ function Journal() {
                     });
 
                     let historySubObject = {
-                        updated_at: new Date(),
+                        updated_at: message.timestamp,
                         system: message.StarSystem,
                         system_lower: message.StarSystem.toLowerCase(),
                         state: faction.FactionState,
@@ -90,7 +93,7 @@ function Journal() {
                     let factionObject = {
                         name: faction.Name,
                         name_lower: faction.Name.toLowerCase(),
-                        updated_at: new Date(),
+                        updated_at: message.timestamp,
                         government: faction.Government,
                         allegiance: faction.Allegiance,
                         $addToSet: {
