@@ -121,7 +121,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                                             return -1;
                                         }
                                     });
-                                    historySelected = [historySelected[0]];
+                                    if (historySelected.length > 0) {
+                                        historySelected = [historySelected[0]];
+                                    }
                                 }
                                 doc.history = historySelected;
                                 docs[index] = doc;
