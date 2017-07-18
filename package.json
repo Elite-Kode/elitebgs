@@ -27,6 +27,7 @@
         "ajv": "^5.1.5",
         "bluebird": "^3.5.0",
         "body-parser": "^1.17.2",
+        "bugsnag": "^1.11.0",
         "cookie-parser": "~1.4.3",
         "core-js": "^2.4.1",
         "csvtojson": "^1.1.6",

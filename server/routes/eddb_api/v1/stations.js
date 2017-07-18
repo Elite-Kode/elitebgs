@@ -23,7 +23,7 @@ const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/stations')
         .then(stations => {
             let query = new Object;
@@ -169,10 +169,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     .then(result => {
                         res.status(200).json(result);
                     })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json(err);
-                    })
+                    .catch(next)
             }
 
             if (factionSearch instanceof BluePromise && systemSearch instanceof BluePromise) {
@@ -202,28 +199,19 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         query.controlling_minor_faction_id = { $in: ids };
                         stationSearch();
                     })
-                    .catch(err => {
-                        console.log(err);
-                        stationSearch();
-                    });
+                    .catch(next);
             } else if (systemSearch instanceof BluePromise) {
                 systemSearch
                     .then(ids => {
                         query.system_id = { $in: ids };
                         stationSearch();
                     })
-                    .catch(err => {
-                        console.log(err);
-                        stationSearch();
-                    });
+                    .catch(next);
             } else {
                 stationSearch();
             }
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
 let arrayfy = requestParam => {

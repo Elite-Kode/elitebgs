@@ -22,7 +22,7 @@ const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/ebgs_factions')
         .then(factions => {
             let query = new Object;
@@ -142,18 +142,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         }
                         res.status(200).json(result);
                     })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json(err);
-                    })
+                    .catch(next)
             }
 
             factionSearch();
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
 let arrayfy = requestParam => {

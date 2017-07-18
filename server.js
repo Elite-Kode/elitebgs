@@ -23,6 +23,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const bugsnag = require("bugsnag");
 const basicStrategy = require('passport-http').BasicStrategy;
 
 const bodiesV1 = require('./server/routes/eddb_api/v1/bodies');
@@ -45,6 +46,7 @@ require('./server/modules/eddn');
 const app = express();
 
 // app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
+app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -68,6 +70,8 @@ app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
 
+bugsnag.register(require('./secrets').bugsnag_token);
+
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
     console.log(`Server 404 request: ${req.originalUrl}`);
@@ -85,18 +89,22 @@ if (app.get('env') === 'development') {
             message: err.message,
             error: err
         });
+        console.log(err);
     });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
-    res.status(err.status || 500);
-    res.send({
-        message: err.message,
-        error: {}
+if (app.get('env') === 'production') {
+    app.use(bugsnag.errorHandler);
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.send({
+            message: err.message,
+            error: {}
+        });
     });
-});
+}
 
 require('./server/models/users')
     .then(user => {
