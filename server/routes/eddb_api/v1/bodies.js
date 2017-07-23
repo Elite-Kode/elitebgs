@@ -105,6 +105,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             if (req.query.landable) {
                 query.is_landable = boolify(req.query.landable);
             }
+            if (req.query.idnext) {
+                query._id = { $gt: req.query.idnext };
+            }
 
             let bodySearch = () => {
                 if (_.isEmpty(query) && req.user.clearance !== 0) {
