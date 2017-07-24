@@ -22,25 +22,19 @@ const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/commodities')
         .then(commodities => {
             commodities.find({}).lean()
                 .then(result => {
                     res.status(200).json(result);
                 })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
+                .catch(next)
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
-router.get('/id/:commodityid', (req, res) => {
+router.get('/id/:commodityid', (req, res, next) => {
     require('../../../models/commodities')
         .then(commodities => {
             let id = req.params.commodityid;
@@ -48,15 +42,9 @@ router.get('/id/:commodityid', (req, res) => {
                 .then(result => {
                     res.status(200).json(result);
                 })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
+                .catch(next)
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
 module.exports = router;

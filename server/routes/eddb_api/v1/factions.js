@@ -22,7 +22,7 @@ const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/factions')
         .then(factions => {
             let query = new Object;
@@ -81,10 +81,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                     .then(result => {
                         res.status(200).json(result);
                     })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json(err);
-                    })
+                    .catch(next)
             }
 
             if (systemSearch instanceof Promise) {
@@ -93,18 +90,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                         query.home_system_id = { $in: ids };
                         factionSearch();
                     })
-                    .catch(err => {
-                        console.log(err);
-                        factionSearch();
-                    })
+                    .catch(next)
             } else {
                 factionSearch();
             }
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
 let boolify = requestParam => {

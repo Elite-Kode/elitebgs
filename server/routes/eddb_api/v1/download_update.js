@@ -24,7 +24,7 @@ let router = express.Router();
 
 let eddb = require('../../../modules/eddb');
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     if (req.user.clearance === 0) {
         res.status(200).json({ message: 'started' });
 
@@ -208,9 +208,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
             .then(stationsUpdate)
             .then(populatedSystemsUpdate)
             .then(systemsUpdate)
-            .catch(err => {
-                console.log(err);
-            });
+            .catch(next);
     } else {
         res.status(403).json({ Error: "Permission Denied" });
     }

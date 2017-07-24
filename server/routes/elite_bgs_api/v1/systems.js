@@ -22,7 +22,7 @@ const _ = require('lodash');
 
 let router = express.Router();
 
-router.get('/', passport.authenticate('basic', { session: false }), (req, res) => {
+router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/ebgs_systems')
         .then(systems => {
             let query = new Object;
@@ -60,15 +60,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res) =
                 .then(result => {
                     res.status(200).json(result);
                 })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json(err);
-                })
+                .catch(next)
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .catch(next);
 });
 
 let arrayfy = requestParam => {
