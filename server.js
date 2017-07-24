@@ -23,8 +23,9 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const bugsnag = require("bugsnag");
 const basicStrategy = require('passport-http').BasicStrategy;
+
+const bugsnag = require('./server/bugsnag');
 
 const bodiesV1 = require('./server/routes/eddb_api/v1/bodies');
 const commoditiesV1 = require('./server/routes/eddb_api/v1/commodities');
@@ -69,8 +70,6 @@ app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
-
-bugsnag.register(require('./secrets').bugsnag_token);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {

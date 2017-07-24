@@ -46,6 +46,7 @@
         "request-promise-native": "^1.0.4",
         "rxjs": "^5.1.0",
         "serve-favicon": "~2.3.0",
+        "unhandled-rejection": "^1.0.0",
         "zmq": "^2.15.3",
         "zone.js": "^0.8.4"
     },
