@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 import { MdToolbarModule, MdButtonModule } from '@angular/material';
+import { Ng2TableModule } from 'ng2-table/ng2-table';
 
 import { AppComponent } from './app.component';
 import { EddbApiModule } from './eddb_api/eddb-api.module';
@@ -14,6 +15,7 @@ import { PageNotFoundComponent } from './page_not_found/page-not-found.component
 import { HomeComponent } from './home.component';
 
 import { ToolbarService } from './shared/toolbar.service';
+import { SystemsService } from './services/systems.service';
 
 @NgModule({
     declarations: [
@@ -31,8 +33,9 @@ import { ToolbarService } from './shared/toolbar.service';
         AppRoutingModule,
         MdToolbarModule,
         MdButtonModule,
+        Ng2TableModule
     ],
-    providers: [ToolbarService],
+    providers: [ToolbarService, SystemsService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

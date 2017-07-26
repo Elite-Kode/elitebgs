@@ -39,6 +39,7 @@
         "mongoose": "^4.10.4",
         "morgan": "~1.7.0",
         "ndjson": "^1.5.0",
+        "ng2-table": "^1.3.2",
         "passport": "^0.3.2",
         "passport-http": "^0.3.0",
         "request": "^2.81.0",
