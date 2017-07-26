@@ -23,7 +23,7 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let faction = new Schema({
-        id: { type: Number, unique: true },
+        id: { type: Number, unique: true, index: true },
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
         updated_at: Date,

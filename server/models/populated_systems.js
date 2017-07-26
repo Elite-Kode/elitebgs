@@ -23,7 +23,7 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let populatedSystem = new Schema({
-        id: { type: Number, unique: true },
+        id: { type: Number, unique: true, index: true },
         edsm_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true, index: true },

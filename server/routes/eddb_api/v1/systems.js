@@ -27,6 +27,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
         .then(systems => {
             let query = new Object;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }

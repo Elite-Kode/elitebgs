@@ -23,7 +23,7 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let station = new Schema({
-        id: { type: Number, unique: true },
+        id: { type: Number, unique: true, index: true },
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
         system_id: { type: Number, ref: 'system.id' },

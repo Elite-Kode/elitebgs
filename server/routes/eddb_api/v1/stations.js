@@ -30,6 +30,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             let factionSearch = null;
             let systemSearch = null;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
