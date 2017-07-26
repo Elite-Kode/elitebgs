@@ -53,7 +53,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                             if (req.query.power) {
                                 systemQuery.power = req.query.power.toLowerCase();
                             }
-                            systems.find(systemQuery).lean()
+                            let systemProjection = {
+                                _id: 0,
+                                id: 1
+                            }
+                            systems.find(systemQuery, systemProjection).lean()
                                 .then(result => {
                                     let ids = [];
                                     result.forEach(doc => {

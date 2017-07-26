@@ -25,16 +25,16 @@ module.exports = new Promise((resolve, reject) => {
     let faction = new Schema({
         id: { type: Number, unique: true },
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         updated_at: Date,
         government_id: Number,
-        government: { type: String, lowercase: true },
+        government: { type: String, lowercase: true, index: true },
         allegiance_id: Number,
-        allegiance: { type: String, lowercase: true },
+        allegiance: { type: String, lowercase: true, index: true },
         state_id: Number,
-        state: { type: String, lowercase: true },
+        state: { type: String, lowercase: true, index: true },
         home_system_id: Number,
-        is_player_faction: Boolean
+        is_player_faction: { type: Boolean, index: true }
     }, { runSettersOnQuery: true });
 
     faction.pre('save', function (next) {
