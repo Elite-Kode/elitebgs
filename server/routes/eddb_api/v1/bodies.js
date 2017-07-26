@@ -28,6 +28,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             let query = new Object;
             let systemSearch = null;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
@@ -53,7 +56,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                             if (req.query.power) {
                                 systemQuery.power = req.query.power.toLowerCase();
                             }
-                            systems.find(systemQuery).lean()
+                            let systemProjection = {
+                                _id: 0,
+                                id: 1
+                            }
+                            systems.find(systemQuery, systemProjection).lean()
                                 .then(result => {
                                     let ids = [];
                                     result.forEach(doc => {

@@ -27,6 +27,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
         .then(systems => {
             let query = new Object;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
@@ -55,6 +58,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             }
             if (req.query.securityname) {
                 query.security = req.query.securityname.toLowerCase();
+            }
+            if (req.query.idnext) {
+                query._id = { $gt: req.query.idnext };
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");

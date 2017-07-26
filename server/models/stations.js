@@ -23,28 +23,28 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
 
     let station = new Schema({
-        id: { type: Number, unique: true },
+        id: { type: Number, unique: true, index: true },
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         system_id: { type: Number, ref: 'system.id' },
         updated_at: Date,
-        max_landing_pad_size: { type: String, lowercase: true },
-        distance_to_star: Number,
+        max_landing_pad_size: { type: String, lowercase: true, index: true },
+        distance_to_star: { type: Number, index: true },
         government_id: Number,
-        government: { type: String, lowercase: true },
+        government: { type: String, lowercase: true, index: true },
         allegiance_id: Number,
-        allegiance: { type: String, lowercase: true },
+        allegiance: { type: String, lowercase: true, index: true },
         state_id: Number,
         state: { type: String, lowercase: true },
         type_id: Number,
         type: { type: String, lowercase: true },
-        has_blackmarket: Boolean,
-        has_market: Boolean,
-        has_refuel: Boolean,
-        has_repair: Boolean,
-        has_rearm: Boolean,
-        has_outfitting: Boolean,
-        has_shipyard: Boolean,
+        has_blackmarket: { type: Boolean, index: true },
+        has_market: { type: Boolean, index: true },
+        has_refuel: { type: Boolean, index: true },
+        has_repair: { type: Boolean, index: true },
+        has_rearm: { type: Boolean, index: true },
+        has_outfitting: { type: Boolean, index: true },
+        has_shipyard: { type: Boolean, index: true },
         has_docking: Boolean,
         has_commodities: Boolean,
         import_commodities: [{
@@ -66,7 +66,7 @@ module.exports = new Promise((resolve, reject) => {
         shipyard_updated_at: Date,
         outfitting_updated_at: Date,
         market_updated_at: Date,
-        is_planetary: Boolean,
+        is_planetary: { type: Boolean, index: true },
         selling_ships: [{
             name: String,
             name_lower: { type: String, lowercase: true }
@@ -80,13 +80,13 @@ module.exports = new Promise((resolve, reject) => {
         controlling_minor_faction_id: { type: Number, ref: 'faction.id' }
     }, { runSettersOnQuery: true });
 
-    station.pre('save', function(next) {
+    station.pre('save', function (next) {
         lowerify(this);
         millisecondify(this);
         next();
     });
 
-    station.pre('findOneAndUpdate', function(next) {
+    station.pre('findOneAndUpdate', function (next) {
         lowerify(this._update);
         millisecondify(this._update);
         next();

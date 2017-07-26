@@ -30,12 +30,15 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             let factionSearch = null;
             let systemSearch = null;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
             if (req.query.ships) {
                 let ships = arrayfy(req.query.ships);
-                query['selling_ship.name_lower'] = { $all: ships };
+                query['selling_ships.name_lower'] = { $all: ships };
             }
             if (req.query.moduleid) {
                 let modules = arrayfy(req.query.moduleid);
@@ -49,7 +52,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
 
                             factionQuery.name_lower = req.query.controllingfactionname.toLowerCase();
 
-                            factions.find(factionQuery).lean()
+                            let factionProjection = {
+                                _id: 0,
+                                id: 1
+                            }
+
+                            factions.find(factionQuery, factionProjection).lean()
                                 .then(result => {
                                     let ids = [];
                                     result.forEach(doc => {
@@ -140,8 +148,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                                 let powerStates = arrayfy(req.query.powerstatename);
                                 systemQuery.power_state = { $in: powerStates };
                             }
+                            let systemProjection = {
+                                _id: 0,
+                                id: 1
+                            }
 
-                            systems.find(systemQuery).lean()
+                            systems.find(systemQuery, systemProjection).lean()
                                 .then(result => {
                                     let ids = [];
                                     result.forEach(doc => {
@@ -159,6 +171,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                             reject(err);
                         });
                 })
+            }
+            if (req.query.idnext) {
+                query._id = { $gt: req.query.idnext };
             }
 
             let stationSearch = () => {

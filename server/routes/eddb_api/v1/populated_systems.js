@@ -28,6 +28,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             let query = new Object;
             let factionSearch = null;
 
+            if (req.query.eddbid) {
+                query.id = req.query.eddbid;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
@@ -72,7 +75,12 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
 
                                 factionQuery.name_lower = req.query.factionname.toLowerCase();
 
-                                factions.find(factionQuery).lean()
+                                let factionProjection = {
+                                    _id: 0,
+                                    id: 1
+                                }
+
+                                factions.find(factionQuery, factionProjection).lean()
                                     .then(result => {
                                         let ids = [];
                                         result.forEach(doc => {
@@ -89,6 +97,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                             });
                     })
                 }
+            }
+            if (req.query.idnext) {
+                query._id = { $gt: req.query.idnext };
             }
 
             let systemSearch = () => {
