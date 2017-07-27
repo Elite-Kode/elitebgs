@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { MdToolbarModule, MdButtonModule } from '@angular/material';
 import { Ng2TableModule } from 'ng2-table/ng2-table';
@@ -16,6 +16,7 @@ import { HomeComponent } from './home.component';
 
 import { ToolbarService } from './shared/toolbar.service';
 import { SystemsService } from './services/systems.service';
+import { ApiInterceptor } from './api.interceptor';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,7 @@ import { SystemsService } from './services/systems.service';
     imports: [
         BrowserModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         EddbApiModule,
         EliteBgsModule,
         SharedModule,
@@ -35,7 +36,11 @@ import { SystemsService } from './services/systems.service';
         MdButtonModule,
         Ng2TableModule
     ],
-    providers: [ToolbarService, SystemsService],
+    providers: [ToolbarService, SystemsService, {
+        provide: HTTP_INTERCEPTORS,
+        useClass: ApiInterceptor,
+        multi: true,
+    }],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

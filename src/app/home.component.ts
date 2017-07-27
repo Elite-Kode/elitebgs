@@ -3,6 +3,7 @@ import { ToolbarService } from './shared/toolbar.service';
 import { ToolbarButton } from './shared/toolbar-button';
 import { SystemsService } from './services/systems.service';
 import { ISystem } from './system.interface';
+import { FDevIDs } from './fdevids';
 
 @Component({
     selector: 'app-home',
@@ -27,7 +28,20 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.systemService.getAllSystems().subscribe(systems => {
-            this.systemData = systems;
+            this.systemData = systems.map(responseSystem => {
+                const name = responseSystem.name;
+                const government = FDevIDs.government[responseSystem.government].name;
+                const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
+                const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
+                const state = FDevIDs.state[responseSystem.state].name;
+                return <ISystem>{
+                    name: name,
+                    government: government,
+                    allegiance: allegiance,
+                    primary_economy: primary_economy,
+                    state: state
+                };
+            });
             this.rows = this.systemData;
         });
     }

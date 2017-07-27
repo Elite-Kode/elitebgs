@@ -70,7 +70,7 @@ export class FDevIDs {
         '$economy_extraction;': {
             'name': 'Extraction'
         },
-        '$economy_highTech;': {
+        '$economy_hightech;': {
             'name': 'High Tech'
         },
         '$economy_industrial;': {
@@ -129,7 +129,7 @@ export class FDevIDs {
         '$government_patronage;': {
             'name': 'Patronage'
         },
-        '$government_prisonColony;': {
+        '$government_prisoncolony;': {
             'name': 'Prison Colony'
         },
         '$government_theocracy;': {

@@ -46,3 +46,4 @@ Thumbs.db
 
 # Secrets
 secrets.js
+src/secrets.ts
