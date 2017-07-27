@@ -26,6 +26,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
     ngOnInit() {
         this.systemService.getAllSystems().subscribe(systems => {
             this.systemData = systems;
+            this.rows = this.systemData;
         });
     }
 
