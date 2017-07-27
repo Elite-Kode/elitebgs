@@ -12,14 +12,16 @@ import { ISystem } from './system.interface';
 export class HomeComponent implements AfterViewInit, OnInit {
     toolbarButtons: ToolbarButton[];
     private systemData: ISystem[] = [];
+    public config: any = {
+        className: ['table-striped', 'table-bordered']
+    };
     public rows: Array<any> = [];
     public columns: Array<any> = [
         { title: 'System Name', name: 'name' },
         { title: 'System Government', name: 'government' },
         { title: 'Allegiance', name: 'allegiance' },
         { title: 'Economy', name: 'primary_economy' },
-        { title: 'State', name: 'state' },
-        { title: 'Controlling Minor Faction', name: 'controlling_minor_faction' }
+        { title: 'State', name: 'state' }
     ];
     constructor(private toolbarService: ToolbarService, private systemService: SystemsService) { }
 

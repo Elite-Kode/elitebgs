@@ -20,5 +20,4 @@ export interface ISystem {
     allegiance: string;
     primary_economy: string;
     state: string;
-    controlling_minor_faction: string;
 }
