@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
-import { Ng2TableModule } from 'ng2-table/ng2-table';
 import { ClarityModule } from 'clarity-angular';
 
 import { AppComponent } from './app.component';
@@ -29,7 +28,6 @@ import { ApiInterceptor } from './api.interceptor';
         EddbApiModule,
         EliteBgsModule,
         AppRoutingModule,
-        Ng2TableModule,
         ClarityModule.forRoot()
     ],
     providers: [SystemsService, {

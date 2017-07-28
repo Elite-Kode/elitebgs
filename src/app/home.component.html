@@ -1,5 +1,25 @@
 <div class="normal-body">
-    <h1>Coming Soon...</h1>
-    <!-- <ng-table [config]="config" [rows]="rows" [columns]="columns">
-    </ng-table> -->
+    <h1>Systems</h1>
+    <clr-datagrid [clrDgLoading]="loading">
+        <clr-dg-column>System Name</clr-dg-column>
+        <clr-dg-column>System Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>Economy</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any systems!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let system of systemData">
+            <clr-dg-cell>{{system.name}}</clr-dg-cell>
+            <clr-dg-cell>{{system.government}}</clr-dg-cell>
+            <clr-dg-cell>{{system.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{system.primary_economy}}</clr-dg-cell>
+            <clr-dg-cell>{{system.state}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{pagination.totalItems}} systems
+            <clr-dg-pagination #pagination [clrDgPageSize]="10"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
 </div>
