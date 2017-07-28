@@ -1,10 +1,10 @@
 <div class="normal-body">
     <h1 style="text-align:left;float:left;">The complete RESTful API for EDDB</h1>
     <div style="text-align:right;float:right;">
-        <a md-raised-button href="https://www.paypal.me/SayakMukhopadhyay" class="donate-button">Donate</a>
-        <a md-icon-button href="https://github.com/SayakMukhopadhyay/elitebgs">
+        <a class="btn btn-primary" href="https://www.paypal.me/SayakMukhopadhyay">Donate</a>
+        <!-- <a md-icon-button href="https://github.com/SayakMukhopadhyay/elitebgs">
             <md-icon class="fa fa-github" aria-hidden="true"></md-icon>
-        </a>
+        </a> -->
     </div>
     <br style="clear:both;">
     <h3>
@@ -13,16 +13,16 @@
         an API for EDDB data sources.
     </h3>
     <h2>API</h2>
-    <md-card>
-        <md-card-title>Access</md-card-title>
-        <md-card-content>
+    <div class="card">
+        <div class="card-title">Access</div>
+        <div class="card-text">
             Consumers must make a GET request at any endpoint using Basic HTTP authentication with username
             <code>guest</code> and password <code>secret</code>.
-        </md-card-content>
-    </md-card>
-    <md-card>
-        <md-card-title>Endpoints</md-card-title>
-        <md-card-content>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title">Endpoints</div>
+        <div class="card-text">
             <h3>Bodies</h3>
             <code>http://elitebgs.kodeblox.com/api/eddb/v1/bodies?&lt;params&gt;</code>
             <h3>Commodities</h3>
@@ -35,6 +35,6 @@
             <code>http://elitebgs.kodeblox.com/api/eddb/v1/stations?&lt;params&gt;</code>
             <h3>Systems</h3>
             <code>http://elitebgs.kodeblox.com/api/eddb/v1/systems?&lt;params&gt;</code>
-        </md-card-content>
-    </md-card>
+        </div>
+    </div>
 </div>

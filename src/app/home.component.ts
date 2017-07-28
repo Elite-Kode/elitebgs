@@ -1,6 +1,4 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { ToolbarService } from './shared/toolbar.service';
-import { ToolbarButton } from './shared/toolbar-button';
 import { SystemsService } from './services/systems.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from './fdevids';
@@ -11,7 +9,6 @@ import { FDevIDs } from './fdevids';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-    toolbarButtons: ToolbarButton[];
     private systemData: ISystem[] = [];
     public config: any = {
         className: ['table-striped', 'table-bordered']
@@ -24,7 +21,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
         { title: 'Economy', name: 'primary_economy' },
         { title: 'State', name: 'state' }
     ];
-    constructor(private toolbarService: ToolbarService, private systemService: SystemsService) { }
+    constructor(private systemService: SystemsService) { }
 
     ngOnInit() {
         this.systemService.getAllSystems().subscribe(systems => {
@@ -46,14 +43,5 @@ export class HomeComponent implements AfterViewInit, OnInit {
         });
     }
 
-    ngAfterViewInit() {
-        this.toolbarButtons = [
-            new ToolbarButton('text', 'EDDB API', 'router', './api/eddb'),
-            new ToolbarButton('text', 'Elite BGS API', 'router', './api/elitebgs')
-        ];
-
-        this.toolbarService.makeButtons(this.toolbarButtons);
-        this.toolbarService.setTitle('Elite BGS');
-        this.toolbarService.setShowBack(false);
-    }
+    ngAfterViewInit() { }
 }
