@@ -1,14 +1,14 @@
 <div class="main-container">
     <header class="header header-6">
         <div class="branding">
-            <a href="/">
+            <a [routerLink]="['/']">
                 <clr-icon shape="vm-bug"></clr-icon>
                 <span class="title">Elite BGS</span>
             </a>
         </div>
         <div class="header-nav">
-            <a href="/api/eddb" class="nav-link nav-text" [ngClass]="{'active':isActive('EDDB')}">EDDB API</a>
-            <a href="/api/elitebgs" class="nav-link nav-text" [ngClass]="{'active':isActive('EBGS')}">Elite BGS API</a>
+            <a [routerLink]="['/api/eddb']" routerLinkActive="active" class="nav-link nav-text">EDDB API</a>
+            <a [routerLink]="['/api/elitebgs']" routerLinkActive="active" class="nav-link nav-text">Elite BGS API</a>
         </div>
     </header>
     <div class="content-container">
