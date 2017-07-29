@@ -16,6 +16,8 @@
 
 "use strict";
 
+let mongoosePaginate = require('mongoose-paginate');
+
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
@@ -26,18 +28,18 @@ module.exports = new Promise((resolve, reject) => {
         eddb_id: Number,
         edsm_id: Number,
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         x: Number,
         y: Number,
         z: Number,
         population: Number,
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
-        state: { type: String, lowercase: true },
-        security: { type: String, lowercase: true },
-        primary_economy: { type: String, lowercase: true },
+        government: { type: String, lowercase: true, index: true },
+        allegiance: { type: String, lowercase: true, index: true },
+        state: { type: String, lowercase: true, index: true },
+        security: { type: String, lowercase: true, index: true },
+        primary_economy: { type: String, lowercase: true, index: true },
         power: [{ type: String, lowercase: true }],
-        power_state: { type: String, lowercase: true },
+        power_state: { type: String, lowercase: true, index: true },
         needs_permit: Boolean,
         updated_at: Date,
         simbad_ref: { type: String, lowercase: true },
@@ -49,6 +51,8 @@ module.exports = new Promise((resolve, reject) => {
             name_lower: { type: String, lowercase: true }
         }]
     }, { runSettersOnQuery: true });
+
+    ebgsSystem.plugin(mongoosePaginate);
 
     let model = connection.model('ebgsSystem', ebgsSystem);
 

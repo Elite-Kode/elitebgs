@@ -16,6 +16,8 @@
 
 "use strict";
 
+let mongoosePaginate = require('mongoose-paginate');
+
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.eddb_api;
@@ -65,6 +67,8 @@ module.exports = new Promise((resolve, reject) => {
         millisecondify(this._update);
         next();
     });
+
+    system.plugin(mongoosePaginate);
 
     let model = connection.model('system', system);
 
