@@ -26,6 +26,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
     require('../../../models/ebgs_factions')
         .then(factions => {
             let query = new Object;
+            let page = 1;
 
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();

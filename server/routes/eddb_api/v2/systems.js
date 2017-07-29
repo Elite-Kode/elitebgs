@@ -26,6 +26,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
     require('../../../models/systems')
         .then(systems => {
             let query = new Object;
+            let page = 1;
 
             if (req.query.eddbid) {
                 query.id = req.query.eddbid;

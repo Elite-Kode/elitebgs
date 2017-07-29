@@ -27,6 +27,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
         .then(populatedSystems => {
             let query = new Object;
             let factionSearch = null;
+            let page = 1;
 
             if (req.query.eddbid) {
                 query.id = req.query.eddbid;
