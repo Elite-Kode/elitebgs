@@ -132,6 +132,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.economyname) {
                 query['economies.name_lower'] = req.query.economyname.toLowerCase();
             }
+            if (req.query.page) {
+                page = req.query.page;
+            }
             if (req.query.permit || req.query.power || req.query.powerstatename) {
                 systemSearch = new BluePromise((resolve, reject) => {
                     require('../../../models/systems')

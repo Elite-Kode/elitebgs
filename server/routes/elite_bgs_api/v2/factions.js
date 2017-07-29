@@ -37,6 +37,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.government) {
                 query.government = req.query.government.toLowerCase();
             }
+            if (req.query.page) {
+                page = req.query.page;
+            }
 
             let factionSearch = () => {
                 if (_.isEmpty(query) && req.user.clearance !== 0) {

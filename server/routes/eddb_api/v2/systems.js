@@ -60,6 +60,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.securityname) {
                 query.security = req.query.securityname.toLowerCase();
             }
+            if (req.query.page) {
+                page = req.query.page;
+            }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
             }

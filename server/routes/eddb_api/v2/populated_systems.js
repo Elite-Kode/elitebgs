@@ -61,6 +61,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.securityname) {
                 query.security = req.query.securityname.toLowerCase();
             }
+            if (req.query.page) {
+                page = req.query.page;
+            }
             if (req.query.factionname) {
                 let presencetype = 'presence';
                 if (req.query.presencetype) {

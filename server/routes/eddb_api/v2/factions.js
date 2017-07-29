@@ -47,6 +47,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.playerfaction) {
                 query.is_player_faction = boolify(req.query.playerfaction);
             }
+            if (req.query.page) {
+                page = req.query.page;
+            }
             if (req.query.homesystemname || req.query.power) {
                 systemSearch = new Promise((resolve, reject) => {
                     require('../../../models/systems')
