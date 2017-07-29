@@ -65,7 +65,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                         }
 
                         if (states.length === 0 && systems.length === 0 && timemin === null && timemax === null) {
-                            result.forEach((doc, index, docs) => {
+                            result.docs.forEach((doc, index, docs) => {
                                 doc.history.sort((a, b) => {
                                     var key1 = a.updated_at;
                                     var key2 = b.updated_at;
@@ -82,7 +82,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                                 docs[index] = doc;
                             })
                         } else if (states.length !== 0 || systems.length !== 0) {
-                            result.forEach((doc, index, docs) => {
+                            result.docs.forEach((doc, index, docs) => {
                                 let historySelected = []
                                 doc.history.forEach(historyDoc => {
                                     let historyBool = false;
@@ -135,7 +135,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                                 docs[index] = doc;
                             })
                         } else if (timemin !== null && timemax !== null) {
-                            result.forEach((doc, index, docs) => {
+                            result.docs.forEach((doc, index, docs) => {
                                 let historySelected = [];
                                 doc.history.forEach(history => {
                                     if (history.updated_at > timemin && history.updated_at < timemax) {
