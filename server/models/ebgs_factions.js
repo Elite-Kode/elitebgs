@@ -16,6 +16,8 @@
 
 "use strict";
 
+let mongoosePaginate = require('mongoose-paginate');
+
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
@@ -25,10 +27,10 @@ module.exports = new Promise((resolve, reject) => {
     let ebgsFaction = new Schema({
         eddb_id: Number,
         name: String,
-        name_lower: { type: String, lowercase: true },
+        name_lower: { type: String, lowercase: true, index: true },
         updated_at: Date,
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
+        government: { type: String, lowercase: true, index: true },
+        allegiance: { type: String, lowercase: true, index: true },
         home_system_name: { type: String, lowercase: true },
         is_player_faction: Boolean,
         faction_presence: [{
@@ -55,6 +57,8 @@ module.exports = new Promise((resolve, reject) => {
             }]
         }]
     }, { runSettersOnQuery: true });
+
+    ebgsFaction.plugin(mongoosePaginate);
 
     let model = connection.model('ebgsFaction', ebgsFaction);
 
