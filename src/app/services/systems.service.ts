@@ -12,4 +12,10 @@ export class SystemsService {
             params: new HttpParams().set('page', page)
         });
     }
+
+    getSingleSystemById(id: string): Observable<any> {
+        return this.http.get<any>('/api/ebgs/v2/systems', {
+            params: new HttpParams().set('id', id)
+        });
+    }
 }

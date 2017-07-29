@@ -1,18 +1,18 @@
-<div class="main-container">
-    <header class="header header-1">
+<clr-main-container>
+    <clr-header>
         <div class="branding">
             <a [routerLink]="['/']">
                 <span class="clr-icon elitebgs-logo"></span>
                 <span class="title">Elite BGS</span>
             </a>
         </div>
-        <div class="header-nav">
+        <div class="header-nav" [clr-nav-level]="1">
             <a [routerLink]="['/api/eddb']" routerLinkActive="active" class="nav-link nav-text">EDDB API</a>
             <a [routerLink]="['/api/elitebgs']" routerLinkActive="active" class="nav-link nav-text">Elite BGS API</a>
         </div>
-    </header>
+    </clr-header>
     <div class="content-container">
         <router-outlet>
         </router-outlet>
     </div>
-</div>
+</clr-main-container>

@@ -15,6 +15,7 @@
  */
 
 export interface ISystem {
+    id: string;
     name: string;
     government: string;
     allegiance: string;

@@ -1,4 +1,4 @@
-<div class="normal-body">
+<div class="content-area">
     <h1>Systems</h1>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>System Name</clr-dg-column>
@@ -10,6 +10,9 @@
         <clr-dg-placeholder>Unable to find any systems!</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let system of systemData">
+            <clr-dg-action-overflow>
+                <button class="action-item" (click)="onView(system)">View</button>
+            </clr-dg-action-overflow>
             <clr-dg-cell>{{system.name}}</clr-dg-cell>
             <clr-dg-cell>{{system.government}}</clr-dg-cell>
             <clr-dg-cell>{{system.allegiance}}</clr-dg-cell>

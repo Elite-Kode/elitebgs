@@ -11,6 +11,7 @@ import { EliteBgsModule } from './elite_bgs_api/elite-bgs-api.module';
 import { AppRoutingModule } from './app-routing.module';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 import { HomeComponent } from './home.component';
+import { SystemViewComponent } from './system-view.component';
 
 import { SystemsService } from './services/systems.service';
 import { ApiInterceptor } from './api.interceptor';
@@ -19,7 +20,8 @@ import { ApiInterceptor } from './api.interceptor';
     declarations: [
         AppComponent,
         HomeComponent,
-        PageNotFoundComponent
+        PageNotFoundComponent,
+        SystemViewComponent
     ],
     imports: [
         BrowserModule,
