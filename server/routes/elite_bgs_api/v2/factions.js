@@ -40,6 +40,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.government) {
                 query.government = req.query.government.toLowerCase();
             }
+            if (req.query.beginsWith) {
+                query.name_lower = {
+                    $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
+                }
+            }
             if (req.query.page) {
                 page = req.query.page;
             }

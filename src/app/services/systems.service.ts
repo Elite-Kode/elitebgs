@@ -7,9 +7,9 @@ export class SystemsService {
 
     constructor(private http: HttpClient) { }
 
-    getAllSystems(page: string): Observable<any> {
+    getSystems(page: string, name: string): Observable<any> {
         return this.http.get<any>('/api/ebgs/v2/systems', {
-            params: new HttpParams().set('page', page)
+            params: new HttpParams().set('page', page).set('beginsWith', name)
         });
     }
 

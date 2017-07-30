@@ -1,5 +1,14 @@
 <div class="content-area">
     <h1>Systems</h1>
+    <form [formGroup]="systemForm" novalidate>
+        <section class="form-block">
+            <label>Filter System</label>
+            <div class="form-group">
+                <label for="systemName">System Name</label>
+                <input type="text" id="systemName" placeholder="Sol" formControlName="systemName">
+            </div>
+        </section>
+    </form>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>System Name</clr-dg-column>
         <clr-dg-column>System Government</clr-dg-column>
