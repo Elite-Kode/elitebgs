@@ -17,6 +17,7 @@
 "use strict";
 
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -76,6 +77,8 @@ app.use('/api/eddb/v1/insertdumps', insertDumpsV1);
 app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
+
+app.use('/api/eddb/docs', swaggerUi.serve, swaggerUi.setup(require('./server/swagger')));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
