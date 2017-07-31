@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
     private systemForm = new FormGroup({
         systemName: new FormControl()
     });
+    @HostBinding('class.content-area') hostClass = false;
     constructor(
         private systemService: SystemsService,
         private router: Router
@@ -65,6 +66,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.hostClass = true;
         this.systemForm.valueChanges.subscribe(value => {
             this.refresh(this.tableState, value.systemName);
         })
