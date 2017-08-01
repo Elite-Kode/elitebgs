@@ -27,6 +27,7 @@ const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
 
 const bugsnag = require('./server/bugsnag');
+const swagger = require('./server/swagger');
 
 const bodiesV1 = require('./server/routes/eddb_api/v1/bodies');
 const commoditiesV1 = require('./server/routes/eddb_api/v1/commodities');
@@ -66,6 +67,11 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/api/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger);
+});
+
 app.use('/api/eddb/v1/bodies', bodiesV1);
 app.use('/api/eddb/v1/commodities', commoditiesV1);
 app.use('/api/eddb/v1/factions', factionsV1);
@@ -78,7 +84,7 @@ app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
-app.use('/api/eddb/docs', swaggerUi.serve, swaggerUi.setup(require('./server/swagger')));
+app.use('/api/eddb/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/api-docs.json'));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);

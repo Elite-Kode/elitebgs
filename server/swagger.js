@@ -18,17 +18,41 @@
 
 let swaggerJsDoc = require('swagger-jsdoc');
 
+let host = '';
+
+if (process.env.NODE_ENV === 'development') {
+    host = 'localhost:3001';
+} else if (process.env.NODE_ENV === 'production') {
+    host = 'elitebgs.kodeblox.com';
+}
+
 let swaggerDefinition = {
     info: {
-        title: 'Hello World',
+        title: 'EDDB API',
         version: '1.0.0',
-        description: 'A sample API',
+        description: 'An API for EDDB Data',
+    },
+    host: host,
+    basePath: '/api/eddb/v1/',
+    definitions: {
+        Bodies: {
+            properties: {
+                username: { type: "string" },
+                password: { type: "string" },
+                path: { type: "string" }
+            }
+        }
+    },
+    securityDefinitions: {
+        http: {
+            type: "basic"
+        }
     }
 };
 
 let options = {
     swaggerDefinition: swaggerDefinition,
-    apis: ['./routes/eddb_api/v1/*.js'],
+    apis: ['./server/routes/eddb_api/v1/*.js']
 };
 
 let swaggerSpec = swaggerJsDoc(options);
