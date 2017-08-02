@@ -67,9 +67,14 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/api-docs.json', (req, res, next) => {
+app.use('/api/eddb/v1/api-docs.json', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send(swagger);
+    res.send(swagger.EDDBAPIv1);
+});
+
+app.use('/api/ebgs/v1/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EBGSAPIv1);
 });
 
 app.use('/api/eddb/v1/bodies', bodiesV1);
@@ -84,7 +89,8 @@ app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
-app.use('/api/eddb/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/api-docs.json'));
+app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/eddb/v1/api-docs.json'));
+app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/ebgs/v1/api-docs.json'));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);

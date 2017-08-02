@@ -1,4 +1,24 @@
+/*
+ * KodeBlox Copyright 2017 Sayak Mukhopadhyay
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http: //www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";
+
 module.exports = {
+    _id: { type: "string" },
+    __v: { type: "integer" },
     id: { type: "integer" },
     created_at: { type: "string" },
     updated_at: { type: "string" },
@@ -19,7 +39,7 @@ module.exports = {
     is_main_star: { type: "boolean" },
     age: { type: "integer" },
     solar_masses: { type: "integer" },
-    solar_radius:{ type: "integer" },
+    solar_radius: { type: "integer" },
     catalogue_gliese_id: { type: "string" },
     catalogue_hipp_id: { type: "string" },
     catalogue_hd_id: { type: "string" },
@@ -48,33 +68,29 @@ module.exports = {
     ring_mass: { type: "integer" },
     ring_inner_radius: { type: "integer" },
     ring_outer_radius: { type: "integer" },
-    rings: [{
-        id: Number,
-        created_at: Date,
-        updated_at: Date,
-        name: String,
-        name_lower: { type: String, lowercase: true },
-        semi_major_axis: Number,
-        ring_type_id: Number,
-        ring_type_name: { type: String, lowercase: true },
-        ring_mass: Number,
-        ring_inner_radius: Number,
-        ring_outer_radius: Number
-    }],
-    atmosphere_composition: [{
-        atmosphere_component_id: Number,
-        share: Number,
-        atmosphere_component_name: { type: String, lowercase: true },
-    }],
-    solid_composition: [{
-        solid_component_id: Number,
-        share: Number,
-        solid_component_name: { type: String, lowercase: true },
-    }],
-    materials: [{
-        material_id: Number,
-        share: Number,
-        material_name: { type: String, lowercase: true },
-    }],
+    rings: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/Rings'
+        }
+    },
+    atmosphere_composition: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/AtmosphereComposition'
+        }
+    },
+    solid_composition: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/SolidComposition'
+        }
+    },
+    materials: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/Materials'
+        }
+    },
     is_landable: { type: "boolean" }
 }

@@ -103,6 +103,8 @@ let router = express.Router();
    *         description: An array of bodies in EDDB format
    *         schema:
    *           type: array
+   *           items:
+   *             $ref: '#/definitions/Bodies'
    */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/bodies')

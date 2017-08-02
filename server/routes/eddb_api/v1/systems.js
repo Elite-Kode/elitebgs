@@ -22,6 +22,66 @@ const _ = require('lodash');
 
 let router = express.Router();
 
+/**
+   * @swagger
+   * /systems:
+   *   get:
+   *     description: Get the Systems
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: eddbid
+   *         description: EDDB ID.
+   *         in: query
+   *         type: integer
+   *       - name: name
+   *         description: System name.
+   *         in: query
+   *         type: string
+   *       - name: allegiancename
+   *         description: Name of the allegiance.
+   *         in: query
+   *         type: string
+   *       - name: governmentname
+   *         description: Name of the government type.
+   *         in: query
+   *         type: string
+   *       - name: statename
+   *         description: State the system is in.
+   *         in: query
+   *         type: string
+   *       - name: primaryeconomyname
+   *         description: The primary economy of the system.
+   *         in: query
+   *         type: string
+   *       - name: power
+   *         description: Comma seperated names of powers in influence in the system.
+   *         in: query
+   *         type: string
+   *       - name: powerstatename
+   *         description: Comma seperated states of the powers in influence in the system.
+   *         in: query
+   *         type: string
+   *       - name: permit
+   *         description: Whether the system is permit locked.
+   *         in: query
+   *         type: boolean
+   *       - name: securityname
+   *         description: The name of the security status in the system.
+   *         in: query
+   *         type: string
+   *       - name: idnext
+   *         description: Database id to start the results from.
+   *         in: query
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: An array of systems in EDDB format
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Systems'
+   */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/systems')
         .then(systems => {
