@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { ToolbarService } from './shared/toolbar.service';
-import { ToolbarButton } from './shared/toolbar-button';
+import { Component, OnInit, HostBinding } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
+import { State } from 'clarity-angular';
 import { SystemsService } from './services/systems.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from './fdevids';
@@ -10,50 +11,64 @@ import { FDevIDs } from './fdevids';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements AfterViewInit, OnInit {
-    toolbarButtons: ToolbarButton[];
+export class HomeComponent implements OnInit {
     private systemData: ISystem[] = [];
-    public config: any = {
-        className: ['table-striped', 'table-bordered']
-    };
-    public rows: Array<any> = [];
-    public columns: Array<any> = [
-        { title: 'System Name', name: 'name' },
-        { title: 'System Government', name: 'government' },
-        { title: 'Allegiance', name: 'allegiance' },
-        { title: 'Economy', name: 'primary_economy' },
-        { title: 'State', name: 'state' }
-    ];
-    constructor(private toolbarService: ToolbarService, private systemService: SystemsService) { }
+    private loading = true;
+    private totalRecords = 0;
+    private pageNumber = 1;
+    private tableState: State;
+    private systemForm = new FormGroup({
+        systemName: new FormControl()
+    });
+    @HostBinding('class.content-area') hostClass = false;
+    constructor(
+        private systemService: SystemsService,
+        private router: Router
+    ) { }
 
-    ngOnInit() {
-        this.systemService.getAllSystems().subscribe(systems => {
-            this.systemData = systems.map(responseSystem => {
-                const name = responseSystem.name;
-                const government = FDevIDs.government[responseSystem.government].name;
-                const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
-                const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
-                const state = FDevIDs.state[responseSystem.state].name;
-                return <ISystem>{
-                    name: name,
-                    government: government,
-                    allegiance: allegiance,
-                    primary_economy: primary_economy,
-                    state: state
-                };
-            });
-            this.rows = this.systemData;
+    showSystem(systems) {
+        this.totalRecords = systems.total;
+        this.systemData = systems.docs.map(responseSystem => {
+            const id = responseSystem._id;
+            const name = responseSystem.name;
+            const government = FDevIDs.government[responseSystem.government].name;
+            const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
+            const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
+            const state = FDevIDs.state[responseSystem.state].name;
+            return <ISystem>{
+                id: id,
+                name: name,
+                government: government,
+                allegiance: allegiance,
+                primary_economy: primary_economy,
+                state: state
+            };
         });
     }
 
-    ngAfterViewInit() {
-        this.toolbarButtons = [
-            new ToolbarButton('text', 'EDDB API', 'router', './api/eddb'),
-            new ToolbarButton('text', 'Elite BGS API', 'router', './api/elitebgs')
-        ];
+    refresh(tableState: State, beginsWith = this.systemForm.value.systemName) {
+        this.tableState = tableState;
+        this.loading = true;
+        this.pageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
 
-        this.toolbarService.makeButtons(this.toolbarButtons);
-        this.toolbarService.setTitle('Elite BGS');
-        this.toolbarService.setShowBack(false);
+        if (!beginsWith) {
+            beginsWith = '';
+        }
+
+        this.systemService
+            .getSystems(this.pageNumber.toString(), beginsWith)
+            .subscribe(systems => this.showSystem(systems));
+        this.loading = false;
+    }
+
+    onView(system: ISystem) {
+        this.router.navigate(['/system', system.id]);
+    }
+
+    ngOnInit() {
+        this.hostClass = true;
+        this.systemForm.valueChanges.subscribe(value => {
+            this.refresh(this.tableState, value.systemName);
+        })
     }
 }

@@ -1,0 +1,43 @@
+.elitebgs-logo {
+    background-image: url('../BGSv1.svg');
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 {
+    background-color: #313131;
+}
+
+.main-container.open-hamburger-menu .header .branding .title {
+    color: #fafafa;
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 .nav-link.active {
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 1;
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 .nav-link.active>.nav-text {
+    color: #fafafa;
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 .nav-link {
+    background-color: transparent;
+    opacity: 0.65;
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 .nav-link>.nav-text {
+    color: #fafafa;
+}
+
+.main-container.open-hamburger-menu .header .header-nav.clr-nav-level-1 .nav-link:hover {
+    opacity: 1;
+}
+
+.header .header-nav .nav-link:first-of-type::before,
+.header .header-nav .nav-link:last-of-type::after {
+    content: unset;
+    background: transparent;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    top: 0;
+}

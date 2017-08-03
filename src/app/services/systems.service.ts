@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
@@ -7,7 +7,15 @@ export class SystemsService {
 
     constructor(private http: HttpClient) { }
 
-    getAllSystems(): Observable<any[]> {
-        return this.http.get<any[]>('/api/ebgs/v1/systems');
+    getSystems(page: string, name: string): Observable<any> {
+        return this.http.get<any>('/api/ebgs/v2/systems', {
+            params: new HttpParams().set('page', page).set('beginsWith', name)
+        });
+    }
+
+    getSingleSystemById(id: string): Observable<any> {
+        return this.http.get<any>('/api/ebgs/v2/systems', {
+            params: new HttpParams().set('id', id)
+        });
     }
 }

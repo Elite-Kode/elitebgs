@@ -1,24 +1,15 @@
-import { Component, AfterViewInit } from '@angular/core';
-import { ToolbarService } from './../shared/toolbar.service';
-import { ToolbarButton } from './../shared/toolbar-button';
+import { Component, OnInit, HostBinding } from '@angular/core';
 
 @Component({
-    selector: 'ebgs-api',
+    selector: 'app-ebgs-api',
     templateUrl: './elite-bgs-api.component.html',
     styleUrls: ['./elite-bgs-api.component.scss']
 })
-export class EliteBgsApiComponent implements AfterViewInit {
-    toolbarButtons: ToolbarButton[];
-    constructor(private toolbarService: ToolbarService) { }
+export class EliteBgsApiComponent implements OnInit {
+    @HostBinding('class.content-area') hostClass = false;
+    constructor() { }
 
-    ngAfterViewInit() {
-        this.toolbarButtons = [
-            new ToolbarButton("text", "Home", "router", "/api/elitebgs"),
-            new ToolbarButton("text", "Docs", "external", "https://github.com/SayakMukhopadhyay/elitebgs/wiki")
-        ];
-
-        this.toolbarService.makeButtons(this.toolbarButtons);
-        this.toolbarService.setTitle('Elite BGS API');
-        this.toolbarService.setShowBack(true);
+    ngOnInit() {
+        this.hostClass = true;
     }
 }

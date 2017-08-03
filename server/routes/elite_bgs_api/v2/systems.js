@@ -28,6 +28,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             let query = new Object;
             let page = 1;
 
+            if (req.query.id) {
+                query._id = req.query.id;
+            }
             if (req.query.name) {
                 query.name_lower = req.query.name.toLowerCase();
             }
@@ -53,6 +56,11 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             }
             if (req.query.security) {
                 query.security = req.query.security.toLowerCase();
+            }
+            if (req.query.beginsWith) {
+                query.name_lower = {
+                    $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
+                }
             }
             if (_.isEmpty(query) && req.user.clearance !== 0) {
                 throw new Error("Add at least 1 query parameter to limit traffic");
