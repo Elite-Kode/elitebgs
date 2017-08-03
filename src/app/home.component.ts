@@ -20,7 +20,6 @@ export class HomeComponent implements OnInit {
     private systemForm = new FormGroup({
         systemName: new FormControl()
     });
-    @HostBinding('class.content-area') hostClass = false;
     constructor(
         private systemService: SystemsService,
         private router: Router
@@ -66,7 +65,6 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.hostClass = true;
         this.systemForm.valueChanges.subscribe(value => {
             this.refresh(this.tableState, value.systemName);
         })

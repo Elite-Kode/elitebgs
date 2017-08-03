@@ -6,10 +6,7 @@ import { Component, OnInit, HostBinding } from '@angular/core';
     styleUrls: ['./elite-bgs-api.component.scss']
 })
 export class EliteBgsApiComponent implements OnInit {
-    @HostBinding('class.content-area') hostClass = false;
     constructor() { }
 
-    ngOnInit() {
-        this.hostClass = true;
-    }
+    ngOnInit() { }
 }

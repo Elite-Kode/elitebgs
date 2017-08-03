@@ -11,7 +11,6 @@ import { ISystem } from './system.interface';
 })
 export class SystemViewComponent implements OnInit {
     private systemData: ISystem;
-    @HostBinding('class.content-area') hostClass = false;
     constructor(
         private systemService: SystemsService,
         private router: Router,
@@ -19,7 +18,6 @@ export class SystemViewComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.hostClass = true;
         this.systemService.getSingleSystemById(this.route.snapshot.paramMap.get('systemid')).subscribe(system => {
             const id = system.docs[0]._id;
             const name = system.docs[0].name;
