@@ -27,6 +27,7 @@ module.exports.ebgsSystemPresence = require('./ebgs_system_presence');
 module.exports.ebgsSystems = require('./ebgs_systems');
 module.exports.factions = require('./factions');
 module.exports.materials = require('./materials');
+module.exports.pagination = require('./pagination');
 module.exports.populatedSystemPresence = require('./populated_system_presence');
 module.exports.populatedSystems = require('./populated_systems');
 module.exports.rings = require('./rings');

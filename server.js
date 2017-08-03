@@ -72,9 +72,19 @@ app.use('/api/eddb/v1/api-docs.json', (req, res, next) => {
     res.send(swagger.EDDBAPIv1);
 });
 
+app.use('/api/eddb/v2/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EDDBAPIv2);
+});
+
 app.use('/api/ebgs/v1/api-docs.json', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swagger.EBGSAPIv1);
+});
+
+app.use('/api/ebgs/v2/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EBGSAPIv2);
 });
 
 app.use('/api/eddb/v1/bodies', bodiesV1);
@@ -90,7 +100,9 @@ app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
 app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/eddb/v1/api-docs.json'));
+app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/eddb/v2/api-docs.json'));
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/ebgs/v1/api-docs.json'));
+app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/ebgs/v2/api-docs.json'));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);

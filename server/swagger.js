@@ -28,13 +28,33 @@ if (process.env.NODE_ENV === 'development') {
     host = 'elitebgs.kodeblox.com';
 }
 
-let swaggerDefinitionEDDBAPIv1 = {
+let makeSwaggerSpec = (params) => {
+    let swaggerDefinition = {
+        info: params.info,
+        host: host,
+        basePath: params.basePath,
+        definitions: params.definitions,
+        securityDefinitions: {
+            http: {
+                type: "basic"
+            }
+        }
+    };
+
+    let options = {
+        swaggerDefinition: swaggerDefinition,
+        apis: params.apis
+    };
+
+    return swaggerJsDoc(options);
+}
+
+let paramsEDDBAPIv1 = {
     info: {
         title: 'EDDB API',
         version: '1.0.0',
         description: 'An API for EDDB Data',
     },
-    host: host,
     basePath: '/api/eddb/v1/',
     definitions: {
         AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
@@ -50,27 +70,48 @@ let swaggerDefinitionEDDBAPIv1 = {
         Stations: { properties: swaggerDefinitions.stations },
         Systems: { properties: swaggerDefinitions.systems }
     },
-    securityDefinitions: {
-        http: {
-            type: "basic"
-        }
-    }
-};
-
-let optionsEDDBAPIv1 = {
-    swaggerDefinition: swaggerDefinitionEDDBAPIv1,
     apis: ['./server/routes/eddb_api/v1/*.js']
 };
 
-let swaggerSpecEDDBAPIv1 = swaggerJsDoc(optionsEDDBAPIv1);
+let swaggerSpecEDDBAPIv1 = makeSwaggerSpec(paramsEDDBAPIv1);
 
-let swaggerDefinitionEBGSAPIv1 = {
+let paramsEDDBAPIv2 = {
+    info: {
+        title: 'EDDB API',
+        version: '2.0.0',
+        description: 'An API for EDDB Data',
+    },
+    basePath: '/api/eddb/v2/',
+    definitions: {
+        AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
+        Bodies: { properties: swaggerDefinitions.bodies },
+        Commodities: { properties: swaggerDefinitions.commodities },
+        Factions: { properties: swaggerDefinitions.factions },
+        Materials: { properties: swaggerDefinitions.materials },
+        PopulatedSystemPresence: { properties: swaggerDefinitions.populatedSystemPresence },
+        PopulatedSystems: { properties: swaggerDefinitions.populatedSystems },
+        Rings: { properties: swaggerDefinitions.rings },
+        SolidComposition: { properties: swaggerDefinitions.solidComposition },
+        StationItems: { properties: swaggerDefinitions.stationItems },
+        Stations: { properties: swaggerDefinitions.stations },
+        Systems: { properties: swaggerDefinitions.systems },
+        BodiesPage: { properties: swaggerDefinitions.pagination('Bodies') },
+        FactionsPage: { properties: swaggerDefinitions.pagination('Factions') },
+        PopulatedSystemsPage: { properties: swaggerDefinitions.pagination('PopulatedSystems') },
+        StationsPage: { properties: swaggerDefinitions.pagination('Stations') },
+        SystemsPage: { properties: swaggerDefinitions.pagination('Systems') }
+    },
+    apis: ['./server/routes/eddb_api/v2/*.js']
+};
+
+let swaggerSpecEDDBAPIv2 = makeSwaggerSpec(paramsEDDBAPIv2);
+
+let paramsEBGSAPIv1 = {
     info: {
         title: 'Elite BGS API',
         version: '1.0.0',
         description: 'An API for Elite BGS',
     },
-    host: host,
     basePath: '/api/ebgs/v1/',
     definitions: {
         EBGSFactionHistory: { properties: swaggerDefinitions.ebgsFactionHistory },
@@ -80,19 +121,34 @@ let swaggerDefinitionEBGSAPIv1 = {
         EBGSSystemPresence: { properties: swaggerDefinitions.ebgsSystemPresence },
         EBGSSystems: { properties: swaggerDefinitions.ebgsSystems }
     },
-    securityDefinitions: {
-        http: {
-            type: "basic"
-        }
-    }
-};
-
-let optionsEBGSAPIv1 = {
-    swaggerDefinition: swaggerDefinitionEBGSAPIv1,
     apis: ['./server/routes/elite_bgs_api/v1/*.js']
 };
 
-let swaggerSpecEBGSAPIv1 = swaggerJsDoc(optionsEBGSAPIv1);
+let swaggerSpecEBGSAPIv1 = makeSwaggerSpec(paramsEBGSAPIv1);
+
+let paramsEBGSAPIv2 = {
+    info: {
+        title: 'Elite BGS API',
+        version: '2.0.0',
+        description: 'An API for Elite BGS',
+    },
+    basePath: '/api/ebgs/v2/',
+    definitions: {
+        EBGSFactionHistory: { properties: swaggerDefinitions.ebgsFactionHistory },
+        EBGSFactionPresence: { properties: swaggerDefinitions.ebgsFactionPresence },
+        EBGSFactions: { properties: swaggerDefinitions.ebgsFactions },
+        EBGSState: { properties: swaggerDefinitions.ebgsState },
+        EBGSSystemPresence: { properties: swaggerDefinitions.ebgsSystemPresence },
+        EBGSSystems: { properties: swaggerDefinitions.ebgsSystems },
+        EBGSFactionsPage: { properties: swaggerDefinitions.pagination('EBGSFactions') },
+        EBGSSystemsPage: { properties: swaggerDefinitions.pagination('EBGSSystems') }
+    },
+    apis: ['./server/routes/elite_bgs_api/v2/*.js']
+};
+
+let swaggerSpecEBGSAPIv2 = makeSwaggerSpec(paramsEBGSAPIv2);
 
 module.exports.EDDBAPIv1 = swaggerSpecEDDBAPIv1;
+module.exports.EDDBAPIv2 = swaggerSpecEDDBAPIv2;
 module.exports.EBGSAPIv1 = swaggerSpecEBGSAPIv1;
+module.exports.EBGSAPIv2 = swaggerSpecEBGSAPIv2;
