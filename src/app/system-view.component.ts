@@ -1,13 +1,12 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { SystemsService } from './services/systems.service';
-import { FDevIDs } from './fdevids';
+import { FDevIDs } from './utilities/fdevids';
 import { ISystem } from './system.interface';
 
 @Component({
     selector: 'app-system-view',
-    templateUrl: './system-view.component.html',
-    styleUrls: ['./system-view.component.scss']
+    templateUrl: './system-view.component.html'
 })
 export class SystemViewComponent implements OnInit {
     private systemData: ISystem;

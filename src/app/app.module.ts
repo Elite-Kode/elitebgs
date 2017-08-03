@@ -11,9 +11,13 @@ import { EliteBgsModule } from './elite_bgs_api/elite-bgs-api.module';
 import { AppRoutingModule } from './app-routing.module';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 import { HomeComponent } from './home.component';
+import { SystemListComponent } from './system-list.component';
 import { SystemViewComponent } from './system-view.component';
+import { FactionListComponent } from './faction-list.component';
+import { FactionViewComponent } from './faction-view.component';
 
 import { SystemsService } from './services/systems.service';
+import { FactionsService } from './services/factions.service';
 import { ApiInterceptor } from './api.interceptor';
 
 @NgModule({
@@ -21,7 +25,10 @@ import { ApiInterceptor } from './api.interceptor';
         AppComponent,
         HomeComponent,
         PageNotFoundComponent,
-        SystemViewComponent
+        SystemListComponent,
+        SystemViewComponent,
+        FactionListComponent,
+        FactionViewComponent
     ],
     imports: [
         BrowserModule,
@@ -33,7 +40,7 @@ import { ApiInterceptor } from './api.interceptor';
         AppRoutingModule,
         ClarityModule.forRoot()
     ],
-    providers: [SystemsService, {
+    providers: [SystemsService, FactionsService, {
         provide: HTTP_INTERCEPTORS,
         useClass: ApiInterceptor,
         multi: true,
