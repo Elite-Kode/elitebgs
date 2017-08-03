@@ -1,15 +1,28 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-ebgs-api',
     templateUrl: './elite-bgs-api.component.html',
     styleUrls: ['./elite-bgs-api.component.scss']
 })
-export class EliteBgsApiComponent implements OnInit {
-    @HostBinding('class.content-area') hostClass = false;
+export class EliteBgsApiComponent {
+    overviewActive = true;
+    docsActive = false;
+
     constructor() { }
 
-    ngOnInit() {
-        this.hostClass = true;
+    onTabIndexChanged(index: number) {
+        switch (index) {
+            case 0: {
+                this.overviewActive = true;
+                this.docsActive = false;
+                break;
+            }
+            case 1: {
+                this.docsActive = true;
+                this.overviewActive = false;
+                break;
+            }
+        }
     }
 }

@@ -1,4 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+
 .component {
     padding-bottom: 24px;
+}
+
+iframe {
+    min-width: -moz-available;
+    height: 80vh;
 }
