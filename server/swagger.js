@@ -25,7 +25,7 @@ let host = '';
 if (process.env.NODE_ENV === 'development') {
     host = 'localhost:3001';
 } else if (process.env.NODE_ENV === 'production') {
-    host = 'elitebgs.kodeblox.com';
+    host = 'localhost:4001';
 }
 
 let makeSwaggerSpec = (params) => {

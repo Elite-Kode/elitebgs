@@ -99,10 +99,17 @@ app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
 app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
-app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/eddb/v1/api-docs.json'));
-app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/eddb/v2/api-docs.json'));
-app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/ebgs/v1/api-docs.json'));
-app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, 'http://localhost:3001/api/ebgs/v2/api-docs.json'));
+let host = '';
+if (process.env.NODE_ENV === 'development') {
+    host = 'localhost:3001';
+} else if (process.env.NODE_ENV === 'production') {
+    host = 'localhost:4001';
+}
+
+app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v1/api-docs.json`));
+app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v2/api-docs.json`));
+app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
+app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
