@@ -22,6 +22,90 @@ const _ = require('lodash');
 
 let router = express.Router();
 
+/**
+   * @swagger
+   * /bodies:
+   *   get:
+   *     description: Get the Bodies
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: eddbid
+   *         description: EDDB ID.
+   *         in: query
+   *         type: integer
+   *       - name: name
+   *         description: Body name.
+   *         in: query
+   *         type: string
+   *       - name: materials
+   *         description: Comma seperated material names.
+   *         in: query
+   *         type: string
+   *       - name: systemname
+   *         description: System name to filter the body.
+   *         in: query
+   *         type: string
+   *       - name: reservetypename
+   *         description: Reserve type of the system.
+   *         in: query
+   *         type: string
+   *       - name: ispopulated
+   *         description: Whether the system is populated.
+   *         in: query
+   *         type: boolean
+   *       - name: power
+   *         description: Name of the power in influence in the system.
+   *         in: query
+   *         type: string
+   *       - name: ringtypename
+   *         description: Name of type of ring.
+   *         in: query
+   *         type: string
+   *       - name: bodygroupname
+   *         description: Comma seperated names of group of body.
+   *         in: query
+   *         type: string
+   *       - name: hasrings
+   *         description: Whether the body has rings.
+   *         in: query
+   *         type: boolean
+   *       - name: bodytypename
+   *         description: Comma seperated names of type of body.
+   *         in: query
+   *         type: string
+   *       - name: distancearrival
+   *         description: Distance to arrival of the body.
+   *         in: query
+   *         type: integer
+   *       - name: ismainstar
+   *         description: Whether the star is a main star.
+   *         in: query
+   *         type: boolean
+   *       - name: specclass
+   *         description: Comma seperated specular classes of the star.
+   *         in: query
+   *         type: string
+   *       - name: lumoclass
+   *         description: Comma seperated luminosity classes of the star.
+   *         in: query
+   *         type: string
+   *       - name: landable
+   *         description: Whether the body is landable
+   *         in: query
+   *         type: boolean
+   *       - name: idnext
+   *         description: Database id to start the results from.
+   *         in: query
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: An array of bodies in EDDB format
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Bodies'
+   */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/bodies')
         .then(bodies => {

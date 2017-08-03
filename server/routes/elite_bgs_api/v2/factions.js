@@ -22,6 +22,62 @@ const _ = require('lodash');
 
 let router = express.Router();
 
+/**
+   * @swagger
+   * /factions:
+   *   get:
+   *     description: Get the Factions
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: id
+   *         description: ID of the document.
+   *         in: query
+   *         type: string
+   *       - name: name
+   *         description: System name.
+   *         in: query
+   *         type: string
+   *       - name: allegiance
+   *         description: Name of the allegiance.
+   *         in: query
+   *         type: string
+   *       - name: government
+   *         description: Name of the government type.
+   *         in: query
+   *         type: string
+   *       - name: beginswith
+   *         description: Starting characters of the faction.
+   *         in: query
+   *         type: string
+   *       - name: state
+   *         description: State the system is in.
+   *         in: query
+   *         type: string
+   *       - name: system
+   *         description: The system name to fetch the history data for.
+   *         in: query
+   *         type: string
+   *       - name: timemin
+   *         description: Minimum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
+   *       - name: timemax
+   *         description: Maximum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
+   *       - name: page
+   *         description: Page no of response.
+   *         in: query
+   *         type: integer
+   *     responses:
+   *       200:
+   *         description: An array of factions with historical data
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/EBGSFactionsPage'
+   */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/ebgs_factions')
         .then(factions => {

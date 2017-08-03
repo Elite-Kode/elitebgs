@@ -22,6 +22,58 @@ const _ = require('lodash');
 
 let router = express.Router();
 
+/**
+   * @swagger
+   * /factions:
+   *   get:
+   *     description: Get the Factions
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: eddbid
+   *         description: EDDB ID.
+   *         in: query
+   *         type: integer
+   *       - name: name
+   *         description: Faction name.
+   *         in: query
+   *         type: string
+   *       - name: allegiancename
+   *         description: Name of the allegiance.
+   *         in: query
+   *         type: string
+   *       - name: governmentname
+   *         description: Name of the government type.
+   *         in: query
+   *         type: string
+   *       - name: statename
+   *         description: State the faction is in.
+   *         in: query
+   *         type: string
+   *       - name: playerfaction
+   *         description: Whether the faction is a player faction.
+   *         in: query
+   *         type: boolean
+   *       - name: power
+   *         description: Name of the power in influence in a system the faction is in.
+   *         in: query
+   *         type: string
+   *       - name: homesystemname
+   *         description: Name of the home system of the faction.
+   *         in: query
+   *         type: string
+   *       - name: idnext
+   *         description: Database id to start the results from.
+   *         in: query
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: An array of factions in EDDB format
+   *         schema:
+   *           type: array
+   *           items:
+   *             $ref: '#/definitions/Factions'
+   */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/factions')
         .then(factions => {
