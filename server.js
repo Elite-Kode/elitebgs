@@ -40,6 +40,7 @@ const insertDumpsV1 = require('./server/routes/eddb_api/v1/insert_dumps');
 const updateDumpsV1 = require('./server/routes/eddb_api/v1/update_dumps');
 const downloadInsertV1 = require('./server/routes/eddb_api/v1/download_insert');
 const downloadUpdateV1 = require('./server/routes/eddb_api/v1/download_update');
+const downloadUpdateV2 = require('./server/routes/eddb_api/v2/download_update');
 
 const ebgsFactionsV1 = require('./server/routes/elite_bgs_api/v1/factions');
 const ebgsSystemsV1 = require('./server/routes/elite_bgs_api/v1/systems');
@@ -119,6 +120,7 @@ app.use('/api/eddb/v2/factions', factionsV2);
 app.use('/api/eddb/v2/populatedsystems', populatedSystemsV2);
 app.use('/api/eddb/v2/stations', stationsV2);
 app.use('/api/eddb/v2/systems', systemsV2);
+app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
 
 app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
 app.use('/api/ebgs/v2/systems', ebgsSystemsV2);

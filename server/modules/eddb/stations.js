@@ -144,6 +144,52 @@ function Stations() {
             })
     }
 
+    this.downloadUpdate = function () {
+        let recordsUpdated = 0;
+        new utilities.downloadUpdate('https://eddb.io/archive/v5/stations.json', 'json')
+            .on('start', response => {
+                console.log(`EDDB station dump started with status code ${response.statusCode}`);
+                this.emit('started', {
+                    response: response,
+                    insertion: "started",
+                    type: 'station'
+                });
+            })
+            .on('json', json => {
+                json.import_commodities = objectify(json.import_commodities);
+                json.export_commodities = objectify(json.export_commodities);
+                json.prohibited_commodities = objectify(json.prohibited_commodities);
+                json.economies = objectify(json.economies);
+                json.selling_ships = objectify(json.selling_ships);
+                stationsModel
+                    .then(model => {
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                recordsUpdated++;
+                            })
+                            .catch((err) => {
+                                this.emit('error', err);
+                            });
+                    })
+                    .catch(err => {
+                        this.emit('error', err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
+    }
+
     let objectify = ref => {
         let entities = ref;
         ref = [];

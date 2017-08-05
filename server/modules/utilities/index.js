@@ -21,3 +21,4 @@ module.exports.jsonlToJson = require('./jsonl_to_json');
 module.exports.jsonParse = require('./json_parse');
 module.exports.download = require('./download');
 module.exports.fileSize = require('./file_size');
+module.exports.downloadUpdate = require('./download_update.js');

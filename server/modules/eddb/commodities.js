@@ -132,6 +132,47 @@ function Commodities() {
             .on('error', err => {
                 this.emit('error', err);
             })
+    };
+
+    this.downloadUpdate = function () {
+        let recordsUpdated = 0;
+        new utilities.downloadUpdate('https://eddb.io/archive/v5/listings.csv', 'csv')
+            .on('start', response => {
+                console.log(`EDDB commodity dump started with status code ${response.statusCode}`);
+                this.emit('started', {
+                    response: response,
+                    insertion: "started",
+                    type: 'commodity'
+                });
+            })
+            .on('json', json => {
+                commoditiesModel
+                    .then(model => {
+                        model.findOneAndUpdate(
+                            { id: json.id },
+                            json,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                recordsUpdated++;
+                            })
+                            .catch((err) => {
+                                this.emit('error', err);
+                            });
+                    })
+                    .catch(err => {
+                        this.emit('error', err);
+                    });
+            })
+            .on('end', () => {
+                console.log(`${recordsUpdated} records updated`);
+                this.emit('done', recordsUpdated);
+            })
+            .on('error', err => {
+                this.emit('error', err);
+            })
     }
 }
 
