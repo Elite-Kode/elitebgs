@@ -1,0 +1,33 @@
+<div class="content-container">
+    <div class="content-area">
+        <section *ngIf="sideNavActive['Home']">
+            <div class="card" *ngFor="let path of paths">
+                <div class="card-title">Endpoint {{path[0]}}</div>
+                <div class="card-text">
+                    Method
+                </div>
+            </div>
+        </section>
+        <ng-container *ngFor="let path of paths">
+            <section *ngIf="sideNavActive[path[0]]">
+                Endpoint {{path[0]}}
+            </section>
+        </ng-container>
+    </div>
+    <nav class="sidenav">
+        <section class="sidenav-content">
+            <a (click)="makeActive('Home')" class="nav-link" [ngClass]="{'active': sideNavActive['Home']}">Home</a>
+            <section class="nav-group collapsible">
+                <input id="paths" type="checkbox">
+                <label for="paths">Paths</label>
+                <ul class="nav-list">
+                    <li (click)="makeActive(path[0])" *ngFor="let path of paths">
+                        <a class="nav-link" [ngClass]="{'active': sideNavActive[path[0]]}">
+                        {{path[0]}}
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </section>
+    </nav>
+</div>

@@ -8,8 +8,8 @@ import { DomSanitizer } from '@angular/platform-browser';
     styleUrls: ['./elite-bgs-api.component.scss']
 })
 export class EliteBgsApiComponent {
-    overviewActive = true;
-    docsActive = false;
+    overviewActive = false;
+    docsActive = true;
     source;
     constructor(private domSanitizer: DomSanitizer) {
         if (environment.production) {
@@ -20,17 +20,7 @@ export class EliteBgsApiComponent {
     }
 
     onTabIndexChanged(index: number) {
-        switch (index) {
-            case 0: {
-                this.overviewActive = true;
-                this.docsActive = false;
-                break;
-            }
-            case 1: {
-                this.docsActive = true;
-                this.overviewActive = false;
-                break;
-            }
-        }
+        this.overviewActive = !this.overviewActive;
+        this.docsActive = !this.docsActive;
     }
 }

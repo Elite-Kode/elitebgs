@@ -12,9 +12,6 @@
                 <h1 style="text-align:left;float:left;">The complete RESTful API for EDDB</h1>
                 <div style="text-align:right;float:right;">
                     <a class="btn btn-primary" href="https://www.paypal.me/SayakMukhopadhyay">Donate</a>
-                    <!-- <a md-icon-button href="https://github.com/SayakMukhopadhyay/elitebgs">
-            <md-icon class="fa fa-github" aria-hidden="true"></md-icon>
-        </a> -->
                 </div>
                 <br style="clear:both;">
                 <h3>
@@ -53,6 +50,6 @@
 </section>
 <section *ngIf="docsActive">
     <div>
-        <iframe [src]="source" frameborder="0"></iframe>
+        <app-swagger-ui [docUrl]="'/api/eddb/v1/api-docs.json'"></app-swagger-ui>
     </div>
 </section>

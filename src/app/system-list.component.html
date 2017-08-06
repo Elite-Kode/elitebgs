@@ -1,41 +1,37 @@
-<div class="content-container">
-    <div class="content-area">
-        <div class="component">
-            <h1>Systems</h1>
-            <form [formGroup]="systemForm" novalidate>
-                <section class="form-block">
-                    <label>Filter System</label>
-                    <div class="form-group">
-                        <label for="systemName">System Name</label>
-                        <input type="text" id="systemName" placeholder="Qa'wakana" formControlName="systemName">
-                    </div>
-                </section>
-            </form>
-            <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
-                <clr-dg-column>System Name</clr-dg-column>
-                <clr-dg-column>System Government</clr-dg-column>
-                <clr-dg-column>Allegiance</clr-dg-column>
-                <clr-dg-column>Economy</clr-dg-column>
-                <clr-dg-column>State</clr-dg-column>
+<div class="component">
+    <h1>Systems</h1>
+    <form [formGroup]="systemForm" novalidate>
+        <section class="form-block">
+            <label>Filter System</label>
+            <div class="form-group">
+                <label for="systemName">System Name</label>
+                <input type="text" id="systemName" placeholder="Qa'wakana" formControlName="systemName">
+            </div>
+        </section>
+    </form>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>System Name</clr-dg-column>
+        <clr-dg-column>System Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>Economy</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
 
-                <clr-dg-placeholder>Unable to find any systems!</clr-dg-placeholder>
+        <clr-dg-placeholder>Unable to find any systems!</clr-dg-placeholder>
 
-                <clr-dg-row *ngFor="let system of systemData">
-                    <clr-dg-action-overflow>
-                        <button class="action-item" (click)="onView(system)">View</button>
-                    </clr-dg-action-overflow>
-                    <clr-dg-cell>{{system.name}}</clr-dg-cell>
-                    <clr-dg-cell>{{system.government}}</clr-dg-cell>
-                    <clr-dg-cell>{{system.allegiance}}</clr-dg-cell>
-                    <clr-dg-cell>{{system.primary_economy}}</clr-dg-cell>
-                    <clr-dg-cell>{{system.state}}</clr-dg-cell>
-                </clr-dg-row>
+        <clr-dg-row *ngFor="let system of systemData">
+            <clr-dg-action-overflow>
+                <button class="action-item" (click)="onView(system)">View</button>
+            </clr-dg-action-overflow>
+            <clr-dg-cell>{{system.name}}</clr-dg-cell>
+            <clr-dg-cell>{{system.government}}</clr-dg-cell>
+            <clr-dg-cell>{{system.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{system.primary_economy}}</clr-dg-cell>
+            <clr-dg-cell>{{system.state}}</clr-dg-cell>
+        </clr-dg-row>
 
-                <clr-dg-footer>
-                    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} systems
-                    <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
-                </clr-dg-footer>
-            </clr-datagrid>
-        </div>
-    </div>
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} systems
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
 </div>

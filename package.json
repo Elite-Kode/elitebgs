@@ -62,6 +62,7 @@
         "@angular/compiler-cli": "^4.3.1",
         "@types/jasmine": "^2.5.53",
         "@types/node": "^8.0.17",
+        "@types/swagger-schema-official": "^2.0.5",
         "codelyzer": "^3.1.2",
         "concurrently": "^3.5.0",
         "cross-env": "^5.0.1",
