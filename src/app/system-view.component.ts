@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { SystemsService } from './services/systems.service';
 import { FDevIDs } from './utilities/fdevids';
@@ -9,6 +9,7 @@ import { ISystem } from './system.interface';
     templateUrl: './system-view.component.html'
 })
 export class SystemViewComponent implements OnInit {
+    @HostBinding('class.u-main-container') mainContainer = true;
     private systemData: ISystem;
     constructor(
         private systemService: SystemsService,

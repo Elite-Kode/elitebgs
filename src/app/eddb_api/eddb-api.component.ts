@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     styleUrls: ['./eddb-api.component.scss']
 })
 export class EddbApiComponent {
+    @HostBinding('class.u-main-container') mainContainer = true;
     overviewActive = false;
     docsActive = true;
     source;

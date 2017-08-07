@@ -13,7 +13,7 @@ import { EliteBgsApiRoutingModule } from './elite-bgs-api-routing.module';
     imports: [
         CommonModule,
         FormsModule,
-        ClarityModule,
+        ClarityModule.forRoot(),
         SwaggerUIModule,
         EliteBgsApiRoutingModule
     ],
