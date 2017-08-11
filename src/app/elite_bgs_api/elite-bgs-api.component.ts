@@ -21,7 +21,13 @@ export class EliteBgsApiComponent {
     }
 
     onTabIndexChanged(index: number) {
-        this.overviewActive = !this.overviewActive;
-        this.docsActive = !this.docsActive;
+        switch (index) {
+            case 0: this.overviewActive = true;
+                this.docsActive = false;
+                break;
+            case 1: this.docsActive = true;
+                this.overviewActive = false;
+                break;
+        }
     }
 }
