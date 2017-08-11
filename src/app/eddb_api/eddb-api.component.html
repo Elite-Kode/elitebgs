@@ -5,9 +5,9 @@
     </clr-tabs>
 </nav>
 
-<div class="content-container">
-    <div class="content-area">
-        <section *ngIf="overviewActive">
+<ng-container *ngIf="overviewActive">
+    <div class="content-container">
+        <div class="content-area">
             <div class="component">
                 <h1 style="text-align:left;float:left;">The complete RESTful API for EDDB</h1>
                 <div style="text-align:right;float:right;">
@@ -45,9 +45,9 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <section *ngIf="docsActive">
-            <app-swagger-ui [docUrl]="'/api/eddb/v1/api-docs.json'"></app-swagger-ui>
-        </section>
+        </div>
     </div>
-</div>
+</ng-container>
+<ng-container *ngIf="docsActive">
+    <app-swagger-ui [docUrl]="'/api/eddb/v1/api-docs.json'"></app-swagger-ui>
+</ng-container>

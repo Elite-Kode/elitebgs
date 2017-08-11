@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Spec, Path } from 'swagger-schema-official';
 
@@ -9,6 +9,7 @@ import { Spec, Path } from 'swagger-schema-official';
 })
 
 export class SwaggerUIComponent implements OnInit {
+    @HostBinding('class.content-container') contentContainer = true;
     @Input() docUrl: string;
     doc: Spec;
     paths: [string, Path][];
