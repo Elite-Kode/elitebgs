@@ -1,7 +1,11 @@
 <nav class="subnav">
-    <clr-tabs (clrTabsCurrentTabIndexChanged)="onTabIndexChanged($event)">
-        <clr-tab-link>Overview</clr-tab-link>
-        <clr-tab-link>Docs</clr-tab-link>
+    <clr-tabs>
+        <clr-tab>
+            <button (click)="onTabClick(0)" clrTabLink>Overview</button>
+        </clr-tab>
+        <clr-tab>
+            <button (click)="onTabClick(1)" clrTabLink>Docs</button>
+        </clr-tab>
     </clr-tabs>
 </nav>
 

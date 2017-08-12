@@ -13,7 +13,7 @@ export class HomeComponent {
 
     constructor() { }
 
-    onTabIndexChanged(index: number) {
+    onTabClick(index: number) {
         switch (index) {
             case 0: {
                 this.systemActive = true;
