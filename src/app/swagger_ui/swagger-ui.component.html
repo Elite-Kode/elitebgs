@@ -1,15 +1,37 @@
 <div class="content-area">
     <section *ngIf="sideNavActive['Home']">
-        <div class="card" *ngFor="let path of paths">
-            <div class="card-title">Endpoint {{path[0]}}</div>
-            <div class="card-text">
-                Method
+        <h1>{{doc.info.title}}</h1>
+        <h3>{{doc.info.description}}</h3>
+        <h4>Version {{doc.info.version}}</h4>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let path of paths;let i=index">
+                <ng-container *ngFor="let method of methods[i][1]">
+                    <div class="card">
+                        <div class="card-header">Endpoint {{path[0]}}</div>
+                        <div class="card-block">
+                            <div class="card-title">
+                                Method {{method}}
+                            </div>
+                            <div class="card-text">
+                                {{path[1][method].description}}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-sm btn-link">Try API</button>
+                        </div>
+                    </div>
+                </ng-container>
             </div>
         </div>
     </section>
     <ng-container *ngFor="let path of paths">
         <section *ngIf="sideNavActive[path[0]]">
             Endpoint {{path[0]}}
+        </section>
+    </ng-container>
+    <ng-container *ngFor="let definition of definitions">
+        <section *ngIf="sideNavActive[definition[0]]">
+            Definition of {{definition[0]}}
         </section>
     </ng-container>
 </div>
@@ -23,6 +45,17 @@
                 <li (click)="makeActive(path[0])" *ngFor="let path of paths">
                     <a class="nav-link" [ngClass]="{'active': sideNavActive[path[0]]}">
                         {{path[0]}}
+                    </a>
+                </li>
+            </ul>
+        </section>
+        <section class="nav-group collapsible">
+            <input id="definitions" type="checkbox">
+            <label for="definitions">Definitions</label>
+            <ul class="nav-list">
+                <li (click)="makeActive(definition[0])" *ngFor="let definition of definitions">
+                    <a class="nav-link" [ngClass]="{'active': sideNavActive[definition[0]]}">
+                        {{definition[0]}}
                     </a>
                 </li>
             </ul>

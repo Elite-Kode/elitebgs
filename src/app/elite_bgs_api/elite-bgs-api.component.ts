@@ -9,8 +9,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class EliteBgsApiComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
-    overviewActive = false;
-    docsActive = true;
+    overviewActive = true;
+    docsActive = false;
     source;
     constructor(private domSanitizer: DomSanitizer) {
         if (environment.production) {
