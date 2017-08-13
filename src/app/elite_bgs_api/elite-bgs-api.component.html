@@ -1,20 +1,21 @@
 <nav class="subnav">
-    <clr-tabs (clrTabsCurrentTabIndexChanged)="onTabIndexChanged($event)">
-        <clr-tab-link>Overview</clr-tab-link>
-        <clr-tab-link>Docs</clr-tab-link>
+    <clr-tabs>
+        <clr-tab>
+            <button (click)="onTabClick(0)" clrTabLink>Overview</button>
+        </clr-tab>
+        <clr-tab>
+            <button (click)="onTabClick(1)" clrTabLink>Docs</button>
+        </clr-tab>
     </clr-tabs>
 </nav>
 
-<section *ngIf="overviewActive">
+<ng-container *ngIf="overviewActive">
     <div class="content-container">
         <div class="content-area">
             <div class="component">
                 <h1 style="text-align:left;float:left;">A Historical API</h1>
                 <div style="text-align:right;float:right;">
                     <a class="btn btn-primary" href="https://www.paypal.me/SayakMukhopadhyay">Donate</a>
-                    <!-- <a md-icon-button href="https://github.com/SayakMukhopadhyay/elitebgs">
-            <md-icon class="fa fa-github" aria-hidden="true"></md-icon>
-        </a> -->
                 </div>
                 <br style="clear:both;">
                 <h3>
@@ -42,9 +43,7 @@
             </div>
         </div>
     </div>
-</section>
-<section *ngIf="docsActive">
-    <div>
-        <iframe [src]="source" frameborder="0"></iframe>
-    </div>
-</section>
+</ng-container>
+<ng-container *ngIf="docsActive">
+    <app-swagger-ui [docSpecs]="specs"></app-swagger-ui>
+</ng-container>

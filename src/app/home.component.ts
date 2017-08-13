@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 
 @Component({
     selector: 'app-home',
@@ -6,12 +6,14 @@ import { Component } from '@angular/core';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
+    @HostBinding('class.u-main-container') mainContainer = true;
+
     systemActive = true;
     factionActive = false;
 
     constructor() { }
 
-    onTabIndexChanged(index: number) {
+    onTabClick(index: number) {
         switch (index) {
             case 0: {
                 this.systemActive = true;

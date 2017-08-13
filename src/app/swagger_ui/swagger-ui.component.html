@@ -1,0 +1,136 @@
+<div class="content-area">
+    <section *ngIf="sideNavActive['Home']">
+        <clr-dropdown>
+            <button type="button" class="btn btn-outline-primary" clrDropdownTrigger>
+                {{currentVersion.versionName}}
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu clrPosition="bottom-left" *clrIfOpen>
+                <button (click)="onVersionSelect(i)" type="button" clrDropdownItem *ngFor="let spec of docSpecs;let i = index">{{spec.versionName}}</button>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+        <h1>{{doc.info.title}}</h1>
+        <h3>{{doc.info.description}}</h3>
+        <h4>Version {{doc.info.version}}</h4>
+        <a href="{{currentVersion.specLocation}}">Go to Spec</a>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let path of paths;let i=index">
+                <ng-container *ngFor="let method of getMethods(path[0])">
+                    <div class="card">
+                        <div class="card-header">Endpoint {{path[0]}}</div>
+                        <div class="card-block">
+                            <div class="card-title">
+                                Method {{method}}
+                            </div>
+                            <div class="card-text">
+                                {{path[1][method].description}}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-sm btn-link">Try API</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </section>
+    <ng-container *ngFor="let path of paths">
+        <section *ngIf="sideNavActive[path[0]]">
+            <h1>Endpoint {{path[0]}}</h1>
+            <h3>General Information</h3>
+            <clr-tabs>
+                <clr-tab *ngFor="let method of getMethods(path[0])">
+                    <button clrTabLink>{{method}}</button>
+                    <clr-tab-content *clrIfActive>
+                        <h3>{{path[1][method].description}}</h3>
+                        <section>
+                            <h4>Parameters</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter Name</th>
+                                        <th>Parameter Description</th>
+                                        <th>Parameter Type</th>
+                                        <th>Data Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let parameter of path[1][method].parameters">
+                                        <td>{{parameter.name}}</td>
+                                        <td>{{parameter.description}}</td>
+                                        <td>{{parameter.in}}</td>
+                                        <td>{{parameter.type}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                        <section>
+                            <h4>Response Content Types</h4>
+                            <ul class="list-unstyled">
+                                <li *ngFor="let responseType of path[1][method].produces">{{responseType}}</li>
+                            </ul>
+                        </section>
+                        <section>
+                            <h4>Responses</h4>
+                            <table class="table table-vertical">
+                                <tbody>
+                                    <tr *ngFor="let responseType of getResponses(path[0], method)">
+                                        <th>{{responseType}}</th>
+                                        <td>{{path[1][method].responses[responseType].description}}</td>
+                                        <td>{{getResponseSchema(path[1][method].responses[responseType].schema)}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    </clr-tab-content>
+                </clr-tab>
+            </clr-tabs>
+        </section>
+    </ng-container>
+    <ng-container *ngFor="let definition of definitions">
+        <section *ngIf="sideNavActive[definition[0]]">
+            Definition of {{definition[0]}}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Property Name</th>
+                        <th>Property Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let property of getProperties(definition[0])">
+                        <td>{{property}}</td>
+                        <td>{{definition[1].properties[property].type}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </ng-container>
+</div>
+<nav class="sidenav">
+    <section class="sidenav-content">
+        <a (click)="makeActive('Home')" class="nav-link" [ngClass]="{'active': sideNavActive['Home']}">Home</a>
+        <section class="nav-group collapsible">
+            <input id="paths" type="checkbox">
+            <label for="paths">Paths</label>
+            <ul class="nav-list">
+                <li (click)="makeActive(path[0])" *ngFor="let path of paths">
+                    <a class="nav-link" [ngClass]="{'active': sideNavActive[path[0]]}">
+                        {{path[0]}}
+                    </a>
+                </li>
+            </ul>
+        </section>
+        <section class="nav-group collapsible">
+            <input id="definitions" type="checkbox">
+            <label for="definitions">Definitions</label>
+            <ul class="nav-list">
+                <li (click)="makeActive(definition[0])" *ngFor="let definition of definitions">
+                    <a class="nav-link" [ngClass]="{'active': sideNavActive[definition[0]]}">
+                        {{definition[0]}}
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </section>
+</nav>

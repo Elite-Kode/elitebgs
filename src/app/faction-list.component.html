@@ -1,37 +1,33 @@
-<div class="content-container">
-    <div class="content-area">
-        <div class="component">
-            <h1>Factions</h1>
-            <form [formGroup]="factionForm" novalidate>
-                <section class="form-block">
-                    <label>Filter Faction</label>
-                    <div class="form-group">
-                        <label for="factionName">Faction Name</label>
-                        <input type="text" id="factionName" placeholder="Knights of Karma" formControlName="factionName">
-                    </div>
-                </section>
-            </form>
-            <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
-                <clr-dg-column>Faction Name</clr-dg-column>
-                <clr-dg-column>Faction Government</clr-dg-column>
-                <clr-dg-column>Allegiance</clr-dg-column>
+<div class="component">
+    <h1>Factions</h1>
+    <form [formGroup]="factionForm" novalidate>
+        <section class="form-block">
+            <label>Filter Faction</label>
+            <div class="form-group">
+                <label for="factionName">Faction Name</label>
+                <input type="text" id="factionName" placeholder="Knights of Karma" formControlName="factionName">
+            </div>
+        </section>
+    </form>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>Faction Name</clr-dg-column>
+        <clr-dg-column>Faction Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
 
-                <clr-dg-placeholder>Unable to find any Factions!</clr-dg-placeholder>
+        <clr-dg-placeholder>Unable to find any Factions!</clr-dg-placeholder>
 
-                <clr-dg-row *ngFor="let faction of factionData">
-                    <clr-dg-action-overflow>
-                        <button class="action-item" (click)="onView(faction)">View</button>
-                    </clr-dg-action-overflow>
-                    <clr-dg-cell>{{faction.name}}</clr-dg-cell>
-                    <clr-dg-cell>{{faction.government}}</clr-dg-cell>
-                    <clr-dg-cell>{{faction.allegiance}}</clr-dg-cell>
-                </clr-dg-row>
+        <clr-dg-row *ngFor="let faction of factionData">
+            <clr-dg-action-overflow>
+                <button class="action-item" (click)="onView(faction)">View</button>
+            </clr-dg-action-overflow>
+            <clr-dg-cell>{{faction.name}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.government}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.allegiance}}</clr-dg-cell>
+        </clr-dg-row>
 
-                <clr-dg-footer>
-                    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} factions
-                    <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
-                </clr-dg-footer>
-            </clr-datagrid>
-        </div>
-    </div>
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} factions
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
 </div>
