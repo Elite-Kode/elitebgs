@@ -157,16 +157,27 @@ function Journal() {
             if (message.Factions) {
                 ebgsSystemsV3Model
                     .then(model => {
-                        model.findOne({
-                            name_lower: message.StarSystem.toLowerCase(),
-                            x: this.correctCoordinates(message.StarPos[0]),
-                            y: this.correctCoordinates(message.StarPos[1]),
-                            z: this.correctCoordinates(message.StarPos[2])
-                        }).lean().then(system => {
+                        model.findOne(
+                            {
+                                name_lower: message.StarSystem.toLowerCase(),
+                                x: this.correctCoordinates(message.StarPos[0]),
+                                y: this.correctCoordinates(message.StarPos[1]),
+                                z: this.correctCoordinates(message.StarPos[2])
+                            },
+                            { history: 0 }
+                        ).lean().then(system => {
                             let hasEddbId = false;
                             let systemObject = {};
                             let historySubObject = {};
                             let eddbIdPromise;
+                            let factionArray = [];
+                            message.Factions.forEach(faction => {
+                                let factionObject = {
+                                    name: faction.Name,
+                                    name_lower: faction.Name.toLowerCase()
+                                };
+                                factionArray.push(factionObject);
+                            });
                             if (system) {   // System exists in db
                                 if (!system.eddb_id) {
                                     eddbIdPromise = this.getEDDBId(message.StarSystem);
@@ -178,13 +189,15 @@ function Journal() {
                                     system.allegiance !== message.SystemAllegiance.toLowerCase() ||
                                     system.state !== message.FactionState.toLowerCase() ||
                                     system.security !== message.SystemSecurity.toLowerCase() ||
-                                    system.controlling_minor_faction !== message.SystemFaction.toLowerCase()) {
+                                    system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
+                                    !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
 
                                     systemObject.government = message.SystemGovernment;
                                     systemObject.allegiance = message.SystemAllegiance;
                                     systemObject.state = message.FactionState;
                                     systemObject.security = message.SystemSecurity;
                                     systemObject.controlling_minor_faction = message.SystemFaction;
+                                    systemObject.factions = factionArray;
                                     systemObject.updated_at = message.timestamp;
 
                                     historySubObject.updated_at = message.timestamp;
@@ -193,6 +206,9 @@ function Journal() {
                                     historySubObject.state = message.FactionState;
                                     historySubObject.security = message.SystemSecurity;
                                     historySubObject.controlling_minor_faction = message.SystemFaction;
+                                    historySubObject.factions = factionArray;
+                                } else {
+                                    systemObject.updated_at = message.timestamp;
                                 }
                             } else {
                                 eddbIdPromise = this.getEDDBId(message.StarSystem);
@@ -207,6 +223,7 @@ function Journal() {
                                     state: message.FactionState,
                                     security: message.SystemSecurity,
                                     controlling_minor_faction: message.SystemFaction,
+                                    factions: factionArray,
                                     updated_at: message.timestamp
                                 };
 
@@ -216,13 +233,16 @@ function Journal() {
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
                                     security: message.SystemSecurity,
-                                    controlling_minor_faction: message.SystemFaction
+                                    controlling_minor_faction: message.SystemFaction,
+                                    factions: factionArray
                                 };
                             }
-                            if (!_.isEmpty(systemObject) && !_.isEmpty(historySubObject)) {
+                            if (!_.isEmpty(historySubObject)) {
                                 systemObject["$addToSet"] = {
                                     history: historySubObject
                                 }
+                            }
+                            if (!_.isEmpty(systemObject)) {
                                 if (hasEddbId) {
                                     model.findOneAndUpdate(
                                         {
@@ -269,6 +289,10 @@ function Journal() {
                     .catch(err => {
                         console.log(err);
                     });
+                // ebgsFactionsV3Model
+                //     .then(model => {
+
+                //     })
             }
         }
     }

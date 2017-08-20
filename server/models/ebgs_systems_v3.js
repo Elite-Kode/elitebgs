@@ -36,6 +36,11 @@ module.exports = new Promise((resolve, reject) => {
         state: { type: String, lowercase: true, index: true },
         security: { type: String, lowercase: true, index: true },
         controlling_minor_faction: { type: String, lowercase: true, index: true },
+        factions: [{
+            _id: false,
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }],
         updated_at: Date,
         history: [{
             _id: false,
@@ -44,7 +49,12 @@ module.exports = new Promise((resolve, reject) => {
             allegiance: { type: String, lowercase: true },
             state: { type: String, lowercase: true },
             security: { type: String, lowercase: true },
-            controlling_minor_faction: { type: String, lowercase: true }
+            controlling_minor_faction: { type: String, lowercase: true },
+            factions: [{
+                _id: false,
+                name: String,
+                name_lower: { type: String, lowercase: true }
+            }]
         }]
     }, { runSettersOnQuery: true });
 
