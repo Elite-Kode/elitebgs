@@ -62,6 +62,11 @@ module.exports = new Promise((resolve, reject) => {
                 _id: false,
                 state: { type: String, lowercase: true },
                 trend: Number
+            }],
+            systems: [{
+                _id: false,
+                name: String,
+                name_lower: { type: String, lowercase: true }
             }]
         }]
     }, { runSettersOnQuery: true });
