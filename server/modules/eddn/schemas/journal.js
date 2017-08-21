@@ -289,10 +289,30 @@ function Journal() {
                     .catch(err => {
                         console.log(err);
                     });
-                // ebgsFactionsV3Model
-                //     .then(model => {
-
-                //     })
+                ebgsFactionsV3Model
+                    .then(model => {
+                        let factionsInSystem = new Promise((resolve, reject) => {
+                            model.find(
+                                {
+                                    faction_presence:
+                                    {
+                                        $elemMatch:
+                                        {
+                                            name_lower: message.StarSystem.toLowerCase()
+                                        }
+                                    }
+                                },
+                                { _id: 0, name: 1, name_lower: 1 }
+                            ).lean().then(factions => {
+                                resolve(factions);
+                            }).catch(err => {
+                                reject(err);
+                            })
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             }
         }
     }
