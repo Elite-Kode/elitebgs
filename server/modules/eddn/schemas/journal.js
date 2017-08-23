@@ -155,6 +155,14 @@ function Journal() {
     this.trackSystemV3 = function (message) {
         if (message.event === "FSDJump" || message.event === "Location") {
             if (message.Factions) {
+                let factionArray = [];
+                message.Factions.forEach(faction => {
+                    let factionObject = {
+                        name: faction.Name,
+                        name_lower: faction.Name.toLowerCase()
+                    };
+                    factionArray.push(factionObject);
+                });
                 ebgsSystemsV3Model
                     .then(model => {
                         model.findOne(
@@ -170,14 +178,6 @@ function Journal() {
                             let systemObject = {};
                             let historySubObject = {};
                             let eddbIdPromise;
-                            let factionArray = [];
-                            message.Factions.forEach(faction => {
-                                let factionObject = {
-                                    name: faction.Name,
-                                    name_lower: faction.Name.toLowerCase()
-                                };
-                                factionArray.push(factionObject);
-                            });
                             if (system) {   // System exists in db
                                 if (!system.eddb_id) {
                                     eddbIdPromise = this.getEDDBId(message.StarSystem);
@@ -291,24 +291,123 @@ function Journal() {
                     });
                 ebgsFactionsV3Model
                     .then(model => {
-                        let factionsInSystem = new Promise((resolve, reject) => {
+                        // let factionsInSystem = new Promise((resolve, reject) => {
+                        //     model.find(
+                        //         {
+                        //             faction_presence:
+                        //             {
+                        //                 $elemMatch:
+                        //                 {
+                        //                     name_lower: message.StarSystem.toLowerCase()
+                        //                 }
+                        //             }
+                        //         },
+                        //         { _id: 0, name: 1, name_lower: 1 }
+                        //     ).lean().then(factions => {
+                        //         resolve(factions);
+                        //     }).catch(err => {
+                        //         reject(err);
+                        //     })
+                        // });
+                        model.find(
+                            {
+                                faction_presence:
+                                {
+                                    $elemMatch:
+                                    {
+                                        name_lower: message.StarSystem.toLowerCase()
+                                    }
+                                }
+                            },
+                            { _id: 0, name: 1, name_lower: 1 }
+                        ).lean().then(factions => {
+                            console.log(factionArray);
+                            console.log(factions);
+
+                            let messageFactionsLower = [];
+                            message.Factions.forEach(faction => {
+                                messageFactionsLower.push(faction.Name.toLowerCase());
+                            });
+
                             model.find(
                                 {
-                                    faction_presence:
-                                    {
-                                        $elemMatch:
-                                        {
-                                            name_lower: message.StarSystem.toLowerCase()
-                                        }
+                                    name_lower: {
+                                        $in: messageFactionsLower
                                     }
                                 },
-                                { _id: 0, name: 1, name_lower: 1 }
-                            ).lean().then(factions => {
-                                resolve(factions);
-                            }).catch(err => {
-                                reject(err);
+                                { history: 0 }
+                            ).lean().then(factionsAllDetails => {
+                                let dbFactionsLower = [];
+
+                                factionsAllDetails.forEach(faction => {
+                                    dbFactionsLower.push(faction.name_lower);
+                                });
+
+                                let notInDb = _.difference(messageFactionsLower, dbFactionsLower);
+                                notInDb.forEach(factionNameLower => {
+                                    message.Factions.forEach(messageFaction => {
+                                        if (messageFaction.Name.toLowerCase() === factionNameLower) {
+                                            let pendingStates = [];
+                                            if (messageFaction.PendingStates) {
+                                                messageFaction.PendingStates.forEach(pendingState => {
+                                                    let pendingStateObject = {
+                                                        state: pendingState.State,
+                                                        trend: pendingState.Trend
+                                                    };
+                                                    pendingStates.push(pendingStateObject);
+                                                });
+                                            };
+                                            let recoveringStates = [];
+                                            if (messageFaction.RecoveringStates) {
+                                                messageFaction.RecoveringStates.forEach(recoveringState => {
+                                                    let recoveringStateObject = {
+                                                        state: recoveringState.State,
+                                                        trend: recoveringState.Trend
+                                                    };
+                                                    recoveringStates.push(recoveringStateObject);
+                                                });
+                                            };
+
+                                            let factionObject = {
+                                                name: messageFaction.Name,
+                                                name_lower: messageFaction.Name.toLowerCase(),
+                                                updated_at: message.timestamp,
+                                                faction_presence: [{
+                                                    system_name: message.StarSystem,
+                                                    system_name_lower: message.StarSystem.toLowerCase(),
+                                                    state: messageFaction.FactionState,
+                                                    influence: messageFaction.Influence,
+                                                    pending_states: pendingStates,
+                                                    recovering_states: recoveringStates
+                                                }],
+                                                history: [{
+                                                    updated_at: message.timestamp,
+                                                    system_name: message.StarSystem,
+                                                    system_name_lower: message.StarSystem.toLowerCase(),
+                                                    state: messageFaction.FactionState,
+                                                    influence: messageFaction.Influence,
+                                                    pending_states: pendingStates,
+                                                    recovering_states: recoveringStates,
+                                                    systems: [{
+                                                        name: message.StarSystem,
+                                                        name_lower: message.StarSystem.toLowerCase()
+                                                    }]
+                                                }]
+                                            };
+                                            new model(factionObject).save()
+                                                .then(saved => {
+                                                    console.log("saved", saved);
+                                                })
+                                                .catch(err => {
+                                                    console.log(err);
+                                                })
+                                        }
+                                    })
+                                })
                             })
-                        });
+                        }).catch(err => {
+                            console.log(err);
+                        })
                     })
                     .catch(err => {
                         console.log(err);
