@@ -377,9 +377,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => {
-                                                                // console.log("saved", saved);
-                                                            })
+                                                            .then(saved => {})
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -392,9 +390,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => {
-                                                                // console.log("saved", saved);
-                                                            })
+                                                            .then(saved => {})
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -407,9 +403,7 @@ function Journal() {
                                                         upsert: true,
                                                         runValidators: true
                                                     })
-                                                    .then(saved => {
-                                                        // console.log("saved", saved);
-                                                    })
+                                                    .then(saved => {})
                                                     .catch(err => {
                                                         console.log(err);
                                                     })
@@ -473,18 +467,14 @@ function Journal() {
                                                 .then(id => {
                                                     factionObject.eddb_id = id;
                                                     new model(factionObject).save()
-                                                        .then(saved => {
-                                                            // console.log("saved", saved);
-                                                        })
+                                                        .then(saved => {})
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
                                                 })
                                                 .catch(() => {
                                                     new model(factionObject).save()
-                                                        .then(saved => {
-                                                            // console.log("saved", saved);
-                                                        })
+                                                        .then(saved => {})
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
@@ -597,9 +587,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => {
-                                                                    // console.log("saved", saved);
-                                                                })
+                                                                .then(saved => {})
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -612,9 +600,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => {
-                                                                    // console.log("saved", saved);
-                                                                })
+                                                                .then(saved => {})
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -627,9 +613,7 @@ function Journal() {
                                                             upsert: true,
                                                             runValidators: true
                                                         })
-                                                        .then(saved => {
-                                                            // console.log("saved", saved);
-                                                        })
+                                                        .then(saved => {})
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
