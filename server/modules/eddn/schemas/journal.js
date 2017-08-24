@@ -180,7 +180,7 @@ function Journal() {
                             let eddbIdPromise;
                             if (system) {   // System exists in db
                                 if (!system.eddb_id) {
-                                    eddbIdPromise = this.getEDDBId(message.StarSystem);
+                                    eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
                                 } else {
                                     systemObject.eddb_id = system.eddb_id;
                                     hasEddbId = true;
@@ -211,7 +211,7 @@ function Journal() {
                                     systemObject.updated_at = message.timestamp;
                                 }
                             } else {
-                                eddbIdPromise = this.getEDDBId(message.StarSystem);
+                                eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
                                 systemObject = {
                                     name: message.StarSystem,
                                     name_lower: message.StarSystem.toLowerCase(),
@@ -261,25 +261,44 @@ function Journal() {
                                             console.log(err);
                                         })
                                 } else {
-                                    eddbIdPromise.then(id => {
-                                        systemObject.eddb_id = id;
-                                        model.findOneAndUpdate(
-                                            {
-                                                name_lower: message.StarSystem.toLowerCase(),
-                                                x: this.correctCoordinates(message.StarPos[0]),
-                                                y: this.correctCoordinates(message.StarPos[1]),
-                                                z: this.correctCoordinates(message.StarPos[2])
-                                            },
-                                            systemObject,
-                                            {
-                                                upsert: true,
-                                                runValidators: true
-                                            })
-                                            .exec()
-                                            .catch((err) => {
-                                                console.log(err);
-                                            })
-                                    })
+                                    eddbIdPromise
+                                        .then(id => {
+                                            systemObject.eddb_id = id;
+                                            model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StarSystem.toLowerCase(),
+                                                    x: this.correctCoordinates(message.StarPos[0]),
+                                                    y: this.correctCoordinates(message.StarPos[1]),
+                                                    z: this.correctCoordinates(message.StarPos[2])
+                                                },
+                                                systemObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true
+                                                })
+                                                .exec()
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                })
+                                        })
+                                        .catch(() => {      // If eddb id cannot be fetched, create the record without it.
+                                            model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StarSystem.toLowerCase(),
+                                                    x: this.correctCoordinates(message.StarPos[0]),
+                                                    y: this.correctCoordinates(message.StarPos[1]),
+                                                    z: this.correctCoordinates(message.StarPos[2])
+                                                },
+                                                systemObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true
+                                                })
+                                                .exec()
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                })
+                                        })
                                 }
                             }
                         }).catch((err) => {
@@ -347,19 +366,54 @@ function Journal() {
                                             faction.faction_presence = factionPresence;
                                             faction.updated_at = message.timestamp;
 
-                                            model.findOneAndUpdate(
-                                                { name: faction.name },
-                                                faction,
-                                                {
-                                                    upsert: true,
-                                                    runValidators: true
-                                                })
-                                                .then(saved => {
-                                                    // console.log("saved", saved);
-                                                })
-                                                .catch(err => {
-                                                    console.log(err);
-                                                })
+                                            if (!faction.eddb_id) {
+                                                this.getFactionEDDBId(faction.name)
+                                                    .then(id => {
+                                                        faction.eddb_id = id;
+                                                        model.findOneAndUpdate(
+                                                            { name: faction.name },
+                                                            faction,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .then(saved => {
+                                                                // console.log("saved", saved);
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err);
+                                                            })
+                                                    })
+                                                    .catch(() => {
+                                                        model.findOneAndUpdate(
+                                                            { name: faction.name },
+                                                            faction,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .then(saved => {
+                                                                // console.log("saved", saved);
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err);
+                                                            })
+                                                    })
+                                            } else {
+                                                model.findOneAndUpdate(
+                                                    { name: faction.name },
+                                                    faction,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true
+                                                    })
+                                                    .then(saved => {
+                                                        // console.log("saved", saved);
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(err);
+                                                    })
+                                            }
                                         }
                                     })
                                 })
@@ -415,12 +469,25 @@ function Journal() {
                                                     }]
                                                 }]
                                             };
-                                            new model(factionObject).save()
-                                                .then(saved => {
-                                                    // console.log("saved", saved);
+                                            this.getFactionEDDBId(messageFaction.Name)
+                                                .then(id => {
+                                                    factionObject.eddb_id = id;
+                                                    new model(factionObject).save()
+                                                        .then(saved => {
+                                                            // console.log("saved", saved);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        })
                                                 })
-                                                .catch(err => {
-                                                    console.log(err);
+                                                .catch(() => {
+                                                    new model(factionObject).save()
+                                                        .then(saved => {
+                                                            // console.log("saved", saved);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        })
                                                 })
                                         }
                                     })
@@ -519,19 +586,54 @@ function Journal() {
                                                         }
                                                     }
                                                 };
-                                                model.findOneAndUpdate(
-                                                    { name: messageFaction.Name },
-                                                    factionObject,
-                                                    {
-                                                        upsert: true,
-                                                        runValidators: true
-                                                    })
-                                                    .then(saved => {
-                                                        // console.log("saved", saved);
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(err);
-                                                    })
+                                                if (!dbFaction.eddb_id) {
+                                                    this.getFactionEDDBId(messageFaction.Name)
+                                                        .then(id => {
+                                                            factionObject.eddb_id = id;
+                                                            model.findOneAndUpdate(
+                                                                { name: messageFaction.Name },
+                                                                factionObject,
+                                                                {
+                                                                    upsert: true,
+                                                                    runValidators: true
+                                                                })
+                                                                .then(saved => {
+                                                                    // console.log("saved", saved);
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log(err);
+                                                                })
+                                                        })
+                                                        .catch(() => {
+                                                            model.findOneAndUpdate(
+                                                                { name: messageFaction.Name },
+                                                                factionObject,
+                                                                {
+                                                                    upsert: true,
+                                                                    runValidators: true
+                                                                })
+                                                                .then(saved => {
+                                                                    // console.log("saved", saved);
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log(err);
+                                                                })
+                                                        })
+                                                } else {
+                                                    model.findOneAndUpdate(
+                                                        { name: messageFaction.Name },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .then(saved => {
+                                                            // console.log("saved", saved);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        })
+                                                }
                                             }
                                         }
                                     })
@@ -551,10 +653,40 @@ function Journal() {
         return intValue / 32;
     }
 
-    this.getEDDBId = function (name) {
+    this.getSystemEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
                 url: "http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems",
+                method: "GET",
+                auth: {
+                    'user': 'guest',
+                    'pass': 'secret',
+                    'sendImmediately': true
+                },
+                qs: {
+                    name: name.toLowerCase()
+                }
+            };
+            request(requestOptions, (error, response, body) => {
+                if (!error && response.statusCode == 200) {
+                    let responseData = body;
+                    if (responseData.length !== 2) {
+                        let responseObject = JSON.parse(responseData);
+                        resolve(responseObject[0].id);
+                    } else {
+                        reject();
+                    }
+                } else {
+                    reject();
+                }
+            });
+        })
+    }
+
+    this.getFactionEDDBId = function (name) {
+        return new Promise((resolve, reject) => {
+            let requestOptions = {
+                url: "http://elitebgs.kodeblox.com/api/eddb/v1/factions",
                 method: "GET",
                 auth: {
                     'user': 'guest',
