@@ -291,59 +291,80 @@ function Journal() {
                     });
                 ebgsFactionsV3Model
                     .then(model => {
-                        // let factionsInSystem = new Promise((resolve, reject) => {
-                        //     model.find(
-                        //         {
-                        //             faction_presence:
-                        //             {
-                        //                 $elemMatch:
-                        //                 {
-                        //                     name_lower: message.StarSystem.toLowerCase()
-                        //                 }
-                        //             }
-                        //         },
-                        //         { _id: 0, name: 1, name_lower: 1 }
-                        //     ).lean().then(factions => {
-                        //         resolve(factions);
-                        //     }).catch(err => {
-                        //         reject(err);
-                        //     })
-                        // });
-                        model.find(
+                        let messageFactionsLower = [];
+                        message.Factions.forEach(faction => {
+                            messageFactionsLower.push(faction.Name.toLowerCase());
+                        });
+
+                        let allFactionsPresentInSystem = model.find(
                             {
-                                faction_presence:
-                                {
-                                    $elemMatch:
-                                    {
-                                        name_lower: message.StarSystem.toLowerCase()
-                                    }
+                                faction_presence: {
+                                    $elemMatch: { system_name_lower: message.StarSystem.toLowerCase() }
                                 }
                             },
-                            { _id: 0, name: 1, name_lower: 1 }
-                        ).lean().then(factions => {
-                            console.log(factionArray);
-                            console.log(factions);
+                            { history: 0 }
+                        ).lean();
 
-                            let messageFactionsLower = [];
-                            message.Factions.forEach(faction => {
-                                messageFactionsLower.push(faction.Name.toLowerCase());
-                            });
+                        let allFactionsPresentInMessage = model.find(
+                            {
+                                name_lower: {
+                                    $in: messageFactionsLower
+                                }
+                            },
+                            { history: 0 }
+                        ).lean();
 
-                            model.find(
-                                {
-                                    name_lower: {
-                                        $in: messageFactionsLower
-                                    }
-                                },
-                                { history: 0 }
-                            ).lean().then(factionsAllDetails => {
+                        Promise.all([allFactionsPresentInSystem, allFactionsPresentInMessage])
+                            .then(values => {
+                                let factionsPresentInSystemDB = values[0];
+                                let factionsAllDetails = values[1];
+
+                                let factionsNotInSystem = [];
+
+                                factionsPresentInSystemDB.forEach(faction => {
+                                    factionsNotInSystem.push(faction.name_lower);
+                                });
+
+                                let toRemove = _.difference(factionsNotInSystem, messageFactionsLower);
+
                                 let dbFactionsLower = [];
 
                                 factionsAllDetails.forEach(faction => {
                                     dbFactionsLower.push(faction.name_lower);
                                 });
-
                                 let notInDb = _.difference(messageFactionsLower, dbFactionsLower);
+                                // To remove are those factions which are not present in this system anymore
+                                // Such factions need to be updated too
+                                toRemove.forEach(factionNameLower => {
+                                    factionsPresentInSystemDB.forEach(faction => {
+                                        if (factionNameLower === faction.name_lower) {
+                                            let factionPresence = [];
+                                            faction.faction_presence.forEach(system => {
+                                                if (system.system_name_lower !== message.StarSystem.toLowerCase()) {
+                                                    factionPresence.push(system);
+                                                }
+                                            });
+                                            faction.faction_presence = factionPresence;
+                                            faction.updated_at = message.timestamp;
+
+                                            model.findOneAndUpdate(
+                                                { name: faction.name },
+                                                faction,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true
+                                                })
+                                                .then(saved => {
+                                                    // console.log("saved", saved);
+                                                })
+                                                .catch(err => {
+                                                    console.log(err);
+                                                })
+                                        }
+                                    })
+                                })
+                                // Not In DB means that the message contains a faction which is not present in the db yet
+                                // So one must create a new record
                                 notInDb.forEach(factionNameLower => {
                                     message.Factions.forEach(messageFaction => {
                                         if (messageFaction.Name.toLowerCase() === factionNameLower) {
@@ -351,7 +372,7 @@ function Journal() {
                                             if (messageFaction.PendingStates) {
                                                 messageFaction.PendingStates.forEach(pendingState => {
                                                     let pendingStateObject = {
-                                                        state: pendingState.State,
+                                                        state: pendingState.State.toLowerCase(),
                                                         trend: pendingState.Trend
                                                     };
                                                     pendingStates.push(pendingStateObject);
@@ -361,7 +382,7 @@ function Journal() {
                                             if (messageFaction.RecoveringStates) {
                                                 messageFaction.RecoveringStates.forEach(recoveringState => {
                                                     let recoveringStateObject = {
-                                                        state: recoveringState.State,
+                                                        state: recoveringState.State.toLowerCase(),
                                                         trend: recoveringState.Trend
                                                     };
                                                     recoveringStates.push(recoveringStateObject);
@@ -382,8 +403,8 @@ function Journal() {
                                                 }],
                                                 history: [{
                                                     updated_at: message.timestamp,
-                                                    system_name: message.StarSystem,
-                                                    system_name_lower: message.StarSystem.toLowerCase(),
+                                                    system: message.StarSystem,
+                                                    system_lower: message.StarSystem.toLowerCase(),
                                                     state: messageFaction.FactionState,
                                                     influence: messageFaction.Influence,
                                                     pending_states: pendingStates,
@@ -396,7 +417,7 @@ function Journal() {
                                             };
                                             new model(factionObject).save()
                                                 .then(saved => {
-                                                    console.log("saved", saved);
+                                                    // console.log("saved", saved);
                                                 })
                                                 .catch(err => {
                                                     console.log(err);
@@ -404,10 +425,118 @@ function Journal() {
                                         }
                                     })
                                 })
+                                // dbFactionsLower are the factions present in the db. So next we need to update them
+                                // factionsAllDetails has all the factions details
+                                factionsAllDetails.forEach(dbFaction => {
+                                    message.Factions.forEach(messageFaction => {
+                                        if (messageFaction.Name.toLowerCase() === dbFaction.name_lower) {
+                                            let pendingStates = [];
+                                            if (messageFaction.PendingStates) {
+                                                messageFaction.PendingStates.forEach(pendingState => {
+                                                    let pendingStateObject = {
+                                                        state: pendingState.State.toLowerCase(),
+                                                        trend: pendingState.Trend
+                                                    };
+                                                    pendingStates.push(pendingStateObject);
+                                                });
+                                            };
+                                            let recoveringStates = [];
+                                            if (messageFaction.RecoveringStates) {
+                                                messageFaction.RecoveringStates.forEach(recoveringState => {
+                                                    let recoveringStateObject = {
+                                                        state: recoveringState.State.toLowerCase(),
+                                                        trend: recoveringState.Trend
+                                                    };
+                                                    recoveringStates.push(recoveringStateObject);
+                                                });
+                                            };
+
+                                            // Check if the incoming message has any different faction detail
+                                            let doUpdate = true;
+                                            dbFaction.faction_presence.forEach(faction => {
+                                                if (faction.system_name_lower === message.StarSystem.toLowerCase() &&
+                                                    faction.state === messageFaction.FactionState.toLowerCase() &&
+                                                    faction.influence === messageFaction.Influence &&
+                                                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state']))) {
+                                                    doUpdate = false;
+                                                }
+                                            })
+                                            if (doUpdate) {
+                                                let factionPresentSystemObject = {};
+                                                let factionPresence = dbFaction.faction_presence;
+
+                                                factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                    if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                        factionPresentSystemObject = {
+                                                            system_name: message.StarSystem,
+                                                            system_name_lower: message.StarSystem.toLowerCase(),
+                                                            state: messageFaction.FactionState,
+                                                            influence: messageFaction.Influence,
+                                                            pending_states: pendingStates,
+                                                            recovering_states: recoveringStates
+                                                        };
+                                                        factionPresenceArray[index] = factionPresentSystemObject;
+                                                    }
+                                                });
+
+                                                if (_.isEmpty(factionPresentSystemObject)) {
+                                                    // This system is not present as a presence system in db.
+                                                    // Make a new array element
+                                                    factionPresence.push({
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates
+                                                    });
+                                                }
+
+                                                let systemHistory = [];
+
+                                                factionPresence.forEach((faction) => {
+                                                    systemHistory.push({
+                                                        name: faction.system_name,
+                                                        name_lower: faction.system_name_lower
+                                                    });
+                                                });
+
+                                                let factionObject = {
+                                                    name: messageFaction.Name,
+                                                    name_lower: messageFaction.Name.toLowerCase(),
+                                                    updated_at: message.timestamp,
+                                                    faction_presence: factionPresence,
+                                                    $addToSet: {
+                                                        history: {
+                                                            updated_at: message.timestamp,
+                                                            system: message.StarSystem,
+                                                            system_lower: message.StarSystem.toLowerCase(),
+                                                            state: messageFaction.FactionState,
+                                                            influence: messageFaction.Influence,
+                                                            pending_states: pendingStates,
+                                                            recovering_states: recoveringStates,
+                                                            systems: systemHistory
+                                                        }
+                                                    }
+                                                };
+                                                model.findOneAndUpdate(
+                                                    { name: messageFaction.Name },
+                                                    factionObject,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true
+                                                    })
+                                                    .then(saved => {
+                                                        // console.log("saved", saved);
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(err);
+                                                    })
+                                            }
+                                        }
+                                    })
+                                })
                             })
-                        }).catch(err => {
-                            console.log(err);
-                        })
                     })
                     .catch(err => {
                         console.log(err);
