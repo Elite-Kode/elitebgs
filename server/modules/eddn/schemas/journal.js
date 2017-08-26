@@ -222,6 +222,7 @@ function Journal() {
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
                                     security: message.SystemSecurity,
+                                    primary_economy: message.SystemEconomy,
                                     controlling_minor_faction: message.SystemFaction,
                                     factions: factionArray,
                                     updated_at: message.timestamp
@@ -377,7 +378,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => {})
+                                                            .then(saved => { })
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -390,7 +391,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => {})
+                                                            .then(saved => { })
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -403,7 +404,7 @@ function Journal() {
                                                         upsert: true,
                                                         runValidators: true
                                                     })
-                                                    .then(saved => {})
+                                                    .then(saved => { })
                                                     .catch(err => {
                                                         console.log(err);
                                                     })
@@ -441,6 +442,8 @@ function Journal() {
                                                 name: messageFaction.Name,
                                                 name_lower: messageFaction.Name.toLowerCase(),
                                                 updated_at: message.timestamp,
+                                                government: messageFaction.Government,
+                                                allegiance: messageFaction.Allegiance,
                                                 faction_presence: [{
                                                     system_name: message.StarSystem,
                                                     system_name_lower: message.StarSystem.toLowerCase(),
@@ -467,14 +470,14 @@ function Journal() {
                                                 .then(id => {
                                                     factionObject.eddb_id = id;
                                                     new model(factionObject).save()
-                                                        .then(saved => {})
+                                                        .then(saved => { })
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
                                                 })
                                                 .catch(() => {
                                                     new model(factionObject).save()
-                                                        .then(saved => {})
+                                                        .then(saved => { })
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
@@ -562,6 +565,8 @@ function Journal() {
                                                     name: messageFaction.Name,
                                                     name_lower: messageFaction.Name.toLowerCase(),
                                                     updated_at: message.timestamp,
+                                                    government: messageFaction.Government,
+                                                    allegiance: messageFaction.Allegiance,
                                                     faction_presence: factionPresence,
                                                     $addToSet: {
                                                         history: {
@@ -587,7 +592,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => {})
+                                                                .then(saved => { })
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -600,7 +605,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => {})
+                                                                .then(saved => { })
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -613,7 +618,7 @@ function Journal() {
                                                             upsert: true,
                                                             runValidators: true
                                                         })
-                                                        .then(saved => {})
+                                                        .then(saved => { })
                                                         .catch(err => {
                                                             console.log(err);
                                                         })

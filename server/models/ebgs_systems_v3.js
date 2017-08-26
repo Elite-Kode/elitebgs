@@ -31,10 +31,14 @@ module.exports = new Promise((resolve, reject) => {
         x: Number,
         y: Number,
         z: Number,
+        population: Number,     // Population to be added when in new journal
         government: { type: String, lowercase: true, index: true },
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true, index: true },
         security: { type: String, lowercase: true, index: true },
+        primary_economy: { type: String, lowercase: true, index: true },
+        needs_permit: Boolean,      // Not in Journal
+        reserve_type: { type: String, lowercase: true },    // Not in Journal
         controlling_minor_faction: { type: String, lowercase: true, index: true },
         factions: [{
             _id: false,
@@ -45,6 +49,7 @@ module.exports = new Promise((resolve, reject) => {
         history: [{
             _id: false,
             updated_at: Date,
+            population: Number,
             government: { type: String, lowercase: true },
             allegiance: { type: String, lowercase: true },
             state: { type: String, lowercase: true },

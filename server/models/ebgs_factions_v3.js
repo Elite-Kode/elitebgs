@@ -29,6 +29,10 @@ module.exports = new Promise((resolve, reject) => {
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
         updated_at: Date,
+        government: { type: String, lowercase: true, index: true },
+        allegiance: { type: String, lowercase: true, index: true },
+        home_system_name: { type: String, lowercase: true },    // Not in Journal
+        is_player_faction: Boolean,     // Not in Journal
         faction_presence: [{
             _id: false,
             system_name: String,
