@@ -75,7 +75,7 @@ let router = express.Router();
    *             $ref: '#/definitions/EBGSSystemsPageV3'
    */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
-    require('../../../models/ebgs_systems')
+    require('../../../models/ebgs_systems_v3')
         .then(systems => {
             let query = new Object;
             let page = 1;

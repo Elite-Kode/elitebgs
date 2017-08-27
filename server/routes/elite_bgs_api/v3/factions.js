@@ -63,7 +63,7 @@ let router = express.Router();
    *             $ref: '#/definitions/EBGSFactionsPageV3'
    */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
-    require('../../../models/ebgs_factions')
+    require('../../../models/ebgs_factions_v3')
         .then(factions => {
             let query = new Object;
             let page = 1;
@@ -117,22 +117,22 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                         // }
 
                         // if (states.length === 0 && systems.length === 0 && timemin === null && timemax === null) {
-                        result.docs.forEach((doc, index, docs) => {
-                            doc.history.sort((a, b) => {
-                                var key1 = a.updated_at;
-                                var key2 = b.updated_at;
+                        // result.docs.forEach((doc, index, docs) => {
+                        //     doc.history.sort((a, b) => {
+                        //         var key1 = a.updated_at;
+                        //         var key2 = b.updated_at;
 
-                                if (key1 < key2) {
-                                    return 1;
-                                } else if (key1 == key2) {
-                                    return 0;
-                                } else {
-                                    return -1;
-                                }
-                            });
-                            doc.history = [doc.history[0]];
-                            docs[index] = doc;
-                        })
+                        //         if (key1 < key2) {
+                        //             return 1;
+                        //         } else if (key1 == key2) {
+                        //             return 0;
+                        //         } else {
+                        //             return -1;
+                        //         }
+                        //     });
+                        //     doc.history = [doc.history[0]];
+                        //     docs[index] = doc;
+                        // })
                         // } else if (states.length !== 0 || systems.length !== 0) {
                         //     result.docs.forEach((doc, index, docs) => {
                         //         let historySelected = []

@@ -29,9 +29,9 @@ module.exports = Journal;
 
 function Journal() {
     this.schemaId = [
-        // "http://schemas.elite-markets.net/eddn/journal/1",
-        // "https://eddn.edcd.io/schemas/journal/1"
-        "https://eddn.edcd.io/schemas/journal/1/test"
+        "http://schemas.elite-markets.net/eddn/journal/1",
+        "https://eddn.edcd.io/schemas/journal/1"
+        // "https://eddn.edcd.io/schemas/journal/1/test"
     ];
 
     this.trackSystem = function (message) {
