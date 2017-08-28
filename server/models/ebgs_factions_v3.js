@@ -52,7 +52,7 @@ module.exports = new Promise((resolve, reject) => {
         }],
         history: [{
             _id: false,
-            updated_at: Date,
+            updated_at: { type: Date, index: true },
             system: String,
             system_lower: { type: String, lowercase: true },
             state: { type: String, lowercase: true },

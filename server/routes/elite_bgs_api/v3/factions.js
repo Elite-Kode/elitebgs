@@ -50,6 +50,14 @@ let router = express.Router();
    *         description: Starting characters of the faction.
    *         in: query
    *         type: string
+   *       - name: timemin
+   *         description: Minimum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
+   *       - name: timemax
+   *         description: Maximum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
    *       - name: page
    *         description: Page no of response.
    *         in: query
@@ -67,6 +75,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
         .then(factions => {
             let query = new Object;
             let page = 1;
+            let history = false;
+            let greaterThanTime;
+            let lesserThanTime;
 
             if (req.query.id) {
                 query._id = req.query.id;
@@ -88,116 +99,55 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.page) {
                 page = req.query.page;
             }
+            if (req.query.timemin && req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timemin));
+                lesserThanTime = new Date(Number(req.query.timemax));
+            }
+            if (req.query.timemin && !req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timemin));
+                lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            }
+            if (!req.query.timemin && req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
+                lesserThanTime = new Date(Number(req.query.timemax));
+            }
 
             let factionSearch = () => {
                 if (_.isEmpty(query) && req.user.clearance !== 0) {
                     throw new Error("Add at least 1 query parameter to limit traffic");
                 }
-                let paginateOptions = {
-                    select: '-history',
-                    lean: true,
-                    page: page,
-                    limit: 10
-                };
+                let paginateOptions = {};
+                if (history) {
+                    paginateOptions = {
+                        select: {
+                            history: {
+                                $elemMatch: {
+                                    updated_at: {
+                                        $gte: greaterThanTime,
+                                        $lte: lesserThanTime
+                                    }
+                                }
+                            }
+                        },
+                        lean: true,
+                        leanWithId: false,
+                        page: page,
+                        limit: 10
+                    }
+                } else {
+                    paginateOptions = {
+                        select: { history: 0 },
+                        lean: true,
+                        leanWithId: false,
+                        page: page,
+                        limit: 10
+                    };
+                }
                 factions.paginate(query, paginateOptions)
                     .then(result => {
-                        // let states = [];
-                        // let systems = [];
-                        // let timemin = null;
-                        // let timemax = null;
-                        // if (req.query.state) {
-                        //     states = arrayfy(req.query.state.toLowerCase());
-                        // }
-                        // if (req.query.system) {
-                        //     systems = arrayfy(req.query.system.toLowerCase());
-                        // }
-                        // if (req.query.timemin && req.query.timemax) {
-                        //     timemin = new Date(Number(req.query.timemin));
-                        //     timemax = new Date(Number(req.query.timemax));
-                        // }
-
-                        // if (states.length === 0 && systems.length === 0 && timemin === null && timemax === null) {
-                        // result.docs.forEach((doc, index, docs) => {
-                        //     doc.history.sort((a, b) => {
-                        //         var key1 = a.updated_at;
-                        //         var key2 = b.updated_at;
-
-                        //         if (key1 < key2) {
-                        //             return 1;
-                        //         } else if (key1 == key2) {
-                        //             return 0;
-                        //         } else {
-                        //             return -1;
-                        //         }
-                        //     });
-                        //     doc.history = [doc.history[0]];
-                        //     docs[index] = doc;
-                        // })
-                        // } else if (states.length !== 0 || systems.length !== 0) {
-                        //     result.docs.forEach((doc, index, docs) => {
-                        //         let historySelected = []
-                        //         doc.history.forEach(historyDoc => {
-                        //             let historyBool = false;
-                        //             if (states.length > 0) {
-                        //                 if (states.find(eachState => {
-                        //                     return historyDoc.state === eachState;
-                        //                 })) {
-                        //                     historyBool = true;
-                        //                 }
-                        //             }
-
-                        //             if (systems.length > 0) {
-                        //                 if (systems.find(eachSystem => {
-                        //                     return historyDoc.system_lower === eachSystem;
-                        //                 })) {
-                        //                     historyBool = true;
-                        //                 }
-                        //             }
-                        //             if (historyBool === true) {
-                        //                 historySelected.push(historyDoc);
-                        //             }
-                        //         });
-
-                        //         if (timemax !== null && timemin !== null) {
-                        //             let historySelectedTime = [];
-                        //             historySelected.forEach(history => {
-                        //                 if (history.updated_at > timemin && history.updated_at < timemax) {
-                        //                     historySelectedTime.push(history);
-                        //                 }
-                        //             })
-                        //             historySelected = historySelectedTime;
-                        //         } else {
-                        //             historySelected.sort((a, b) => {
-                        //                 var key1 = a.updated_at;
-                        //                 var key2 = b.updated_at;
-
-                        //                 if (key1 < key2) {
-                        //                     return 1;
-                        //                 } else if (key1 == key2) {
-                        //                     return 0;
-                        //                 } else {
-                        //                     return -1;
-                        //                 }
-                        //             });
-                        //             if (historySelected.length > 0) {
-                        //                 historySelected = [historySelected[0]];
-                        //             }
-                        //         }
-                        //         doc.history = historySelected;
-                        //         docs[index] = doc;
-                        //     })
-                        // } else if (timemin !== null && timemax !== null) {
-                        //     result.docs.forEach((doc, index, docs) => {
-                        //         let historySelected = [];
-                        //         doc.history.forEach(history => {
-                        //             if (history.updated_at > timemin && history.updated_at < timemax) {
-                        //                 historySelected.push(history);
-                        //             }
-                        //         });
-                        //         doc.history = historySelected;
-                        //         docs[index] = doc;
-                        //     })
-                        // }
                         res.status(200).json(result);
                     })
                     .catch(next)
