@@ -16,17 +16,27 @@
 
 "use strict";
 
-module.exports = function (documentRef) {
-    return {
-        docs: {
-            type: 'array',
-            items: {
-                $ref: `#/definitions/${documentRef}`
-            }
-        },
-        total: { type: "integer" },
-        limit: { type: "integer" },
-        page: { type: "integer" },
-        pages: { type: "integer" }
+module.exports = {
+    _id: { type: "string" },
+    __v: { type: "integer" },
+    eddb_id: { type: "integer" },
+    name: { type: "string" },
+    name_lower: { type: "string" },
+    updated_at: { type: "string" },
+    government: { type: "string" },
+    allegiance: { type: "string" },
+    home_system_name: { type: "string" },
+    is_player_faction: { type: "boolean" },
+    faction_presence: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/EBGSFactionPresenceV3'
+        }
+    },
+    history: {
+        type: 'array',
+        items: {
+            $ref: '#/definitions/EBGSFactionHistoryV3'
+        }
     }
 }
