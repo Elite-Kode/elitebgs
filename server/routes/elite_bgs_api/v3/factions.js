@@ -114,75 +114,70 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                 greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
                 lesserThanTime = new Date(Number(req.query.timemax));
             }
-
-            let factionSearch = () => {
-                if (_.isEmpty(query) && req.user.clearance !== 0) {
-                    throw new Error("Add at least 1 query parameter to limit traffic");
-                }
-                if (history) {
-                    let aggregate = factions.aggregate();
-                    let aggregateOptions = {
-                        page: page,
-                        limit: 10
-                    }
-                    aggregate.match(query).project({
-                        eddb_id: 1,
-                        name: 1,
-                        name_lower: 1,
-                        updated_at: 1,
-                        government: 1,
-                        allegiance: 1,
-                        home_system_name: 1,
-                        is_player_faction: 1,
-                        faction_presence: 1,
-                        history: {
-                            $filter: {
-                                input: "$history",
-                                as: "record",
-                                cond: {
-                                    $and: [
-                                        { $lte: ["$$record.updated_at", lesserThanTime] },
-                                        { $gte: ["$$record.updated_at", greaterThanTime] }
-                                    ]
-                                }
-                            }
-                        }
-                    });
-                    factions.aggregatePaginate(
-                        aggregate,
-                        aggregateOptions,
-                        (err, resultDocs, page, items) => {
-                            if (err) {
-                                next(err);
-                            } else {
-                                let result = {
-                                    docs: resultDocs,
-                                    total: items,
-                                    limit: aggregateOptions.limit,
-                                    page: aggregateOptions.page,
-                                    pages: Math.ceil(items / aggregateOptions.limit)
-                                }
-                                res.status(200).json(result);
-                            }
-                        }
-                    )
-                } else {
-                    let paginateOptions = {
-                        select: { history: 0 },
-                        lean: true,
-                        leanWithId: false,
-                        page: page,
-                        limit: 10
-                    };
-                    factions.paginate(query, paginateOptions)
-                        .then(result => {
-                            res.status(200).json(result);
-                        })
-                        .catch(next)
-                }
+            if (_.isEmpty(query) && req.user.clearance !== 0) {
+                throw new Error("Add at least 1 query parameter to limit traffic");
             }
-
-            factionSearch();
+            if (history) {
+                let aggregate = factions.aggregate();
+                let aggregateOptions = {
+                    page: page,
+                    limit: 10
+                }
+                aggregate.match(query).project({
+                    eddb_id: 1,
+                    name: 1,
+                    name_lower: 1,
+                    updated_at: 1,
+                    government: 1,
+                    allegiance: 1,
+                    home_system_name: 1,
+                    is_player_faction: 1,
+                    faction_presence: 1,
+                    history: {
+                        $filter: {
+                            input: "$history",
+                            as: "record",
+                            cond: {
+                                $and: [
+                                    { $lte: ["$$record.updated_at", lesserThanTime] },
+                                    { $gte: ["$$record.updated_at", greaterThanTime] }
+                                ]
+                            }
+                        }
+                    }
+                });
+                factions.aggregatePaginate(
+                    aggregate,
+                    aggregateOptions,
+                    (err, resultDocs, page, items) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            let result = {
+                                docs: resultDocs,
+                                total: items,
+                                limit: aggregateOptions.limit,
+                                page: aggregateOptions.page,
+                                pages: Math.ceil(items / aggregateOptions.limit)
+                            }
+                            res.status(200).json(result);
+                        }
+                    }
+                )
+            } else {
+                let paginateOptions = {
+                    select: { history: 0 },
+                    lean: true,
+                    leanWithId: false,
+                    page: page,
+                    limit: 10
+                };
+                factions.paginate(query, paginateOptions)
+                    .then(result => {
+                        res.status(200).json(result);
+                    })
+                    .catch(next)
+            }
         })
         .catch(next);
 });

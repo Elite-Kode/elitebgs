@@ -62,6 +62,14 @@ let router = express.Router();
    *         description: Starting characters of the system.
    *         in: query
    *         type: string
+   *       - name: timemin
+   *         description: Minimum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
+   *       - name: timemax
+   *         description: Maximum time for the faction history in miliseconds.
+   *         in: query
+   *         type: string
    *       - name: page
    *         description: Page no of response.
    *         in: query
@@ -79,6 +87,9 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
         .then(systems => {
             let query = new Object;
             let page = 1;
+            let history = false;
+            let greaterThanTime;
+            let lesserThanTime;
 
             if (req.query.id) {
                 query._id = req.query.id;
@@ -106,23 +117,95 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                     $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
                 }
             }
-            if (_.isEmpty(query) && req.user.clearance !== 0) {
-                throw new Error("Add at least 1 query parameter to limit traffic");
-            }
             if (req.query.page) {
                 page = req.query.page;
             }
-            let paginateOptions = {
-                select: '-history',
-                lean: true,
-                page: page,
-                limit: 10
-            };
-            systems.paginate(query, paginateOptions)
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(next)
+            if (req.query.timemin && req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timemin));
+                lesserThanTime = new Date(Number(req.query.timemax));
+            }
+            if (req.query.timemin && !req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timemin));
+                lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            }
+            if (!req.query.timemin && req.query.timemax) {
+                history = true;
+                greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
+                lesserThanTime = new Date(Number(req.query.timemax));
+            }
+            if (_.isEmpty(query) && req.user.clearance !== 0) {
+                throw new Error("Add at least 1 query parameter to limit traffic");
+            }
+            if (history) {
+                let aggregate = systems.aggregate();
+                let aggregateOptions = {
+                    page: page,
+                    limit: 10
+                }
+                aggregate.match(query).project({
+                    eddb_id: 1,
+                    name: 1,
+                    name_lower:1,
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    population: 1,
+                    government: 1,
+                    allegiance: 1,
+                    state: 1,
+                    security: 1,
+                    primary_economy: 1,
+                    needs_permit: 1,
+                    reserve_type: 1,
+                    controlling_minor_faction: 1,
+                    factions: 1,
+                    updated_at: 1,
+                    history: {
+                        $filter: {
+                            input: "$history",
+                            as: "record",
+                            cond: {
+                                $and: [
+                                    { $lte: ["$$record.updated_at", lesserThanTime] },
+                                    { $gte: ["$$record.updated_at", greaterThanTime] }
+                                ]
+                            }
+                        }
+                    }
+                });
+                systems.aggregatePaginate(
+                    aggregate,
+                    aggregateOptions,
+                    (err, resultDocs, page, items) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            let result = {
+                                docs: resultDocs,
+                                total: items,
+                                limit: aggregateOptions.limit,
+                                page: aggregateOptions.page,
+                                pages: Math.ceil(items / aggregateOptions.limit)
+                            }
+                            res.status(200).json(result);
+                        }
+                    }
+                )
+            } else {
+                let paginateOptions = {
+                    select: { history: 0 },
+                    lean: true,
+                    page: page,
+                    limit: 10
+                };
+                systems.paginate(query, paginateOptions)
+                    .then(result => {
+                        res.status(200).json(result);
+                    })
+                    .catch(next)
+            }
         })
         .catch(next);
 });
