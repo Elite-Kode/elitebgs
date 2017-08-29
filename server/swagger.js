@@ -148,31 +148,7 @@ let paramsEBGSAPIv2 = {
 
 let swaggerSpecEBGSAPIv2 = makeSwaggerSpec(paramsEBGSAPIv2);
 
-let paramsEBGSAPIv3 = {
-    info: {
-        title: 'Elite BGS API',
-        version: '3.0.0',
-        description: 'An API for Elite BGS',
-    },
-    basePath: '/api/ebgs/v3/',
-    definitions: {
-        EBGSFactionHistoryV3: { properties: swaggerDefinitions.ebgsFactionHistoryV3 },
-        EBGSFactionPresenceV3: { properties: swaggerDefinitions.ebgsFactionPresenceV3 },
-        EBGSFactionsV3: { properties: swaggerDefinitions.ebgsFactionsV3 },
-        EBGSStateV3: { properties: swaggerDefinitions.ebgsStateV3 },
-        EBGSSystemHistoryV3: { properties: swaggerDefinitions.ebgsSystemHistoryV3 },
-        EBGSSystemPresenceV3: { properties: swaggerDefinitions.ebgsSystemPresenceV3 },
-        EBGSSystemsV3: { properties: swaggerDefinitions.ebgsSystemsV3 },
-        EBGSFactionsPageV3: { properties: swaggerDefinitions.pagination('EBGSFactionsV3') },
-        EBGSSystemsPageV3: { properties: swaggerDefinitions.pagination('EBGSSystemsV3') }
-    },
-    apis: ['./server/routes/elite_bgs_api/v3/*.js']
-};
-
-let swaggerSpecEBGSAPIv3 = makeSwaggerSpec(paramsEBGSAPIv3);
-
 module.exports.EDDBAPIv1 = swaggerSpecEDDBAPIv1;
 module.exports.EDDBAPIv2 = swaggerSpecEDDBAPIv2;
 module.exports.EBGSAPIv1 = swaggerSpecEBGSAPIv1;
 module.exports.EBGSAPIv2 = swaggerSpecEBGSAPIv2;
-module.exports.EBGSAPIv3 = swaggerSpecEBGSAPIv3;

@@ -8,13 +8,13 @@ export class SystemsService {
     constructor(private http: HttpClient) { }
 
     getSystems(page: string, name: string): Observable<any> {
-        return this.http.get<any>('/api/ebgs/v3/systems', {
+        return this.http.get<any>('/api/ebgs/v2/systems', {
             params: new HttpParams().set('page', page).set('beginsWith', name)
         });
     }
 
     getSingleSystemById(id: string): Observable<any> {
-        return this.http.get<any>('/api/ebgs/v3/systems', {
+        return this.http.get<any>('/api/ebgs/v2/systems', {
             params: new HttpParams().set('id', id)
         });
     }

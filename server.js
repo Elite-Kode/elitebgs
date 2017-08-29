@@ -54,9 +54,6 @@ const systemsV2 = require('./server/routes/eddb_api/v2/systems');
 const ebgsFactionsV2 = require('./server/routes/elite_bgs_api/v2/factions');
 const ebgsSystemsV2 = require('./server/routes/elite_bgs_api/v2/systems');
 
-const ebgsFactionsV3 = require('./server/routes/elite_bgs_api/v3/factions');
-const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
-
 require('./server/modules/eddn');
 
 const app = express();
@@ -91,11 +88,6 @@ app.use('/api/ebgs/v2/api-docs.json', (req, res, next) => {
     res.send(swagger.EBGSAPIv2);
 });
 
-app.use('/api/ebgs/v3/api-docs.json', (req, res, next) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swagger.EBGSAPIv3);
-});
-
 app.use('/api/eddb/v1/bodies', bodiesV1);
 app.use('/api/eddb/v1/commodities', commoditiesV1);
 app.use('/api/eddb/v1/factions', factionsV1);
@@ -119,7 +111,6 @@ app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, 
 app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v2/api-docs.json`));
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
 app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
-app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
@@ -133,9 +124,6 @@ app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
 
 app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
 app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
-
-app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
-app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {

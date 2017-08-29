@@ -28,10 +28,6 @@ export class EliteBgsApiComponent {
             {
                 versionName: 'V2',
                 specLocation: '/api/ebgs/v2/api-docs.json'
-            },
-            {
-                versionName: 'V3',
-                specLocation: '/api/ebgs/v3/api-docs.json'
             }
         ]
     }
