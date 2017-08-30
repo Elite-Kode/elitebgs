@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
-import { SystemsService } from './services/systems.service';
+import { SystemsService } from '../../services/systems.service';
 import { ISystem } from './system.interface';
-import { FDevIDs } from './utilities/fdevids';
+import { FDevIDs } from '../../utilities/fdevids';
 
 @Component({
     selector: 'app-system-list',

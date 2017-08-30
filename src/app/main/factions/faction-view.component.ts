@@ -1,7 +1,7 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FactionsService } from './services/factions.service';
-import { StringHandlers } from './utilities/stringHandlers';
+import { FactionsService } from '../../services/factions.service';
+import { StringHandlers } from '../../utilities/stringHandlers';
 import { IFaction } from './faction.interface';
 
 @Component({
@@ -9,7 +9,6 @@ import { IFaction } from './faction.interface';
     templateUrl: './faction-view.component.html'
 })
 export class FactionViewComponent implements OnInit {
-    @HostBinding('class.u-main-container') mainContainer = true;
     private factionData: IFaction;
     constructor(
         private factionService: FactionsService,

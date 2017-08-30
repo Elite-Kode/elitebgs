@@ -1,15 +1,16 @@
 <nav class="subnav">
     <clr-tabs>
         <clr-tab>
-            <button (click)="onTabClick(0)" clrTabLink>Overview</button>
+            <button routerLink="/api/eddb" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="btn btn-link nav-link nav-item">Overview</button>
         </clr-tab>
         <clr-tab>
-            <button (click)="onTabClick(1)" clrTabLink>Docs</button>
+            <button routerLink="/api/eddb/docs" routerLinkActive="active" class="btn btn-link nav-link nav-item">Docs</button>
         </clr-tab>
     </clr-tabs>
 </nav>
+<router-outlet></router-outlet>
 
-<ng-container *ngIf="overviewActive">
+<!-- <ng-container *ngIf="overviewActive">
     <div class="content-container">
         <div class="content-area">
             <div class="component">
@@ -51,7 +52,7 @@
             </div>
         </div>
     </div>
-</ng-container>
-<ng-container *ngIf="docsActive">
+</ng-container> -->
+<!-- <ng-container *ngIf="docsActive">
     <app-swagger-ui [docSpecs]="specs"></app-swagger-ui>
-</ng-container>
+</ng-container> -->

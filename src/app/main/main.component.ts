@@ -1,11 +1,12 @@
 import { Component, HostBinding } from '@angular/core';
 
 @Component({
-    selector: 'app-eddb-api',
-    templateUrl: './eddb-api.component.html',
-    styleUrls: ['./eddb-api.component.scss']
+    selector: 'app-main',
+    templateUrl: './main.component.html',
+    styleUrls: ['./main.component.scss']
 })
-export class EddbApiComponent {
+export class MainComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
+
     constructor() { }
 }

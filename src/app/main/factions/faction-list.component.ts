@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
-import { FactionsService } from './services/factions.service';
+import { FactionsService } from '../../services/factions.service';
 import { IFaction } from './faction.interface';
-import { StringHandlers } from './utilities/stringHandlers';
+import { StringHandlers } from '../../utilities/stringHandlers';
 
 @Component({
     selector: 'app-faction-list',
