@@ -5,10 +5,14 @@ import { ClarityModule } from 'clarity-angular';
 import { SwaggerUIModule } from '../swagger_ui/swagger-ui.module';
 
 import { EliteBgsApiComponent } from './elite-bgs-api.component';
+import { EliteBgsApiOverviewComponent } from './overview/elite-bgs-api-overview.component';
+import { EliteBgsApiDocsComponent } from './docs/elite-bgs-api-docs.component';
 import { EliteBgsApiRoutingModule } from './elite-bgs-api-routing.module';
 @NgModule({
     declarations: [
-        EliteBgsApiComponent
+        EliteBgsApiComponent,
+        EliteBgsApiOverviewComponent,
+        EliteBgsApiDocsComponent
     ],
     imports: [
         CommonModule,
