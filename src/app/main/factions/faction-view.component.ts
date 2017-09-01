@@ -14,14 +14,7 @@ export class FactionViewComponent implements OnInit {
         private factionService: FactionsService,
         private router: Router,
         private route: ActivatedRoute
-    ) {
-        this.factionData = <IFaction>{
-            id: '',
-            name: '',
-            government: '',
-            allegiance: ''
-        }
-    }
+    ) { }
 
     ngOnInit() {
         this.factionService.getSingleFactionById(this.route.snapshot.paramMap.get('factionid')).subscribe(faction => {

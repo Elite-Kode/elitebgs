@@ -14,16 +14,7 @@ export class SystemViewComponent implements OnInit {
         private systemService: SystemsService,
         private router: Router,
         private route: ActivatedRoute
-    ) {
-        this.systemData = <ISystem>{
-            id: '',
-            name: '',
-            government: '',
-            allegiance: '',
-            primary_economy: '',
-            state: ''
-        }
-    }
+    ) { }
 
     ngOnInit() {
         this.systemService.getSingleSystemById(this.route.snapshot.paramMap.get('systemid')).subscribe(system => {
