@@ -20,7 +20,7 @@
 
         <clr-dg-row *ngFor="let system of systemData">
             <clr-dg-action-overflow>
-                <button class="action-item" (click)="onView(system)">View</button>
+                <button routerLink="/system/{{system.id}}" class="action-item">View</button>
             </clr-dg-action-overflow>
             <clr-dg-cell>{{system.name}}</clr-dg-cell>
             <clr-dg-cell>{{system.government}}</clr-dg-cell>

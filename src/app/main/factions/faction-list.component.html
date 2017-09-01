@@ -18,7 +18,7 @@
 
         <clr-dg-row *ngFor="let faction of factionData">
             <clr-dg-action-overflow>
-                <button class="action-item" (click)="onView(faction)">View</button>
+                <button routerLink="/faction/{{faction.id}}" class="action-item">View</button>
             </clr-dg-action-overflow>
             <clr-dg-cell>{{faction.name}}</clr-dg-cell>
             <clr-dg-cell>{{faction.government}}</clr-dg-cell>

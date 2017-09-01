@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
 import { FactionsService } from '../../services/factions.service';
@@ -20,8 +19,7 @@ export class FactionListComponent implements OnInit {
         factionName: new FormControl()
     });
     constructor(
-        private factionService: FactionsService,
-        private router: Router
+        private factionService: FactionsService
     ) { }
 
     showFaction(factions) {
@@ -53,10 +51,6 @@ export class FactionListComponent implements OnInit {
             .getFactions(this.pageNumber.toString(), beginsWith)
             .subscribe(factions => this.showFaction(factions));
         this.loading = false;
-    }
-
-    onView(faction: IFaction) {
-        this.router.navigate(['/faction', faction.id]);
     }
 
     ngOnInit() {

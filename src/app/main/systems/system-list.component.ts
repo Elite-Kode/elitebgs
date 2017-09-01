@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
 import { SystemsService } from '../../services/systems.service';
@@ -20,8 +19,7 @@ export class SystemListComponent implements OnInit {
         systemName: new FormControl()
     });
     constructor(
-        private systemService: SystemsService,
-        private router: Router
+        private systemService: SystemsService
     ) { }
 
     showSystem(systems) {
@@ -57,10 +55,6 @@ export class SystemListComponent implements OnInit {
             .getSystems(this.pageNumber.toString(), beginsWith)
             .subscribe(systems => this.showSystem(systems));
         this.loading = false;
-    }
-
-    onView(system: ISystem) {
-        this.router.navigate(['/system', system.id]);
     }
 
     ngOnInit() {
