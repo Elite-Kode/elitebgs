@@ -25,6 +25,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
+const DiscordStrategy = require('passport-discord').Strategy;
+const secrets = require('./secrets');
 
 const bugsnag = require('./server/bugsnag');
 const swagger = require('./server/swagger');
@@ -56,6 +58,9 @@ const ebgsSystemsV2 = require('./server/routes/elite_bgs_api/v2/systems');
 
 const ebgsFactionsV3 = require('./server/routes/elite_bgs_api/v3/factions');
 const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
+
+const authCheck = require('./server/routes/auth/auth_check');
+const authDiscord = require('./server/routes/auth/discord');
 
 require('./server/modules/eddn');
 
@@ -137,6 +142,9 @@ app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
 app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
 app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
 
+app.use('/auth/check', authCheck);
+app.use('/auth/discord', authDiscord);
+
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
     console.log(`Server 404 request: ${req.originalUrl}`);
@@ -171,6 +179,13 @@ if (app.get('env') === 'production') {
     });
 }
 
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+passport.deserializeUser(function (obj, done) {
+    done(null, obj);
+});
+
 require('./server/models/users')
     .then(user => {
         passport.use(new basicStrategy((username, password, callback) => {
@@ -191,5 +206,42 @@ require('./server/models/users')
     .catch(err => {
         console.log(err);
     })
+
+let scopes = ['identify', 'email', 'guilds'];
+
+passport.use(new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `http://${host}/auth/discord/callback`,
+    scope: scopes
+}, (accessToken, refreshToken, profile, done) => {
+    require('./server/models/ebgs_users')
+        .then(model => {
+            let user = {
+                id: profile.id,
+                username: profile.username,
+                email: profile.email,
+                avatar: profile.avatar,
+                discriminator: profile.discriminator,
+                guilds: profile.guilds
+            };
+            model.findOneAndUpdate(
+                { id: profile.id },
+                user,
+                {
+                    upsert: true,
+                    runValidators: true
+                })
+                .then(() => {
+                    done(null, user);
+                })
+                .catch(err => {
+                    done(err);
+                });
+        })
+        .catch(err => {
+            done(err);
+        })
+}));
 
 module.exports = app;
