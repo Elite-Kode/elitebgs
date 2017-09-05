@@ -19,10 +19,10 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const mongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
 const DiscordStrategy = require('passport-discord').Strategy;
@@ -66,13 +66,17 @@ require('./server/modules/eddn');
 
 const app = express();
 
-// app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
 app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use(session({
+    name: "EliteBGS",
+    secret: secrets.session_secret,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
+    store: new mongoStore({ mongooseConnection: require('./server/db').elite_bgs })
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -180,10 +184,22 @@ if (app.get('env') === 'production') {
 }
 
 passport.serializeUser(function (user, done) {
-    done(null, user);
+    done(null, user.id);
 });
-passport.deserializeUser(function (obj, done) {
-    done(null, obj);
+passport.deserializeUser(function (id, done) {
+    require('./server/models/ebgs_users')
+        .then(model => {
+            model.findOne({ id: id })
+                .then(user => {
+                    done(null, user);
+                })
+                .catch(err => {
+                    done(err);
+                })
+        })
+        .catch(err => {
+            done(err);
+        })
 });
 
 require('./server/models/users')

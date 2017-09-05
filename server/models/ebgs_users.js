@@ -26,7 +26,7 @@ module.exports = new Promise((resolve, reject) => {
         id: String,
         username: String,
         email: String,
-        avatar: String,
+        avatar: String,     // https://cdn.discordapp.com/avatars/<user-id>/<avatar-id>.png
         discriminator: String,
         guilds: [{
             id: String,
