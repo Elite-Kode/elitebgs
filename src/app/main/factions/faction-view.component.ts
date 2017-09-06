@@ -9,7 +9,7 @@ import { IFaction } from './faction.interface';
     templateUrl: './faction-view.component.html'
 })
 export class FactionViewComponent implements OnInit {
-    private factionData: IFaction;
+    factionData: IFaction;
     constructor(
         private factionService: FactionsService,
         private router: Router,

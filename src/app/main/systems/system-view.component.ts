@@ -9,7 +9,7 @@ import { ISystem } from './system.interface';
     templateUrl: './system-view.component.html'
 })
 export class SystemViewComponent implements OnInit {
-    private systemData: ISystem;
+    systemData: ISystem;
     constructor(
         private systemService: SystemsService,
         private router: Router,

@@ -15,6 +15,7 @@ import { PageNotFoundComponent } from './page_not_found/page-not-found.component
 import { SystemsService } from './services/systems.service';
 import { FactionsService } from './services/factions.service';
 import { AuthenticationService } from './services/authentication.service';
+import { ServerService } from './services/server.service';
 import { ApiInterceptor } from './api.interceptor';
 
 @NgModule({
@@ -33,7 +34,7 @@ import { ApiInterceptor } from './api.interceptor';
         AppRoutingModule,
         ClarityModule.forRoot()
     ],
-    providers: [SystemsService, FactionsService, AuthenticationService, {
+    providers: [SystemsService, FactionsService, AuthenticationService, ServerService, {
         provide: HTTP_INTERCEPTORS,
         useClass: ApiInterceptor,
         multi: true,

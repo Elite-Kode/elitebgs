@@ -1,6 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
-import { Router } from '@angular/router';
+import { ServerService } from '../services/server.service';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
     selector: 'app-main',
@@ -9,29 +10,46 @@ import { Router } from '@angular/router';
 })
 export class MainComponent implements OnInit {
     @HostBinding('class.u-main-container') mainContainer = true;
-    private isAuthenticated = false;
+    private isAuthenticated: boolean;
+    backgroundImage = {};
     constructor(
         private authenticationService: AuthenticationService,
+        private serverService: ServerService,
         private router: Router
-    ) { }
+    ) {
+        router.events.subscribe(event => {
+            if (event instanceof NavigationEnd) {
+                this.getBackground();
+            }
+        })
+    }
 
     ngOnInit(): void {
         this.getAuthentication();
+        this.getBackground();
     }
 
     getAuthentication() {
         this.authenticationService
             .isAuthenticated()
-            .subscribe(status => { this.isAuthenticated = status });
+            .subscribe(status => {
+                this.isAuthenticated = status;
+                this.getBackground();
+            });
     }
 
     getBackground() {
-        if (!this.isAuthenticated && this.router.url === '/') {
-            return {
-                'background-image': 'url(\'/assets/backgrounds/blueness.png\')'
-            };
+        if (this.isAuthenticated !== undefined && !this.isAuthenticated && this.router.url === '/') {
+            this.serverService
+                .getBackgroundImageFiles()
+                .subscribe(files => {
+                    const randomFile = Math.floor(Math.random() * files.length);
+                    this.backgroundImage = {
+                        'background-image': 'url(\'/assets/backgrounds/' + files[randomFile] + '\')'
+                    };
+                })
         } else {
-            return {};
+            this.backgroundImage = {};
         }
     }
 

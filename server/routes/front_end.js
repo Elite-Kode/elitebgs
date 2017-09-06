@@ -17,13 +17,19 @@
 "use strict";
 
 const express = require('express');
+const passport = require('passport');
+const path = require('path');
+const fs = require('fs-extra');
 
 let router = express.Router();
 
 let scopes = ['identify', 'email', 'guilds'];
 
-router.get('/', (req, res) => {
-    res.send(req.isAuthenticated());
+router.get('/backgroundimages', passport.authenticate('basic', { session: false }), (req, res, next) => {
+    if (req.user.clearance === 0) {
+        let pathToFile = path.resolve(__dirname, '../../src/assets/backgrounds');
+        res.send(fs.readdirSync(pathToFile));
+    }
 });
 
 module.exports = router;
