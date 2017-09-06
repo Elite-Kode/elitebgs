@@ -47,3 +47,6 @@ Thumbs.db
 # Secrets
 secrets.js
 src/secrets.ts
+
+# Background Images
+src/assets/backgrounds

@@ -10,6 +10,14 @@
             <a routerLink="/api/eddb" routerLinkActive="active" class="nav-link"><span class="nav-text">EDDB API</span></a>
             <a routerLink="/api/elitebgs" routerLinkActive="active" class="nav-link"><span class="nav-text">Elite BGS API</span></a>
         </div>
+        <div class="header-actions">
+            <a routerLink="/" class="nav-link nav-icon" *ngIf="!isAuthenticated">
+                <clr-icon shape="login" class="is-solid"></clr-icon>
+            </a>
+            <a href="/auth/logout" class="nav-link nav-icon" *ngIf="isAuthenticated">
+                <clr-icon shape="logout" class="is-solid"></clr-icon>
+            </a>
+        </div>
     </clr-header>
     <router-outlet>
     </router-outlet>

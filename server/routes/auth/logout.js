@@ -24,7 +24,8 @@ let router = express.Router();
 let scopes = ['identify', 'email', 'guilds'];
 
 router.get('/', (req, res) => {
-    res.send(req.isAuthenticated());
+    req.logout();
+    res.redirect('/');
 });
 
 module.exports = router;

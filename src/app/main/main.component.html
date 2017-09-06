@@ -11,8 +11,8 @@
         </clr-tab>
     </clr-tabs>
 </nav>
-<div class="content-container">
-    <div class="content-area">
+<div class="content-container" [ngStyle]="getBackground()">
+    <div class="content-area" [ngStyle]="setFlex()">
         <router-outlet></router-outlet>
     </div>
 </div>
