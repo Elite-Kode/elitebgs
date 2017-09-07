@@ -8,7 +8,7 @@ import { AuthenticationService } from './services/authentication.service';
     providers: []
 })
 export class AppComponent implements OnInit {
-    isAuthenticated = false;
+    isAuthenticated: boolean;
     constructor(
         private authenticationService: AuthenticationService
     ) { }

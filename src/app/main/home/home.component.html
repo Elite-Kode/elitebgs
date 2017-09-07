@@ -1,10 +1,10 @@
 <div class="component" [ngClass]="{'flex': !isAuthenticated}">
-    <div class="login-box" *ngIf="!isAuthenticated">
+    <div class="login-box" *ngIf="!isAuthenticated && isAuthenticated !== undefined">
         <h2>HELLO</h2>
         <p>Login using your Discord credentials for a seamless integration</p>
         <a class="btn btn-primary btn-block" href="/auth/discord">Login with Discord</a>
     </div>
-    <div *ngIf="isAuthenticated">
+    <div *ngIf="isAuthenticated && isAuthenticated !== undefined">
         Logged In
     </div>
 </div>

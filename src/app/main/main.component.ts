@@ -54,7 +54,7 @@ export class MainComponent implements OnInit {
     }
 
     setFlex() {
-        if (!this.isAuthenticated && this.router.url === '/') {
+        if (this.isAuthenticated !== undefined && !this.isAuthenticated && this.router.url === '/') {
             return {
                 'display': 'flex'
             };
