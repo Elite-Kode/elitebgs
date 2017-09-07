@@ -8,7 +8,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class HomeComponent implements OnInit {
     @HostBinding('class.flex') flex = true;
-    private isAuthenticated = false;
+    isAuthenticated = false;
     constructor(
         private authenticationService: AuthenticationService
     ) { }
