@@ -17,8 +17,6 @@
 "use strict";
 
 const express = require('express');
-const passport = require('passport');
-const _ = require('lodash');
 
 let router = express.Router();
 
@@ -70,7 +68,7 @@ let router = express.Router();
    *           items:
    *             $ref: '#/definitions/EBGSFactionsPageV3'
    */
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
+router.get('/', (req, res, next) => {
     require('../../../models/ebgs_factions_v3')
         .then(factions => {
             let query = new Object;
@@ -113,9 +111,6 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                 history = true;
                 greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
                 lesserThanTime = new Date(Number(req.query.timemax));
-            }
-            if (_.isEmpty(query) && req.user.clearance !== 0) {
-                throw new Error("Add at least 1 query parameter to limit traffic");
             }
             if (history) {
                 let aggregate = factions.aggregate();
