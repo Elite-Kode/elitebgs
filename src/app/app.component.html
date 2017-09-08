@@ -14,7 +14,7 @@
             <clr-dropdown>
                 <button class="nav-icon" clrDropdownTrigger>
                     <clr-icon shape="cog" *ngIf="!isAuthenticated && isAuthenticated !== undefined"></clr-icon>
-                    <img [src]="'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.png'" class="profile-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
+                    <img [src]="'https://cdn.discordapp.com/avatars/' + user?.id + '/' + user?.avatar + '.png'" class="profile-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
                 </button>
                 <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
                     <a routerLink="/" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Login</a>
