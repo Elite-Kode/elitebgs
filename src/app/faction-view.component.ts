@@ -10,7 +10,7 @@ import { IFaction } from './faction.interface';
 })
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.u-main-container') mainContainer = true;
-    private factionData: IFaction;
+    factionData: IFaction;
     constructor(
         private factionService: FactionsService,
         private router: Router,

@@ -11,12 +11,12 @@ import { StringHandlers } from './utilities/stringHandlers';
     templateUrl: './faction-list.component.html',
 })
 export class FactionListComponent implements OnInit {
-    private factionData: IFaction[] = [];
-    private loading = true;
-    private totalRecords = 0;
+    factionData: IFaction[] = [];
+    loading = true;
+    totalRecords = 0;
     private pageNumber = 1;
     private tableState: State;
-    private factionForm = new FormGroup({
+    factionForm = new FormGroup({
         factionName: new FormControl()
     });
     constructor(

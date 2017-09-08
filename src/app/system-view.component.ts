@@ -10,7 +10,7 @@ import { ISystem } from './system.interface';
 })
 export class SystemViewComponent implements OnInit {
     @HostBinding('class.u-main-container') mainContainer = true;
-    private systemData: ISystem;
+    systemData: ISystem;
     constructor(
         private systemService: SystemsService,
         private router: Router,

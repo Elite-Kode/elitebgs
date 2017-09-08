@@ -164,7 +164,10 @@ function Stations() {
                 stationsModel
                     .then(model => {
                         model.findOneAndUpdate(
-                            { id: json.id },
+                            {
+                                id: json.id,
+                                updated_at: { $ne: json.updated_at }
+                            },
                             json,
                             {
                                 upsert: true,
