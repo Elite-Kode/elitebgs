@@ -11,12 +11,12 @@ import { FDevIDs } from './utilities/fdevids';
     templateUrl: './system-list.component.html',
 })
 export class SystemListComponent implements OnInit {
-    private systemData: ISystem[] = [];
-    private loading = true;
-    private totalRecords = 0;
+    systemData: ISystem[] = [];
+    loading = true;
+    totalRecords = 0;
     private pageNumber = 1;
     private tableState: State;
-    private systemForm = new FormGroup({
+    systemForm = new FormGroup({
         systemName: new FormControl()
     });
     constructor(
