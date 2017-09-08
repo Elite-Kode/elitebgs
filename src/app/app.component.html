@@ -11,12 +11,18 @@
             <a routerLink="/api/elitebgs" routerLinkActive="active" class="nav-link"><span class="nav-text">Elite BGS API</span></a>
         </div>
         <div class="header-actions">
-            <a routerLink="/" class="nav-link nav-icon" *ngIf="!isAuthenticated && isAuthenticated !== undefined">
-                <clr-icon shape="login" class="is-solid"></clr-icon>
-            </a>
-            <a href="/auth/logout" class="nav-link nav-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
-                <clr-icon shape="logout" class="is-solid"></clr-icon>
-            </a>
+            <clr-dropdown>
+                <button class="nav-icon" clrDropdownTrigger>
+                    <clr-icon shape="cog" *ngIf="!isAuthenticated && isAuthenticated !== undefined"></clr-icon>
+                    <img [src]="'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.png'" class="profile-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
+                </button>
+                <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                    <a routerLink="/" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Login</a>
+                    <a routerLink="/profile" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Profile</a>
+                    <a href="/auth/logout" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Log out</a>
+                    <a routerLink="/about" clrDropdownItem>About</a>
+                </clr-dropdown-menu>
+            </clr-dropdown>
         </div>
     </clr-header>
     <router-outlet>

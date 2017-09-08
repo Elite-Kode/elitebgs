@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from './services/authentication.service';
+import { Component, OnInit, HostBinding } from '@angular/core';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    providers: []
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss']
 })
-export class AppComponent implements OnInit {
+export class ProfileComponent implements OnInit {
+    @HostBinding('class.content-container') contentContainer = true;
     isAuthenticated: boolean;
     user: any;
     constructor(

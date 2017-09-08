@@ -62,6 +62,7 @@ const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
 const authCheck = require('./server/routes/auth/auth_check');
 const authDiscord = require('./server/routes/auth/discord');
 const authLogout = require('./server/routes/auth/logout');
+const authUser = require('./server/routes/auth/auth_user');
 const frontEnd = require('./server/routes/front_end');
 
 require('./server/modules/eddn');
@@ -151,6 +152,7 @@ app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
 app.use('/auth/check', authCheck);
 app.use('/auth/discord', authDiscord);
 app.use('/auth/logout', authLogout);
+app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
 
 // Pass all 404 errors called by browser to angular

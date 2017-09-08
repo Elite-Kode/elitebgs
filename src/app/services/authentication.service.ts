@@ -10,4 +10,8 @@ export class AuthenticationService {
     isAuthenticated(): Observable<boolean> {
         return this.http.get<boolean>('/auth/check');
     }
+
+    getUser(): Observable<any> {
+        return this.http.get<any>('/auth/user');
+    }
 }

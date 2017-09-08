@@ -21,7 +21,11 @@ const express = require('express');
 let router = express.Router();
 
 router.get('/', (req, res) => {
-    res.send(req.isAuthenticated());
+    if (req.user) {
+        res.send(req.user);
+    } else {
+        res.send({});
+    }
 });
 
 module.exports = router;

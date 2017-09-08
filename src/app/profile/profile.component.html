@@ -1,0 +1,15 @@
+<div class="content-area">
+    <div class="row component">
+        <div class="col-xs-12 col-sm-6">
+            <div>
+                <img [src]="'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.png'" class="profile-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
+            </div>
+            <div>
+                {{user.username}}#{{user.discriminator}}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            {{user.email}}
+        </div>
+    </div>
+</div>
