@@ -150,8 +150,7 @@ function Commodities() {
                     .then(model => {
                         model.findOneAndUpdate(
                             {
-                                id: json.id,
-                                updated_at: { $ne: json.updated_at }
+                                id: json.id
                             },
                             json,
                             {
