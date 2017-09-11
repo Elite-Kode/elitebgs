@@ -7,6 +7,7 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class ProfileComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
+    @HostBinding('style.flex-direction') flexDirection = 'column';
     isAuthenticated: boolean;
     user: any;
     constructor(

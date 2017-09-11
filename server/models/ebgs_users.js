@@ -26,12 +26,17 @@ module.exports = new Promise((resolve, reject) => {
         id: String,
         username: String,
         email: String,
-        avatar: String,     // https://cdn.discordapp.com/avatars/<user-id>/<avatar-id>.png
+        avatar: String,
         discriminator: String,
         guilds: [{
+            _id: false,
             id: String,
             name: String,
             icon: String
+        }],
+        factions: [{
+            _id: false,
+            name: String
         }]
     });
 
