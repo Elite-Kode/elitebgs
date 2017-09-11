@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
 import { FactionsService } from '../../services/factions.service';
@@ -10,6 +10,7 @@ import { StringHandlers } from '../../utilities/stringHandlers';
     templateUrl: './faction-list.component.html',
 })
 export class FactionListComponent implements OnInit {
+    @HostBinding('class.content-area') contentArea = true;
     factionData: IFaction[] = [];
     loading = true;
     totalRecords = 0;

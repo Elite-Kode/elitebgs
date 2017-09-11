@@ -1,20 +1,25 @@
-<div class="login-box" *ngIf="!isAuthenticated && isAuthenticated !== undefined">
-    <h2>HELLO</h2>
-    <p>Login using your Discord credentials for a seamless integration</p>
-    <a class="btn btn-primary btn-block" href="/auth/discord">Login with Discord</a>
+<div class="box-container" *ngIf="!isAuthenticated && isAuthenticated !== undefined">
+    <div class="login-box">
+        <h2>HELLO</h2>
+        <p>Login using your Discord credentials for a seamless integration</p>
+        <a class="btn btn-primary btn-block" href="/auth/discord">Login with Discord</a>
+    </div>
 </div>
-<div class="flex" *ngIf="isAuthenticated && isAuthenticated !== undefined">
+<div *ngIf="isAuthenticated && isAuthenticated !== undefined">
     <div class="faction-header">
         <h1>Monitoring Factions</h1>
         <button class="btn btn-primary">+ Add</button>
     </div>
-    <clr-stack-view *ngIf="user?.factions">
-        <clr-stack-block [clrSbExpandable]="true" *ngFor="let faction of user?.factions">
+    <clr-stack-view *ngIf="factions.length !== 0">
+        <clr-stack-block [clrSbExpanded]="true" *ngFor="let faction of factions">
             <clr-stack-label>{{faction.name}}</clr-stack-label>
-            <h1>Hell Yeah</h1>
+            <clr-stack-block>
+                <h3>Current State</h3>
+                <h3>Last 10 Days</h3>
+            </clr-stack-block>
         </clr-stack-block>
     </clr-stack-view>
-    <div *ngIf="!user?.factions">
+    <div *ngIf="factions.length === 0">
         You don't have any monitored factions yet. Add Some!
     </div>
 </div>

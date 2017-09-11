@@ -52,14 +52,4 @@ export class MainComponent implements OnInit {
             this.backgroundImage = {};
         }
     }
-
-    setFlex() {
-        if (this.isAuthenticated !== undefined && !this.isAuthenticated && this.router.url === '/') {
-            return {
-                'display': 'flex'
-            };
-        } else {
-            return {};
-        }
-    }
 }

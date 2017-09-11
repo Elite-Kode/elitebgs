@@ -1,10 +1,29 @@
+.box-container {
+    display: flex;
+    height: 100%;
+}
+
 .login-box {
     width: 360px;
     padding: 1%;
     margin: auto;
-    background-color: rgba(28, 96, 147, 0.80)
+    background-color: rgba(28, 96, 147, 0.80);
 }
 
-.login-box p, .login-box h2{
+.login-box p,
+.login-box h2 {
     color: white;
+}
+
+.faction-header {
+    display: flex;
+    align-items: flex-end;
+}
+
+.faction-header h1 {
+    flex: 1;
+}
+
+.faction-header .btn {
+    margin-right: 0px;
 }

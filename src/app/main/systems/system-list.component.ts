@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
 import { SystemsService } from '../../services/systems.service';
@@ -10,6 +10,7 @@ import { FDevIDs } from '../../utilities/fdevids';
     templateUrl: './system-list.component.html',
 })
 export class SystemListComponent implements OnInit {
+    @HostBinding('class.content-area') contentArea = true;
     systemData: ISystem[] = [];
     loading = true;
     totalRecords = 0;
