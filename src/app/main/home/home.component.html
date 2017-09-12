@@ -10,15 +10,49 @@
         <h1>Monitoring Factions</h1>
         <button class="btn btn-primary">+ Add</button>
     </div>
-    <clr-stack-view *ngIf="factions.length !== 0">
-        <clr-stack-block [clrSbExpanded]="true" *ngFor="let faction of factions">
-            <clr-stack-label>{{faction.name}}</clr-stack-label>
-            <clr-stack-block>
-                <h3>Current State</h3>
-                <h3>Last 10 Days</h3>
-            </clr-stack-block>
-        </clr-stack-block>
-    </clr-stack-view>
+    <div *ngIf="factions.length !== 0">
+        <div class="card" *ngFor="let faction of factions">
+            <div class="card-header">
+                {{faction.name}}
+            </div>
+            <div class="card-block">
+                <div class="card-title">
+                    Current State
+                </div>
+                <div class="card-text">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>System</th>
+                                <th>Influence</th>
+                                <th>State</th>
+                                <th>Pending States</th>
+                                <th>Recovering States</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let presence of faction.faction_presence">
+                                <td>{{presence.system_name}}</td>
+                                <td>{{(presence.influence * 100).toFixed(2)}}%</td>
+                                <td>{{presence.state}}</td>
+                                <td>
+                                    <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                                </td>
+                                <td>
+                                    <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-block">
+                <div class="card-title">
+                    Last 10 Days
+                </div>
+            </div>
+        </div>
+    </div>
     <div *ngIf="factions.length === 0">
         You don't have any monitored factions yet. Add Some!
     </div>
