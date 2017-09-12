@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
         if (this.user.factions) {
             this.user.factions.forEach(faction => {
                 this.factionsService
-                    .getFactions('1', faction.name)
+                    .getHistory(faction.name, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
                     .subscribe(factions => {
                         factions.docs.forEach(gotFaction => {
                             this.factions.push(gotFaction);
