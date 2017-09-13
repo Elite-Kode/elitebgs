@@ -59,25 +59,27 @@ export class HomeComponent implements OnInit {
                                 }
                             });
                             let series = [];
+                            history.sort((a, b) => {
+                                if (a.updated_at < b.updated_at) {
+                                    return -1;
+                                } else if (a.updated_at > b.updated_at) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });
                             allSystems.forEach(system => {
-                                let historyItem = [];
+                                let data = [];
                                 history.forEach(element => {
                                     if (element.system === system) {
-                                        historyItem.push(element);
-                                    }
-                                });
-                                historyItem.sort((a, b) => {
-                                    if (a.updated_at < b.updated_at) {
-                                        return -1;
-                                    } else if (a.updated_at > b.updated_at) {
-                                        return 1;
+                                        data.push([element.updated_at, Number.parseFloat((element.influence * 100).toFixed(2))])
                                     } else {
-                                        return 0;
+                                        if (element.systems.findIndex(systemElement => {
+                                            return systemElement.name === system;
+                                        }) === -1) {
+                                            data.push(null);
+                                        }
                                     }
-                                });
-                                let data = [];
-                                historyItem.forEach(item => {
-                                    data.push([item.updated_at, Number.parseFloat((item.influence * 100).toFixed(2))])
                                 });
                                 series.push({
                                     name: system,
