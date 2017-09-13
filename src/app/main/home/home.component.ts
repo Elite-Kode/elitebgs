@@ -51,6 +51,43 @@ export class HomeComponent implements OnInit {
                     .getHistory(faction.name, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
                     .subscribe(factions => {
                         factions.docs.forEach(gotFaction => {
+                            let history: any[] = gotFaction.history;
+                            let allSystems = [];
+                            history.forEach(element => {
+                                if (allSystems.indexOf(element.system) === -1) {
+                                    allSystems.push(element.system);
+                                }
+                            });
+                            let series = [];
+                            allSystems.forEach(system => {
+                                let historyItem = [];
+                                history.forEach(element => {
+                                    if (element.system === system) {
+                                        historyItem.push(element);
+                                    }
+                                });
+                                historyItem.sort((a, b) => {
+                                    if (a.updated_at < b.updated_at) {
+                                        return -1;
+                                    } else if (a.updated_at > b.updated_at) {
+                                        return 1;
+                                    } else {
+                                        return 0;
+                                    }
+                                });
+                                let data = [];
+                                historyItem.forEach(item => {
+                                    data.push([item.updated_at, Number.parseFloat((item.influence * 100).toFixed(2))])
+                                });
+                                series.push({
+                                    name: system,
+                                    data: data
+                                });
+                            });
+                            gotFaction.factionOptions = {
+                                title: { text: 'Influence trend' },
+                                series: series
+                            };
                             this.factions.push(gotFaction);
                         });
                     })
