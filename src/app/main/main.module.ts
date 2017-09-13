@@ -12,7 +12,13 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { MainRoutingModule } from './main-routing.module';
 
+import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
+
 export declare let require: any;
+export function highchartsFactory() {
+    const hc = require('highcharts');
+    return hc;
+}
 
 @NgModule({
     declarations: [
@@ -28,10 +34,13 @@ export declare let require: any;
         FormsModule,
         ReactiveFormsModule,
         ClarityModule.forRoot(),
-        ChartModule.forRoot(require('highcharts')),
+        ChartModule,
         MainRoutingModule
     ],
-    providers: [],
+    providers: [{
+        provide: HighchartsStatic,
+        useFactory: highchartsFactory
+    }],
     exports: [MainComponent]
 })
 export class MainModule { }
