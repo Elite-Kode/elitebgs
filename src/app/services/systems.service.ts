@@ -18,4 +18,10 @@ export class SystemsService {
             params: new HttpParams().set('id', id)
         });
     }
+
+    getHistory(name: string, timemin: string, timemax: string): Observable<any> {
+        return this.http.get<any>('/api/ebgs/v3/systems', {
+            params: new HttpParams().set('name', name).set('timemin', timemin).set('timemax', timemax)
+        })
+    }
 }

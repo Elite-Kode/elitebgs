@@ -1,6 +1,7 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
+import { SystemsService } from '../../services/systems.service';
 
 @Component({
     selector: 'app-home',
@@ -12,9 +13,11 @@ export class HomeComponent implements OnInit {
     isAuthenticated: boolean;
     user: any;
     factions = [];
+    systems = [];
     constructor(
         private authenticationService: AuthenticationService,
-        private factionsService: FactionsService
+        private factionsService: FactionsService,
+        private systemsService: SystemsService
     ) { }
 
     ngOnInit(): void {
@@ -31,6 +34,7 @@ export class HomeComponent implements OnInit {
                 } else {
                     this.user = {};
                     this.factions = [];
+                    this.systems = [];
                 }
             });
     }
@@ -41,6 +45,7 @@ export class HomeComponent implements OnInit {
             .subscribe(user => {
                 this.user = user;
                 this.getFactions();
+                this.getAddedSystems();
             });
     }
 
@@ -51,6 +56,9 @@ export class HomeComponent implements OnInit {
                     .getHistory(faction.name, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
                     .subscribe(factions => {
                         factions.docs.forEach(gotFaction => {
+                            gotFaction.faction_presence.forEach(system => {
+                                this.getSystem(system.system_name);
+                            });
                             let history: any[] = gotFaction.history;
                             let allSystems = [];
                             history.forEach(element => {
@@ -95,5 +103,43 @@ export class HomeComponent implements OnInit {
                     })
             });
         }
+    }
+
+    getSystem(system: string) {
+        this.systemsService
+            .getHistory(system, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
+            .subscribe(systems => {
+                systems.docs.forEach(gotSystem => {
+                    if (this.systems.findIndex(systemElement => {
+                        return systemElement.name === system;
+                    }) === -1) {
+                        let length = this.systems.push(gotSystem);
+                        gotSystem.factions.forEach(faction => {
+                            this.factionsService
+                                .getFactions('1', faction.name_lower)
+                                .subscribe(factions => {
+                                    this.systems[length - 1].factions.forEach((factionInSystem, index, array) => {
+                                        if (factionInSystem.name_lower === faction.name_lower) {
+                                            factions.docs[0].faction_presence.forEach(presence => {
+                                                if (presence.system_name_lower === gotSystem.name_lower) {
+                                                    array[index].influence = presence.influence;
+                                                    array[index].state = presence.state;
+                                                    array[index].pending_states = presence.pending_states;
+                                                    array[index].recovering_states = presence.recovering_states;
+                                                }
+                                            });
+                                        }
+                                    });
+                                })
+                        });
+                    }
+                })
+            })
+    }
+
+    getAddedSystems() {
+        this.user.systems.forEach(system => {
+            this.getSystem(system);
+        })
     }
 }

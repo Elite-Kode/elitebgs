@@ -245,6 +245,7 @@ passport.use(new DiscordStrategy({
                 email: profile.email,
                 avatar: profile.avatar,
                 discriminator: profile.discriminator,
+                access: 1,
                 guilds: profile.guilds
             };
             model.findOneAndUpdate(

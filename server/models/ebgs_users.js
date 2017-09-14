@@ -28,6 +28,7 @@ module.exports = new Promise((resolve, reject) => {
         email: String,
         avatar: String,
         discriminator: String,
+        access: Number,
         guilds: [{
             _id: false,
             id: String,
@@ -35,6 +36,14 @@ module.exports = new Promise((resolve, reject) => {
             icon: String
         }],
         factions: [{
+            _id: false,
+            name: String
+        }],
+        systems: [{
+            _id: false,
+            name: String
+        }],
+        editable_factions: [{
             _id: false,
             name: String
         }]
