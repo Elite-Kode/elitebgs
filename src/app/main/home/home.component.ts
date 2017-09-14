@@ -80,12 +80,12 @@ export class HomeComponent implements OnInit {
                                 let data = [];
                                 history.forEach(element => {
                                     if (element.system === system) {
-                                        data.push([element.updated_at, Number.parseFloat((element.influence * 100).toFixed(2))])
+                                        data.push([Date.parse(element.updated_at), Number.parseFloat((element.influence * 100).toFixed(2))])
                                     } else {
                                         if (element.systems.findIndex(systemElement => {
                                             return systemElement.name === system;
                                         }) === -1) {
-                                            data.push(null);
+                                            data.push([Date.parse(element.updated_at), null]);
                                         }
                                     }
                                 });
@@ -95,6 +95,7 @@ export class HomeComponent implements OnInit {
                                 });
                             });
                             gotFaction.factionOptions = {
+                                xAxis: { type: 'datetime' },
                                 title: { text: 'Influence trend' },
                                 series: series
                             };
