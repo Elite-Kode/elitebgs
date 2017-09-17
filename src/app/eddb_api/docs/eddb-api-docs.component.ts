@@ -1,6 +1,6 @@
 import { Component, HostBinding } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 })
 export class EddbApiDocsComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
-    source;
+    source: SafeResourceUrl;
     specs: IInputSpec[];
     constructor(private domSanitizer: DomSanitizer) {
         if (environment.production) {

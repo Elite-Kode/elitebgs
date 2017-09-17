@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { EBGSUser } from 'app/typings';
 
 @Component({
     templateUrl: './profile.component.html',
@@ -9,7 +10,7 @@ export class ProfileComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     @HostBinding('style.flex-direction') flexDirection = 'column';
     isAuthenticated: boolean;
-    user: any;
+    user: EBGSUser;
     constructor(
         private authenticationService: AuthenticationService
     ) { }
@@ -26,7 +27,7 @@ export class ProfileComponent implements OnInit {
                 if (this.isAuthenticated) {
                     this.getUser();
                 } else {
-                    this.user = {};
+                    this.user = {} as EBGSUser;
                 }
             });
     }

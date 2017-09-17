@@ -3,17 +3,24 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
+import { EBGSFactionsV3, EBGSUser, EBGSFactionV3Schema } from '../../typings';
+import { Options } from 'highcharts';
+
+interface EBGSFactionChart extends EBGSFactionV3Schema {
+    factionOptions: Options;
+}
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    user: any;
-    factions = [];
+    user: EBGSUser;
+    factions: EBGSFactionChart[] = [];
     systems = [];
     monitoredSystems = [];
     constructor(
@@ -34,7 +41,7 @@ export class HomeComponent implements OnInit {
                 if (this.isAuthenticated) {
                     this.getUser();
                 } else {
-                    this.user = {};
+                    this.user = {} as EBGSUser;
                     this.factions = [];
                     this.systems = [];
                 }
@@ -53,7 +60,7 @@ export class HomeComponent implements OnInit {
 
     getFactions() {
         if (this.user.factions) {
-            const allFactionsGet: Promise<any>[] = [];
+            const allFactionsGet: Promise<EBGSFactionsV3>[] = [];
             this.user.factions.forEach(faction => {
                 allFactionsGet.push(new Promise((resolve, reject) => {
                     this.factionsService
@@ -61,7 +68,8 @@ export class HomeComponent implements OnInit {
                         .subscribe(factions => {
                             resolve(factions);
                             factions.docs.forEach(gotFaction => {
-                                const history: any[] = gotFaction.history;
+                                const gotFactionChart: EBGSFactionChart = gotFaction as EBGSFactionChart;
+                                const history = gotFactionChart.history;
                                 const allSystems = [];
                                 history.forEach(element => {
                                     if (allSystems.indexOf(element.system) === -1) {
@@ -99,12 +107,12 @@ export class HomeComponent implements OnInit {
                                         data: data
                                     });
                                 });
-                                gotFaction.factionOptions = {
+                                gotFactionChart.factionOptions = {
                                     xAxis: { type: 'datetime' },
                                     title: { text: 'Influence trend' },
                                     series: series
                                 };
-                                this.factions.push(gotFaction);
+                                this.factions.push(gotFactionChart);
                             });
                         },
                         (err: HttpErrorResponse) => {

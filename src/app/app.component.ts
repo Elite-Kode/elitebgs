@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
+import { EBGSUser } from 'app/typings';
 
 @Component({
     selector: 'app-root',
@@ -9,7 +10,7 @@ import { AuthenticationService } from './services/authentication.service';
 })
 export class AppComponent implements OnInit {
     isAuthenticated: boolean;
-    user: any;
+    user: EBGSUser;
     constructor(
         private authenticationService: AuthenticationService
     ) { }
@@ -26,7 +27,7 @@ export class AppComponent implements OnInit {
                 if (this.isAuthenticated) {
                     this.getUser();
                 } else {
-                    this.user = {};
+                    this.user = {} as EBGSUser;
                 }
             });
     }

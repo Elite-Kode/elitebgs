@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { EBGSUser } from '../typings';
 
 @Injectable()
 export class AuthenticationService {
@@ -11,7 +12,7 @@ export class AuthenticationService {
         return this.http.get<boolean>('/auth/check');
     }
 
-    getUser(): Observable<any> {
-        return this.http.get<any>('/auth/user');
+    getUser(): Observable<EBGSUser> {
+        return this.http.get<EBGSUser>('/auth/user');
     }
 }
