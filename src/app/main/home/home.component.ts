@@ -10,7 +10,7 @@ interface EBGSFactionChart extends EBGSFactionV3Schema {
     factionOptions: Options;
 }
 
-type EBGSSystemFaction = EBGSSystemV3Schema['factions'];
+type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
 
 interface EBGSSystemFactionChart extends EBGSSystemFaction {
     influence: number;
@@ -27,20 +27,7 @@ interface EBGSSystemFactionChart extends EBGSSystemFaction {
 
 interface EBGSSystemChart extends EBGSSystemV3Schema {
     systemOptions: Options;
-    factions: [{
-        name: string;
-        name_lower: string;
-        influence: number;
-        state: string;
-        pending_states: [{
-            state: string;
-            trend: number;
-        }];
-        recovering_states: [{
-            state: string;
-            trend: number;
-        }];
-    }]
+    factions: [EBGSSystemFactionChart];
 }
 
 @Component({
@@ -64,6 +51,9 @@ export class HomeComponent implements OnInit {
 
     ngOnInit(): void {
         this.getAuthentication();
+        const tyty: EBGSSystemFactionChart = {} as EBGSSystemFactionChart;
+        tyty.name_lower = 'fdfdf';
+        tyty.influence = 9;
     }
 
     getAuthentication() {
