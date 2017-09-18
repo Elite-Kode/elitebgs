@@ -215,9 +215,9 @@ function Journal() {
                                 systemObject = {
                                     name: message.StarSystem,
                                     name_lower: message.StarSystem.toLowerCase(),
-                                    x: message.StarPos[0],
-                                    y: message.StarPos[1],
-                                    z: message.StarPos[2],
+                                    x: this.correctCoordinates(message.StarPos[0]),
+                                    y: this.correctCoordinates(message.StarPos[1]),
+                                    z: this.correctCoordinates(message.StarPos[2]),
                                     government: message.SystemGovernment,
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
@@ -378,7 +378,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => { })
+                                                            .exec()
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -391,7 +391,7 @@ function Journal() {
                                                                 upsert: true,
                                                                 runValidators: true
                                                             })
-                                                            .then(saved => { })
+                                                            .exec()
                                                             .catch(err => {
                                                                 console.log(err);
                                                             })
@@ -404,7 +404,7 @@ function Journal() {
                                                         upsert: true,
                                                         runValidators: true
                                                     })
-                                                    .then(saved => { })
+                                                    .exec()
                                                     .catch(err => {
                                                         console.log(err);
                                                     })
@@ -468,16 +468,27 @@ function Journal() {
                                             };
                                             this.getFactionEDDBId(messageFaction.Name)
                                                 .then(id => {
-                                                    factionObject.eddb_id = id;
-                                                    new model(factionObject).save()
-                                                        .then(saved => { })
+                                                    model.findOneAndUpdate(
+                                                        { name: factionObject.name },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec()
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
                                                 })
                                                 .catch(() => {
-                                                    new model(factionObject).save()
-                                                        .then(saved => { })
+                                                    model.findOneAndUpdate(
+                                                        { name: factionObject.name },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec()
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
@@ -592,7 +603,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => { })
+                                                                .exec()
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -605,7 +616,7 @@ function Journal() {
                                                                     upsert: true,
                                                                     runValidators: true
                                                                 })
-                                                                .then(saved => { })
+                                                                .exec()
                                                                 .catch(err => {
                                                                     console.log(err);
                                                                 })
@@ -618,7 +629,7 @@ function Journal() {
                                                             upsert: true,
                                                             runValidators: true
                                                         })
-                                                        .then(saved => { })
+                                                        .exec()
                                                         .catch(err => {
                                                             console.log(err);
                                                         })
@@ -638,7 +649,7 @@ function Journal() {
 
     this.correctCoordinates = function (value) {
         let floatValue = Number.parseFloat(value);
-        let intValue = Number.parseInt((floatValue * 32).toString().split('.')[0]);
+        let intValue = Math.round(floatValue * 32);
         return intValue / 32;
     }
 
