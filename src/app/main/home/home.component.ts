@@ -15,19 +15,19 @@ type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
 interface EBGSSystemFactionChart extends EBGSSystemFaction {
     influence: number;
     state: string;
-    pending_states: [{
+    pending_states: {
         state: string;
         trend: number;
-    }];
-    recovering_states: [{
+    }[];
+    recovering_states: {
         state: string;
         trend: number;
-    }];
+    }[];
 }
 
 interface EBGSSystemChart extends EBGSSystemV3Schema {
     systemOptions: Options;
-    factions: [EBGSSystemFactionChart];
+    factions: EBGSSystemFactionChart[];
 }
 
 @Component({
@@ -115,7 +115,7 @@ export class HomeComponent implements OnInit {
                                         data.push([
                                             Date.parse(element.updated_at),
                                             Number.parseFloat((element.influence * 100).toFixed(2))
-                                        ])
+                                        ]);
                                     } else {
                                         if (element.systems.findIndex(systemElement => {
                                             return systemElement.name === system;
@@ -139,7 +139,7 @@ export class HomeComponent implements OnInit {
                     },
                     (err: HttpErrorResponse) => {
                         reject(err);
-                    })
+                    });
             }));
         });
         Promise.all(allFactionsGet)
@@ -150,14 +150,14 @@ export class HomeComponent implements OnInit {
                             if (this.monitoredSystems.indexOf(system.system_name) === -1) {
                                 this.monitoredSystems.push(system.system_name);
                             }
-                        })
-                    })
+                        });
+                    });
                 });
                 this.getSystems();
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     getSystems() {
@@ -178,12 +178,12 @@ export class HomeComponent implements OnInit {
                                     array[index].state = factions.docs[0].faction_presence[indexOfSystem].state;
                                     array[index].pending_states = factions.docs[0].faction_presence[indexOfSystem].pending_states;
                                     array[index].recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
-                                })
-                        })
+                                });
+                        });
                         this.systems.push(gotSystemChart);
-                    })
-                })
-        })
+                    });
+                });
+        });
     }
 
     addSystems() {

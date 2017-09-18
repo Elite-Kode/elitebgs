@@ -53,7 +53,7 @@ export interface BodySchema {
     ring_mass: number;
     ring_inner_radius: number;
     ring_outer_radius: number;
-    rings: [{
+    rings: {
         _id: string;
         id: number;
         created_at: string;
@@ -66,25 +66,25 @@ export interface BodySchema {
         ring_mass: number;
         ring_inner_radius: number;
         ring_outer_radius: number;
-    }];
-    atmosphere_composition: [{
+    }[];
+    atmosphere_composition: {
         _id: string;
         atmosphere_component_id: number;
         share: number;
         atmosphere_component_name: string;
-    }];
-    solid_composition: [{
+    }[];
+    solid_composition: {
         _id: string;
         solid_component_id: number;
         share: number;
         solid_component_name: string;
-    }];
-    materials: [{
+    }[];
+    materials: {
         _id: string;
         material_id: number;
         share: number;
         material_name: string;
-    }];
+    }[];
     is_landable: boolean;
 }
 
@@ -112,25 +112,25 @@ export interface EBGSFactionSchema {
     allegiance: string;
     home_system_name: string;
     is_player_faction: boolean;
-    faction_presence: [{
+    faction_presence: {
         system_name: string;
         system_name_lower: string;
-    }];
-    history: [{
+    }[];
+    history: {
         updated_at: string;
         system: string;
         system_lower: string;
         state: string;
         influence: number;
-        pending_states: [{
+        pending_states: {
             state: string;
             trend: number;
-        }];
-        recovering_states: [{
+        }[];
+        recovering_states: {
             state: string;
             trend: number;
-        }];
-    }];
+        }[];
+    }[];
 }
 
 export interface EBGSSystemSchema {
@@ -156,10 +156,10 @@ export interface EBGSSystemSchema {
     simbad_ref: string;
     controlling_minor_faction: string;
     reserve_type: string;
-    minor_faction_presences: [{
+    minor_faction_presences: {
         name: string;
         name_lower: string;
-    }];
+    }[];
 }
 
 export interface FactionSchema {
@@ -211,13 +211,13 @@ export interface PopulatedSystemSchema {
     controlling_minor_faction: string;
     reserve_type_id: number;
     reserve_type: string;
-    minor_faction_presences: [{
+    minor_faction_presences: {
         _id: string;
         minor_faction_id: number;
         state_id: number;
         state: string;
         influence: number
-    }];
+    }[];
 }
 
 export interface StationSchema {
@@ -247,34 +247,34 @@ export interface StationSchema {
     has_shipyard: boolean;
     has_docking: boolean;
     has_commodities: boolean;
-    import_commodities: [{
+    import_commodities: {
         _id: string;
         name: string;
         name_lower: string;
-    }];
-    export_commodities: [{
+    }[];
+    export_commodities: {
         _id: string;
         name: string;
         name_lower: string;
-    }];
-    prohibited_commodities: [{
+    }[];
+    prohibited_commodities: {
         _id: string;
         name: string;
         name_lower: string;
-    }];
-    economies: [{
+    }[];
+    economies: {
         name: string;
         name_lower: string;
-    }];
+    }[];
     shipyard_updated_at: string;
     outfitting_updated_at: string;
     market_updated_at: string;
     is_planetary: boolean;
-    selling_ships: [{
+    selling_ships: {
         _id: string;
         name: string;
         name_lower: string;
-    }];
+    }[];
     selling_modules: number[];
     settlement_size_id: number;
     settlement_size: string;
@@ -329,39 +329,39 @@ export interface EBGSFactionV3Schema {
     allegiance: string;
     home_system_name: string;
     is_player_faction: boolean;
-    faction_presence: [{
+    faction_presence: {
         system_name: string;
         system_name_lower: string;
         state: string;
         influence: number;
-        pending_states: [{
+        pending_states: {
             state: string;
             trend: number;
-        }];
-        recovering_states: [{
+        }[];
+        recovering_states: {
             state: string;
             trend: number;
-        }];
-    }];
-    history: [{
+        }[];
+    }[];
+    history: {
         updated_at: string;
         system: string;
         system_lower: string;
         state: string;
         influence: number;
-        pending_states: [{
+        pending_states: {
             state: string;
             trend: number;
-        }];
-        recovering_states: [{
+        }[];
+        recovering_states: {
             state: string;
             trend: number;
-        }];
-        systems: [{
+        }[];
+        systems: {
             name: string;
             name_lower: string;
-        }];
-    }];
+        }[];
+    }[];
 }
 
 export interface EBGSSystemV3Schema {
@@ -382,12 +382,12 @@ export interface EBGSSystemV3Schema {
     needs_permit: boolean
     reserve_type: string
     controlling_minor_faction: string;
-    factions: [{
+    factions: {
         name: string;
         name_lower: string;
-    }];
+    }[];
     updated_at: string;
-    history: [{
+    history: {
         updated_at: string;
         population: number;
         government: string;
@@ -395,11 +395,11 @@ export interface EBGSSystemV3Schema {
         state: string;
         security: string;
         controlling_minor_faction: string;
-        factions: [{
+        factions: {
             name: string;
             name_lower: string;
-        }];
-    }];
+        }[];
+    }[];
 }
 
 export interface EBGSUserSchema {
@@ -411,20 +411,20 @@ export interface EBGSUserSchema {
     avatar: string;
     discriminator: string;
     access: number;
-    guilds: [{
+    guilds: {
         id: string;
         name: string;
         icon: string;
-    }];
-    factions: [{
+    }[];
+    factions: {
         name: string;
-    }];
-    systems: [{
+    }[];
+    systems: {
         name: string;
-    }];
-    editable_factions: [{
+    }[];
+    editable_factions: {
         name: string;
-    }];
+    }[];
 }
 
 export type BodiesV1 = BodySchema;
