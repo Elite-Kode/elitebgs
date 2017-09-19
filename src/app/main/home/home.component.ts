@@ -25,9 +25,20 @@ interface EBGSSystemFactionChart extends EBGSSystemFaction {
     }[];
 }
 
+interface ChartSeries {
+    name: string;
+    data: [number, number][];
+}
+
 interface EBGSSystemChart extends EBGSSystemV3Schema {
     systemOptions: Options;
     factions: EBGSSystemFactionChart[];
+}
+
+type EBGSFactionHistory = EBGSFactionV3Schema['history'][0];
+
+interface EBGSFactionHistoryList extends EBGSFactionHistory {
+    faction: string;
 }
 
 @Component({
@@ -92,13 +103,13 @@ export class HomeComponent implements OnInit {
                         factions.docs.forEach(gotFaction => {
                             const gotFactionChart: EBGSFactionChart = gotFaction as EBGSFactionChart;
                             const history = gotFactionChart.history;
-                            const allSystems = [];
+                            const allSystems: string[] = [];
                             history.forEach(element => {
                                 if (allSystems.indexOf(element.system) === -1) {
                                     allSystems.push(element.system);
                                 }
                             });
-                            const series = [];
+                            const series: ChartSeries[] = [];
                             history.sort((a, b) => {
                                 if (a.updated_at < b.updated_at) {
                                     return -1;
@@ -109,7 +120,7 @@ export class HomeComponent implements OnInit {
                                 }
                             });
                             allSystems.forEach(system => {
-                                const data = [];
+                                const data: [number, number][] = [];
                                 history.forEach(element => {
                                     if (element.system === system) {
                                         data.push([
@@ -164,23 +175,97 @@ export class HomeComponent implements OnInit {
         this.monitoredSystems.forEach(system => {
             this.systemsService
                 .getHistory(system, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
-                .subscribe(systems => {
-                    systems.docs.forEach(gotSystem => {
-                        const gotSystemChart: EBGSSystemChart = gotSystem as EBGSSystemChart;
-                        gotSystemChart.factions.forEach((faction, index, array) => {
-                            this.factionsService
-                                .getFactions('1', faction.name_lower)
-                                .subscribe(factions => {
-                                    const indexOfSystem = factions.docs[0].faction_presence.findIndex(presenceElement => {
-                                        return presenceElement.system_name_lower === gotSystem.name_lower;
-                                    })
-                                    array[index].influence = factions.docs[0].faction_presence[indexOfSystem].influence;
-                                    array[index].state = factions.docs[0].faction_presence[indexOfSystem].state;
-                                    array[index].pending_states = factions.docs[0].faction_presence[indexOfSystem].pending_states;
-                                    array[index].recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
-                                });
+                .subscribe(systems => {     // Stores search results of each monitored system
+                    systems.docs.forEach(gotSystem => {     // Each result might have multiple docs
+                        const allTimeFactions: string[] = [];
+                        gotSystem.history.forEach(element => {
+                            element.factions.forEach(faction => {
+                                if (allTimeFactions.indexOf(faction.name_lower) === -1) {
+                                    allTimeFactions.push(faction.name_lower);
+                                }
+                            });
                         });
-                        this.systems.push(gotSystemChart);
+                        const gotSystemChart: EBGSSystemChart = gotSystem as EBGSSystemChart;
+                        const allFactionsGet: Promise<EBGSFactionV3Schema>[] = [];
+                        allTimeFactions.forEach(faction => {
+                            allFactionsGet.push(new Promise((resolve, reject) => {
+                                this.factionsService
+                                    .getHistory(faction, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
+                                    .subscribe(factions => {
+                                        const indexOfFactionInSystem = gotSystemChart.factions.findIndex(factionElement => {
+                                            return factionElement.name_lower === faction;
+                                        });
+                                        if (indexOfFactionInSystem !== -1) {
+                                            const indexOfSystem = factions.docs[0].faction_presence.findIndex(presenceElement => {
+                                                return presenceElement.system_name_lower === gotSystem.name_lower;
+                                            })
+                                            gotSystemChart
+                                                .factions[indexOfFactionInSystem]
+                                                .influence = factions.docs[0].faction_presence[indexOfSystem].influence;
+                                            gotSystemChart
+                                                .factions[indexOfFactionInSystem]
+                                                .state = factions.docs[0].faction_presence[indexOfSystem].state;
+                                            gotSystemChart
+                                                .factions[indexOfFactionInSystem]
+                                                .pending_states = factions.docs[0].faction_presence[indexOfSystem].pending_states;
+                                            gotSystemChart
+                                                .factions[indexOfFactionInSystem]
+                                                .recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
+                                        }
+                                        resolve(factions.docs[0]);
+                                    },
+                                    (err: HttpErrorResponse) => {
+                                        reject(err);
+                                    });
+                            }));
+                        });
+                        Promise.all(allFactionsGet)
+                            .then(factions => {
+                                const allHistory: EBGSFactionHistoryList[] = [];
+                                factions.forEach(faction => {
+                                    faction.history.forEach(history => {
+                                        const historyList: EBGSFactionHistoryList = history as EBGSFactionHistoryList;
+                                        if (historyList.system_lower === gotSystem.name_lower) {
+                                            historyList.faction = faction.name_lower;
+                                            allHistory.push(historyList);
+                                        }
+                                    });
+                                });
+                                allHistory.sort((a, b) => {
+                                    if (a.updated_at < b.updated_at) {
+                                        return -1;
+                                    } else if (a.updated_at > b.updated_at) {
+                                        return 1;
+                                    } else {
+                                        return 0;
+                                    }
+                                });
+                                const series: ChartSeries[] = [];
+                                factions.forEach(faction => {
+                                    const data: [number, number][] = [];
+                                    allHistory.forEach(history => {
+                                        if (history.faction === faction.name_lower) {
+                                            data.push([
+                                                Date.parse(history.updated_at),
+                                                Number.parseFloat((history.influence * 100).toFixed(2))
+                                            ]);
+                                        }
+                                    });
+                                    series.push({
+                                        name: system,
+                                        data: data
+                                    });
+                                });
+                                gotSystemChart.systemOptions = {
+                                    xAxis: { type: 'datetime' },
+                                    title: { text: 'Influence trend' },
+                                    series: series
+                                };
+                                this.systems.push(gotSystemChart);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
                     });
                 });
         });
