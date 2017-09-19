@@ -249,6 +249,15 @@ export class HomeComponent implements OnInit {
                                                 Date.parse(history.updated_at),
                                                 Number.parseFloat((history.influence * 100).toFixed(2))
                                             ]);
+                                        } else {
+                                            const indexInSystem = gotSystem.history.findIndex(element => {
+                                                return element.updated_at === history.updated_at;
+                                            });
+                                            if (gotSystem.history[indexInSystem].factions.findIndex(element => {
+                                                return element.name_lower === faction.name_lower;
+                                            }) === -1) {
+                                                data.push([Date.parse(history.updated_at), null]);
+                                            }
                                         }
                                     });
                                     series.push({

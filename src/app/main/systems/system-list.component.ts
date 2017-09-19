@@ -4,6 +4,7 @@ import { State } from 'clarity-angular';
 import { SystemsService } from '../../services/systems.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
+import { EBGSSystemsV3WOHistory } from '../../typings';
 
 @Component({
     selector: 'app-system-list',
@@ -23,7 +24,7 @@ export class SystemListComponent implements OnInit {
         private systemService: SystemsService
     ) { }
 
-    showSystem(systems) {
+    showSystem(systems: EBGSSystemsV3WOHistory) {
         this.totalRecords = systems.total;
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;

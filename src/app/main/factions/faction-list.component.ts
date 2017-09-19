@@ -4,6 +4,7 @@ import { State } from 'clarity-angular';
 import { FactionsService } from '../../services/factions.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
+import { EBGSFactionsV3WOHistory } from '../../typings';
 
 @Component({
     selector: 'app-faction-list',
@@ -23,7 +24,7 @@ export class FactionListComponent implements OnInit {
         private factionService: FactionsService
     ) { }
 
-    showFaction(factions) {
+    showFaction(factions: EBGSFactionsV3WOHistory) {
         this.totalRecords = factions.total;
         this.factionData = factions.docs.map(responseFaction => {
             const id = responseFaction._id;

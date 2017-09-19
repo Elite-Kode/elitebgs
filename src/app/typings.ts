@@ -402,6 +402,58 @@ export interface EBGSSystemV3Schema {
     }[];
 }
 
+export interface EBGSFactionV3SchemaWOHistory {
+    _id: string;
+    __v: number;
+    eddb_id: number;
+    name: string;
+    name_lower: string;
+    updated_at: string;
+    government: string;
+    allegiance: string;
+    home_system_name: string;
+    is_player_faction: boolean;
+    faction_presence: {
+        system_name: string;
+        system_name_lower: string;
+        state: string;
+        influence: number;
+        pending_states: {
+            state: string;
+            trend: number;
+        }[];
+        recovering_states: {
+            state: string;
+            trend: number;
+        }[];
+    }[];
+}
+
+export interface EBGSSystemV3SchemaWOHistory {
+    _id: string;
+    __v: number;
+    eddb_id: number;
+    name: string;
+    name_lower: string;
+    x: number;
+    y: number;
+    z: number;
+    population: number
+    government: string;
+    allegiance: string;
+    state: string
+    security: string;
+    primary_economy: string;
+    needs_permit: boolean
+    reserve_type: string
+    controlling_minor_faction: string;
+    factions: {
+        name: string;
+        name_lower: string;
+    }[];
+    updated_at: string;
+}
+
 export interface EBGSUserSchema {
     _id: string;
     __v: number;
@@ -446,5 +498,7 @@ export type SystemsV2 = PaginateResult<SystemSchema>;
 
 export type EBGSFactionsV3 = PaginateResult<EBGSFactionV3Schema>;
 export type EBGSSystemsV3 = PaginateResult<EBGSSystemV3Schema>;
+export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistory>;
+export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>;
 
 export type EBGSUser = EBGSUserSchema;
