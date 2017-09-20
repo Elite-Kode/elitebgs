@@ -8,8 +8,19 @@
 <div *ngIf="isAuthenticated && isAuthenticated !== undefined">
     <div class="section-header">
         <h1>Monitoring Factions</h1>
-        <button class="btn btn-primary">+ Add</button>
+        <button (click)="openFactionAddModal()" class="btn btn-primary">+ Add</button>
     </div>
+    <clr-modal [(clrModalOpen)]="factionModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">Add Factions to Monitor</h3>
+        <div class="modal-body">
+            <h4>Coming Soon...</h4>
+            <p>In the meantime you can add a faction from the <a routerLink="/faction">factions</a> page.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeFactionAddModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
+        </div>
+    </clr-modal>
     <div *ngIf="factions.length !== 0">
         <div class="card" *ngFor="let faction of factions">
             <div class="card-header">
@@ -61,8 +72,19 @@
     </div>
     <div class="section-header">
         <h1>Related Systems</h1>
-        <button class="btn btn-primary">+ Add</button>
+        <button (click)="openSystemAddModal()" class="btn btn-primary">+ Add</button>
     </div>
+    <clr-modal [(clrModalOpen)]="systemModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">Add Systems to Monitor</h3>
+        <div class="modal-body">
+            <h4>Coming Soon...</h4>
+            <p>In the meantime you can add a system from the <a routerLink="/system">systems</a> page.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeSystemAddModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
+        </div>
+    </clr-modal>
     <div *ngIf="systems.length !== 0">
         <div class="card" *ngFor="let system of systems">
             <div class="card-header">

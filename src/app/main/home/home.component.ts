@@ -54,6 +54,8 @@ export class HomeComponent implements OnInit {
     factions: EBGSFactionChart[] = [];
     systems: EBGSSystemChart[] = [];
     monitoredSystems: string[] = [];
+    factionModal: boolean;
+    systemModal: boolean;
     constructor(
         private authenticationService: AuthenticationService,
         private factionsService: FactionsService,
@@ -284,5 +286,21 @@ export class HomeComponent implements OnInit {
         this.user.systems.forEach(system => {
             this.monitoredSystems.push(system.name);
         })
+    }
+
+    openFactionAddModal() {
+        this.factionModal = true;
+    }
+
+    closeFactionAddModal() {
+        this.factionModal = false;
+    }
+
+    openSystemAddModal() {
+        this.systemModal = true;
+    }
+
+    closeSystemAddModal() {
+        this.systemModal = false;
     }
 }
