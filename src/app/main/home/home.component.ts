@@ -64,9 +64,6 @@ export class HomeComponent implements OnInit {
 
     ngOnInit(): void {
         this.getAuthentication();
-        const tyty: EBGSSystemFactionChart = {} as EBGSSystemFactionChart;
-        tyty.name_lower = 'fdfdf';
-        tyty.influence = 9;
     }
 
     getAuthentication() {

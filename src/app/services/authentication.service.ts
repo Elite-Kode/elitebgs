@@ -15,4 +15,12 @@ export class AuthenticationService {
     getUser(): Observable<EBGSUser> {
         return this.http.get<EBGSUser>('/auth/user');
     }
+
+    addFactions(factions: string[]): Observable<boolean> {
+        return this.http.post<boolean>('/auth/user/edit', { factions: factions.join() });
+    }
+
+    addSystems(systems: string[]): Observable<boolean> {
+        return this.http.post<boolean>('/auth/user/edit', { systems: systems.join() });
+    }
 }

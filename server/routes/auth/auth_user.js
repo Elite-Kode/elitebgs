@@ -28,4 +28,62 @@ router.get('/', (req, res) => {
     }
 });
 
+router.post('/edit', (req, res) => {
+    if (req.user) {
+        require('../../models/ebgs_users')
+            .then(users => {
+                let user = req.user;
+                if (req.body.factions) {
+                    arrayfy(req.body.factions).forEach(faction => {
+                        if (user.factions.findIndex(element => {
+                            return element.name.toLowerCase() === faction.toLowerCase();
+                        }) === -1) {
+                            user.factions.push({ name: faction });
+                        }
+                    });
+                }
+                if (req.body.systems) {
+                    arrayfy(req.body.systems).forEach(system => {
+                        if (user.systems.findIndex(element => {
+                            return element.name.toLowerCase() === system.toLowerCase();
+                        }) === -1) {
+                            user.systems.push({ name: system });
+                        }
+                    });
+                }
+                users.findOneAndUpdate(
+                    {
+                        _id: req.user._id
+                    },
+                    user,
+                    {
+                        upsert: false,
+                        runValidators: true
+                    })
+                    .then(user => {
+                        res.send(true);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.send(false);
+                    });
+            })
+            .catch(err => {
+                console.log(err)
+                res.send(false);
+            });
+    }
+});
+
+let arrayfy = requestParam => {
+    let regex = /\s*,\s*/;
+    let mainArray = requestParam.split(regex);
+
+    mainArray.forEach((element, index, allElements) => {
+        allElements[index] = element.toLowerCase();
+    }, this);
+
+    return mainArray;
+}
+
 module.exports = router;
