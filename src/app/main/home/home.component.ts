@@ -200,19 +200,21 @@ export class HomeComponent implements OnInit {
                                         if (indexOfFactionInSystem !== -1) {
                                             const indexOfSystem = factions.docs[0].faction_presence.findIndex(presenceElement => {
                                                 return presenceElement.system_name_lower === gotSystem.name_lower;
-                                            })
-                                            gotSystemChart
-                                                .factions[indexOfFactionInSystem]
-                                                .influence = factions.docs[0].faction_presence[indexOfSystem].influence;
-                                            gotSystemChart
-                                                .factions[indexOfFactionInSystem]
-                                                .state = factions.docs[0].faction_presence[indexOfSystem].state;
-                                            gotSystemChart
-                                                .factions[indexOfFactionInSystem]
-                                                .pending_states = factions.docs[0].faction_presence[indexOfSystem].pending_states;
-                                            gotSystemChart
-                                                .factions[indexOfFactionInSystem]
-                                                .recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
+                                            });
+                                            if (indexOfSystem !== -1) {
+                                                gotSystemChart
+                                                    .factions[indexOfFactionInSystem]
+                                                    .influence = factions.docs[0].faction_presence[indexOfSystem].influence;
+                                                gotSystemChart
+                                                    .factions[indexOfFactionInSystem]
+                                                    .state = factions.docs[0].faction_presence[indexOfSystem].state;
+                                                gotSystemChart
+                                                    .factions[indexOfFactionInSystem]
+                                                    .pending_states = factions.docs[0].faction_presence[indexOfSystem].pending_states;
+                                                gotSystemChart
+                                                    .factions[indexOfFactionInSystem]
+                                                    .recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
+                                            }
                                         }
                                         resolve(factions.docs[0]);
                                     },
@@ -255,7 +257,7 @@ export class HomeComponent implements OnInit {
                                             const indexInSystem = gotSystem.history.findIndex(element => {
                                                 return element.updated_at === history.updated_at;
                                             });
-                                            if (gotSystem.history[indexInSystem].factions.findIndex(element => {
+                                            if (indexInSystem !== -1 && gotSystem.history[indexInSystem].factions.findIndex(element => {
                                                 return element.name_lower === faction.name_lower;
                                             }) === -1) {
                                                 data.push([Date.parse(history.updated_at), null]);
@@ -263,7 +265,7 @@ export class HomeComponent implements OnInit {
                                         }
                                     });
                                     series.push({
-                                        name: system,
+                                        name: faction.name,
                                         data: data
                                     });
                                 });
