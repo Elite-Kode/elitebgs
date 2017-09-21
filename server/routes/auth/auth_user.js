@@ -38,7 +38,10 @@ router.post('/edit', (req, res) => {
                         if (user.factions.findIndex(element => {
                             return element.name.toLowerCase() === faction.toLowerCase();
                         }) === -1) {
-                            user.factions.push({ name: faction });
+                            user.factions.push({
+                                name: faction,
+                                name_lower: faction.toLowerCase()
+                            });
                         }
                     });
                 }
@@ -47,7 +50,10 @@ router.post('/edit', (req, res) => {
                         if (user.systems.findIndex(element => {
                             return element.name.toLowerCase() === system.toLowerCase();
                         }) === -1) {
-                            user.systems.push({ name: system });
+                            user.systems.push({
+                                name: system,
+                                name_lower: system.toLowerCase()
+                            });
                         }
                     });
                 }
@@ -80,7 +86,7 @@ let arrayfy = requestParam => {
     let mainArray = requestParam.split(regex);
 
     mainArray.forEach((element, index, allElements) => {
-        allElements[index] = element.toLowerCase();
+        allElements[index] = element;
     }, this);
 
     return mainArray;
