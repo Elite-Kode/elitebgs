@@ -37,4 +37,20 @@ export class ProfileComponent implements OnInit {
             .getUser()
             .subscribe(user => { this.user = user });
     }
+
+    removeFaction(name: string) {
+        this.authenticationService
+            .removeFaction(name)
+            .subscribe(status => {
+                this.getUser();
+            })
+    }
+
+    removeSystem(name: string) {
+        this.authenticationService
+            .removeSystem(name)
+            .subscribe(status => {
+                this.getUser();
+            })
+    }
 }

@@ -37,15 +37,18 @@ module.exports = new Promise((resolve, reject) => {
         }],
         factions: [{
             _id: false,
-            name: String
+            name: String,
+            name_lower: String
         }],
         systems: [{
             _id: false,
-            name: String
+            name: String,
+            name_lower: String
         }],
         editable_factions: [{
             _id: false,
-            name: String
+            name: String,
+            name_lower: String
         }]
     });
 

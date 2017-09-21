@@ -36,7 +36,7 @@ router.post('/edit', (req, res) => {
                 if (req.body.factions) {
                     arrayfy(req.body.factions).forEach(faction => {
                         if (user.factions.findIndex(element => {
-                            return element.name.toLowerCase() === faction.toLowerCase();
+                            return element.name_lower === faction.toLowerCase();
                         }) === -1) {
                             user.factions.push({
                                 name: faction,
@@ -48,7 +48,7 @@ router.post('/edit', (req, res) => {
                 if (req.body.systems) {
                     arrayfy(req.body.systems).forEach(system => {
                         if (user.systems.findIndex(element => {
-                            return element.name.toLowerCase() === system.toLowerCase();
+                            return element.name_lower === system.toLowerCase();
                         }) === -1) {
                             user.systems.push({
                                 name: system,
@@ -56,6 +56,51 @@ router.post('/edit', (req, res) => {
                             });
                         }
                     });
+                }
+                users.findOneAndUpdate(
+                    {
+                        _id: req.user._id
+                    },
+                    user,
+                    {
+                        upsert: false,
+                        runValidators: true
+                    })
+                    .then(user => {
+                        res.send(true);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.send(false);
+                    });
+            })
+            .catch(err => {
+                console.log(err)
+                res.send(false);
+            });
+    }
+});
+
+router.delete('/edit', (req, res) => {
+    if (req.user) {
+        require('../../models/ebgs_users')
+            .then(users => {
+                let user = req.user;
+                if (req.query.faction) {
+                    let index = user.factions.findIndex(element => {
+                        return element.name_lower === req.query.faction.toLowerCase();
+                    });
+                    if (index !== -1) {
+                        user.factions.splice(index, 1);
+                    }
+                }
+                if (req.query.system) {
+                    let index = user.systems.findIndex(element => {
+                        return element.name_lower === req.query.system.toLowerCase();
+                    });
+                    if (index !== -1) {
+                        user.systems.splice(index, 1);
+                    }
                 }
                 users.findOneAndUpdate(
                     {
