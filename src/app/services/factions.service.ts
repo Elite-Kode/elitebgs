@@ -8,15 +8,21 @@ export class FactionsService {
 
     constructor(private http: HttpClient) { }
 
-    getFactions(page: string, name: string): Observable<EBGSFactionsV3WOHistory> {
+    getFactionsBegins(page: string, name: string): Observable<EBGSFactionsV3WOHistory> {
         return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
             params: new HttpParams().set('page', page).set('beginsWith', name)
         });
     }
 
-    getSingleFactionById(id: string): Observable<EBGSFactionsV3WOHistory> {
+    getFactions(name: string): Observable<EBGSFactionsV3WOHistory> {
         return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
-            params: new HttpParams().set('id', id)
+            params: new HttpParams().set('name', name)
+        });
+    }
+
+    getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSFactionsV3> {
+        return this.http.get<EBGSFactionsV3>('/api/ebgs/v3/factions', {
+            params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
         });
     }
 

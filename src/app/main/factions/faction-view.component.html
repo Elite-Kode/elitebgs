@@ -2,4 +2,14 @@
     <h1>{{factionData?.name}}</h1>
     <p><b>Government : </b>{{factionData?.government}}</p>
     <p><b>Allegiance : </b>{{factionData?.allegiance}}</p>
+    <div class="card">
+        <div class="card-block">
+            <div class="card-title">
+                Last 10 Days
+            </div>
+            <div class="card-text" *ngIf="factionData !== undefined">
+                <app-faction-chart [factionData]="factionData"></app-faction-chart>
+            </div>
+        </div>
+    </div>
 </div>

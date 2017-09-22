@@ -8,15 +8,21 @@ export class SystemsService {
 
     constructor(private http: HttpClient) { }
 
-    getSystems(page: string, name: string): Observable<EBGSSystemsV3WOHistory> {
+    getSystemsBegins(page: string, name: string): Observable<EBGSSystemsV3WOHistory> {
         return this.http.get<EBGSSystemsV3WOHistory>('/api/ebgs/v3/systems', {
             params: new HttpParams().set('page', page).set('beginsWith', name)
         });
     }
 
-    getSingleSystemById(id: string): Observable<EBGSSystemsV3WOHistory> {
+    getSystems(name: string): Observable<EBGSSystemsV3WOHistory> {
         return this.http.get<EBGSSystemsV3WOHistory>('/api/ebgs/v3/systems', {
-            params: new HttpParams().set('id', id)
+            params: new HttpParams().set('name', name)
+        });
+    }
+
+    getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSSystemsV3> {
+        return this.http.get<EBGSSystemsV3>('/api/ebgs/v3/systems', {
+            params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
         });
     }
 

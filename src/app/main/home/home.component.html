@@ -62,7 +62,7 @@
                     Last 10 Days
                 </div>
                 <div class="card-text">
-                    <chart [options]="faction.factionOptions"></chart>
+                    <app-faction-chart [factionData]="faction"></app-faction-chart>
                 </div>
             </div>
         </div>
@@ -126,7 +126,7 @@
                     Last 10 Days
                 </div>
                 <div class="card-text">
-                    <chart [options]="system.systemOptions"></chart>
+                    <app-system-chart [systemData]="system"></app-system-chart>
                 </div>
             </div>
         </div>

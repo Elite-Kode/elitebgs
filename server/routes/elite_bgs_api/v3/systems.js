@@ -134,15 +134,19 @@ router.get('/', (req, res, next) => {
                 lesserThanTime = new Date(Number(req.query.timemax));
             }
             if (history) {
+                if (query._id) {
+                    query._id = require('../../../db').mongoose.Types.ObjectId(query._id);
+                }
                 let aggregate = systems.aggregate();
                 let aggregateOptions = {
                     page: page,
                     limit: 10
                 }
                 aggregate.match(query).project({
+                    _id: 1,
                     eddb_id: 1,
                     name: 1,
-                    name_lower:1,
+                    name_lower: 1,
                     x: 1,
                     y: 1,
                     z: 1,

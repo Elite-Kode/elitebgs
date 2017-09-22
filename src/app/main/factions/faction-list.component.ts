@@ -57,7 +57,7 @@ export class FactionListComponent implements OnInit {
         }
 
         this.factionService
-            .getFactions(this.pageNumber.toString(), beginsWith)
+            .getFactionsBegins(this.pageNumber.toString(), beginsWith)
             .subscribe(factions => this.showFaction(factions));
         this.loading = false;
     }

@@ -61,7 +61,7 @@ export class SystemListComponent implements OnInit {
         }
 
         this.systemService
-            .getSystems(this.pageNumber.toString(), beginsWith)
+            .getSystemsBegins(this.pageNumber.toString(), beginsWith)
             .subscribe(systems => this.showSystem(systems));
         this.loading = false;
     }

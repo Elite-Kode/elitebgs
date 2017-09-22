@@ -4,7 +4,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { EBGSFactionsV3, EBGSUser, EBGSFactionV3Schema, EBGSSystemV3Schema } from '../../typings';
-import { Options } from 'highcharts';
+import { Options, IndividualSeriesOptions } from 'highcharts';
 
 interface EBGSFactionChart extends EBGSFactionV3Schema {
     factionOptions: Options;
@@ -25,13 +25,7 @@ interface EBGSSystemFactionChart extends EBGSSystemFaction {
     }[];
 }
 
-interface ChartSeries {
-    name: string;
-    data: [number, number][];
-}
-
 interface EBGSSystemChart extends EBGSSystemV3Schema {
-    systemOptions: Options;
     factions: EBGSSystemFactionChart[];
 }
 
@@ -51,7 +45,8 @@ export class HomeComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
     user: EBGSUser;
-    factions: EBGSFactionChart[] = [];
+    // factions: EBGSFactionChart[] = [];
+    factions: EBGSFactionV3Schema[] = [];
     systems: EBGSSystemChart[] = [];
     monitoredSystems: string[] = [];
     factionModal: boolean;
@@ -100,51 +95,7 @@ export class HomeComponent implements OnInit {
                     .subscribe(factions => {
                         resolve(factions);
                         factions.docs.forEach(gotFaction => {
-                            const gotFactionChart: EBGSFactionChart = gotFaction as EBGSFactionChart;
-                            const history = gotFactionChart.history;
-                            const allSystems: string[] = [];
-                            history.forEach(element => {
-                                if (allSystems.indexOf(element.system) === -1) {
-                                    allSystems.push(element.system);
-                                }
-                            });
-                            const series: ChartSeries[] = [];
-                            history.sort((a, b) => {
-                                if (a.updated_at < b.updated_at) {
-                                    return -1;
-                                } else if (a.updated_at > b.updated_at) {
-                                    return 1;
-                                } else {
-                                    return 0;
-                                }
-                            });
-                            allSystems.forEach(system => {
-                                const data: [number, number][] = [];
-                                history.forEach(element => {
-                                    if (element.system === system) {
-                                        data.push([
-                                            Date.parse(element.updated_at),
-                                            Number.parseFloat((element.influence * 100).toFixed(2))
-                                        ]);
-                                    } else {
-                                        if (element.systems.findIndex(systemElement => {
-                                            return systemElement.name === system;
-                                        }) === -1) {
-                                            data.push([Date.parse(element.updated_at), null]);
-                                        }
-                                    }
-                                });
-                                series.push({
-                                    name: system,
-                                    data: data
-                                });
-                            });
-                            gotFactionChart.factionOptions = {
-                                xAxis: { type: 'datetime' },
-                                title: { text: 'Influence trend' },
-                                series: series
-                            };
-                            this.factions.push(gotFactionChart);
+                            this.factions.push(gotFaction);
                         });
                     },
                     (err: HttpErrorResponse) => {
@@ -176,23 +127,15 @@ export class HomeComponent implements OnInit {
                 .getHistory(system, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
                 .subscribe(systems => {     // Stores search results of each monitored system
                     systems.docs.forEach(gotSystem => {     // Each result might have multiple docs
-                        const allTimeFactions: string[] = [];
-                        gotSystem.history.forEach(element => {
-                            element.factions.forEach(faction => {
-                                if (allTimeFactions.indexOf(faction.name_lower) === -1) {
-                                    allTimeFactions.push(faction.name_lower);
-                                }
-                            });
-                        });
                         const gotSystemChart: EBGSSystemChart = gotSystem as EBGSSystemChart;
                         const allFactionsGet: Promise<EBGSFactionV3Schema>[] = [];
-                        allTimeFactions.forEach(faction => {
+                        gotSystem.factions.forEach(faction => {
                             allFactionsGet.push(new Promise((resolve, reject) => {
                                 this.factionsService
-                                    .getHistory(faction, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
+                                    .getFactions(faction.name)
                                     .subscribe(factions => {
                                         const indexOfFactionInSystem = gotSystemChart.factions.findIndex(factionElement => {
-                                            return factionElement.name_lower === faction;
+                                            return factionElement.name_lower === faction.name_lower;
                                         });
                                         if (indexOfFactionInSystem !== -1) {
                                             const indexOfSystem = factions.docs[0].faction_presence.findIndex(presenceElement => {
@@ -213,7 +156,7 @@ export class HomeComponent implements OnInit {
                                                     .recovering_states = factions.docs[0].faction_presence[indexOfSystem].recovering_states;
                                             }
                                         }
-                                        resolve(factions.docs[0]);
+                                        resolve();
                                     },
                                     (err: HttpErrorResponse) => {
                                         reject(err);
@@ -221,56 +164,7 @@ export class HomeComponent implements OnInit {
                             }));
                         });
                         Promise.all(allFactionsGet)
-                            .then(factions => {
-                                const allHistory: EBGSFactionHistoryList[] = [];
-                                factions.forEach(faction => {
-                                    faction.history.forEach(history => {
-                                        const historyList: EBGSFactionHistoryList = history as EBGSFactionHistoryList;
-                                        if (historyList.system_lower === gotSystem.name_lower) {
-                                            historyList.faction = faction.name_lower;
-                                            allHistory.push(historyList);
-                                        }
-                                    });
-                                });
-                                allHistory.sort((a, b) => {
-                                    if (a.updated_at < b.updated_at) {
-                                        return -1;
-                                    } else if (a.updated_at > b.updated_at) {
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                });
-                                const series: ChartSeries[] = [];
-                                factions.forEach(faction => {
-                                    const data: [number, number][] = [];
-                                    allHistory.forEach(history => {
-                                        if (history.faction === faction.name_lower) {
-                                            data.push([
-                                                Date.parse(history.updated_at),
-                                                Number.parseFloat((history.influence * 100).toFixed(2))
-                                            ]);
-                                        } else {
-                                            const indexInSystem = gotSystem.history.findIndex(element => {
-                                                return element.updated_at === history.updated_at;
-                                            });
-                                            if (indexInSystem !== -1 && gotSystem.history[indexInSystem].factions.findIndex(element => {
-                                                return element.name_lower === faction.name_lower;
-                                            }) === -1) {
-                                                data.push([Date.parse(history.updated_at), null]);
-                                            }
-                                        }
-                                    });
-                                    series.push({
-                                        name: faction.name,
-                                        data: data
-                                    });
-                                });
-                                gotSystemChart.systemOptions = {
-                                    xAxis: { type: 'datetime' },
-                                    title: { text: 'Influence trend' },
-                                    series: series
-                                };
+                            .then(() => {
                                 this.systems.push(gotSystemChart);
                             })
                             .catch(err => {

@@ -4,4 +4,14 @@
     <p><b>Allegiance : </b>{{systemData?.allegiance}}</p>
     <p><b>Economy : </b>{{systemData?.primary_economy}}</p>
     <p><b>State : </b>{{systemData?.state}}</p>
+    <div class="card">
+        <div class="card-block">
+            <div class="card-title">
+                Last 10 Days
+            </div>
+            <div class="card-text" *ngIf="systemData !== undefined">
+                <app-system-chart [systemData]="systemData"></app-system-chart>
+            </div>
+        </div>
+    </div>
 </div>

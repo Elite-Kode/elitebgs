@@ -3,6 +3,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FactionsService } from '../../services/factions.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { IFaction } from './faction.interface';
+import { EBGSFactionV3Schema } from '../../typings';
+import { Options, IndividualSeriesOptions } from 'highcharts';
 
 @Component({
     selector: 'app-faction-view',
@@ -10,7 +12,8 @@ import { IFaction } from './faction.interface';
 })
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
-    factionData: IFaction;
+    factionData: EBGSFactionV3Schema;
+    options: Options;
     constructor(
         private factionService: FactionsService,
         private router: Router,
@@ -18,18 +21,21 @@ export class FactionViewComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.factionService.getSingleFactionById(this.route.snapshot.paramMap.get('factionid')).subscribe(faction => {
-            const id = faction.docs[0]._id;
-            const name = faction.docs[0].name;
-            const government = StringHandlers.titlify(faction.docs[0].government);
-            const allegiance = StringHandlers.titlify(faction.docs[0].allegiance);
-
-            this.factionData = <IFaction>{
-                id: id,
-                name: name,
-                government: government,
-                allegiance: allegiance
-            }
-        })
+        this.factionService
+            .getHistoryById(
+            this.route.snapshot.paramMap.get('factionid'),
+            (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(),
+            Date.now().toString()
+            )
+            .subscribe(faction => {
+                const doc = faction.docs[0];
+                this.factionData = {
+                    _id: doc._id,
+                    name: doc.name,
+                    government: StringHandlers.titlify(doc.government),
+                    allegiance: StringHandlers.titlify(doc.allegiance),
+                    history: doc.history
+                } as EBGSFactionV3Schema;
+            });
     }
 }
