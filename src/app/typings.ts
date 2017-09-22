@@ -470,13 +470,35 @@ export interface EBGSUserSchema {
     }[];
     factions: {
         name: string;
+        name_lower: string;
     }[];
     systems: {
         name: string;
+        name_lower: string;
     }[];
     editable_factions: {
         name: string;
+        name_lower: string;
     }[];
+}
+
+type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
+
+interface EBGSSystemFactionChart extends EBGSSystemFaction {
+    influence: number;
+    state: string;
+    pending_states: {
+        state: string;
+        trend: number;
+    }[];
+    recovering_states: {
+        state: string;
+        trend: number;
+    }[];
+}
+
+interface EBGSSystemChartSchema extends EBGSSystemV3Schema {
+    factions: EBGSSystemFactionChart[];
 }
 
 export type BodiesV1 = BodySchema;
@@ -502,3 +524,5 @@ export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistor
 export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>;
 
 export type EBGSUser = EBGSUserSchema;
+
+export type EBGSSystemChart = EBGSSystemChartSchema;

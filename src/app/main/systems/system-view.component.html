@@ -4,6 +4,30 @@
     <p><b>Allegiance : </b>{{systemData?.allegiance}}</p>
     <p><b>Economy : </b>{{systemData?.primary_economy}}</p>
     <p><b>State : </b>{{systemData?.state}}</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Faction Name</th>
+                <th>Influence</th>
+                <th>State</th>
+                <th>Pending States</th>
+                <th>Recovering States</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let faction of systemData?.factions">
+                <td>{{faction.name}}</td>
+                <td>{{(faction.influence * 100).toFixed(2)}}%</td>
+                <td>{{faction.state}}</td>
+                <td>
+                    <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                </td>
+                <td>
+                    <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <div class="card">
         <div class="card-block">
             <div class="card-title">
