@@ -345,6 +345,7 @@ export interface EBGSFactionV3Schema {
     }[];
     history: {
         updated_at: string;
+        updated_by: string;
         system: string;
         system_lower: string;
         state: string;
@@ -389,6 +390,7 @@ export interface EBGSSystemV3Schema {
     updated_at: string;
     history: {
         updated_at: string;
+        updated_by: string;
         population: number;
         government: string;
         allegiance: string;

@@ -50,6 +50,7 @@ module.exports = new Promise((resolve, reject) => {
         history: [{
             _id: false,
             updated_at: Date,
+            updated_by: String,
             population: Number,
             government: { type: String, lowercase: true },
             allegiance: { type: String, lowercase: true },

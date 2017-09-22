@@ -201,6 +201,7 @@ function Journal() {
                                     systemObject.updated_at = message.timestamp;
 
                                     historySubObject.updated_at = message.timestamp;
+                                    historySubObject.updated_by = "EDDN";
                                     historySubObject.government = message.SystemGovernment;
                                     historySubObject.allegiance = message.SystemAllegiance;
                                     historySubObject.state = message.FactionState;
@@ -230,6 +231,7 @@ function Journal() {
 
                                 historySubObject = {
                                     updated_at: message.timestamp,
+                                    updated_by: "EDDN",
                                     government: message.SystemGovernment,
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
@@ -454,6 +456,7 @@ function Journal() {
                                                 }],
                                                 history: [{
                                                     updated_at: message.timestamp,
+                                                    updated_by: "EDDN",
                                                     system: message.StarSystem,
                                                     system_lower: message.StarSystem.toLowerCase(),
                                                     state: messageFaction.FactionState,
@@ -582,6 +585,7 @@ function Journal() {
                                                     $addToSet: {
                                                         history: {
                                                             updated_at: message.timestamp,
+                                                            updated_by: "EDDN",
                                                             system: message.StarSystem,
                                                             system_lower: message.StarSystem.toLowerCase(),
                                                             state: messageFaction.FactionState,
