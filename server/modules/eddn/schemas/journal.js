@@ -154,7 +154,7 @@ function Journal() {
 
     this.trackSystemV3 = function (message) {
         if (message.event === "FSDJump" || message.event === "Location") {
-            if (message.Factions) {
+            if (message.Factions && this.checkMessage(message)) {
                 let factionArray = [];
                 message.Factions.forEach(faction => {
                     let factionObject = {
@@ -648,6 +648,29 @@ function Journal() {
                         console.log(err);
                     });
             }
+        }
+    }
+
+    this.checkMessage = function (message) {
+        if (
+            message.StarSystem &&
+            message.SystemFaction &&
+            message.timestamp &&
+            message.SystemSecurity &&
+            message.SystemAllegiance &&
+            message.SystemEconomy &&
+            message.StarPos &&
+            message.Factions &&
+            message.event &&
+            message.SystemGovernment &&
+            message.Population
+        ) {
+            if (!message.FactionState) {
+                message.FactionState = "None";
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 

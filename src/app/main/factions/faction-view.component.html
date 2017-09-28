@@ -1,5 +1,7 @@
 <div>
     <h1>{{factionData?.name}}</h1>
+    <button (click)="openFactionEditModal()" class="btn btn-primary">Edit</button>
+    <app-faction-edit [(modalOpen)]="editModal" [faction]="factionData"></app-faction-edit>
     <p><b>Government : </b>{{factionData?.government}}</p>
     <p><b>Allegiance : </b>{{factionData?.allegiance}}</p>
     <table class="table">

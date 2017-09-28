@@ -17,6 +17,7 @@
 "use strict";
 
 const express = require('express');
+const _ = require('lodash');
 
 let router = express.Router();
 
@@ -181,15 +182,98 @@ router.get('/', (req, res, next) => {
         .catch(next);
 });
 
-let arrayfy = requestParam => {
-    let regex = /\s*,\s*/;
-    let mainArray = requestParam.split(regex);
+router.post('/addhistory', (req, res, next) => {
+    require('../../../models/ebgs_factions_v3')
+        .then(faction => {
+            faction.findOne(
+                { _id: req.body._id },
+                { history: 0 }
+            ).lean()
+                .then(factionFound => {
+                    sortPresence(factionFound.faction_presence);
+                    sortPresence(req.body.faction_presence);
+                    if (!_.isEqual(factionFound.faction_presence, req.body.faction_presence)) {
+                        let history = [];
+                        let updateTime = new Date();
+                        let allSystems = [];
+                        req.body.faction_presence.forEach(system => {
+                            allSystems.push({
+                                name: system.system_name,
+                                name_lower: system.system_name_lower
+                            });
+                        });
+                        req.body.faction_presence.forEach(system => {
+                            let index = factionFound.faction_presence.findIndex(element => {
+                                return element.system_name === system.system_name;
+                            });
+                            if (index !== -1 && !_.isEqual(system, factionFound.faction_presence[index])) {
+                                history.push({
+                                    updated_at: updateTime,
+                                    updated_by: 'Test',
+                                    system: system.system_name,
+                                    system_lower: system.system_name_lower,
+                                    state: system.state,
+                                    influence: system.influence,
+                                    pending_states: system.pending_states,
+                                    recovering_states: system.recovering_states,
+                                    systems: allSystems
+                                });
+                            }
+                        });
+                        faction.findOneAndUpdate(
+                            { _id: req.body._id },
+                            {
+                                updated_at: updateTime,
+                                faction_presence: req.body.faction_presence,
+                                $addToSet: {
+                                    history: { $each: history }
+                                }
+                            },
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(faction => {
+                                res.send(true);
+                            })
+                            .catch(next);
+                    }
+                })
+                .catch(next);
+        })
+        .catch(next);
+});
 
-    mainArray.forEach((element, index, allElements) => {
-        allElements[index] = element.toLowerCase();
-    }, this);
-
-    return mainArray;
+let sortPresence = presence => {
+    presence.forEach(system => {
+        system.pending_states.sort((a, b) => {
+            if (a.state < b.state) {
+                return -1;
+            } else if (a.state > b.state) {
+                return 1
+            } else {
+                return 0;
+            }
+        });
+        system.recovering_states.sort((a, b) => {
+            if (a.state < b.state) {
+                return -1;
+            } else if (a.state > b.state) {
+                return 1
+            } else {
+                return 0;
+            }
+        });
+    });
+    presence.sort((a, b) => {
+        if (a.system_name_lower < b.system_name_lower) {
+            return -1;
+        } else if (a.system_name_lower > b.system_name_lower) {
+            return 1
+        } else {
+            return 0;
+        }
+    });
 }
 
 module.exports = router;

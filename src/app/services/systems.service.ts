@@ -128,6 +128,10 @@ export class SystemsService {
                 .catch(err => {
                     reject(err);
                 });
-        })
+        });
+    }
+
+    postSystems(system: EBGSSystemV3Schema): Observable<boolean> {
+        return this.http.post<boolean>('/api/ebgs/v3/systems/addhistory', system);
     }
 }

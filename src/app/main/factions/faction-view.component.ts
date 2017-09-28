@@ -11,6 +11,7 @@ import { EBGSFactionV3Schema } from '../../typings';
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     factionData: EBGSFactionV3Schema;
+    editModal: boolean;
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute
@@ -24,5 +25,9 @@ export class FactionViewComponent implements OnInit {
                 this.factionData.government = StringHandlers.titlify(this.factionData.government);
                 this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
             })
+    }
+
+    openFactionEditModal() {
+        this.editModal = true;
     }
 }

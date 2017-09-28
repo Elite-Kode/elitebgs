@@ -12,6 +12,8 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { FactionChartComponent } from './charts/faction-chart.component';
 import { SystemChartComponent } from './charts/system-chart.component';
+import { FactionEditComponent } from './edit_modals/faction-edit.component';
+import { SystemEditComponent } from './edit_modals/system-edit.component';
 import { MainRoutingModule } from './main-routing.module';
 
 import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
@@ -31,7 +33,9 @@ export function highchartsFactory() {
         FactionListComponent,
         FactionViewComponent,
         SystemChartComponent,
-        FactionChartComponent
+        FactionChartComponent,
+        FactionEditComponent,
+        SystemEditComponent,
     ],
     imports: [
         CommonModule,

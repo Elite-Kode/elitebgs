@@ -209,15 +209,67 @@ router.get('/', (req, res, next) => {
         .catch(next);
 });
 
-let arrayfy = requestParam => {
-    let regex = /\s*,\s*/;
-    let mainArray = requestParam.split(regex);
+router.post('/addhistory', (req, res, next) => {
+    require('../../../models/ebgs_systems_v3')
+        .then(system => {
+            system.findOne(
+                { _id: req.body._id },
+                { history: 0 }
+            ).lean()
+                .then(systemFound => {
+                    sortFaction(systemFound.factions);
+                    sortFaction(req.body.factions);
+                    if (!_.isEqual(
+                        _.pick(factionFound.faction_presence, [
+                            'allegiance',
+                            'controlling_minor_faction',
+                            'factions',
+                            'government',
+                            'security',
+                            'state'
+                        ]),
+                        _.pick(req.body.faction_presence, [
+                            'allegiance',
+                            'controlling_minor_faction',
+                            'factions',
+                            'government',
+                            'security',
+                            'state'
+                        ])
+                    )) {
+                        let updateTime = new Date();
+                        system.findOneAndUpdate(
+                            { _id: req.body._id },
+                            {
+                                updated_at: updateTime,
+                                allegiance: req.body.allegiance,
+                                $addToSet: {
+                                    history: { $each: history }
+                                }
+                            },
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .then(faction => {
+                                res.send(true);
+                            })
+                            .catch(next);
+                    }
+                })
+        });
+});
 
-    mainArray.forEach((element, index, allElements) => {
-        allElements[index] = element.toLowerCase();
-    }, this);
-
-    return mainArray;
+let sortFaction = faction => {
+    faction.sort((a, b) => {
+        if (a.name_lower < b.name_lower) {
+            return -1;
+        } else if (a.name_lower > b.name_lower) {
+            return 1
+        } else {
+            return 0;
+        }
+    });
 }
 
 module.exports = router;

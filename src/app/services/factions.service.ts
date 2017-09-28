@@ -72,4 +72,8 @@ export class FactionsService {
                 });
         })
     }
+
+    postFactions(faction: EBGSFactionV3Schema): Observable<boolean> {
+        return this.http.post<boolean>('/api/ebgs/v3/factions/addhistory', faction);
+    }
 }

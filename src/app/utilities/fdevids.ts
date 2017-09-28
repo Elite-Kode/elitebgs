@@ -3,6 +3,9 @@ export class FDevIDs {
         null: {
             'name': 'None'
         },
+        'none': {
+            'name': 'None'
+        },
         'boom': {
             'name': 'Boom'
         },
