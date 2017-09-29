@@ -196,6 +196,7 @@ function Journal() {
                                         system.allegiance !== message.SystemAllegiance.toLowerCase() ||
                                         system.state !== message.FactionState.toLowerCase() ||
                                         system.security !== message.SystemSecurity.toLowerCase() ||
+                                        system.population !== message.Population ||
                                         system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
                                         !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
 
@@ -203,6 +204,7 @@ function Journal() {
                                         systemObject.allegiance = message.SystemAllegiance;
                                         systemObject.state = message.FactionState;
                                         systemObject.security = message.SystemSecurity;
+                                        systemObject.population = message.Population;
                                         systemObject.controlling_minor_faction = message.SystemFaction;
                                         systemObject.factions = factionArray;
                                         systemObject.updated_at = message.timestamp;
@@ -213,6 +215,7 @@ function Journal() {
                                         historySubObject.allegiance = message.SystemAllegiance;
                                         historySubObject.state = message.FactionState;
                                         historySubObject.security = message.SystemSecurity;
+                                        historySubObject.population = message.Population;
                                         historySubObject.controlling_minor_faction = message.SystemFaction;
                                         historySubObject.factions = factionArray;
                                     } else {
@@ -231,6 +234,7 @@ function Journal() {
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
                                     security: message.SystemSecurity,
+                                    population: message.Population,
                                     primary_economy: message.SystemEconomy,
                                     controlling_minor_faction: message.SystemFaction,
                                     factions: factionArray,
@@ -244,6 +248,7 @@ function Journal() {
                                     allegiance: message.SystemAllegiance,
                                     state: message.FactionState,
                                     security: message.SystemSecurity,
+                                    population: message.Population,
                                     controlling_minor_faction: message.SystemFaction,
                                     factions: factionArray
                                 };
@@ -260,8 +265,7 @@ function Journal() {
                                             name_lower: message.StarSystem.toLowerCase(),
                                             x: this.correctCoordinates(message.StarPos[0]),
                                             y: this.correctCoordinates(message.StarPos[1]),
-                                            z: this.correctCoordinates(message.StarPos[2]),
-                                            updated_at: { $lt: message.timestamp }
+                                            z: this.correctCoordinates(message.StarPos[2])
                                         },
                                         systemObject,
                                         {
