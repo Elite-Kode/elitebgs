@@ -486,7 +486,7 @@ export interface EBGSUserSchema {
 
 type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
 
-interface EBGSSystemFactionChart extends EBGSSystemFaction {
+interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
     influence: number;
     state: string;
     pending_states: {
@@ -500,7 +500,7 @@ interface EBGSSystemFactionChart extends EBGSSystemFaction {
 }
 
 interface EBGSSystemChartSchema extends EBGSSystemV3Schema {
-    factions: EBGSSystemFactionChart[];
+    factions: EBGSSystemFactionChartSchema[];
 }
 
 export type BodiesV1 = BodySchema;
@@ -527,4 +527,5 @@ export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>
 
 export type EBGSUser = EBGSUserSchema;
 
+export type EBGSSystemFactionChart = EBGSSystemFactionChartSchema;
 export type EBGSSystemChart = EBGSSystemChartSchema;

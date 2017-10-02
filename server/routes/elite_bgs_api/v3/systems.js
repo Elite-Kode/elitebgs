@@ -220,19 +220,21 @@ router.post('/addhistory', (req, res, next) => {
                     sortFaction(systemFound.factions);
                     sortFaction(req.body.factions);
                     if (!_.isEqual(
-                        _.pick(factionFound.faction_presence, [
+                        _.pick(systemFound, [
                             'allegiance',
                             'controlling_minor_faction',
                             'factions',
                             'government',
+                            'population',
                             'security',
                             'state'
                         ]),
-                        _.pick(req.body.faction_presence, [
+                        _.pick(req.body, [
                             'allegiance',
                             'controlling_minor_faction',
                             'factions',
                             'government',
+                            'population',
                             'security',
                             'state'
                         ])
@@ -243,8 +245,24 @@ router.post('/addhistory', (req, res, next) => {
                             {
                                 updated_at: updateTime,
                                 allegiance: req.body.allegiance,
+                                controlling_minor_faction: req.body.controlling_minor_faction,
+                                factions: req.body.factions,
+                                government: req.body.government,
+                                population: req.body.population,
+                                security: req.body.security,
+                                state: req.body.state,
                                 $addToSet: {
-                                    history: { $each: history }
+                                    history: {
+                                        updated_at: updateTime,
+                                        updated_by: 'Test',
+                                        allegiance: req.body.allegiance,
+                                        controlling_minor_faction: req.body.controlling_minor_faction,
+                                        factions: req.body.factions,
+                                        government: req.body.government,
+                                        population: req.body.population,
+                                        security: req.body.security,
+                                        state: req.body.state
+                                    }
                                 }
                             },
                             {

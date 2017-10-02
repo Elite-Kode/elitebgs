@@ -1,5 +1,7 @@
 <div>
     <h1>{{systemData?.name}}</h1>
+    <button (click)="openSystemEditModal()" class="btn btn-primary">Edit</button>
+    <app-system-edit [(modalOpen)]="editModal" [system]="systemData"></app-system-edit>
     <p><b>Government : </b>{{systemData?.government}}</p>
     <p><b>Allegiance : </b>{{systemData?.allegiance}}</p>
     <p><b>Economy : </b>{{systemData?.primary_economy}}</p>

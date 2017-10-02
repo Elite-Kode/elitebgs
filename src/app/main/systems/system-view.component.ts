@@ -11,6 +11,7 @@ import { EBGSSystemChart } from '../../typings';
 export class SystemViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     systemData: EBGSSystemChart;
+    editModal: boolean;
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute
@@ -26,5 +27,9 @@ export class SystemViewComponent implements OnInit {
                 this.systemData.primary_economy = FDevIDs.economy[this.systemData.primary_economy].name;
                 this.systemData.state = FDevIDs.state[this.systemData.state].name;
             })
+    }
+
+    openSystemEditModal() {
+        this.editModal = true;
     }
 }
