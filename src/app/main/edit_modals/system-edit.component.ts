@@ -18,6 +18,7 @@ export class SystemEditComponent implements OnChanges {
     systemUnderEdit: EBGSSystemChart;
     systemEditModal: boolean;
     factionStates: string[] = [];
+    stateTrends: string[] = [];
     systemForm: FormGroup;
     constructor(
         private formBuilder: FormBuilder
@@ -27,6 +28,11 @@ export class SystemEditComponent implements OnChanges {
                 this.factionStates.push(FDevIDs.state[state].name);
             }
         });
+        this.stateTrends = [
+            'Trending Up',
+            'Not Trending',
+            'Trending Down'
+        ]
         this.createForm();
     }
 
@@ -52,6 +58,68 @@ export class SystemEditComponent implements OnChanges {
     systemModal(state: boolean) {
         this.systemEditModal = state;
         this.modalOpenChange.emit(this.systemEditModal);
+    }
+
+    removePendingState(index: number, state: string) {
+        const indexOfState = this.systemUnderEdit.factions[index].pending_states.findIndex(element => {
+            return element.state === state;
+        });
+        if (indexOfState !== -1) {
+            this.systemUnderEdit.factions[index].pending_states.splice(indexOfState, 1);
+        }
+    }
+
+    removeRecoveringState(index: number, state: string) {
+        const indexOfState = this.systemUnderEdit.factions[index].recovering_states.findIndex(element => {
+            return element.state === state;
+        });
+        if (indexOfState !== -1) {
+            this.systemUnderEdit.factions[index].recovering_states.splice(indexOfState, 1);
+        }
+    }
+
+    addPendingState(index: number) {
+        const pendingState: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+            .get('pending_state')).value;
+        const pendingStateTrend: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+            .get('pending_state_trend')).value;
+        const pendingStateTrendNumber: number = function (trend, current) {
+            if (trend === current.stateTrends[0]) {
+                return 1;
+            } else if (trend === current.stateTrends[1]) {
+                return 0;
+            } else if (trend === current.stateTrends[2]) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }(pendingStateTrend, this);
+        this.systemUnderEdit.factions[index].pending_states.push({
+            state: pendingState.toLowerCase(),
+            trend: pendingStateTrendNumber
+        });
+    }
+
+    addRecoveringState(index: number) {
+        const recoveringState: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+            .get('recovering_state')).value;
+        const recoveringStateTrend: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+            .get('recovering_state_trend')).value;
+        const recoveringStateTrendNumber: number = function (trend, current) {
+            if (trend === current.stateTrends[0]) {
+                return 1;
+            } else if (trend === current.stateTrends[1]) {
+                return 0;
+            } else if (trend === current.stateTrends[2]) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }(recoveringStateTrend, this);
+        this.systemUnderEdit.factions[index].recovering_states.push({
+            state: recoveringState.toLowerCase(),
+            trend: recoveringStateTrendNumber
+        });
     }
 
     setFactions(system: EBGSSystemChart) {

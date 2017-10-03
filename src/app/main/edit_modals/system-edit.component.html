@@ -28,13 +28,13 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <button (click)="removePendingState(i, pending.state)" class="label clickable" *ngFor="let pending of systemUnderEdit.factions.pending_states"
+                                    <button (click)="removePendingState(i, pending.state)" class="label clickable" *ngFor="let pending of systemUnderEdit.factions[i].pending_states"
                                         [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">
                                         {{pending.state}}<clr-icon shape="close"></clr-icon>
                                     </button>
                                 </td>
                                 <td>
-                                    <button (click)="removeRecoveringState(i, recovering.state)" class="label clickable" *ngFor="let recovering of systemUnderEdit.factions.recovering_states"
+                                    <button (click)="removeRecoveringState(i, recovering.state)" class="label clickable" *ngFor="let recovering of systemUnderEdit.factions[i].recovering_states"
                                         [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">
                                         {{recovering.state}}<clr-icon shape="close"></clr-icon>
                                     </button>
