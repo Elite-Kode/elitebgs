@@ -1,11 +1,11 @@
 <nav class="subnav">
-    <clr-tabs>
-        <clr-tab>
+    <ul class="nav">
+        <li class="nav-item">
             <button routerLink="/api/eddb" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="btn btn-link nav-link nav-item">Overview</button>
-        </clr-tab>
-        <clr-tab>
+        </li>
+        <li class="nav-item">
             <button routerLink="/api/eddb/docs" routerLinkActive="active" class="btn btn-link nav-link nav-item">Docs</button>
-        </clr-tab>
-    </clr-tabs>
+        </li>
+    </ul>
 </nav>
 <router-outlet></router-outlet>
