@@ -36,6 +36,18 @@ export class SystemEditComponent implements OnChanges {
         this.createForm();
     }
 
+    save() {
+        this.factions.controls.forEach((formGroup: FormGroup, index, Controls: FormGroup[]) => {
+            this.systemUnderEdit.factions[index].influence = Math.round((formGroup.get('influence').value + 0.00001) * 10000) / 1000000;
+            this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string).toLowerCase();
+        });
+    }
+
+    reset() {
+        this.systemUnderEdit = _.cloneDeep(this.system);
+        this.setFactions(this.systemUnderEdit);
+    }
+
     ngOnChanges(changes: SimpleChanges) {
         for (const propName in changes) {
             if (propName === 'system' && changes[propName].currentValue) {
@@ -79,9 +91,9 @@ export class SystemEditComponent implements OnChanges {
     }
 
     addPendingState(index: number) {
-        const pendingState: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+        const pendingState: string = ((this.factions.controls[index] as FormGroup)
             .get('pending_state')).value;
-        const pendingStateTrend: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+        const pendingStateTrend: string = ((this.factions.controls[index] as FormGroup)
             .get('pending_state_trend')).value;
         const pendingStateTrendNumber: number = function (trend, current) {
             if (trend === current.stateTrends[0]) {
@@ -101,9 +113,9 @@ export class SystemEditComponent implements OnChanges {
     }
 
     addRecoveringState(index: number) {
-        const recoveringState: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+        const recoveringState: string = ((this.factions.controls[index] as FormGroup)
             .get('recovering_state')).value;
-        const recoveringStateTrend: string = (((this.systemForm.get('factions') as FormArray).controls[index] as FormGroup)
+        const recoveringStateTrend: string = ((this.factions.controls[index] as FormGroup)
             .get('recovering_state_trend')).value;
         const recoveringStateTrendNumber: number = function (trend, current) {
             if (trend === current.stateTrends[0]) {
@@ -120,6 +132,11 @@ export class SystemEditComponent implements OnChanges {
             state: recoveringState.toLowerCase(),
             trend: recoveringStateTrendNumber
         });
+    }
+
+    removeFactionFromSystem(index: number) {
+        this.systemUnderEdit.factions.splice(index, 1);
+        this.setFactions(this.systemUnderEdit);
     }
 
     setFactions(system: EBGSSystemChart) {
