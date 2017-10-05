@@ -5,7 +5,7 @@ import { FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
 import { SystemsService } from '../../services/systems.service';
 import { FactionsService } from '../../services/factions.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import * as _ from 'lodash';
+import cloneDeep from 'lodash-es/cloneDeep'
 
 @Component({
     selector: 'app-faction-edit',
@@ -73,7 +73,7 @@ export class FactionEditComponent implements OnChanges {
     }
 
     reset() {
-        this.factionUnderEdit = _.cloneDeep(this.faction);
+        this.factionUnderEdit = cloneDeep(this.faction);
         this.setSystems(this.factionUnderEdit);
     }
 
@@ -84,7 +84,7 @@ export class FactionEditComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         for (const propName in changes) {
             if (propName === 'faction' && changes[propName].currentValue) {
-                this.factionUnderEdit = _.cloneDeep(this.faction);
+                this.factionUnderEdit = cloneDeep(this.faction);
                 const systemPromiseArray: Promise<EBGSSystemV3SchemaWOHistory>[] = [];
                 this.factionUnderEdit.faction_presence.forEach(system => {
                     systemPromiseArray.push(new Promise((resolve, reject) => {

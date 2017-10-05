@@ -183,6 +183,19 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/addhistory', (req, res, next) => {
+    // let sanitisedFactionPresence = [];
+    // if (_.has(req.body, 'faction_presence')) {
+    //     req.body.faction_presence.forEach(system => {
+    //         if (system.system_name.toLowerCase() === faction.system_name_lower) {
+    //             sanitisedFactionPresence.push({
+    //                 system_name: system.system_name,
+    //                 system_name_lower: system.system_name_lower,
+    //                 state: system.state,
+    //                 influence: system.influence
+    //             });
+    //         }
+    //     });
+    // }
     if (_.has(req.body, '_id')
         && _.has(req.body, 'faction_presence')
         && _.has(req.body.faction_presence, 'system_name')

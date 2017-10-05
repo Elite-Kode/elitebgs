@@ -210,6 +210,17 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/addhistory', (req, res, next) => {
+    let sanitisedFactions = [];
+    if (_.has(req.body, 'factions')) {
+        req.body.factions.forEach(faction => {
+            if (faction.name.toLowerCase() === faction.name_lower) {
+                sanitisedFactions.push({
+                    name: faction.name,
+                    name_lower: faction.name_lower
+                });
+            }
+        });
+    }
     if (_.has(req.body, '_id')
         && _.has(req.body, 'allegiance')
         && _.has(req.body, 'controlling_minor_faction')
@@ -217,7 +228,8 @@ router.post('/addhistory', (req, res, next) => {
         && _.has(req.body, 'government')
         && _.has(req.body, 'population')
         && _.has(req.body, 'security')
-        && _.has(req.body, 'state')) {
+        && _.has(req.body, 'state')
+        && sanitisedFactions.length !== 0) {
         require('../../../models/ebgs_systems_v3')
             .then(system => {
                 system.findOne(
@@ -254,7 +266,7 @@ router.post('/addhistory', (req, res, next) => {
                                     updated_at: updateTime,
                                     allegiance: req.body.allegiance,
                                     controlling_minor_faction: req.body.controlling_minor_faction,
-                                    factions: req.body.factions,
+                                    factions: sanitisedFactions,
                                     government: req.body.government,
                                     population: req.body.population,
                                     security: req.body.security,
@@ -265,7 +277,7 @@ router.post('/addhistory', (req, res, next) => {
                                             updated_by: 'Test',
                                             allegiance: req.body.allegiance,
                                             controlling_minor_faction: req.body.controlling_minor_faction,
-                                            factions: req.body.factions,
+                                            factions: sanitisedFactions,
                                             government: req.body.government,
                                             population: req.body.population,
                                             security: req.body.security,

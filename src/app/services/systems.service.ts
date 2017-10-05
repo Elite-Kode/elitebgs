@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { EBGSSystemsV3, EBGSSystemsV3WOHistory, EBGSSystemV3Schema, EBGSFactionV3Schema, EBGSSystemChart } from '../typings';
+import { EBGSSystemsV3, EBGSSystemsV3WOHistory, EBGSFactionV3Schema, EBGSSystemChart, EBGSSystemPostHistory } from '../typings';
 import { FactionsService } from './factions.service';
 
 @Injectable()
@@ -131,7 +131,7 @@ export class SystemsService {
         });
     }
 
-    postSystems(system: EBGSSystemV3Schema): Observable<boolean> {
+    postSystems(system: EBGSSystemPostHistory): Observable<boolean> {
         return this.http.post<boolean>('/api/ebgs/v3/systems/addhistory', system);
     }
 }

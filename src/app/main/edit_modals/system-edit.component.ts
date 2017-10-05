@@ -1,8 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart, EBGSSystemFactionChart } from '../../typings';
+import { EBGSSystemChart, EBGSSystemFactionChart, EBGSSystemPostHistory } from '../../typings';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import * as _ from 'lodash';
+import cloneDeep from 'lodash-es/cloneDeep'
 import { FDevIDs } from '../../utilities/fdevids';
+import { SystemsService } from '../../services/systems.service';
 
 @Component({
     selector: 'app-system-edit',
@@ -21,7 +22,8 @@ export class SystemEditComponent implements OnChanges {
     stateTrends: string[] = [];
     systemForm: FormGroup;
     constructor(
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private systemService: SystemsService
     ) {
         Object.keys(FDevIDs.state).forEach(state => {
             if (this.factionStates.indexOf(FDevIDs.state[state].name) === -1) {
@@ -41,17 +43,35 @@ export class SystemEditComponent implements OnChanges {
             this.systemUnderEdit.factions[index].influence = Math.round((formGroup.get('influence').value + 0.00001) * 10000) / 1000000;
             this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string).toLowerCase();
         });
+        const systemToPost = {} as EBGSSystemPostHistory;
+        systemToPost._id = this.systemUnderEdit._id;
+        systemToPost.allegiance = this.systemUnderEdit.allegiance;
+        systemToPost.controlling_minor_faction = this.systemUnderEdit.controlling_minor_faction;
+        systemToPost.government = this.systemUnderEdit.government;
+        systemToPost.population = this.systemUnderEdit.population;
+        systemToPost.security = this.systemUnderEdit.security;
+        systemToPost.state = this.systemUnderEdit.state;
+        systemToPost.factions = [];
+        this.systemUnderEdit.factions.forEach(faction => {
+            systemToPost.factions.push({
+                name: faction.name,
+                name_lower: faction.name_lower
+            });
+        });
+        this.systemService
+            .postSystems(systemToPost)
+            .subscribe(response => { })
     }
 
     reset() {
-        this.systemUnderEdit = _.cloneDeep(this.system);
+        this.systemUnderEdit = cloneDeep(this.system);
         this.setFactions(this.systemUnderEdit);
     }
 
     ngOnChanges(changes: SimpleChanges) {
         for (const propName in changes) {
             if (propName === 'system' && changes[propName].currentValue) {
-                this.systemUnderEdit = _.cloneDeep(this.system);
+                this.systemUnderEdit = cloneDeep(this.system);
                 this.setFactions(this.systemUnderEdit);
             }
         }

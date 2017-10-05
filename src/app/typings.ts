@@ -1,7 +1,7 @@
 import * as mongoosePaginate from 'mongoose-paginate';
 import { PaginateResult } from 'mongoose';
 
-export interface BodySchema {
+interface BodySchema {
     _id: string;
     __v: number;
     id: number;
@@ -88,7 +88,7 @@ export interface BodySchema {
     is_landable: boolean;
 }
 
-export interface CommoditySchema {
+interface CommoditySchema {
     _id: string;
     __v: number;
     id: number;
@@ -101,7 +101,7 @@ export interface CommoditySchema {
     collected_at: string;
 }
 
-export interface EBGSFactionSchema {
+interface EBGSFactionSchema {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -133,7 +133,7 @@ export interface EBGSFactionSchema {
     }[];
 }
 
-export interface EBGSSystemSchema {
+interface EBGSSystemSchema {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -162,7 +162,7 @@ export interface EBGSSystemSchema {
     }[];
 }
 
-export interface FactionSchema {
+interface FactionSchema {
     _id: string;
     __v: number;
     id: number;
@@ -179,7 +179,7 @@ export interface FactionSchema {
     is_player_faction: boolean;
 }
 
-export interface PopulatedSystemSchema {
+interface PopulatedSystemSchema {
     _id: string;
     __v: number;
     id: number;
@@ -220,7 +220,7 @@ export interface PopulatedSystemSchema {
     }[];
 }
 
-export interface StationSchema {
+interface StationSchema {
     _id: string;
     __v: number;
     id: number;
@@ -284,7 +284,7 @@ export interface StationSchema {
     controlling_minor_faction_id: number;
 }
 
-export interface SystemSchema {
+interface SystemSchema {
     _id: string;
     __v: number;
     id: number;
@@ -404,7 +404,7 @@ export interface EBGSSystemV3Schema {
     }[];
 }
 
-export interface EBGSFactionV3SchemaWOHistory {
+interface EBGSFactionV3SchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -456,7 +456,7 @@ export interface EBGSSystemV3SchemaWOHistory {
     updated_at: string;
 }
 
-export interface EBGSUserSchema {
+interface EBGSUserSchema {
     _id: string;
     __v: number;
     id: string;
@@ -503,6 +503,38 @@ interface EBGSSystemChartSchema extends EBGSSystemV3Schema {
     factions: EBGSSystemFactionChartSchema[];
 }
 
+interface EBGSSystemPostHistorySchema {
+    _id: string;
+    population: number
+    government: string;
+    allegiance: string;
+    state: string
+    security: string;
+    controlling_minor_faction: string;
+    factions: {
+        name: string;
+        name_lower: string;
+    }[];
+}
+
+interface EBGSFactionPostHistorySchema {
+    _id: string;
+    faction_presence: {
+        system_name: string;
+        system_name_lower: string;
+        state: string;
+        influence: number;
+        pending_states: {
+            state: string;
+            trend: number;
+        }[];
+        recovering_states: {
+            state: string;
+            trend: number;
+        }[];
+    }[];
+}
+
 export type BodiesV1 = BodySchema;
 export type CommoditiesV1 = CommoditySchema;
 export type EBGSFactionsV1 = EBGSFactionSchema;
@@ -529,3 +561,6 @@ export type EBGSUser = EBGSUserSchema;
 
 export type EBGSSystemFactionChart = EBGSSystemFactionChartSchema;
 export type EBGSSystemChart = EBGSSystemChartSchema;
+
+export type EBGSSystemPostHistory = EBGSSystemPostHistorySchema;
+export type EBGSFactionPostHistory = EBGSFactionPostHistorySchema;
