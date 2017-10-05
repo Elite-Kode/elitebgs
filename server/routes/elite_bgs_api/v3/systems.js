@@ -210,72 +210,81 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/addhistory', (req, res, next) => {
-    require('../../../models/ebgs_systems_v3')
-        .then(system => {
-            system.findOne(
-                { _id: req.body._id },
-                { history: 0 }
-            ).lean()
-                .then(systemFound => {
-                    sortFaction(systemFound.factions);
-                    sortFaction(req.body.factions);
-                    if (!_.isEqual(
-                        _.pick(systemFound, [
-                            'allegiance',
-                            'controlling_minor_faction',
-                            'factions',
-                            'government',
-                            'population',
-                            'security',
-                            'state'
-                        ]),
-                        _.pick(req.body, [
-                            'allegiance',
-                            'controlling_minor_faction',
-                            'factions',
-                            'government',
-                            'population',
-                            'security',
-                            'state'
-                        ])
-                    )) {
-                        let updateTime = new Date();
-                        system.findOneAndUpdate(
-                            { _id: req.body._id },
-                            {
-                                updated_at: updateTime,
-                                allegiance: req.body.allegiance,
-                                controlling_minor_faction: req.body.controlling_minor_faction,
-                                factions: req.body.factions,
-                                government: req.body.government,
-                                population: req.body.population,
-                                security: req.body.security,
-                                state: req.body.state,
-                                $addToSet: {
-                                    history: {
-                                        updated_at: updateTime,
-                                        updated_by: 'Test',
-                                        allegiance: req.body.allegiance,
-                                        controlling_minor_faction: req.body.controlling_minor_faction,
-                                        factions: req.body.factions,
-                                        government: req.body.government,
-                                        population: req.body.population,
-                                        security: req.body.security,
-                                        state: req.body.state
+    if (_.has(req.body, '_id')
+        && _.has(req.body, 'allegiance')
+        && _.has(req.body, 'controlling_minor_faction')
+        && _.has(req.body, 'factions')
+        && _.has(req.body, 'government')
+        && _.has(req.body, 'population')
+        && _.has(req.body, 'security')
+        && _.has(req.body, 'state')) {
+        require('../../../models/ebgs_systems_v3')
+            .then(system => {
+                system.findOne(
+                    { _id: req.body._id },
+                    { history: 0 }
+                ).lean()
+                    .then(systemFound => {
+                        sortFaction(systemFound.factions);
+                        sortFaction(req.body.factions);
+                        if (!_.isEqual(
+                            _.pick(systemFound, [
+                                'allegiance',
+                                'controlling_minor_faction',
+                                'factions',
+                                'government',
+                                'population',
+                                'security',
+                                'state'
+                            ]),
+                            _.pick(req.body, [
+                                'allegiance',
+                                'controlling_minor_faction',
+                                'factions',
+                                'government',
+                                'population',
+                                'security',
+                                'state'
+                            ])
+                        )) {
+                            let updateTime = new Date();
+                            system.findOneAndUpdate(
+                                { _id: req.body._id },
+                                {
+                                    updated_at: updateTime,
+                                    allegiance: req.body.allegiance,
+                                    controlling_minor_faction: req.body.controlling_minor_faction,
+                                    factions: req.body.factions,
+                                    government: req.body.government,
+                                    population: req.body.population,
+                                    security: req.body.security,
+                                    state: req.body.state,
+                                    $addToSet: {
+                                        history: {
+                                            updated_at: updateTime,
+                                            updated_by: 'Test',
+                                            allegiance: req.body.allegiance,
+                                            controlling_minor_faction: req.body.controlling_minor_faction,
+                                            factions: req.body.factions,
+                                            government: req.body.government,
+                                            population: req.body.population,
+                                            security: req.body.security,
+                                            state: req.body.state
+                                        }
                                     }
-                                }
-                            },
-                            {
-                                upsert: true,
-                                runValidators: true
-                            })
-                            .then(faction => {
-                                res.send(true);
-                            })
-                            .catch(next);
-                    }
-                })
-        });
+                                },
+                                {
+                                    upsert: true,
+                                    runValidators: true
+                                })
+                                .then(faction => {
+                                    res.send(true);
+                                })
+                                .catch(next);
+                        }
+                    })
+            });
+    }
 });
 
 let sortFaction = faction => {

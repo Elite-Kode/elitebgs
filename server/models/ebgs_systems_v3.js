@@ -32,7 +32,7 @@ module.exports = new Promise((resolve, reject) => {
         x: Number,
         y: Number,
         z: Number,
-        population: Number,     // Population to be added when in new journal
+        population: Number,
         government: { type: String, lowercase: true, index: true },
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true, index: true },

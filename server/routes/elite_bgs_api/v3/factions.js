@@ -183,65 +183,91 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/addhistory', (req, res, next) => {
-    require('../../../models/ebgs_factions_v3')
-        .then(faction => {
-            faction.findOne(
-                { _id: req.body._id },
-                { history: 0 }
-            ).lean()
-                .then(factionFound => {
-                    sortPresence(factionFound.faction_presence);
-                    sortPresence(req.body.faction_presence);
-                    if (!_.isEqual(factionFound.faction_presence, req.body.faction_presence)) {
-                        let history = [];
-                        let updateTime = new Date();
-                        let allSystems = [];
-                        req.body.faction_presence.forEach(system => {
-                            allSystems.push({
-                                name: system.system_name,
-                                name_lower: system.system_name_lower
-                            });
-                        });
-                        req.body.faction_presence.forEach(system => {
-                            let index = factionFound.faction_presence.findIndex(element => {
-                                return element.system_name === system.system_name;
-                            });
-                            if (index !== -1 && !_.isEqual(system, factionFound.faction_presence[index])) {
-                                history.push({
-                                    updated_at: updateTime,
-                                    updated_by: 'Test',
-                                    system: system.system_name,
-                                    system_lower: system.system_name_lower,
-                                    state: system.state,
-                                    influence: system.influence,
-                                    pending_states: system.pending_states,
-                                    recovering_states: system.recovering_states,
-                                    systems: allSystems
+    if (_.has(req.body, '_id')
+        && _.has(req.body, 'faction_presence')
+        && _.has(req.body.faction_presence, 'system_name')
+        && _.has(req.body.faction_presence, 'system_name_lower')
+        && _.has(req.body.faction_presence, 'state')
+        && _.has(req.body.faction_presence, 'influence')
+        && _.has(req.body.faction_presence, 'pending_states')
+        && _.has(req.body.faction_presence, 'recovering_states')) {
+        require('../../../models/ebgs_factions_v3')
+            .then(faction => {
+                faction.findOne(
+                    { _id: req.body._id },
+                    { history: 0 }
+                ).lean()
+                    .then(factionFound => {
+                        sortPresence(factionFound.faction_presence);
+                        sortPresence(req.body.faction_presence);
+                        if (!_.isEqual(
+                            _.pick(factionFound.faction_presence, [
+                                'system_name',
+                                'system_name_lower',
+                                'state',
+                                'influence',
+                                'pending_states',
+                                'recovering_states'
+                            ]),
+                            _.pick(req.body.faction_presence, [
+                                'system_name',
+                                'system_name_lower',
+                                'state',
+                                'influence',
+                                'pending_states',
+                                'recovering_states'
+                            ])
+                        )) {
+                            let history = [];
+                            let updateTime = new Date();
+                            let allSystems = [];
+                            req.body.faction_presence.forEach(system => {
+                                allSystems.push({
+                                    name: system.system_name,
+                                    name_lower: system.system_name_lower
                                 });
-                            }
-                        });
-                        faction.findOneAndUpdate(
-                            { _id: req.body._id },
-                            {
-                                updated_at: updateTime,
-                                faction_presence: req.body.faction_presence,
-                                $addToSet: {
-                                    history: { $each: history }
+                            });
+                            req.body.faction_presence.forEach(system => {
+                                let index = factionFound.faction_presence.findIndex(element => {
+                                    return element.system_name === system.system_name;
+                                });
+                                if (index !== -1 && !_.isEqual(system, factionFound.faction_presence[index])) {
+                                    history.push({
+                                        updated_at: updateTime,
+                                        updated_by: 'Test',
+                                        system: system.system_name,
+                                        system_lower: system.system_name_lower,
+                                        state: system.state,
+                                        influence: system.influence,
+                                        pending_states: system.pending_states,
+                                        recovering_states: system.recovering_states,
+                                        systems: allSystems
+                                    });
                                 }
-                            },
-                            {
-                                upsert: true,
-                                runValidators: true
-                            })
-                            .then(faction => {
-                                res.send(true);
-                            })
-                            .catch(next);
-                    }
-                })
-                .catch(next);
-        })
-        .catch(next);
+                            });
+                            faction.findOneAndUpdate(
+                                { _id: req.body._id },
+                                {
+                                    updated_at: updateTime,
+                                    faction_presence: req.body.faction_presence,
+                                    $addToSet: {
+                                        history: { $each: history }
+                                    }
+                                },
+                                {
+                                    upsert: true,
+                                    runValidators: true
+                                })
+                                .then(faction => {
+                                    res.send(true);
+                                })
+                                .catch(next);
+                        }
+                    })
+                    .catch(next);
+            })
+            .catch(next);
+    }
 });
 
 let sortPresence = presence => {
