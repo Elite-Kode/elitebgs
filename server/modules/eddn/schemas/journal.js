@@ -698,7 +698,7 @@ function Journal() {
                 message.FactionState = "None";
             }
             let messageTimestamp = new Date(message.timestamp);
-            let oldestTimestamp = new Date("2017-09-01T00:00:00Z");
+            let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
             if (messageTimestamp < oldestTimestamp) {
                 return false;
             } else {

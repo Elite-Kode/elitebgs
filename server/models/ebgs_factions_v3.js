@@ -52,7 +52,6 @@ module.exports = new Promise((resolve, reject) => {
             }]
         }],
         history: [{
-            _id: false,
             updated_at: { type: Date, index: true },
             updated_by: String,
             system: String,

@@ -48,7 +48,6 @@ module.exports = new Promise((resolve, reject) => {
         }],
         updated_at: Date,
         history: [{
-            _id: false,
             updated_at: Date,
             updated_by: String,
             population: Number,

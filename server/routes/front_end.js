@@ -19,14 +19,60 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs-extra');
+const _ = require('lodash');
+const ids = require('../id');
 
 let router = express.Router();
-
-let scopes = ['identify', 'email', 'guilds'];
 
 router.get('/backgroundimages', (req, res, next) => {
     let pathToFile = path.resolve(__dirname, '../../src/assets/backgrounds');
     res.send(fs.readdirSync(pathToFile));
 });
+
+router.post('/edit', (req, res, next) => {
+    if (validateEdit(req.body)) {
+        console.log(req.body);
+        res.send(true);
+    }
+});
+
+let validateEdit = data => {
+    if (_.has(data, '_id')
+        && _.has(data, 'name')
+        && _.has(data, 'name_lower')
+        && _.has(data, 'x')
+        && _.has(data, 'y')
+        && _.has(data, 'z')
+        && _.has(data, 'population')
+        && _.has(data, 'primary_economy')
+        && _.has(data, 'controlling_minor_faction')
+        && _.has(data, 'updated_at')
+        && _.has(data, 'factions')
+        && data.name.toLowerCase() === data.name_lower) {
+        let totalInfluence = 0;
+        data.factions.forEach(faction => {
+            if (faction) {
+                if (_.has(faction, 'name')
+                    && _.has(faction, 'name_lower')
+                    && _.has(faction, 'influence')
+                    && _.has(faction, 'state')
+                    && _.has(faction, 'pending_states')
+                    && _.has(faction, 'recovering_states')
+                    && faction.name.toLowerCase() === faction.name_lower) {
+                    totalInfluence += faction.influence;
+
+                }
+            } else {
+                return false;
+            }
+        });
+        if (totalInfluence !== 1) {
+            return false;
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
 
 module.exports = router;
