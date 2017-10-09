@@ -41,7 +41,7 @@ export class SystemEditComponent implements OnChanges {
     save() {
         this.factions.controls.forEach((formGroup: FormGroup, index, Controls: FormGroup[]) => {
             this.systemUnderEdit.factions[index].influence = Math.round((formGroup.get('influence').value + 0.00001) * 10000) / 1000000;
-            this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string).toLowerCase();
+            this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string);
         });
         this.serverService
             .postEdit(this.systemUnderEdit)
@@ -116,7 +116,7 @@ export class SystemEditComponent implements OnChanges {
             }
         }(pendingStateTrend, this);
         this.systemUnderEdit.factions[index].pending_states.push({
-            state: pendingState.toLowerCase(),
+            state: pendingState,
             trend: pendingStateTrendNumber
         });
     }
@@ -138,7 +138,7 @@ export class SystemEditComponent implements OnChanges {
             }
         }(recoveringStateTrend, this);
         this.systemUnderEdit.factions[index].recovering_states.push({
-            state: recoveringState.toLowerCase(),
+            state: recoveringState,
             trend: recoveringStateTrendNumber
         });
     }
@@ -153,7 +153,7 @@ export class SystemEditComponent implements OnChanges {
         system.factions.forEach(faction => {
             formGroup.push(this.formBuilder.group({
                 influence: Math.round(faction.influence * 1000000) / 10000,
-                state: FDevIDs.state[faction.state].name,
+                state: faction.state,
                 is_controlling: this.isControlling(faction),
                 pending_state: 'None',
                 pending_state_trend: 'Trending Up',

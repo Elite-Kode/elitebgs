@@ -39,6 +39,7 @@ router.post('/edit', (req, res, next) => {
 });
 
 let validateEdit = data => {
+    let valid = true;
     if (_.has(data, '_id')
         && _.has(data, 'name')
         && _.has(data, 'name_lower')
@@ -51,8 +52,8 @@ let validateEdit = data => {
         && _.has(data, 'updated_at')
         && _.has(data, 'factions')
         && data.name.toLowerCase() === data.name_lower) {
-        if (ids.economyIdsArray.findIndex(data.primary_economy) === -1) {
-            return false;
+        if (ids.economyIdsArray.indexOf(data.primary_economy) === -1) {
+            valid = false;
         }
         let totalInfluence = 0;
         data.factions.forEach(faction => {
@@ -64,21 +65,25 @@ let validateEdit = data => {
                     && _.has(faction, 'pending_states')
                     && _.has(faction, 'recovering_states')
                     && faction.name.toLowerCase() === faction.name_lower) {
-                    if (ids.stateIdsArray.findIndex(faction.state) === -1) {
-                        return false;
+                    if (ids.stateIdsArray.indexOf(faction.state) === -1) {
+                        valid = false;
+                        return;
                     }
                     faction.pending_states.forEach(state => {
                         if (state) {
                             if (_.has(state, 'state')
                                 && _.has(state, 'trend')) {
-                                if (ids.stateIdsArray.findIndex(state.state) === -1) {
-                                    return false;
+                                if (ids.stateIdsArray.indexOf(state.state) === -1) {
+                                    valid = false;
+                                    return;
                                 }
-                                if (state.trend !== -1 || state.trend !== 0 || state.trend !== 1) {
-                                    return false;
+                                if (state.trend !== -1 && state.trend !== 0 && state.trend !== 1) {
+                                    valid = false;
+                                    return;
                                 }
                             } else {
-                                return false;
+                                valid = false;
+                                return;
                             }
                         }
                     });
@@ -86,29 +91,37 @@ let validateEdit = data => {
                         if (state) {
                             if (_.has(state, 'state')
                                 && _.has(state, 'trend')) {
-                                if (ids.stateIdsArray.findIndex(state.state) === -1) {
-                                    return false;
+                                if (ids.stateIdsArray.indexOf(state.state) === -1) {
+                                    valid = false;
+                                    return;
                                 }
-                                if (state.trend !== -1 || state.trend !== 0 || state.trend !== 1) {
-                                    return false;
+                                if (state.trend !== -1 && state.trend !== 0 && state.trend !== 1) {
+                                    valid = false;
+                                    return;
                                 }
                             } else {
-                                return false;
+                                valid = false;
+                                return;
                             }
                         }
                     });
+                    if (!valid) {
+                        return;
+                    }
                     totalInfluence += faction.influence;
                 } else {
-                    return false;
+                    valid = false;
+                    return;
                 }
             } else {
-                return false;
+                valid = false;
+                return;
             }
         });
         if (totalInfluence !== 1) {
             return false;
         }
-        return true;
+        return valid;
     } else {
         return false;
     }
