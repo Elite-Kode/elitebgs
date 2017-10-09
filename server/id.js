@@ -94,3 +94,45 @@ module.exports.fdevEconomyId = {
         'name': 'Tourism'
     }
 }
+
+module.exports.fdevStateId = {
+    'none': {
+        'name': 'None'
+    },
+    'boom': {
+        'name': 'Boom'
+    },
+    'bust': {
+        'name': 'Bust'
+    },
+    'civilunrest': {
+        'name': 'Civil Unrest'
+    },
+    'civilwar': {
+        'name': 'Civil War'
+    },
+    'election': {
+        'name': 'Election'
+    },
+    'expansion': {
+        'name': 'Expansion'
+    },
+    'famine': {
+        'name': 'Famine'
+    },
+    'investment': {
+        'name': 'Investment'
+    },
+    'lockdown': {
+        'name': 'Lockdown'
+    },
+    'outbreak': {
+        'name': 'Outbreak'
+    },
+    'retreat': {
+        'name': 'Retreat'
+    },
+    'war': {
+        'name': 'War'
+    }
+}

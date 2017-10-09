@@ -30,9 +30,11 @@ router.get('/backgroundimages', (req, res, next) => {
 });
 
 router.post('/edit', (req, res, next) => {
+    console.log(req.body);
     if (validateEdit(req.body)) {
-        console.log(req.body);
         res.send(true);
+    } else {
+        res.send(false);
     }
 });
 
@@ -49,6 +51,16 @@ let validateEdit = data => {
         && _.has(data, 'updated_at')
         && _.has(data, 'factions')
         && data.name.toLowerCase() === data.name_lower) {
+        let economyFound = false;
+        for (economy in ids.fdevEconomyId) {
+            console.log(economy);
+            if (ids.fdevEconomyId[economy].name === data.primary_economy) {
+                economyFound = true;
+            }
+        }
+        if (!economyFound) {
+            return false;
+        }
         let totalInfluence = 0;
         data.factions.forEach(faction => {
             if (faction) {
@@ -60,7 +72,8 @@ let validateEdit = data => {
                     && _.has(faction, 'recovering_states')
                     && faction.name.toLowerCase() === faction.name_lower) {
                     totalInfluence += faction.influence;
-
+                } else {
+                    return false;
                 }
             } else {
                 return false;
