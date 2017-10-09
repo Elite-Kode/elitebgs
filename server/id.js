@@ -59,80 +59,32 @@ module.exports.stateId = {
     "Investment": 101
 }
 
-module.exports.fdevEconomyId = {
-    '$economy_agri;': {
-        'name': 'Agriculture'
-    },
-    '$economy_colony;': {
-        'name': 'Colony'
-    },
-    '$economy_extraction;': {
-        'name': 'Extraction'
-    },
-    '$economy_hightech;': {
-        'name': 'High Tech'
-    },
-    '$economy_industrial;': {
-        'name': 'Industrial'
-    },
-    '$economy_military;': {
-        'name': 'Military'
-    },
-    '$economy_none;': {
-        'name': 'None'
-    },
-    '$economy_refinery;': {
-        'name': 'Refinery'
-    },
-    '$economy_service;': {
-        'name': 'Service'
-    },
-    '$economy_terraforming;': {
-        'name': 'Terraforming'
-    },
-    '$economy_tourism;': {
-        'name': 'Tourism'
-    }
-}
+module.exports.economyIdsArray = [
+    'Agriculture',
+    'Colony',
+    'Extraction',
+    'High Tech',
+    'Industrial',
+    'Military',
+    'None',
+    'Refinery',
+    'Service',
+    'Terraforming',
+    'Tourism'
+]
 
-module.exports.fdevStateId = {
-    'none': {
-        'name': 'None'
-    },
-    'boom': {
-        'name': 'Boom'
-    },
-    'bust': {
-        'name': 'Bust'
-    },
-    'civilunrest': {
-        'name': 'Civil Unrest'
-    },
-    'civilwar': {
-        'name': 'Civil War'
-    },
-    'election': {
-        'name': 'Election'
-    },
-    'expansion': {
-        'name': 'Expansion'
-    },
-    'famine': {
-        'name': 'Famine'
-    },
-    'investment': {
-        'name': 'Investment'
-    },
-    'lockdown': {
-        'name': 'Lockdown'
-    },
-    'outbreak': {
-        'name': 'Outbreak'
-    },
-    'retreat': {
-        'name': 'Retreat'
-    },
-    'war': {
-        'name': 'War'
-    }
-}
+module.exports.stateIdsArray = [
+    'None',
+    'Boom',
+    'Bust',
+    'Civil Unrest',
+    'Civil War',
+    'Election',
+    'Expansion',
+    'Famine',
+    'Investment',
+    'Lockdown',
+    'Outbreak',
+    'Retreat',
+    'War'
+]

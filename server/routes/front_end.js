@@ -51,14 +51,7 @@ let validateEdit = data => {
         && _.has(data, 'updated_at')
         && _.has(data, 'factions')
         && data.name.toLowerCase() === data.name_lower) {
-        let economyFound = false;
-        for (economy in ids.fdevEconomyId) {
-            console.log(economy);
-            if (ids.fdevEconomyId[economy].name === data.primary_economy) {
-                economyFound = true;
-            }
-        }
-        if (!economyFound) {
+        if (ids.economyIdsArray.findIndex(data.primary_economy) === -1) {
             return false;
         }
         let totalInfluence = 0;
@@ -71,6 +64,39 @@ let validateEdit = data => {
                     && _.has(faction, 'pending_states')
                     && _.has(faction, 'recovering_states')
                     && faction.name.toLowerCase() === faction.name_lower) {
+                    if (ids.stateIdsArray.findIndex(faction.state) === -1) {
+                        return false;
+                    }
+                    faction.pending_states.forEach(state => {
+                        if (state) {
+                            if (_.has(state, 'state')
+                                && _.has(state, 'trend')) {
+                                if (ids.stateIdsArray.findIndex(state.state) === -1) {
+                                    return false;
+                                }
+                                if (state.trend !== -1 || state.trend !== 0 || state.trend !== 1) {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
+                    faction.recovering_states.forEach(state => {
+                        if (state) {
+                            if (_.has(state, 'state')
+                                && _.has(state, 'trend')) {
+                                if (ids.stateIdsArray.findIndex(state.state) === -1) {
+                                    return false;
+                                }
+                                if (state.trend !== -1 || state.trend !== 0 || state.trend !== 1) {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    });
                     totalInfluence += faction.influence;
                 } else {
                     return false;
