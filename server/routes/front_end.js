@@ -32,7 +32,32 @@ router.get('/backgroundimages', (req, res, next) => {
 router.post('/edit', (req, res, next) => {
     console.log(req.body);
     if (validateEdit(req.body)) {
-        res.send(true);
+        require('../models/ebgs_systems_v3')
+            .then(model => {
+                model.findOne(
+                    {
+                        name_lower: req.body.name_lower,
+                        x: req.body.x,
+                        y: req.body.y,
+                        z: req.body.z
+                    },
+                    { history: 0 }
+                ).lean().then(system => {
+                    req.body.factions.forEach(faction => {
+                        if (system.factions.findIndex(element => {
+                            return element.name_lower === faction.name_lower;
+                        }) === -1) {
+                            res.send(false);
+                            return;
+                        }
+                    });
+                    // Update Code here
+                }).catch(err => {
+                    res.send(false);
+                });
+            }).catch(err => {
+                res.send(false);
+            });
     } else {
         res.send(false);
     }
@@ -53,7 +78,14 @@ let validateEdit = data => {
         && _.has(data, 'factions')
         && data.name.toLowerCase() === data.name_lower) {
         if (ids.economyIdsArray.indexOf(data.primary_economy) === -1) {
-            valid = false;
+            return false;
+        }
+        if (data.factions.findIndex(element => {
+            if (_.has(element, 'name_lower')) {
+                return element.name_lower === data.controlling_minor_faction;
+            }
+        }) === -1) {
+            return false;
         }
         let totalInfluence = 0;
         data.factions.forEach(faction => {
