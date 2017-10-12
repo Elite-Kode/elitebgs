@@ -88,3 +88,101 @@ module.exports.stateIdsArray = [
     'Retreat',
     'War'
 ]
+
+module.exports.securityIdsArray = [
+    'Anarchy',
+    'Lawless',
+    'High',
+    'Low',
+    'Medium'
+]
+
+module.exports.allegianceIdsArray = [
+    'Alliance',
+    'Empire',
+    'Federation',
+    'Independent',
+    'None',
+    'Pirate'
+]
+
+module.exports.governmentIdsArray = [
+    'Anarchy',
+    'Communism',
+    'Confederacy',
+    'Cooperative',
+    'Corporate',
+    'Democracy',
+    'Dictatorship',
+    'Feudal',
+    'Imperial',
+    'None',
+    'Patronage',
+    'Prison Colony',
+    'Theocracy',
+    'Workshop'
+]
+
+module.exports.economyFDevArray = [
+    '$economy_agri;',
+    '$economy_colony;',
+    '$economy_extraction;',
+    '$economy_hightech;',
+    '$economy_industrial;',
+    '$economy_military;',
+    '$economy_none;',
+    '$economy_refinery;',
+    '$economy_service;',
+    '$economy_terraforming;',
+    '$economy_tourism;'
+]
+
+module.exports.stateFDevArray = [
+    'none',
+    'boom',
+    'bust',
+    'civilunrest',
+    'civilwar',
+    'election',
+    'expansion',
+    'famine',
+    'investment',
+    'lockdown',
+    'outbreak',
+    'retreat',
+    'war'
+]
+
+module.exports.securityFDevArray = [
+    '$galaxy_map_info_state_anarchy;',
+    '$galaxy_map_info_state_lawless;',
+    '$system_security_high;',
+    '$system_security_low;',
+    '$system_security_medium;'
+]
+
+module.exports.allegianceFDevArray = [
+    'alliance',
+    'empire',
+    'federation',
+    'independent',
+    'none',
+    '$pirate'
+]
+
+module.exports.governmentFDevArray = [
+    '$government_anarchy;',
+    '$government_communism;',
+    '$government_confederacy;',
+    '$government_cooperative;',
+    '$government_corporate;',
+    '$government_democracy;',
+    '$government_dictatorship;',
+    '$government_feudal;',
+    '$government_imperial;',
+    '$government_none;',
+    '$government_patronage;',
+    '$government_prisoncolony;',
+    '$government_theocracy;',
+    '$government_engineer;'
+]

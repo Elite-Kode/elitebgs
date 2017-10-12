@@ -22,6 +22,9 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const ids = require('../id');
 
+const ebgsFactionsV3Model = require('../models/ebgs_factions_v3');
+const ebgsSystemsV3Model = require('../models/ebgs_systems_v3');
+
 let router = express.Router();
 
 router.get('/backgroundimages', (req, res, next) => {
@@ -32,7 +35,7 @@ router.get('/backgroundimages', (req, res, next) => {
 router.post('/edit', (req, res, next) => {
     console.log(req.body);
     if (validateEdit(req.body)) {
-        require('../models/ebgs_systems_v3')
+        ebgsSystemsV3Model
             .then(model => {
                 model.findOne(
                     {
@@ -51,7 +54,90 @@ router.post('/edit', (req, res, next) => {
                             return;
                         }
                     });
-                    // Update Code here
+                    let controllingFactionPromise = new Promise((resolve, reject) => {
+                        req.body.factions.forEach(faction => {
+                            if (faction.name_lower === req.body.controlling_minor_faction) {
+                                ebgsFactionsV3Model
+                                    .then(model => {
+                                        model.findOne(
+                                            {
+                                                name_lower: req.body.controlling_minor_faction
+                                            },
+                                            { history: 0 }
+                                        ).lean().then(factionGot => {
+                                            if (factionGot) {
+                                                resolve([faction.state, factionGot]);
+                                            } else {
+                                                reject();
+                                            }
+                                        }).catch(err => {
+                                            reject(err);
+                                        });
+                                    }).catch(err => {
+                                        reject(err);
+                                    });
+                            }
+                        });
+                    });
+                    controllingFactionPromise
+                        .then(data => {
+                            let state = data[0];
+                            let government = data[1].government;
+                            let allegiance = data[1].allegiance;
+                            let security = req.body.security;
+                            state = ids.stateFDevArray[ids.stateIdsArray.indexOf(state)];
+                            government = ids.governmentFDevArray[ids.governmentIdsArray.indexOf(government)];
+                            allegiance = ids.allegianceFDevArray[ids.allegianceIdsArray.indexOf(allegiance)];
+                            security = ids.securityFDevArray[ids.securityIdsArray.indexOf(security)];
+                            let factions = [];
+                            req.body.factions.forEach(faction => {
+                                factions.push({
+                                    name: faction.name,
+                                    name_lower: faction.name_lower
+                                });
+                            });
+                            let systemObject = {
+                                population: req.body.population,
+                                security: security,
+                                state: state,
+                                government: government,
+                                allegiance: allegiance,
+                                controlling_minor_faction: req.body.controlling_minor_faction.toLowerCase(),
+                                updated_at: req.body.updated_at,
+                                factions: factions
+                            };
+                            systemObject["$addToSet"] = {
+                                history: {
+                                    population: req.body.population,
+                                    security: security,
+                                    state: state,
+                                    government: government,
+                                    allegiance: allegiance,
+                                    controlling_minor_faction: req.body.controlling_minor_faction.toLowerCase(),
+                                    updated_at: req.body.updated_at,
+                                    factions: rfactions,
+                                    updated_by: "Test"
+                                }
+                            }
+                            model.findOneAndUpdate(
+                                {
+                                    name_lower: req.body.name_lower,
+                                    x: req.body.x,
+                                    y: req.body.y,
+                                    z: req.body.z
+                                },
+                                systemObject,
+                                {
+                                    upsert: false,
+                                    runValidators: true
+                                })
+                                .exec()
+                                .catch((err) => {
+                                    res.send(false);
+                                });
+                        }).catch(err => {
+                            res.send(false);
+                        });
                 }).catch(err => {
                     res.send(false);
                 });
@@ -72,12 +158,12 @@ let validateEdit = data => {
         && _.has(data, 'y')
         && _.has(data, 'z')
         && _.has(data, 'population')
-        && _.has(data, 'primary_economy')
+        && _.has(data, 'security')
         && _.has(data, 'controlling_minor_faction')
         && _.has(data, 'updated_at')
         && _.has(data, 'factions')
         && data.name.toLowerCase() === data.name_lower) {
-        if (ids.economyIdsArray.indexOf(data.primary_economy) === -1) {
+        if (ids.securityIdsArray.indexOf(data.security) === -1) {
             return false;
         }
         if (data.factions.findIndex(element => {
