@@ -1,83 +1,85 @@
 <clr-modal [clrModalOpen]="systemEditModal" (clrModalOpenChange)="systemModal($event)" [clrModalStaticBackdrop]="'true'"
-[clrModalSize]="'xl'">
-<h3 class="modal-title">Edit {{faction?.name}}</h3>
-<div class="modal-body">
-    <form class="compact" [formGroup]="systemForm">
-        <section class="form-block">
-            <label>Edit Systems for this faction</label>
-            <div formArrayName="factions">
-                <div class="form-group" *ngFor="let faction of factions.controls; let i=index" [formGroupName]="i">
-                    <label>{{systemUnderEdit.factions[i].name}}</label>
-                    <input formControlName="influence" type="number" min="0" max="100" style="width: 7em">
-                    <div class="select">
-                        <select formControlName="state">
-                            <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
-                        </select>
+    [clrModalSize]="'xl'">
+    <h3 class="modal-title">Edit {{faction?.name}}</h3>
+    <div class="modal-body">
+        <form class="compact" [formGroup]="systemForm">
+            <section class="form-block">
+                <label>Edit Factions for this System</label>
+                <div formArrayName="factions">
+                    <div class="form-group" *ngFor="let faction of factions.controls; let i=index" [formGroupName]="i">
+                        <label>{{systemUnderEdit.factions[i].name}}</label>
+                        <input formControlName="influence" type="number" min="0" max="100" style="width: 7em">
+                        <div class="select">
+                            <select formControlName="state">
+                                <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
+                            </select>
+                        </div>
+                        <div class="toggle-switch">
+                            <input formControlName="is_controlling" [id]="'controlling_toggle_' + i" type="checkbox">
+                            <label [for]="'controlling_toggle_' + i">Controlling</label>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Pending States</th>
+                                    <th>Recovering States</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <button (click)="removePendingState(i, pending.state)" class="label clickable" *ngFor="let pending of systemUnderEdit.factions[i].pending_states"
+                                            [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">
+                                            {{pending.state}}
+                                            <clr-icon shape="close"></clr-icon>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button (click)="removeRecoveringState(i, recovering.state)" class="label clickable" *ngFor="let recovering of systemUnderEdit.factions[i].recovering_states"
+                                            [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">
+                                            {{recovering.state}}
+                                            <clr-icon shape="close"></clr-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="select" style="display:inline-flex">
+                                            <select formControlName="pending_state">
+                                                <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="select" style="display:inline-flex">
+                                            <select formControlName="pending_state_trend">
+                                                <option *ngFor="let trend of stateTrends" [value]="trend">{{trend}}</option>
+                                            </select>
+                                        </div>
+                                        <button (click)="addPendingState(i)" class="btn btn-success">Add Pending</button>
+                                    </td>
+                                    <td>
+                                        <div class="select" style="display:inline-flex">
+                                            <select formControlName="recovering_state">
+                                                <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="select" style="display:inline-flex">
+                                            <select formControlName="recovering_state_trend">
+                                                <option *ngFor="let trend of stateTrends" [value]="trend">{{trend}}</option>
+                                            </select>
+                                        </div>
+                                        <button (click)="addRecoveringState(i)" class="btn btn-success">Add Recovering</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button (click)="removeFactionFromSystem(i)" class="btn btn-danger">Remove Faction</button>
                     </div>
-                    <div class="toggle-switch">
-                        <input formControlName="is_controlling" [id]="'controlling_toggle_' + i" type="checkbox">
-                        <label [for]="'controlling_toggle_' + i">Controlling</label>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Pending States</th>
-                                <th>Recovering States</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button (click)="removePendingState(i, pending.state)" class="label clickable" *ngFor="let pending of systemUnderEdit.factions[i].pending_states"
-                                        [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">
-                                        {{pending.state}}<clr-icon shape="close"></clr-icon>
-                                    </button>
-                                </td>
-                                <td>
-                                    <button (click)="removeRecoveringState(i, recovering.state)" class="label clickable" *ngFor="let recovering of systemUnderEdit.factions[i].recovering_states"
-                                        [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">
-                                        {{recovering.state}}<clr-icon shape="close"></clr-icon>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="select" style="display:inline-flex">
-                                        <select formControlName="pending_state">
-                                            <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="select" style="display:inline-flex">
-                                        <select formControlName="pending_state_trend">
-                                            <option *ngFor="let trend of stateTrends" [value]="trend">{{trend}}</option>
-                                        </select>
-                                    </div>
-                                    <button (click)="addPendingState(i)" class="btn btn-success">Add Pending</button>
-                                </td>
-                                <td>
-                                    <div class="select" style="display:inline-flex">
-                                        <select formControlName="recovering_state">
-                                            <option *ngFor="let state of factionStates" [value]="state">{{state}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="select" style="display:inline-flex">
-                                        <select formControlName="recovering_state_trend">
-                                            <option *ngFor="let trend of stateTrends" [value]="trend">{{trend}}</option>
-                                        </select>
-                                    </div>
-                                    <button (click)="addRecoveringState(i)" class="btn btn-success">Add Recovering</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button (click)="removeFactionFromSystem(i)" class="btn btn-danger">Remove Faction</button>
                 </div>
-            </div>
-        </section>
-    </form>
-</div>
-<div class="modal-footer">
+            </section>
+        </form>
+    </div>
+    <div class="modal-footer">
         <button class="btn btn-success" (click)="save()">Save</button>
         <button class="btn btn-warning" (click)="reset()">Reset</button>
-</div>
+    </div>
 </clr-modal>

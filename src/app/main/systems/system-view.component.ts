@@ -26,6 +26,7 @@ export class SystemViewComponent implements OnInit {
                 this.systemData.allegiance = FDevIDs.superpower[this.systemData.allegiance].name;
                 this.systemData.primary_economy = FDevIDs.economy[this.systemData.primary_economy].name;
                 this.systemData.state = FDevIDs.state[this.systemData.state].name;
+                this.systemData.security = FDevIDs.security[this.systemData.security].name;
                 this.systemData.factions.forEach(faction => {
                     faction.state = FDevIDs.state[faction.state].name;
                     faction.pending_states.forEach(state => {

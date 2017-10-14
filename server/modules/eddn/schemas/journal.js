@@ -554,7 +554,8 @@ function Journal() {
                                                 if (faction.system_name_lower === message.StarSystem.toLowerCase() &&
                                                     faction.state === messageFaction.FactionState.toLowerCase() &&
                                                     faction.influence === messageFaction.Influence &&
-                                                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state']))) {
+                                                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state']))&&
+                                                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
                                                     doUpdate = false;
                                                 }
                                             })

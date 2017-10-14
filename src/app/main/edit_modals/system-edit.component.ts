@@ -43,6 +43,7 @@ export class SystemEditComponent implements OnChanges {
             this.systemUnderEdit.factions[index].influence = Math.round((formGroup.get('influence').value + 0.00001) * 10000) / 1000000;
             this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string);
         });
+        this.systemUnderEdit.updated_at = new Date().toISOString();
         this.serverService
             .postEdit(this.systemUnderEdit)
             .subscribe(response => {
