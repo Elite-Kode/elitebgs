@@ -130,8 +130,4 @@ export class SystemsService {
                 });
         });
     }
-
-    postSystems(system: EBGSSystemPostHistory): Observable<boolean> {
-        return this.http.post<boolean>('/api/ebgs/v3/systems/addhistory', system);
-    }
 }

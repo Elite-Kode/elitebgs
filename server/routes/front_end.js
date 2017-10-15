@@ -141,21 +141,25 @@ router.post('/edit', (req, res, next) => {
                                         }).then(data => {
                                             factionUpdate();
                                         }).catch((err) => {
+                                            console.log(err);
                                             res.send(false);
                                         });
                                 } else {
                                     factionUpdate();
                                 }
                             }).catch(err => {
+                                console.log(err);
                                 res.send(false);
                             });
                     } else {
                         res.send(false);
                     }
                 }).catch(err => {
+                    console.log(err);
                     res.send(false);
                 });
             }).catch(err => {
+                console.log(err);
                 res.send(false);
             });
 
@@ -366,9 +370,11 @@ router.post('/edit', (req, res, next) => {
                                     res.send(true);
                                 });
                         }).catch(err => {
+                            console.log(err);
                             res.send(false);
                         });
                 }).catch(err => {
+                    console.log(err);
                     res.send(false);
                 });
         }

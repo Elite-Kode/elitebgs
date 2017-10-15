@@ -33,15 +33,38 @@ router.post('/edit', (req, res) => {
         require('../../models/ebgs_users')
             .then(users => {
                 let user = req.user;
+                let factionPromise = [];
+                let systemPromise = [];
                 if (req.body.factions) {
                     arrayfy(req.body.factions).forEach(faction => {
                         if (user.factions.findIndex(element => {
                             return element.name_lower === faction.toLowerCase();
                         }) === -1) {
-                            user.factions.push({
-                                name: faction,
-                                name_lower: faction.toLowerCase()
-                            });
+                            factionPromise.push(new Promise((resolve, reject) => {
+                                require('../../models/ebgs_factions_v3')
+                                    .then(model => {
+                                        model.findOne(
+                                            {
+                                                name_lower: faction.toLowerCase()
+                                            },
+                                            { history: 0 }
+                                        ).lean().then(factionGot => {
+                                            if (factionGot) {
+                                                user.factions.push({
+                                                    name: faction,
+                                                    name_lower: faction.toLowerCase()
+                                                });
+                                                resolve();
+                                            } else {
+                                                reject(new Error("Faction not present"));
+                                            }
+                                        }).catch(err => {
+                                            reject(err);
+                                        });
+                                    }).catch(err => {
+                                        reject(err);
+                                    });
+                            }));
                         }
                     });
                 }
@@ -50,29 +73,57 @@ router.post('/edit', (req, res) => {
                         if (user.systems.findIndex(element => {
                             return element.name_lower === system.toLowerCase();
                         }) === -1) {
-                            user.systems.push({
-                                name: system,
-                                name_lower: system.toLowerCase()
-                            });
+                            systemPromise.push(new Promise((resolve, reject) => {
+                                require('../../models/ebgs_systems_v3')
+                                    .then(model => {
+                                        model.findOne(
+                                            {
+                                                name_lower: system.toLowerCase()
+                                            },
+                                            { history: 0 }
+                                        ).lean().then(systemGot => {
+                                            if (systemGot) {
+                                                user.systems.push({
+                                                    name: system,
+                                                    name_lower: system.toLowerCase()
+                                                });
+                                                resolve();
+                                            } else {
+                                                reject(new Error("System not present"));
+                                            }
+                                        }).catch(err => {
+                                            reject(err);
+                                        });
+                                    }).catch(err => {
+                                        reject(err);
+                                    });
+                            }));
                         }
                     });
                 }
-                users.findOneAndUpdate(
-                    {
-                        _id: req.user._id
-                    },
-                    user,
-                    {
-                        upsert: false,
-                        runValidators: true
-                    })
-                    .then(user => {
-                        res.send(true);
+                Promise.all(factionPromise.concat(systemPromise))
+                    .then(() => {
+                        users.findOneAndUpdate(
+                            {
+                                _id: req.user._id
+                            },
+                            user,
+                            {
+                                upsert: false,
+                                runValidators: true
+                            })
+                            .then(user => {
+                                res.send(true);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.send(false);
+                            });
                     })
                     .catch(err => {
                         console.log(err);
                         res.send(false);
-                    });
+                    })
             })
             .catch(err => {
                 console.log(err)
@@ -92,6 +143,9 @@ router.delete('/edit', (req, res) => {
                     });
                     if (index !== -1) {
                         user.factions.splice(index, 1);
+                    } else {
+                        res.send(false);
+                        return;
                     }
                 }
                 if (req.query.system) {
@@ -100,6 +154,9 @@ router.delete('/edit', (req, res) => {
                     });
                     if (index !== -1) {
                         user.systems.splice(index, 1);
+                    } else {
+                        res.send(false);
+                        return;
                     }
                 }
                 users.findOneAndUpdate(
@@ -132,7 +189,7 @@ let arrayfy = requestParam => {
 
     mainArray.forEach((element, index, allElements) => {
         allElements[index] = element;
-    }, this);
+    });
 
     return mainArray;
 }
