@@ -48,7 +48,7 @@ export class SystemEditComponent implements OnChanges {
             .postEdit(this.systemUnderEdit)
             .subscribe(response => {
                 if (response === true) {
-                    this.systemEditModal = false;
+                    this.systemModal(false);
                 }
             })
     }
