@@ -1,6 +1,7 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SystemsService } from '../../services/systems.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemChart } from '../../typings';
 
@@ -11,10 +12,12 @@ import { EBGSSystemChart } from '../../typings';
 export class SystemViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     systemData: EBGSSystemChart;
+    editAllowed: boolean;
     editModal: boolean;
     constructor(
         private systemService: SystemsService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private authenticationService: AuthenticationService
     ) { }
 
     ngOnInit() {
@@ -36,10 +39,19 @@ export class SystemViewComponent implements OnInit {
                         state.state = FDevIDs.state[state.state].name;
                     });
                 });
+                this.getEditAllowed();
             });
     }
 
     openSystemEditModal() {
         this.editModal = true;
+    }
+
+    getEditAllowed() {
+        this.authenticationService
+            .isEditAllowed(this.systemData.name_lower)
+            .subscribe(check => {
+                this.editAllowed = check;
+            })
     }
 }

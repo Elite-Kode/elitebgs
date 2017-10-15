@@ -34,7 +34,7 @@ let router = express.Router();
    *         in: query
    *         type: string
    *       - name: name
-   *         description: System name.
+   *         description: Faction name.
    *         in: query
    *         type: string
    *       - name: allegiance

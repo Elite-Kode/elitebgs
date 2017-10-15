@@ -252,7 +252,7 @@ router.post('/edit', (req, res, next) => {
                                         if (editFaction.pending_states) {
                                             editFaction.pending_states.forEach(pendingState => {
                                                 let pendingStateObject = {
-                                                    state: pendingState.state.toLowerCase(),
+                                                    state: ids.stateFDevArray[ids.stateIdsArray.indexOf(pendingState.state)],
                                                     trend: pendingState.trend
                                                 };
                                                 pendingStates.push(pendingStateObject);
@@ -262,7 +262,7 @@ router.post('/edit', (req, res, next) => {
                                         if (editFaction.recovering_states) {
                                             editFaction.recovering_states.forEach(recoveringState => {
                                                 let recoveringStateObject = {
-                                                    state: recoveringState.state.toLowerCase(),
+                                                    state: ids.stateFDevArray[ids.stateIdsArray.indexOf(recoveringState.state)],
                                                     trend: recoveringState.trend
                                                 };
                                                 recoveringStates.push(recoveringStateObject);

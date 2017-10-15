@@ -24,4 +24,51 @@ router.get('/', (req, res) => {
     res.send(req.isAuthenticated());
 });
 
+router.get('/edit', (req, res) => {
+    if (req.user) {
+        let editableFactions = req.user.editable_factions;
+        let systemName = req.query.name;
+        require('../../models/ebgs_factions_v3')
+            .then(model => {
+                let factionPromise = [];
+                editableFactions.forEach(faction => {
+                    factionPromise.push(new Promise((resolve, reject) => {
+                        model.findOne(
+                            { name_lower: faction.name_lower },
+                            { history: 0 }
+                        ).lean().then(gotFaction => {
+                            if (gotFaction && gotFaction.faction_presence.findIndex(element => {
+                                return element.system_name_lower === systemName.toLowerCase();
+                            }) !== -1) {
+                                resolve(true);
+                            } else {
+                                resolve(false)
+                            }
+                        }).catch(err => {
+                            reject(err);
+                        });
+                    }));
+                });
+                Promise.all(factionPromise)
+                    .then(checks => {
+                        if (checks.indexOf(true) !== -1) {
+                            res.send(true);
+                        } else {
+                            res.send(false);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.send(false);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                res.send(false);
+            });
+    } else {
+        res.send(false);
+    }
+})
+
 module.exports = router;

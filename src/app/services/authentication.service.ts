@@ -12,6 +12,12 @@ export class AuthenticationService {
         return this.http.get<boolean>('/auth/check');
     }
 
+    isEditAllowed(systemName: string): Observable<boolean> {
+        return this.http.get<boolean>('/auth/check/edit', {
+            params: new HttpParams().set('name', systemName)
+        });
+    }
+
     getUser(): Observable<EBGSUser> {
         return this.http.get<EBGSUser>('/auth/user');
     }
