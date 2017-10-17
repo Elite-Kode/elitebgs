@@ -42,6 +42,9 @@ export class SystemEditComponent implements OnChanges {
         this.factions.controls.forEach((formGroup: FormGroup, index, Controls: FormGroup[]) => {
             this.systemUnderEdit.factions[index].influence = Math.round((formGroup.get('influence').value + 0.00001) * 10000) / 1000000;
             this.systemUnderEdit.factions[index].state = (formGroup.get('state').value as string);
+            if (formGroup.get('is_controlling').value as boolean === true) {
+                this.systemUnderEdit.controlling_minor_faction = this.systemUnderEdit.factions[index].name_lower;
+            }
         });
         this.systemUnderEdit.updated_at = new Date().toISOString();
         this.serverService
@@ -56,6 +59,21 @@ export class SystemEditComponent implements OnChanges {
     reset() {
         this.systemUnderEdit = cloneDeep(this.system);
         this.setFactions(this.systemUnderEdit);
+    }
+
+    toggleAll(index: number) {
+        const state: boolean = ((this.factions.controls[index] as FormGroup)
+            .get('is_controlling')).value;
+        if (state === false) {
+            this.factions.controls.forEach((formGroup: FormGroup, i, Controls: FormGroup[]) => {
+                if (formGroup.get('is_controlling').value as boolean === true) {
+                    formGroup.get('is_controlling').setValue(false);
+                }
+            });
+        } else {
+            ((this.factions.controls[index] as FormGroup)
+                .get('is_controlling')).setValue(true);
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {

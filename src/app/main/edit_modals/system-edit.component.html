@@ -15,7 +15,7 @@
                             </select>
                         </div>
                         <div class="toggle-switch">
-                            <input formControlName="is_controlling" [id]="'controlling_toggle_' + i" type="checkbox">
+                            <input formControlName="is_controlling" [id]="'controlling_toggle_' + i" type="checkbox" (click)="toggleAll(i)">
                             <label [for]="'controlling_toggle_' + i">Controlling</label>
                         </div>
                         <table class="table">
