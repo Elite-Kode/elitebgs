@@ -66,6 +66,7 @@ const authUser = require('./server/routes/auth/auth_user');
 const frontEnd = require('./server/routes/front_end');
 
 require('./server/modules/eddn');
+require('./server/modules/discord');
 
 const app = express();
 
@@ -237,30 +238,79 @@ passport.use(new DiscordStrategy({
     callbackURL: `http://${host}/auth/discord/callback`,
     scope: scopes
 }, (accessToken, refreshToken, profile, done) => {
+    const client = require('./server/modules/discord/client');
+    const config = require('./server/models/configs');
     require('./server/models/ebgs_users')
         .then(model => {
-            let user = {
-                id: profile.id,
-                username: profile.username,
-                email: profile.email,
-                avatar: profile.avatar,
-                discriminator: profile.discriminator,
-                access: 1,
-                guilds: profile.guilds
-            };
-            model.findOneAndUpdate(
-                { id: profile.id },
-                user,
-                {
-                    upsert: true,
-                    runValidators: true
+            model.findOne({ id: profile.id })
+                .then(user => {
+                    if (user) {
+                        let user = {
+                            id: profile.id,
+                            username: profile.username,
+                            email: profile.email,
+                            avatar: profile.avatar,
+                            discriminator: profile.discriminator,
+                            guilds: profile.guilds
+                        };
+                        model.findOneAndUpdate(
+                            { id: profile.id },
+                            user,
+                            {
+                                upsert: false,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                done(null, user);
+                            })
+                            .catch(err => {
+                                done(err);
+                            });
+                    } else {
+                        config.then(configModel => {
+                            configModel.findOne()
+                                .then(config => {
+                                    let invite = client.guilds.get(config.guild_id).channels.get(config.invite_channel_id).createInvite({
+                                        maxAge: 0,
+                                        maxUses: 1,
+                                        unique: true
+                                    });
+                                    invite.then(invitePromise => {
+                                        let user = {
+                                            id: profile.id,
+                                            username: profile.username,
+                                            email: profile.email,
+                                            avatar: profile.avatar,
+                                            discriminator: profile.discriminator,
+                                            access: 1,
+                                            invite: invitePromise.code,
+                                            invite_used: false,
+                                            guilds: profile.guilds
+                                        };
+                                        model.findOneAndUpdate(
+                                            { id: profile.id },
+                                            user,
+                                            {
+                                                upsert: true,
+                                                runValidators: true
+                                            })
+                                            .then(() => {
+                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+                                                done(null, user);
+                                            })
+                                            .catch(err => {
+                                                done(err);
+                                            });
+                                    })
+                                })
+                                .catch(err => {
+                                    done(err);
+                                })
+                        }).catch(err => {
+                            done(err);
+                        });
+                    }
                 })
-                .then(() => {
-                    done(null, user);
-                })
-                .catch(err => {
-                    done(err);
-                });
         })
         .catch(err => {
             done(err);

@@ -16,13 +16,21 @@
 
 "use strict";
 
-const express = require('express');
+module.exports = new Promise((resolve, reject) => {
+    let db = require('../db');
+    let connection = db.elite_bgs;
+    let mongoose = db.mongoose;
+    let Schema = mongoose.Schema;
 
-let router = express.Router();
+    let config = new Schema({
+        guild_id: String,
+        admin_channel_id: String,
+        invite_channel_id: String,
+        editor_role_id: String,
+        guest_role_id: String
+    });
 
-router.get('/', (req, res) => {
-    req.logout();
-    res.redirect('/');
-});
+    let model = connection.model('configs', config);
 
-module.exports = router;
+    resolve(model);
+})

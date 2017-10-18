@@ -148,6 +148,17 @@ router.delete('/edit', (req, res) => {
                         return;
                     }
                 }
+                if (req.query.editablefaction) {
+                    let index = user.editable_factions.findIndex(element => {
+                        return element.name_lower === req.query.editablefaction.toLowerCase();
+                    });
+                    if (index !== -1) {
+                        user.editable_factions.splice(index, 1);
+                    } else {
+                        res.send(false);
+                        return;
+                    }
+                }
                 if (req.query.system) {
                     let index = user.systems.findIndex(element => {
                         return element.name_lower === req.query.system.toLowerCase();

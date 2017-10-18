@@ -10,6 +10,7 @@ export class ProfileComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     @HostBinding('style.flex-direction') flexDirection = 'column';
     isAuthenticated: boolean;
+    inviteCode: String;
     user: EBGSUser;
     constructor(
         private authenticationService: AuthenticationService
@@ -49,6 +50,14 @@ export class ProfileComponent implements OnInit {
     removeSystem(name: string) {
         this.authenticationService
             .removeSystem(name)
+            .subscribe(status => {
+                this.getUser();
+            })
+    }
+
+    removeEditableFaction(name: string) {
+        this.authenticationService
+            .removeEditableFaction(name)
             .subscribe(status => {
                 this.getUser();
             })

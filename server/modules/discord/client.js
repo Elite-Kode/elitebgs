@@ -16,13 +16,7 @@
 
 "use strict";
 
-const express = require('express');
+const discord = require('discord.js');
+const secrets = require('../../../secrets');
 
-let router = express.Router();
-
-router.get('/', (req, res) => {
-    req.logout();
-    res.redirect('/');
-});
-
-module.exports = router;
+module.exports = new discord.Client();

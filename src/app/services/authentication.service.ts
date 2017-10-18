@@ -41,4 +41,10 @@ export class AuthenticationService {
             params: new HttpParams().set('system', system)
         });
     }
+
+    removeEditableFaction(faction: string): Observable<boolean> {
+        return this.http.delete<boolean>('/auth/user/edit', {
+            params: new HttpParams().set('editablefaction', faction)
+        });
+    }
 }

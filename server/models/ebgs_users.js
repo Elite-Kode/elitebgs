@@ -29,6 +29,8 @@ module.exports = new Promise((resolve, reject) => {
         avatar: String,
         discriminator: String,
         access: Number,
+        invite: String,
+        invite_used: Boolean,
         guilds: [{
             _id: false,
             id: String,

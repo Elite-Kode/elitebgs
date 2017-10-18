@@ -9,6 +9,7 @@
 <div class="content-area">
     <div>
         Email: {{user?.email}}
+        <a *ngIf="!user?.invite_used" class="btn btn-primary" [href]="'https://discord.gg/' + user?.invite">Join Discord Server</a>
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
@@ -22,26 +23,50 @@
                 <tbody>
                     <tr *ngFor="let faction of user?.factions">
                         <td>{{faction.name}}</td>
-                        <td><button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button></td>
+                        <td>
+                            <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Systems</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let system of user?.systems">
-                            <td>{{system.name}}</td>
-                            <td><button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Systems</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let system of user?.systems">
+                        <td>{{system.name}}</td>
+                        <td>
+                            <button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Factions</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let faction of user?.editable_factions">
+                        <td>{{faction.name}}</td>
+                        <td>
+                            <button (click)="removeEditableFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
