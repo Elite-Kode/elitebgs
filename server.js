@@ -125,7 +125,7 @@ let host = '';
 if (process.env.NODE_ENV === 'development') {
     host = 'localhost:3001';
 } else if (process.env.NODE_ENV === 'production') {
-    host = 'localhost:4001';
+    host = 'elitebgs.kodeblox.com';
 }
 
 app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v1/api-docs.json`));
