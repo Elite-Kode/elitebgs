@@ -21,6 +21,7 @@
                         <div class="card-block">
                             <div class="card-title">
                                 Method {{method}}
+                                <span *ngIf="path[1][method].deprecated" class="label label-danger deprecated">Deprecated</span>
                             </div>
                             <div class="card-text">
                                 {{path[1][method].description}}

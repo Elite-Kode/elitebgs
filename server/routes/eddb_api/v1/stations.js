@@ -122,6 +122,7 @@ let router = express.Router();
    *           type: array
    *           items:
    *             $ref: '#/definitions/Stations'
+   *     deprecated: true
    */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/stations')
