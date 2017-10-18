@@ -1,6 +1,6 @@
 <clr-modal [clrModalOpen]="systemEditModal" (clrModalOpenChange)="systemModal($event)" [clrModalStaticBackdrop]="'true'"
     [clrModalSize]="'xl'">
-    <h3 class="modal-title">Edit {{faction?.name}}</h3>
+    <h3 class="modal-title">Edit {{system?.name}}</h3>
     <div class="modal-body">
         <form class="compact" [formGroup]="systemForm">
             <section class="form-block">

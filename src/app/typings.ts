@@ -465,6 +465,8 @@ interface EBGSUserSchema {
     avatar: string;
     discriminator: string;
     access: number;
+    invite: string;
+    invite_used: boolean;
     guilds: {
         id: string;
         name: string;
