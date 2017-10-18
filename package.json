@@ -4,7 +4,7 @@
     "license": "Apache-2.0",
     "scripts": {
         "ng": "ng",
-        "start": "concurrently \"ng build\" \"cross-env PORT=4001 pm2 start process.json --env production\"",
+        "start": "concurrently \"ng build --prod\" \"cross-env PORT=4001 pm2 start process.json --env production\"",
         "startdev": "concurrently \"ng build --watch\" \"cross-env NODE_ENV=development nodemon --inspect ./bin/start.js\"",
         "build": "ng build",
         "test": "ng test",

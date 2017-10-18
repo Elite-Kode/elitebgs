@@ -149,7 +149,9 @@ function Commodities() {
                 commoditiesModel
                     .then(model => {
                         model.findOneAndUpdate(
-                            { id: json.id },
+                            {
+                                id: json.id
+                            },
                             json,
                             {
                                 upsert: true,
