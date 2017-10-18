@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ProfileComponent } from './profile/profile.component';
+import { AboutComponent } from './about/about.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
-import { HomeComponent } from './home.component';
-import { SystemViewComponent } from './system-view.component';
-import { FactionViewComponent } from './faction-view.component';
 
 const appRoutes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'system/:systemid', component: SystemViewComponent },
-    { path: 'faction/:factionid', component: FactionViewComponent },
+    {
+        path: 'profile',
+        component: ProfileComponent
+    },
+    {
+        path: 'about',
+        component: AboutComponent
+    },
     {
         path: '**',
         component: PageNotFoundComponent

@@ -1,9 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-.component {
-    padding-bottom: 24px;
-}
-
 iframe {
     overflow: hidden;
     overflow-x: hidden;
@@ -14,4 +10,8 @@ iframe {
     left: 0px;
     right: 0px;
     bottom: 0px;
+}
+
+chart {
+    display: block;
 }

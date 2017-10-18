@@ -3,6 +3,9 @@ export class FDevIDs {
         null: {
             'name': 'None'
         },
+        'none': {
+            'name': 'None'
+        },
         'boom': {
             'name': 'Boom'
         },
@@ -139,4 +142,21 @@ export class FDevIDs {
             'name': 'Workshop'
         }
     };
+    public static security = {
+        '$galaxy_map_info_state_anarchy;': {
+            'name': 'Anarchy'
+        },
+        '$galaxy_map_info_state_lawless;': {
+            'name': 'Lawless'
+        },
+        '$system_security_high;': {
+            'name': 'High'
+        },
+        '$system_security_low;': {
+            'name': 'Low'
+        },
+        '$system_security_medium;': {
+            'name': 'Medium'
+        }
+    }
 }

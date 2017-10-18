@@ -1,0 +1,58 @@
+<div>
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Added {{factionToAdd}} as a monitored Faction.
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                {{factionToAdd}} could not be added as a monitored Faction due to some error.
+            </span>
+        </div>
+    </clr-alert>
+    <h1>Factions</h1>
+    <form [formGroup]="factionForm" novalidate>
+        <section class="form-block">
+            <label>Filter Faction</label>
+            <div class="form-group">
+                <label for="factionName">Faction Name</label>
+                <input type="text" id="factionName" placeholder="Knights of Karma" formControlName="factionName">
+            </div>
+        </section>
+    </form>
+    <clr-modal [(clrModalOpen)]="confirmModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">Confirm Addition</h3>
+        <div class="modal-body">
+            <p>Do you want to add the faction {{factionToAdd}}?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeConfirmModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="confirmAddFaction()">Add Faction</button>
+        </div>
+    </clr-modal>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>Faction Name</clr-dg-column>
+        <clr-dg-column>Faction Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any Factions!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let faction of factionData">
+            <clr-dg-action-overflow>
+                <button routerLink="/faction/{{faction.id}}" class="action-item">View</button>
+                <button *ngIf="isAuthenticated && isAuthenticated !== undefined" class="action-item" (click)="addFaction(faction.name)">Add to Monitor</button>
+            </clr-dg-action-overflow>
+            <clr-dg-cell>{{faction.name}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.government}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.allegiance}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} factions
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+</div>

@@ -9,9 +9,9 @@
                 <button (click)="onVersionSelect(i)" type="button" clrDropdownItem *ngFor="let spec of docSpecs;let i = index">{{spec.versionName}}</button>
             </clr-dropdown-menu>
         </clr-dropdown>
-        <h1>{{doc.info.title}}</h1>
-        <h3>{{doc.info.description}}</h3>
-        <h4>Version {{doc.info.version}}</h4>
+        <h1>{{doc?.info.title}}</h1>
+        <h3>{{doc?.info.description}}</h3>
+        <h4>Version {{doc?.info.version}}</h4>
         <a href="{{currentVersion.specLocation}}">Go to Spec</a>
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let path of paths;let i=index">
@@ -21,6 +21,7 @@
                         <div class="card-block">
                             <div class="card-title">
                                 Method {{method}}
+                                <span *ngIf="path[1][method].deprecated" class="label label-danger deprecated">Deprecated</span>
                             </div>
                             <div class="card-text">
                                 {{path[1][method].description}}

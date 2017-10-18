@@ -81,6 +81,7 @@ let router = express.Router();
    *           type: array
    *           items:
    *             $ref: '#/definitions/EBGSSystemsPage'
+   *     deprecated: true
    */
 router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
     require('../../../models/ebgs_systems')

@@ -19,12 +19,14 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const mongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
+const DiscordStrategy = require('passport-discord').Strategy;
+const secrets = require('./secrets');
 
 const bugsnag = require('./server/bugsnag');
 const swagger = require('./server/swagger');
@@ -54,17 +56,31 @@ const systemsV2 = require('./server/routes/eddb_api/v2/systems');
 const ebgsFactionsV2 = require('./server/routes/elite_bgs_api/v2/factions');
 const ebgsSystemsV2 = require('./server/routes/elite_bgs_api/v2/systems');
 
+const ebgsFactionsV3 = require('./server/routes/elite_bgs_api/v3/factions');
+const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
+
+const authCheck = require('./server/routes/auth/auth_check');
+const authDiscord = require('./server/routes/auth/discord');
+const authLogout = require('./server/routes/auth/logout');
+const authUser = require('./server/routes/auth/auth_user');
+const frontEnd = require('./server/routes/front_end');
+
 require('./server/modules/eddn');
+require('./server/modules/discord');
 
 const app = express();
 
-// app.use(favicon(path.join(__dirname, 'dist', 'favicon.ico')));
 app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use(session({
+    name: "EliteBGS",
+    secret: secrets.session_secret,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
+    store: new mongoStore({ mongooseConnection: require('./server/db').elite_bgs })
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -86,6 +102,11 @@ app.use('/api/ebgs/v1/api-docs.json', (req, res, next) => {
 app.use('/api/ebgs/v2/api-docs.json', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swagger.EBGSAPIv2);
+});
+
+app.use('/api/ebgs/v3/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EBGSAPIv3);
 });
 
 app.use('/api/eddb/v1/bodies', bodiesV1);
@@ -111,6 +132,7 @@ app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, 
 app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v2/api-docs.json`));
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
 app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
+app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
@@ -124,6 +146,15 @@ app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
 
 app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
 app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
+
+app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
+app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
+
+app.use('/auth/check', authCheck);
+app.use('/auth/discord', authDiscord);
+app.use('/auth/logout', authLogout);
+app.use('/auth/user', authUser);
+app.use('/frontend', frontEnd);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
@@ -159,6 +190,25 @@ if (app.get('env') === 'production') {
     });
 }
 
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+passport.deserializeUser(function (id, done) {
+    require('./server/models/ebgs_users')
+        .then(model => {
+            model.findOne({ id: id })
+                .then(user => {
+                    done(null, user);
+                })
+                .catch(err => {
+                    done(err);
+                })
+        })
+        .catch(err => {
+            done(err);
+        })
+});
+
 require('./server/models/users')
     .then(user => {
         passport.use(new basicStrategy((username, password, callback) => {
@@ -179,5 +229,92 @@ require('./server/models/users')
     .catch(err => {
         console.log(err);
     })
+
+let scopes = ['identify', 'email', 'guilds'];
+
+passport.use(new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `http://${host}/auth/discord/callback`,
+    scope: scopes
+}, (accessToken, refreshToken, profile, done) => {
+    const client = require('./server/modules/discord/client');
+    const config = require('./server/models/configs');
+    require('./server/models/ebgs_users')
+        .then(model => {
+            model.findOne({ id: profile.id })
+                .then(user => {
+                    if (user) {
+                        let user = {
+                            id: profile.id,
+                            username: profile.username,
+                            email: profile.email,
+                            avatar: profile.avatar,
+                            discriminator: profile.discriminator,
+                            guilds: profile.guilds
+                        };
+                        model.findOneAndUpdate(
+                            { id: profile.id },
+                            user,
+                            {
+                                upsert: false,
+                                runValidators: true
+                            })
+                            .then(() => {
+                                done(null, user);
+                            })
+                            .catch(err => {
+                                done(err);
+                            });
+                    } else {
+                        config.then(configModel => {
+                            configModel.findOne()
+                                .then(config => {
+                                    let invite = client.guilds.get(config.guild_id).channels.get(config.invite_channel_id).createInvite({
+                                        maxAge: 0,
+                                        maxUses: 1,
+                                        unique: true
+                                    });
+                                    invite.then(invitePromise => {
+                                        let user = {
+                                            id: profile.id,
+                                            username: profile.username,
+                                            email: profile.email,
+                                            avatar: profile.avatar,
+                                            discriminator: profile.discriminator,
+                                            access: 1,
+                                            invite: invitePromise.code,
+                                            invite_used: false,
+                                            guilds: profile.guilds
+                                        };
+                                        model.findOneAndUpdate(
+                                            { id: profile.id },
+                                            user,
+                                            {
+                                                upsert: true,
+                                                runValidators: true
+                                            })
+                                            .then(() => {
+                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+                                                done(null, user);
+                                            })
+                                            .catch(err => {
+                                                done(err);
+                                            });
+                                    })
+                                })
+                                .catch(err => {
+                                    done(err);
+                                })
+                        }).catch(err => {
+                            done(err);
+                        });
+                    }
+                })
+        })
+        .catch(err => {
+            done(err);
+        })
+}));
 
 module.exports = app;

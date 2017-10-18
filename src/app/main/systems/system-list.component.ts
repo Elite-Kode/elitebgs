@@ -1,19 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from 'clarity-angular';
-import { SystemsService } from './services/systems.service';
+import { SystemsService } from '../../services/systems.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
-import { FDevIDs } from './utilities/fdevids';
+import { FDevIDs } from '../../utilities/fdevids';
+import { EBGSSystemsV3WOHistory } from '../../typings';
 
 @Component({
     selector: 'app-system-list',
     templateUrl: './system-list.component.html',
 })
 export class SystemListComponent implements OnInit {
+    @HostBinding('class.content-area') contentArea = true;
+    isAuthenticated: boolean;
     systemData: ISystem[] = [];
     loading = true;
+    systemToAdd: string;
     totalRecords = 0;
+    confirmModal: boolean;
+    successAlertState = false;
+    failureAlertState = false;
     private pageNumber = 1;
     private tableState: State;
     systemForm = new FormGroup({
@@ -21,10 +28,10 @@ export class SystemListComponent implements OnInit {
     });
     constructor(
         private systemService: SystemsService,
-        private router: Router
+        private authenticationService: AuthenticationService
     ) { }
 
-    showSystem(systems) {
+    showSystem(systems: EBGSSystemsV3WOHistory) {
         this.totalRecords = systems.total;
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;
@@ -54,16 +61,53 @@ export class SystemListComponent implements OnInit {
         }
 
         this.systemService
-            .getSystems(this.pageNumber.toString(), beginsWith)
+            .getSystemsBegins(this.pageNumber.toString(), beginsWith)
             .subscribe(systems => this.showSystem(systems));
         this.loading = false;
     }
 
-    onView(system: ISystem) {
-        this.router.navigate(['/system', system.id]);
+    addSystem(name: string) {
+        this.systemToAdd = name;
+        this.openConfirmModal();
+    }
+
+    confirmAddSystem() {
+        this.authenticationService
+            .addSystems([this.systemToAdd])
+            .subscribe(status => {
+                if (status === true) {
+                    this.successAlertState = true;
+                    setTimeout(() => {
+                        this.successAlertState = false;
+                    }, 3000);
+                } else {
+                    this.failureAlertState = true;
+                    setTimeout(() => {
+                        this.failureAlertState = false
+                    }, 3000);
+                }
+            });
+        this.closeConfirmModal();
+    }
+
+    openConfirmModal() {
+        this.confirmModal = true;
+    }
+
+    closeConfirmModal() {
+        this.confirmModal = false;
+    }
+
+    getAuthentication() {
+        this.authenticationService
+            .isAuthenticated()
+            .subscribe(status => {
+                this.isAuthenticated = status;
+            });
     }
 
     ngOnInit() {
+        this.getAuthentication();
         this.systemForm.valueChanges.subscribe(value => {
             this.refresh(this.tableState, value.systemName);
         })

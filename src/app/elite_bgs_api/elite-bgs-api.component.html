@@ -1,49 +1,11 @@
 <nav class="subnav">
-    <clr-tabs>
-        <clr-tab>
-            <button (click)="onTabClick(0)" clrTabLink>Overview</button>
-        </clr-tab>
-        <clr-tab>
-            <button (click)="onTabClick(1)" clrTabLink>Docs</button>
-        </clr-tab>
-    </clr-tabs>
+    <ul class="nav">
+        <li class="nav-item">
+            <button routerLink="/api/elitebgs" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="btn btn-link nav-link nav-item">Overview</button>
+        </li>
+        <li class="nav-item">
+            <button routerLink="/api/elitebgs/docs" routerLinkActive="active" class="btn btn-link nav-link nav-item">Docs</button>
+        </li>
+    </ul>
 </nav>
-
-<ng-container *ngIf="overviewActive">
-    <div class="content-container">
-        <div class="content-area">
-            <div class="component">
-                <h1 style="text-align:left;float:left;">A Historical API</h1>
-                <div style="text-align:right;float:right;">
-                    <a class="btn btn-primary" href="https://www.paypal.me/SayakMukhopadhyay">Donate</a>
-                </div>
-                <br style="clear:both;">
-                <h3>
-                    For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a
-                    step in that direction. It stores information which changes regularly in a historical format. Thus, one
-                    can always look up the events that led to the current Civil War for instance.
-                </h3>
-                <h2>API</h2>
-                <div class="card">
-                    <div class="card-title">Access</div>
-                    <div class="card-text">
-                        Consumers must make a GET request at any endpoint using Basic HTTP authentication with username
-                        <code>guest</code> and password <code>secret</code>.
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Endpoints</div>
-                    <div class="card-text">
-                        <h3>Factions</h3>
-                        <code>http://elitebgs.kodeblox.com/api/ebgs/v1/factions?&lt;params&gt;</code>
-                        <h3>Systems</h3>
-                        <code>http://elitebgs.kodeblox.com/api/ebgs/v1/systems?&lt;params&gt;</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-container>
-<ng-container *ngIf="docsActive">
-    <app-swagger-ui [docSpecs]="specs"></app-swagger-ui>
-</ng-container>
+<router-outlet></router-outlet>
