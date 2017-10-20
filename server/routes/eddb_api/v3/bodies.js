@@ -16,6 +16,11 @@
 
 "use strict";
 
+const express = require('express');
+const _ = require('lodash');
+
+let router = express.Router();
+
 /**
    * @swagger
    * /bodies:
@@ -99,15 +104,8 @@
    *           type: array
    *           items:
    *             $ref: '#/definitions/BodiesPage'
-   *     deprecated: true
    */
-const express = require('express');
-const passport = require('passport');
-const _ = require('lodash');
-
-let router = express.Router();
-
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
+router.get('/', (req, res, next) => {
     require('../../../models/bodies')
         .then(bodies => {
             let query = new Object;
@@ -203,7 +201,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             }
 
             let bodySearch = () => {
-                if (_.isEmpty(query) && req.user.clearance !== 0) {
+                if (_.isEmpty(query)) {
                     throw new Error("Add at least 1 query parameter to limit traffic");
                 }
                 let paginateOptions = {

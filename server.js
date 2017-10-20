@@ -37,12 +37,14 @@ const factionsV1 = require('./server/routes/eddb_api/v1/factions');
 const populatedSystemsV1 = require('./server/routes/eddb_api/v1/populated_systems');
 const stationsV1 = require('./server/routes/eddb_api/v1/stations');
 const systemsV1 = require('./server/routes/eddb_api/v1/systems');
+
 const downloadDumpsV1 = require('./server/routes/eddb_api/v1/download_dumps');
 const insertDumpsV1 = require('./server/routes/eddb_api/v1/insert_dumps');
 const updateDumpsV1 = require('./server/routes/eddb_api/v1/update_dumps');
 const downloadInsertV1 = require('./server/routes/eddb_api/v1/download_insert');
 const downloadUpdateV1 = require('./server/routes/eddb_api/v1/download_update');
 const downloadUpdateV2 = require('./server/routes/eddb_api/v2/download_update');
+const downloadUpdateV3 = require('./server/routes/eddb_api/v3/download_update');
 
 const ebgsFactionsV1 = require('./server/routes/elite_bgs_api/v1/factions');
 const ebgsSystemsV1 = require('./server/routes/elite_bgs_api/v1/systems');
@@ -55,6 +57,12 @@ const systemsV2 = require('./server/routes/eddb_api/v2/systems');
 
 const ebgsFactionsV2 = require('./server/routes/elite_bgs_api/v2/factions');
 const ebgsSystemsV2 = require('./server/routes/elite_bgs_api/v2/systems');
+
+const bodiesV3 = require('./server/routes/eddb_api/v3/bodies');
+const factionsV3 = require('./server/routes/eddb_api/v3/factions');
+const populatedSystemsV3 = require('./server/routes/eddb_api/v3/populated_systems');
+const stationsV3 = require('./server/routes/eddb_api/v3/stations');
+const systemsV3 = require('./server/routes/eddb_api/v3/systems');
 
 const ebgsFactionsV3 = require('./server/routes/elite_bgs_api/v3/factions');
 const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
@@ -94,6 +102,11 @@ app.use('/api/eddb/v2/api-docs.json', (req, res, next) => {
     res.send(swagger.EDDBAPIv2);
 });
 
+app.use('/api/eddb/v3/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EDDBAPIv3);
+});
+
 app.use('/api/ebgs/v1/api-docs.json', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swagger.EBGSAPIv1);
@@ -130,6 +143,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v1/api-docs.json`));
 app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v2/api-docs.json`));
+app.use('/api/eddb/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v3/api-docs.json`));
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
 app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
@@ -146,6 +160,13 @@ app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
 
 app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
 app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
+
+app.use('/api/eddb/v3/bodies', bodiesV3);
+app.use('/api/eddb/v3/factions', factionsV3);
+app.use('/api/eddb/v3/populatedsystems', populatedSystemsV3);
+app.use('/api/eddb/v3/stations', stationsV3);
+app.use('/api/eddb/v3/systems', systemsV3);
+app.use('/api/eddb/v3/downloadupdate', downloadUpdateV3);
 
 app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
 app.use('/api/ebgs/v3/systems', ebgsSystemsV3);

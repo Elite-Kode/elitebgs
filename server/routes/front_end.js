@@ -33,8 +33,7 @@ router.get('/backgroundimages', (req, res, next) => {
 });
 
 router.post('/edit', (req, res, next) => {
-    console.log(req.body);
-    if (validateEdit(req.body)) {
+    if (validateEdit(req.body && req.user && userAllowed(req.user))) {
         ebgsSystemsV3Model
             .then(model => {
                 model.findOne(
@@ -477,6 +476,10 @@ let validateEdit = data => {
     } else {
         return false;
     }
+}
+
+let userAllowed = user => {
+    return false;
 }
 
 let titlify = title => {

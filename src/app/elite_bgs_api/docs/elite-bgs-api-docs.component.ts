@@ -1,6 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 
 @Component({
@@ -9,14 +8,8 @@ import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 })
 export class EliteBgsApiDocsComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
-    source: SafeResourceUrl;
     specs: IInputSpec[];
-    constructor(private domSanitizer: DomSanitizer) {
-        if (environment.production) {
-            this.source = this.domSanitizer.bypassSecurityTrustResourceUrl('http://localhost:4001/api/ebgs/v1/docs/');
-        } else {
-            this.source = this.domSanitizer.bypassSecurityTrustResourceUrl('http://localhost:3001/api/ebgs/v1/docs/');
-        }
+    constructor() {
         this.specs = [
             {
                 versionName: 'V1',

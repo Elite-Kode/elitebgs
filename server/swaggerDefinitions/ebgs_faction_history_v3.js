@@ -17,7 +17,9 @@
 "use strict";
 
 module.exports = {
+    _id: { type: "string" },
     updated_at: { type: "string" },
+    updated_by: { type: "string" },
     system: { type: "string" },
     system_lower: { type: "string" },
     state: { type: "string" },
