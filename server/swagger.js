@@ -28,18 +28,21 @@ if (process.env.NODE_ENV === 'development') {
     host = 'localhost:4001';
 }
 
-let makeSwaggerSpec = (params) => {
+let makeSwaggerSpec = (params, security) => {
     let swaggerDefinition = {
         info: params.info,
         host: host,
         basePath: params.basePath,
-        definitions: params.definitions,
-        securityDefinitions: {
+        definitions: params.definitions
+    };
+
+    if (security) {
+        swaggerDefinition.securityDefinitions = {
             http: {
                 type: "basic"
             }
-        }
-    };
+        };
+    }
 
     let options = {
         swaggerDefinition: swaggerDefinition,
@@ -73,7 +76,7 @@ let paramsEDDBAPIv1 = {
     apis: ['./server/routes/eddb_api/v1/*.js']
 };
 
-let swaggerSpecEDDBAPIv1 = makeSwaggerSpec(paramsEDDBAPIv1);
+let swaggerSpecEDDBAPIv1 = makeSwaggerSpec(paramsEDDBAPIv1, true);
 
 let paramsEDDBAPIv2 = {
     info: {
@@ -104,7 +107,38 @@ let paramsEDDBAPIv2 = {
     apis: ['./server/routes/eddb_api/v2/*.js']
 };
 
-let swaggerSpecEDDBAPIv2 = makeSwaggerSpec(paramsEDDBAPIv2);
+let swaggerSpecEDDBAPIv2 = makeSwaggerSpec(paramsEDDBAPIv2, true);
+
+let paramsEDDBAPIv3 = {
+    info: {
+        title: 'EDDB API',
+        version: '3.0.0',
+        description: 'An API for EDDB Data',
+    },
+    basePath: '/api/eddb/v3/',
+    definitions: {
+        AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
+        Bodies: { properties: swaggerDefinitions.bodies },
+        Commodities: { properties: swaggerDefinitions.commodities },
+        Factions: { properties: swaggerDefinitions.factions },
+        Materials: { properties: swaggerDefinitions.materials },
+        PopulatedSystemPresence: { properties: swaggerDefinitions.populatedSystemPresence },
+        PopulatedSystems: { properties: swaggerDefinitions.populatedSystems },
+        Rings: { properties: swaggerDefinitions.rings },
+        SolidComposition: { properties: swaggerDefinitions.solidComposition },
+        StationItems: { properties: swaggerDefinitions.stationItems },
+        Stations: { properties: swaggerDefinitions.stations },
+        Systems: { properties: swaggerDefinitions.systems },
+        BodiesPage: { properties: swaggerDefinitions.pagination('Bodies') },
+        FactionsPage: { properties: swaggerDefinitions.pagination('Factions') },
+        PopulatedSystemsPage: { properties: swaggerDefinitions.pagination('PopulatedSystems') },
+        StationsPage: { properties: swaggerDefinitions.pagination('Stations') },
+        SystemsPage: { properties: swaggerDefinitions.pagination('Systems') }
+    },
+    apis: ['./server/routes/eddb_api/v3/*.js']
+};
+
+let swaggerSpecEDDBAPIv3 = makeSwaggerSpec(paramsEDDBAPIv3, false);
 
 let paramsEBGSAPIv1 = {
     info: {
@@ -124,7 +158,7 @@ let paramsEBGSAPIv1 = {
     apis: ['./server/routes/elite_bgs_api/v1/*.js']
 };
 
-let swaggerSpecEBGSAPIv1 = makeSwaggerSpec(paramsEBGSAPIv1);
+let swaggerSpecEBGSAPIv1 = makeSwaggerSpec(paramsEBGSAPIv1, true);
 
 let paramsEBGSAPIv2 = {
     info: {
@@ -146,7 +180,7 @@ let paramsEBGSAPIv2 = {
     apis: ['./server/routes/elite_bgs_api/v2/*.js']
 };
 
-let swaggerSpecEBGSAPIv2 = makeSwaggerSpec(paramsEBGSAPIv2);
+let swaggerSpecEBGSAPIv2 = makeSwaggerSpec(paramsEBGSAPIv2, true);
 
 let paramsEBGSAPIv3 = {
     info: {
@@ -169,10 +203,11 @@ let paramsEBGSAPIv3 = {
     apis: ['./server/routes/elite_bgs_api/v3/*.js']
 };
 
-let swaggerSpecEBGSAPIv3 = makeSwaggerSpec(paramsEBGSAPIv3);
+let swaggerSpecEBGSAPIv3 = makeSwaggerSpec(paramsEBGSAPIv3, false);
 
 module.exports.EDDBAPIv1 = swaggerSpecEDDBAPIv1;
 module.exports.EDDBAPIv2 = swaggerSpecEDDBAPIv2;
+module.exports.EDDBAPIv3 = swaggerSpecEDDBAPIv3;
 module.exports.EBGSAPIv1 = swaggerSpecEBGSAPIv1;
 module.exports.EBGSAPIv2 = swaggerSpecEBGSAPIv2;
 module.exports.EBGSAPIv3 = swaggerSpecEBGSAPIv3;

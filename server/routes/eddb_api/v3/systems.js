@@ -17,16 +17,15 @@
 "use strict";
 
 const express = require('express');
-const passport = require('passport');
 const _ = require('lodash');
 
 let router = express.Router();
 
 /**
    * @swagger
-   * /populatedsystems:
+   * /systems:
    *   get:
-   *     description: Get the Populated Systems
+   *     description: Get the Systems
    *     produces:
    *       - application/json
    *     parameters:
@@ -70,35 +69,22 @@ let router = express.Router();
    *         description: The name of the security status in the system.
    *         in: query
    *         type: string
-   *       - name: factionname
-   *         description: Name of a faction present in the system.
-   *         in: query
-   *         type: string
-   *       - name: presencetype
-   *         description: Presence type of the faction.
-   *         enum:
-   *           - 'presence'
-   *           - 'controlling'
-   *         in: query
-   *         type: string
    *       - name: page
    *         description: Page no of response.
    *         in: query
    *         type: integer
    *     responses:
    *       200:
-   *         description: An array of populated systems in EDDB format
+   *         description: An array of systems in EDDB format
    *         schema:
    *           type: array
    *           items:
-   *             $ref: '#/definitions/PopulatedSystemsPage'
-   *     deprecated: true
+   *             $ref: '#/definitions/SystemsPage'
    */
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
-    require('../../../models/populated_systems')
-        .then(populatedSystems => {
+router.get('/', (req, res, next) => {
+    require('../../../models/systems')
+        .then(systems => {
             let query = new Object;
-            let factionSearch = null;
             let page = 1;
 
             if (req.query.eddbid) {
@@ -136,72 +122,19 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             if (req.query.page) {
                 page = req.query.page;
             }
-            if (req.query.factionname) {
-                let presencetype = 'presence';
-                if (req.query.presencetype) {
-                    presencetype = req.query.presencetype.toLowerCase();
-                }
-                if (presencetype === 'controlling') {
-                    query.controlling_minor_faction = req.query.factionname.toLowerCase();
-                } else if (presencetype === 'presence') {
-                    factionSearch = new Promise((resolve, reject) => {
-                        require('../../../models/factions')
-                            .then(factions => {
-                                let factionQuery = new Object;
-
-                                factionQuery.name_lower = req.query.factionname.toLowerCase();
-
-                                let factionProjection = {
-                                    _id: 0,
-                                    id: 1
-                                }
-
-                                factions.find(factionQuery, factionProjection).lean()
-                                    .then(result => {
-                                        let ids = [];
-                                        result.forEach(doc => {
-                                            ids.push(doc.id);
-                                        }, this);
-                                        resolve(ids);
-                                    })
-                                    .catch(err => {
-                                        reject(err);
-                                    });
-                            })
-                            .catch(err => {
-                                reject(err);
-                            });
-                    })
-                }
+            if (_.isEmpty(query)) {
+                throw new Error("Add at least 1 query parameter to limit traffic");
             }
-
-            let systemSearch = () => {
-                if (_.isEmpty(query) && req.user.clearance !== 0) {
-                    throw new Error("Add at least 1 query parameter to limit traffic");
-                }
-                let paginateOptions = {
-                    lean: true,
-                    page: page,
-                    limit: 10
-                };
-                populatedSystems.paginate(query, paginateOptions)
-                    .then(result => {
-                        res.status(200).json(result);
-                    })
-                    .catch(next)
-            }
-
-            if (factionSearch instanceof Promise) {
-                factionSearch
-                    .then(ids => {
-                        query["minor_faction_presences.minor_faction_id"] = { $in: ids };
-                        systemSearch();
-                    })
-                    .catch(next)
-            } else {
-                systemSearch();
-            }
-
+            let paginateOptions = {
+                lean: true,
+                page: page,
+                limit: 10
+            };
+            systems.paginate(query, paginateOptions)
+                .then(result => {
+                    res.status(200).json(result);
+                })
+                .catch(next)
         })
         .catch(next);
 });

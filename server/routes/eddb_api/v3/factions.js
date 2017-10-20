@@ -17,7 +17,6 @@
 "use strict";
 
 const express = require('express');
-const passport = require('passport');
 const _ = require('lodash');
 
 let router = express.Router();
@@ -73,9 +72,8 @@ let router = express.Router();
    *           type: array
    *           items:
    *             $ref: '#/definitions/FactionsPage'
-   *     deprecated: true
    */
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
+router.get('/', (req, res, next) => {
     require('../../../models/factions')
         .then(factions => {
             let query = new Object;
@@ -138,7 +136,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
             }
 
             let factionSearch = () => {
-                if (_.isEmpty(query) && req.user.clearance !== 0) {
+                if (_.isEmpty(query)) {
                     throw new Error("Add at least 1 query parameter to limit traffic");
                 }
                 let paginateOptions = {
