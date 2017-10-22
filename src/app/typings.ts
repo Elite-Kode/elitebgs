@@ -554,6 +554,11 @@ export type PopulatedSystemsV2 = PaginateResult<PopulatedSystemSchema>;
 export type StationsV2 = PaginateResult<StationSchema>;
 export type SystemsV2 = PaginateResult<SystemSchema>;
 
+export type BodiesV3 = PaginateResult<BodySchema>;
+export type FactionsV3 = PaginateResult<FactionSchema>;
+export type PopulatedSystemsV3 = PaginateResult<PopulatedSystemSchema>;
+export type StationsV3 = PaginateResult<StationSchema>;
+export type SystemsV3 = PaginateResult<SystemSchema>;
 export type EBGSFactionsV3 = PaginateResult<EBGSFactionV3Schema>;
 export type EBGSSystemsV3 = PaginateResult<EBGSSystemV3Schema>;
 export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistory>;
