@@ -2,15 +2,15 @@
 
 A website to track the background simulation in Elite Dangerous
 
-Elite BGS is a project that attempts to fill a gap of APIs for the treasure trove of information online. Currently it is operating in 2 seperate modules.
+Elite BGS is a project that attempts to fill a gap of APIs for the treasure trove of information online. Currently, it is operating in 2 separate modules.
 
 ## EDDB API
 
-Currently [EDDB](https://eddb.io/) is the greatest treasure of information of the galaxy and it is a user friendly tool for many pilots. But it lacks an API for developers. EDDB API is an attempt to fill this gap by providing an API for EDDB data sources.
+Currently, [EDDB](https://eddb.io/) is the greatest treasure of information of the galaxy and it is a user friendly tool for many pilots. But it lacks an API for developers. EDDB API is an attempt to fill this gap by providing an API for EDDB data sources.
 
 ## ELITE BGS API
 
-For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a step in that direction. It stores information which changes regularly in a historical format. Thus, one can always look up the events that led to the current Civil War for instance.
+For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a step in that direction. It stores information which changes regularly in an historical format. Thus, one can always look up the events that led to the current Civil War, for instance.
 
 # API
 
@@ -98,7 +98,7 @@ Consumers must make a GET request at any endpoint using Basic HTTP authenticatio
 
 \* These routes are not availble to public due to security/traffic issues. Only developer(s) have access.
 
-For more details please refer the [wiki](https://github.com/SayakMukhopadhyay/elitebgs/wiki "EliteBGS Wiki")
+For more details, please refer the [wiki](https://github.com/SayakMukhopadhyay/elitebgs/wiki "EliteBGS Wiki").
 
 ## Contributing
 
@@ -109,7 +109,7 @@ If you are willing to contribute to the project, please work on a fork and creat
 ## Credits
 
 For the CMDRs by a CMDR. Created by [CMDR Garud](https://forums.frontier.co.uk/member.php/136073-Garud) for an awesome gaming community. 
-A great thanks to the developers of [EDDB](https://eddb.io/) without which this project would not have started. Special mention for the awesome group I am in, [Knights of Karma](http://knightsofkarma.com/), whose members had to put up with me making no contribution during development. And last but not the least, [CMDR Blood Drunk](https://forums.frontier.co.uk/member.php/125031-Blood-Drunk), for making me MEAN and guiding me through all the troubles faced by me at all odd times!
+A great thanks to the developers of [EDDB](https://eddb.io/) without which this project would not have started. Special mention for the awesome group I am in, [Knights of Karma](http://knightsofkarma.com/), whose members had to put up with me making no contribution during development. And last but not least, [CMDR Blood Drunk](https://forums.frontier.co.uk/member.php/125031-Blood-Drunk), for making me MEAN and guiding me through all the troubles faced by me at all odd times!
 
 ## License
 
