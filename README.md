@@ -10,7 +10,7 @@ Currently, [EDDB](https://eddb.io/) is the greatest treasure of information of t
 
 ## ELITE BGS API
 
-For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a step in that direction. It stores information which changes regularly in an historical format. Thus, one can always look up the events that led to the current Civil War, for instance.
+For ultimate immersion and BGS control, we require not only the latest data but also historical ones. ELITE BGS API is a step in that direction. It stores information which changes regularly in a historical format. Thus, one can always look up the events that led to the current Civil War, for instance.
 
 # API
 
