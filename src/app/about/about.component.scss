@@ -44,12 +44,48 @@
 }
 
 .self-logo img {
-    height: 50%;
-    width: 50%;
+    height: 70%;
+    width: 70%;
     margin: auto;
 }
 
 .self-logo h3 {
     margin: auto;
     margin-top: 12px;
+}
+
+.big-ampersand h1 {
+    text-align: center;
+    font-size: 100px;
+}
+
+.feature-card .card-img {
+    display: flex;
+}
+
+.feature-card .card-img clr-icon {
+    margin: auto;
+}
+
+.feature-card .card-title {
+    text-align: center;
+}
+
+.feature-card .card-text {
+    text-align: center;
+}
+
+.contact-card .card-img {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-card .card-img img {
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.contact-card .card-header {
+    text-align: center;
 }
