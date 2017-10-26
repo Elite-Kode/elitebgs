@@ -8,7 +8,48 @@
     font-size: 18px;
 }
 
-.header-background{
-    background-image: url('/assets/BGSv1.svg');
-    background-size: cover;
+.header-logo {
+    display: flex;
+}
+
+.header-logo img {
+    height: 80%;
+    width: 80%;
+    margin: auto;
+}
+
+.contact {
+    min-height: 100px;
+}
+
+.contact:nth-child(1) {
+    background-color: #0b26c2;
+}
+
+.contact:nth-child(2) {
+    background-color: #f8b600;
+}
+
+.contact:nth-child(3) {
+    background-color: #00b818;
+}
+
+.card-img img {
+    width: 50%;
+}
+
+.self-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.self-logo img {
+    height: 50%;
+    width: 50%;
+    margin: auto;
+}
+
+.self-logo h3 {
+    margin: auto;
+    margin-top: 12px;
 }
