@@ -13,6 +13,7 @@ import { MainModule } from './main/main.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { AboutComponent } from './about/about.component';
+import { GuideComponent } from './guide/guide.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 
 import { SystemsService } from './services/systems.service';
@@ -25,6 +26,7 @@ import { ServerService } from './services/server.service';
         AppComponent,
         ProfileComponent,
         AboutComponent,
+        GuideComponent,
         PageNotFoundComponent
     ],
     imports: [

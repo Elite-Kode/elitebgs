@@ -20,6 +20,7 @@
                     <a routerLink="/" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Login</a>
                     <a routerLink="/profile" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Profile</a>
                     <a href="/auth/logout" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Log out</a>
+                    <a routerLink="/guide" clrDropdownItem>Guide</a>
                     <a routerLink="/about" clrDropdownItem>About</a>
                 </clr-dropdown-menu>
             </clr-dropdown>

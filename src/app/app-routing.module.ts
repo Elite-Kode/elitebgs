@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ProfileComponent } from './profile/profile.component';
 import { AboutComponent } from './about/about.component';
+import { GuideComponent } from './guide/guide.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 
 const appRoutes: Routes = [
@@ -13,6 +14,10 @@ const appRoutes: Routes = [
     {
         path: 'about',
         component: AboutComponent
+    },
+    {
+        path: 'guide',
+        component: GuideComponent
     },
     {
         path: '**',

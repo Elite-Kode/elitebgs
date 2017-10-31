@@ -1,9 +1,10 @@
 import { Component, HostBinding } from '@angular/core';
 
 @Component({
-    templateUrl: './page-not-found.component.html'
+    templateUrl: './guide.component.html',
+    styleUrls: ['./guide.component.scss']
 })
-export class PageNotFoundComponent {
+export class GuideComponent {
     @HostBinding('class.content-container') contentContainer = true;
     constructor() { }
 }
