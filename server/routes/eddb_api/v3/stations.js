@@ -283,7 +283,8 @@ router.get('/', (req, res, next) => {
                 let paginateOptions = {
                     lean: true,
                     page: page,
-                    limit: 10
+                    limit: 10,
+                    leanWithId: false
                 };
                 stations.paginate(query, paginateOptions)
                     .then(result => {
