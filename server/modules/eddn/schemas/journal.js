@@ -719,7 +719,7 @@ function Journal() {
     this.getSystemEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
-                url: "http://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems",
+                url: "https://elitebgs.kodeblox.com/api/eddb/v1/populatedsystems",
                 method: "GET",
                 auth: {
                     'user': 'guest',
@@ -749,7 +749,7 @@ function Journal() {
     this.getFactionEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
-                url: "http://elitebgs.kodeblox.com/api/eddb/v1/factions",
+                url: "https://elitebgs.kodeblox.com/api/eddb/v1/factions",
                 method: "GET",
                 auth: {
                     'user': 'guest',

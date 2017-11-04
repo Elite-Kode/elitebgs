@@ -136,7 +136,7 @@ function Bodies() {
 
     this.downloadUpdate = function () {
         let recordsUpdated = 0;
-        new utilities.downloadUpdate('https://eddb.io/archive/v5/bodies.jsonl', 'jsonl')
+        new utilities.downloadUpdate('https://eddb.io/archive/v5/bodies_recently.jsonl', 'jsonl')
             .on('start', response => {
                 console.log(`EDDB body dump started with status code ${response.statusCode}`);
                 this.emit('started', {

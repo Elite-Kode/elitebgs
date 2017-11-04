@@ -1,0 +1,98 @@
+<div class="content-area">
+    <h1>Hosted Bot</h1>
+    <p>
+        I am hosting the bot for all to use. Click the invite in the overview tab. You must have Manage Server permission for the
+        server.
+    </p>
+    <p>
+        After inviting the bot, follow the steps in order:
+    </p>
+    <ol>
+        <li>
+            Run command
+            <code>@BGSBot myguild set</code> to register your Discord guild(fancy term for a server). The command MUST be run by someone who has the
+            <code>Administrator</code> permission in Discord.
+        </li>
+        <li>
+            Next you need to add an admin role. An admin role is able to execute all commands. Find which role you want to add as an
+            admin role. You can add many roles as admin roles. Next you need to find the id of the admin role(s). To do that
+            prepend the mention of your role with
+            <code>\</code>. Eg. if your role is admin, you need to use
+            <code>\@admin</code> to see the id.
+        </li>
+        <li>
+            With the role id, run the command
+            <code>@BGSBot adminroles add &ltid&rt</code>. Replace
+            <code>&ltid&rt</code> with the role found in the previous step. The command MUST be run by someone who has the
+            <code>Administrator</code> permission in Discord.
+        </li>
+        <li>
+            Now, add a BGS Manager role. A BGS Manager would be able to execute commands related to BGS but not the bot's administrative
+            commands. Run the command
+            <code>@BGSBot bgsrole set &ltid&rt</code>. You need to have an admin role that you set in the previous step to execute this command. Also, there can be
+            only 1 role for BGS Manager.
+        </li>
+        <li>
+            Optionally, set up a BGS Channel using the command
+            <code>@BGSBot bgschannel set &ltid&rt</code>. Replace
+            <code>&ltid&rt</code> with the channel id that you want to convert to a BGS reporting channel. BGS Reporting function coming soon
+            <sup>TM</sup>.
+        </li>
+        <li>
+            Optionally, set up forbidden roles. Users having these roles won't be able to execute any command even if they have admin
+            roles or bgs manager roles. Run the command
+            <code>@BGSBot forbiddenroles add &ltid&rt</code>. You can add as many roles as you like.
+        </li>
+    </ol>
+    <p>
+        This concludes the set up of the bot.
+    </p>
+    <h1>Self Hosting</h1>
+    <p>
+        Coming Soon
+        <sup>TM</sup>
+    </p>
+    <h1>Using the bot</h1>
+    <p>
+        The commands that the bot has currently are:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot factionstatus get &ltfaction name in lower case&gt</code>
+        </li>
+        <li>
+            <code>@BGSBot systemstatus get &ltsystem name in lower case&gt</code>
+        </li>
+    </ol>
+    <p>
+        To create BGS Reports you need to monitor factions and systems. A faction or a system can be monitored as primary or not.
+        Primary factions would be having detailed data while non primary ones would be having concise ones in a compact format.
+        Only primary monitored systems is currently available in BGS reports.
+    </p>
+    <p>
+        To monitor a faction, command using:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot monitorfactions add &ltfactionname&gt</code>
+        </li>
+        <li>
+            <code>@BGSBot monitorfactions addprimary &ltfactionname&gt</code>
+        </li>
+    </ol>
+    <p>
+        To monitor a system, command using:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot monitorsystems add &ltsystemname&gt</code>
+        </li>
+        <li>
+            <code>@BGSBot monitorsystems addprimary &ltsystemname&gt</code>
+        </li>
+    </ol>
+    <p>
+        To generate a report type:
+        <code>@BGSBot bgsreport get</code>
+    </p>
+</div>
