@@ -177,7 +177,7 @@ router.get('/', (req, res, next) => {
             }
             if (req.query.bodytypename) {
                 let bodyTypeNames = arrayfy(req.query.bodytypename);
-                query.type = { $in: bodyTypeNames };
+                query.type_name = { $in: bodyTypeNames };
             }
             if (req.query.distancearrival) {
                 query.distance_to_arrival = { $lt: req.query.distancearrival };
