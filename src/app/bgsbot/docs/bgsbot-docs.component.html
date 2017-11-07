@@ -22,26 +22,31 @@
         </li>
         <li>
             With the role id, run the command
-            <code>@BGSBot adminroles add &ltid&rt</code>. Replace
-            <code>&ltid&rt</code> with the role found in the previous step. The command MUST be run by someone who has the
-            <code>Administrator</code> permission in Discord.
+            <code>@BGSBot adminroles add &lt;id&gt;</code>. Replace
+            <code>&lt;id&gt;</code> with the role found in the previous step. The command MUST be run by someone who has the
+            <code>Administrator</code> permission in Discord. For eg. if Discord shows the id as
+            <code>&lt;@&amp;123456789012345678&gt;</code>, run the command as
+            <code>@BGSBot adminroles add 123456789012345678</code>.
         </li>
         <li>
             Now, add a BGS Manager role. A BGS Manager would be able to execute commands related to BGS but not the bot's administrative
             commands. Run the command
-            <code>@BGSBot bgsrole set &ltid&rt</code>. You need to have an admin role that you set in the previous step to execute this command. Also, there can be
-            only 1 role for BGS Manager.
+            <code>@BGSBot bgsrole set &lt;id&gt;</code>. You need to have an admin role that you set in the previous step to execute this command. Also, there can be
+            only 1 role for BGS Manager. Use the numeric id only like
+            <code>adminroles</code>.
         </li>
         <li>
             Optionally, set up a BGS Channel using the command
-            <code>@BGSBot bgschannel set &ltid&rt</code>. Replace
-            <code>&ltid&rt</code> with the channel id that you want to convert to a BGS reporting channel. BGS Reporting function coming soon
+            <code>@BGSBot bgschannel set &lt;id&gt;</code>. Replace
+            <code>&lt;id&gt;</code> with the channel id that you want to convert to a BGS reporting channel. Use the numeric id only like
+            <code>adminroles</code>. BGS Reporting function coming soon
             <sup>TM</sup>.
         </li>
         <li>
             Optionally, set up forbidden roles. Users having these roles won't be able to execute any command even if they have admin
             roles or bgs manager roles. Run the command
-            <code>@BGSBot forbiddenroles add &ltid&rt</code>. You can add as many roles as you like.
+            <code>@BGSBot forbiddenroles add &lt;id&gt;</code>. Use the numeric id only like
+            <code>adminroles</code>. You can add as many roles as you like.
         </li>
     </ol>
     <p>
@@ -54,14 +59,19 @@
     </p>
     <h1>Using the bot</h1>
     <p>
-        The commands that the bot has currently are:
+        The bot can be commanded to fetch data of systems and factions. The name is case insensitive but the entered name should
+        reflect ingame name in English. The commands that the bot has currently are:
     </p>
     <ol>
         <li>
-            <code>@BGSBot factionstatus get &ltfaction name in lower case&gt</code>
+            <code>@BGSBot factionstatus get &lt;faction name in lower case&gt;</code>
+            <br>For eg.
+            <code>@BGSBot factionstatus get knights of karma</code>
         </li>
         <li>
-            <code>@BGSBot systemstatus get &ltsystem name in lower case&gt</code>
+            <code>@BGSBot systemstatus get &lt;system name in lower case&gt;</code>
+            <br>For eg.
+            <code>@BGSBot systemstatus get qa'wakana</code>
         </li>
     </ol>
     <p>
@@ -74,10 +84,14 @@
     </p>
     <ol>
         <li>
-            <code>@BGSBot monitorfactions add &ltfactionname&gt</code>
+            <code>@BGSBot monitorfactions add &lt;factionname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorfactions add knights of karma</code>
         </li>
         <li>
-            <code>@BGSBot monitorfactions addprimary &ltfactionname&gt</code>
+            <code>@BGSBot monitorfactions addprimary &lt;factionname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorfactions addprimary knights of karma</code>
         </li>
     </ol>
     <p>
@@ -85,14 +99,65 @@
     </p>
     <ol>
         <li>
-            <code>@BGSBot monitorsystems add &ltsystemname&gt</code>
+            <code>@BGSBot monitorsystems add &lt;systemname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorsystems add qa'wakana</code>
         </li>
         <li>
-            <code>@BGSBot monitorsystems addprimary &ltsystemname&gt</code>
+            <code>@BGSBot monitorsystems addprimary &lt;systemname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorsystems addprimary qa'wakana</code>
         </li>
     </ol>
     <p>
         To generate a report type:
         <code>@BGSBot bgsreport get</code>
     </p>
+    <h2>Administrative Commands</h2>
+    <p>
+        To remove any role or channel, use one of the following commands as suited:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot adminroles remove &lt;id&gt;</code>
+            <br>For eg.
+            <code>@BGSBot adminroles remove 123456789012345678</code>
+        </li>
+        <li>
+            <code>@BGSBot bgsrole remove &lt;id&gt;</code>
+            <br>For eg.
+            <code>@BGSBot bgsrole remove 123456789012345678</code>
+        </li>
+        <li>
+            <code>@BGSBot bgschannel remove &lt;id&gt;</code>
+            <br>For eg.
+            <code>@BGSBot bgschannel remove 123456789012345678</code>
+        </li>
+        <li>
+            <code>@BGSBot forbiddenroles add &lt;id&gt;</code>
+            <br>For eg.
+            <code>@BGSBot forbiddenroles remove 123456789012345678</code>
+        </li>
+    </ol>
+    <p>
+        To remove or list the monitored factions or systems:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot monitorfactions list</code>
+        </li>
+        <li>
+            <code>@BGSBot monitorfactions remove &lt;factionname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorfactions remove knights of karma</code>
+        </li>
+        <li>
+            <code>@BGSBot monitorsystems list</code>
+        </li>
+        <li>
+            <code>@BGSBot monitorsystems remove &lt;systemname&gt;</code>
+            <br>For eg.
+            <code>@BGSBot monitorsystems remove qa'wakana</code>
+        </li>
+    </ol>
 </div>
