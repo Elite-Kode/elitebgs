@@ -2,7 +2,9 @@
     <div class="login-box">
         <h2>HELLO</h2>
         <p>Login using your Discord credentials for a seamless integration</p>
-        <a class="btn btn-primary btn-block" href="/auth/discord">Login with <img src="/assets/discord-logo-text-logo.svg" alt="Discord" /></a>
+        <a class="btn btn-primary btn-block" href="/auth/discord">Login with
+            <img src="/assets/discord-logo-text-logo.svg" alt="Discord" />
+        </a>
     </div>
 </div>
 <div *ngIf="isAuthenticated && isAuthenticated !== undefined">
@@ -14,7 +16,8 @@
         <h3 class="modal-title">Add Factions to Monitor</h3>
         <div class="modal-body">
             <h4>Coming Soon...</h4>
-            <p>In the meantime you can add a faction from the <a routerLink="/faction">factions</a> page.</p>
+            <p>In the meantime you can add a faction from the
+                <a routerLink="/faction">factions</a> page.</p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" (click)="closeFactionAddModal()">Cancel</button>
@@ -31,30 +34,27 @@
                     Current State
                 </div>
                 <div class="card-text">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>System</th>
-                                <th>Influence</th>
-                                <th>State</th>
-                                <th>Pending States</th>
-                                <th>Recovering States</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let presence of faction.faction_presence">
-                                <td>{{presence.system_name}}</td>
-                                <td>{{(presence.influence * 100).toFixed(2)}}%</td>
-                                <td>{{presence.state}}</td>
-                                <td>
-                                    <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
-                                </td>
-                                <td>
-                                    <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <clr-datagrid>
+                        <clr-dg-column [clrDgField]="'system_name'">System</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+                        <clr-dg-column>Pending States</clr-dg-column>
+                        <clr-dg-column>Recovering States</clr-dg-column>
+
+                        <clr-dg-placeholder>Unable to fetch data for faction</clr-dg-placeholder>
+
+                        <clr-dg-row *clrDgItems="let presence of faction.faction_presence">
+                            <clr-dg-cell>{{presence.system_name}}</clr-dg-cell>
+                            <clr-dg-cell>{{(presence.influence * 100).toFixed(2)}}%</clr-dg-cell>
+                            <clr-dg-cell>{{presence.state}}</clr-dg-cell>
+                            <clr-dg-cell>
+                                <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                            </clr-dg-cell>
+                            <clr-dg-cell>
+                                <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                            </clr-dg-cell>
+                        </clr-dg-row>
+                    </clr-datagrid>
                 </div>
             </div>
             <div class="card-block">
@@ -78,7 +78,8 @@
         <h3 class="modal-title">Add Systems to Monitor</h3>
         <div class="modal-body">
             <h4>Coming Soon...</h4>
-            <p>In the meantime you can add a system from the <a routerLink="/system">systems</a> page.</p>
+            <p>In the meantime you can add a system from the
+                <a routerLink="/system">systems</a> page.</p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" (click)="closeSystemAddModal()">Cancel</button>
@@ -95,30 +96,27 @@
                     Current State
                 </div>
                 <div class="card-text">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Faction Name</th>
-                                <th>Influence</th>
-                                <th>State</th>
-                                <th>Pending States</th>
-                                <th>Recovering States</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let faction of system.factions">
-                                <td>{{faction.name}}</td>
-                                <td>{{(faction.influence * 100).toFixed(2)}}%</td>
-                                <td>{{faction.state}}</td>
-                                <td>
-                                    <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
-                                </td>
-                                <td>
-                                    <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <clr-datagrid>
+                        <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
+                        <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+                        <clr-dg-column>Pending States</clr-dg-column>
+                        <clr-dg-column>Recovering States</clr-dg-column>
+
+                        <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
+
+                        <clr-dg-row *clrDgItems="let faction of system.factions">
+                            <clr-dg-cell>{{faction.name}}</clr-dg-cell>
+                            <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
+                            <clr-dg-cell>{{faction.state}}</clr-dg-cell>
+                            <clr-dg-cell>
+                                <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                            </clr-dg-cell>
+                            <clr-dg-cell>
+                                <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                            </clr-dg-cell>
+                        </clr-dg-row>
+                    </clr-datagrid>
                 </div>
             </div>
             <div class="card-block">
