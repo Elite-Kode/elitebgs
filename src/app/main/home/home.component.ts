@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
+import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSUser, EBGSFactionV3Schema, EBGSSystemV3Schema } from '../../typings';
 
 type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
@@ -90,6 +91,17 @@ export class HomeComponent implements OnInit {
                         }
                     });
                 });
+                this.factions.forEach(faction => {
+                    faction.faction_presence.forEach(system => {
+                        system.state = FDevIDs.state[system.state].name;
+                        system.pending_states.forEach(state => {
+                            state.state = FDevIDs.state[state.state].name;
+                        });
+                        system.recovering_states.forEach(state => {
+                            state.state = FDevIDs.state[state.state].name;
+                        });
+                    });
+                });
                 this.getSystems();
             })
             .catch(err => {
@@ -102,6 +114,18 @@ export class HomeComponent implements OnInit {
             .parseSystemDataName(this.monitoredSystems)
             .then(systemData => {
                 this.systems = systemData;
+                this.systems.forEach(system => {
+                    system.state = FDevIDs.state[system.state].name;
+                    system.factions.forEach(faction => {
+                        faction.state = FDevIDs.state[faction.state].name;
+                        faction.pending_states.forEach(state => {
+                            state.state = FDevIDs.state[state.state].name;
+                        });
+                        faction.recovering_states.forEach(state => {
+                            state.state = FDevIDs.state[state.state].name;
+                        });
+                    });
+                });
             })
             .catch(err => {
                 console.log(err);

@@ -23,14 +23,20 @@ export class SystemChartComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        const allTimeFactions: string[] = [];
-        this.systemData.history.forEach(element => {
-            element.factions.forEach(faction => {
-                if (allTimeFactions.indexOf(faction.name_lower) === -1) {
-                    allTimeFactions.push(faction.name_lower);
-                }
+        let allTimeFactions: string[] = [];
+        if (this.systemData.history.length === 0) {
+            allTimeFactions = this.systemData.factions.map((system, index, allSystems) => {
+                return system.name_lower;
             });
-        });
+        } else {
+            this.systemData.history.forEach(element => {
+                element.factions.forEach(faction => {
+                    if (allTimeFactions.indexOf(faction.name_lower) === -1) {
+                        allTimeFactions.push(faction.name_lower);
+                    }
+                });
+            });
+        }
         const allFactionsGet: Promise<EBGSFactionV3Schema>[] = [];
         allTimeFactions.forEach(faction => {
             allFactionsGet.push(new Promise((resolve, reject) => {
