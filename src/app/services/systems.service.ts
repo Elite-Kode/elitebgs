@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { Observable } from 'rxjs/Observable';
 import { EBGSSystemsV3, EBGSSystemsV3WOHistory, EBGSFactionV3Schema, EBGSSystemChart, EBGSSystemPostHistory } from '../typings';
 import { FactionsService } from './factions.service';
+import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class SystemsService {
@@ -14,13 +15,13 @@ export class SystemsService {
 
     getSystemsBegins(page: string, name: string): Observable<EBGSSystemsV3WOHistory> {
         return this.http.get<EBGSSystemsV3WOHistory>('/api/ebgs/v3/systems', {
-            params: new HttpParams().set('page', page).set('beginsWith', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
         });
     }
 
     getSystems(name: string): Observable<EBGSSystemsV3WOHistory> {
         return this.http.get<EBGSSystemsV3WOHistory>('/api/ebgs/v3/systems', {
-            params: new HttpParams().set('name', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
         });
     }
 
@@ -32,7 +33,7 @@ export class SystemsService {
 
     getHistory(name: string, timemin: string, timemax: string): Observable<EBGSSystemsV3> {
         return this.http.get<EBGSSystemsV3>('/api/ebgs/v3/systems', {
-            params: new HttpParams().set('name', name).set('timemin', timemin).set('timemax', timemax)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         })
     }
 

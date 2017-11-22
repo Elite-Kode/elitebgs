@@ -92,7 +92,7 @@ router.get('/', (req, res, next) => {
             }
             if (req.query.beginsWith) {
                 query.name_lower = {
-                    $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
+                    $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
                 }
             }
             if (req.query.page) {
