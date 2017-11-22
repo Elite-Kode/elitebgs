@@ -39,14 +39,20 @@
             Optionally, set up a BGS Channel using the command
             <code>@BGSBot bgschannel set &lt;id&gt;</code>. Replace
             <code>&lt;id&gt;</code> with the channel id that you want to convert to a BGS reporting channel. Use the numeric id only like
-            <code>adminroles</code>. BGS Reporting function coming soon
-            <sup>TM</sup>.
+            <code>adminroles</code>.
         </li>
         <li>
             Optionally, set up forbidden roles. Users having these roles won't be able to execute any command even if they have admin
             roles or bgs manager roles. Run the command
             <code>@BGSBot forbiddenroles add &lt;id&gt;</code>. Use the numeric id only like
             <code>adminroles</code>. You can add as many roles as you like.
+        </li>
+        <li>
+            Optionally, set up automated BGS Reporting. For this, a BGS Channel must be set up. To set up automated BGS Reporting, use
+            a time in UTC with the following command
+            <code>@BGSBot bgsreport settime &lt;time in UTC&gt;</code>. The time must be of the format
+            <code>HH:mm:ss</code>. For eg. if the time to show the report is 15:25:32 UTC everyday, run the command as
+            <code>@BGSBot bgsreport settime 15:25:32</code>.
         </li>
     </ol>
     <p>
@@ -115,13 +121,19 @@
     </p>
     <h2>Administrative Commands</h2>
     <p>
-        To remove any role or channel, use one of the following commands as suited:
+        To remove or list any role or channel, use one of the following commands as suited:
     </p>
     <ol>
+        <li>
+            <code>@BGSBot adminroles list</code>
+        </li>
         <li>
             <code>@BGSBot adminroles remove &lt;id&gt;</code>
             <br>For eg.
             <code>@BGSBot adminroles remove 123456789012345678</code>
+        </li>
+        <li>
+            <code>@BGSBot bgsrole show</code>
         </li>
         <li>
             <code>@BGSBot bgsrole remove &lt;id&gt;</code>
@@ -129,9 +141,15 @@
             <code>@BGSBot bgsrole remove 123456789012345678</code>
         </li>
         <li>
+            <code>@BGSBot bgschannel show</code>
+        </li>
+        <li>
             <code>@BGSBot bgschannel remove &lt;id&gt;</code>
             <br>For eg.
             <code>@BGSBot bgschannel remove 123456789012345678</code>
+        </li>
+        <li>
+            <code>@BGSBot forbiddenroles list</code>
         </li>
         <li>
             <code>@BGSBot forbiddenroles add &lt;id&gt;</code>
@@ -158,6 +176,17 @@
             <code>@BGSBot monitorsystems remove &lt;systemname&gt;</code>
             <br>For eg.
             <code>@BGSBot monitorsystems remove qa'wakana</code>
+        </li>
+    </ol>
+    <p>
+        To unset or show the BGS Reporting time:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot bgsreport showtime</code>
+        </li>
+        <li>
+            <code>@BGSBot bgsreport unsettime</code>
         </li>
     </ol>
 </div>
