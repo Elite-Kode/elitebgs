@@ -11,6 +11,30 @@
     <script src="https://use.fontawesome.com/8f418cc020.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+        window.addEventListener("load", function () {
+            window.cookieconsent.initialise({
+                "palette": {
+                    "popup": {
+                        "background": "#313131"
+                    },
+                    "button": {
+                        "background": "#007cbb"
+                    }
+                },
+                "theme": "edgeless",
+                "content": {
+                    "message": "This website uses cookies to maintain a logged in session.",
+                    "link": "Privacy Policy",
+                    "href": "elitebgs.kodeblox.com/about/privacypolicy"
+                }
+            })
+        });
+    </script>
 </head>
 
 <body>

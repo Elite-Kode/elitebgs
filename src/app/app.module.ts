@@ -14,6 +14,9 @@ import { MainModule } from './main/main.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { AboutComponent } from './about/about.component';
+import { TandCComponent } from './about/tandc.component';
+import { DisclaimerComponent } from './about/disclaimer.component';
+import { PrivacyPolicyComponent } from './about/privacy-policy.component';
 import { GuideComponent } from './guide/guide.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 
@@ -27,6 +30,9 @@ import { ServerService } from './services/server.service';
         AppComponent,
         ProfileComponent,
         AboutComponent,
+        TandCComponent,
+        DisclaimerComponent,
+        PrivacyPolicyComponent,
         GuideComponent,
         PageNotFoundComponent
     ],
