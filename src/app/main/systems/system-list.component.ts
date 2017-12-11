@@ -6,6 +6,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemsV3WOHistory } from '../../typings';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
     selector: 'app-system-list',
@@ -108,7 +110,7 @@ export class SystemListComponent implements OnInit {
 
     ngOnInit() {
         this.getAuthentication();
-        this.systemForm.valueChanges.subscribe(value => {
+        this.systemForm.valueChanges.debounceTime(300).subscribe(value => {
             this.refresh(this.tableState, value.systemName);
         })
     }

@@ -6,6 +6,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { EBGSFactionsV3WOHistory } from '../../typings';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
     selector: 'app-faction-list',
@@ -104,7 +106,7 @@ export class FactionListComponent implements OnInit {
 
     ngOnInit() {
         this.getAuthentication();
-        this.factionForm.valueChanges.subscribe(value => {
+        this.factionForm.valueChanges.debounceTime(300).subscribe(value => {
             this.refresh(this.tableState, value.factionName);
         })
     }
