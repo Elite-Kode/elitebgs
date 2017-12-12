@@ -49,21 +49,6 @@ export class FactionListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State, beginsWith = this.factionForm.value.factionName) {
-        this.tableState = tableState;
-        this.loading = true;
-        this.pageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
-
-        if (!beginsWith) {
-            beginsWith = '';
-        }
-
-        this.factionService
-            .getFactionsBegins(this.pageNumber.toString(), beginsWith)
-            .subscribe(factions => this.showFaction(factions));
-        this.loading = false;
-    }
-
     addFaction(name: string) {
         this.factionToAdd = name;
         this.openConfirmModal();
@@ -106,8 +91,20 @@ export class FactionListComponent implements OnInit {
 
     ngOnInit() {
         this.getAuthentication();
-        this.factionForm.valueChanges.debounceTime(300).subscribe(value => {
-            this.refresh(this.tableState, value.factionName);
+        this.factionForm.valueChanges
+        .debounceTime(300)
+        .switchMap(value => {
+            this.loading = true;
+            this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
+            if (!value.factionName) {
+                value.factionName = '';
+            }
+            return this.factionService
+                .getFactionsBegins(this.pageNumber.toString(), value.factionName)
         })
+        .subscribe(factions => {
+            this.showFaction(factions);
+            this.loading = false;
+        });
     }
 }
