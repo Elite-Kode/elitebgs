@@ -54,6 +54,22 @@ export class SystemListComponent implements OnInit {
         });
     }
 
+    refresh(tableState: State) {
+        let beginsWith = this.systemForm.value.systemName;
+        this.tableState = tableState;
+        this.loading = true;
+        this.pageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
+
+        if (!beginsWith) {
+            beginsWith = '';
+        }
+
+        this.systemService
+            .getSystemsBegins(this.pageNumber.toString(), beginsWith)
+            .subscribe(systems => this.showSystem(systems));
+        this.loading = false;
+    }
+
     addSystem(name: string) {
         this.systemToAdd = name;
         this.openConfirmModal();

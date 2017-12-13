@@ -49,6 +49,22 @@ export class FactionListComponent implements OnInit {
         });
     }
 
+    refresh(tableState: State) {
+        let beginsWith = this.factionForm.value.factionName;
+        this.tableState = tableState;
+        this.loading = true;
+        this.pageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
+
+        if (!beginsWith) {
+            beginsWith = '';
+        }
+
+        this.factionService
+            .getFactionsBegins(this.pageNumber.toString(), beginsWith)
+            .subscribe(factions => this.showFaction(factions));
+        this.loading = false;
+    }
+
     addFaction(name: string) {
         this.factionToAdd = name;
         this.openConfirmModal();
