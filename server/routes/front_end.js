@@ -32,6 +32,81 @@ router.get('/backgroundimages', (req, res, next) => {
     res.send(fs.readdirSync(pathToFile));
 });
 
+router.get('/donors', (req, res, next) => {
+    require('../models/ebgs_users')
+        .then(users => {
+            users.aggregate().unwind('donation').project({
+                amount: "$donation.amount",
+                date: "$donation.date",
+                username: 1
+            }).sort({
+                date: -1
+            }).then(donations => {
+                res.send(donations);
+            }).catch(err => {
+                console.log(err);
+                res.send();
+            });
+        })
+        .catch(err => {
+            console.log(err)
+            res.send();
+        });
+});
+
+router.get('/patrons', (req, res, next) => {
+    require('../models/ebgs_users')
+        .then(users => {
+            users.aggregate().match({
+                "patronage.level": { $gt: 0 }
+            }).project({
+                level: "$patronage.level",
+                since: "$patronage.since",
+                username: 1
+            }).sort({
+                since: -1
+            }).then(patrons => {
+                res.send(patrons);
+            }).catch(err => {
+                console.log(err);
+                res.send();
+            });
+        })
+        .catch(err => {
+            console.log(err)
+            res.send();
+        });
+});
+
+router.get('/credits', (req, res, next) => {
+    require('../models/ebgs_users')
+        .then(users => {
+            users.aggregate().match({
+                $or: [
+                    { os_contribution: { $gt: 0 } },
+                    { "patronage.level": { $gt: 1 } }
+                ]
+            }).project({
+                username: 1,
+                avatar: 1,
+                id: 1,
+                os_contribution: 1,
+                level: "$patronage.level"
+            }).sort({
+                since: -1
+            }).then(credits => {
+                res.send(credits);
+            }).catch(err => {
+                console.log(err);
+                res.send();
+            });
+        })
+        .catch(err => {
+            console.log(err)
+            res.send();
+        });
+});
+
 router.post('/edit', (req, res, next) => {
     userAllowed(req)
         .then(allowed => {
