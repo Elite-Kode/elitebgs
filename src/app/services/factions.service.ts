@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { EBGSFactionsV3, EBGSFactionsV3WOHistory, EBGSFactionV3Schema } from '../typings';
+import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class FactionsService {
@@ -10,13 +11,13 @@ export class FactionsService {
 
     getFactionsBegins(page: string, name: string): Observable<EBGSFactionsV3WOHistory> {
         return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
-            params: new HttpParams().set('page', page).set('beginsWith', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
         });
     }
 
     getFactions(name: string): Observable<EBGSFactionsV3WOHistory> {
         return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
-            params: new HttpParams().set('name', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
         });
     }
 
@@ -28,7 +29,7 @@ export class FactionsService {
 
     getHistory(name: string, timemin: string, timemax: string): Observable<EBGSFactionsV3> {
         return this.http.get<EBGSFactionsV3>('/api/ebgs/v3/factions', {
-            params: new HttpParams().set('name', name).set('timemin', timemin).set('timemax', timemax)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         })
     }
 
