@@ -465,6 +465,15 @@ interface EBGSUserSchema {
     avatar: string;
     discriminator: string;
     access: number;
+    os_contribution: number;
+    patronage: {
+        level: number,
+        since: string
+    };
+    donation: {
+        amount: number,
+        date: string
+    }[];
     invite: string;
     invite_used: boolean;
     guilds: {
@@ -537,6 +546,29 @@ interface EBGSFactionPostHistorySchema {
     }[];
 }
 
+interface EBGSDonorSchema {
+    _id: string;
+    username: string;
+    amount: number;
+    date: string;
+}
+
+interface EBGSPatronSchema {
+    _id: string;
+    username: string;
+    level: number;
+    since: string;
+}
+
+interface EBGSCreditsSchema {
+    _id: string;
+    username: string;
+    avatar: string;
+    id: string;
+    os_contribution: number;
+    level: number;
+}
+
 export type BodiesV1 = BodySchema;
 export type CommoditiesV1 = CommoditySchema;
 export type EBGSFactionsV1 = EBGSFactionSchema;
@@ -571,3 +603,8 @@ export type EBGSSystemChart = EBGSSystemChartSchema;
 
 export type EBGSSystemPostHistory = EBGSSystemPostHistorySchema;
 export type EBGSFactionPostHistory = EBGSFactionPostHistorySchema;
+
+
+export type EBGSDonor = EBGSDonorSchema;
+export type EBGSPatron = EBGSPatronSchema;
+export type EBGSCredits = EBGSCreditsSchema;

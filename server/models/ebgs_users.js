@@ -29,6 +29,15 @@ module.exports = new Promise((resolve, reject) => {
         avatar: String,
         discriminator: String,
         access: Number,
+        os_contribution: Number,
+        patronage: {
+            level: Number,
+            since: Date
+        },
+        donation: [{
+            amount: Number,
+            date: Date
+        }],
         invite: String,
         invite_used: Boolean,
         guilds: [{

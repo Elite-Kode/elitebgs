@@ -7,6 +7,8 @@ import { TandCComponent } from './about/tandc.component';
 import { DisclaimerComponent } from './about/disclaimer.component';
 import { PrivacyPolicyComponent } from './about/privacy-policy.component';
 import { GuideComponent } from './guide/guide.component';
+import { DonateComponent } from './donate/donate.component';
+import { CreditsComponent } from './credits/credits.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
 
 const appRoutes: Routes = [
@@ -33,6 +35,14 @@ const appRoutes: Routes = [
     {
         path: 'guide',
         component: GuideComponent
+    },
+    {
+        path: 'donate',
+        component: DonateComponent
+    },
+    {
+        path: 'credits',
+        component: CreditsComponent
     },
     {
         path: '**',
