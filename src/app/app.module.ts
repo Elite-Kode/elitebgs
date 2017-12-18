@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { EddbApiModule } from './eddb_api/eddb-api.module';
 import { EliteBgsModule } from './elite_bgs_api/elite-bgs-api.module';
 import { BGSBotModule } from './bgsbot/bgsbot.module';
+import { AdminModule } from './admin/admin.module';
 import { MainModule } from './main/main.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfileComponent } from './profile/profile.component';
@@ -49,6 +50,7 @@ import { ServerService } from './services/server.service';
         EddbApiModule,
         EliteBgsModule,
         BGSBotModule,
+        AdminModule,
         MainModule,
         AppRoutingModule,
         ClarityModule.forRoot()
