@@ -36,9 +36,9 @@ export class ServerService {
         });
     }
 
-    getUsers(discordId: string): Observable<EBGSUsers> {
+    getUsers(id: string): Observable<EBGSUsers> {
         return this.http.get<EBGSUsers>('/frontend/users', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('discordId', discordId)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('id', id)
         });
     }
 }

@@ -20,7 +20,7 @@
                 </button>
                 <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
                     <a routerLink="/" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Login</a>
-                    <a routerLink="/admin" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Admin</a>
+                    <a routerLink="/admin" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined && user?.access === 0">Admin</a>
                     <a routerLink="/profile" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Profile</a>
                     <a href="/auth/logout" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Log out</a>
                     <a routerLink="/guide" clrDropdownItem>Guide</a>

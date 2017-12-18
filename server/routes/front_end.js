@@ -107,6 +107,53 @@ router.get('/credits', (req, res, next) => {
         });
 });
 
+router.get('/users', (req, res, next) => {
+    if (req.user.access === 0) {
+        require('../models/ebgs_users')
+            .then(users => {
+                let query = new Object;
+                let page = 1;
+                if (req.query.id) {
+                    query._id = req.query.id;
+                }
+                if (req.query.beginsWith) {
+                    query["$or"] = [
+                        {
+                            username: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        },
+                        {
+                            email: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        },
+                        {
+                            id: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        }
+                    ]
+                }
+                if (req.query.page) {
+                    page = req.query.page;
+                }
+                let paginateOptions = {
+                    lean: true,
+                    page: page,
+                    limit: 10,
+                    leanWithId: false
+                };
+                users.paginate(query, paginateOptions)
+                    .then(result => {
+                        res.status(200).json(result);
+                    })
+                    .catch(next)
+            })
+            .catch(next)
+    }
+});
+
 router.post('/edit', (req, res, next) => {
     userAllowed(req)
         .then(allowed => {

@@ -16,6 +16,8 @@
 
 "use strict";
 
+let mongoosePaginate = require('mongoose-paginate');
+
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
@@ -62,6 +64,8 @@ module.exports = new Promise((resolve, reject) => {
             name_lower: String
         }]
     });
+
+    user.plugin(mongoosePaginate);
 
     let model = connection.model('ebgsUsers', user);
 
