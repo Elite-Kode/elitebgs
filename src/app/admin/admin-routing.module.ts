@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin.component';
 import { AdminOverviewComponent } from './overview/admin-overview.component';
-import { AdminUsersComponent } from './users/admin-users.component';
+import { AdminUsersListComponent } from './users/admin-users-list.component';
 import { AdminSystemsComponent } from './systems/admin-systems.component';
 import { AdminFactionsComponent } from './factions/admin-factions.component';
 
@@ -17,7 +17,7 @@ const adminRoutes: Routes = [
             },
             {
                 path: 'users',
-                component: AdminUsersComponent
+                component: AdminUsersListComponent
             },
             {
                 path: 'systems',

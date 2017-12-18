@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { EBGSDonor, EBGSPatron, EBGSCredits } from '../typings';
+import { EBGSDonor, EBGSPatron, EBGSCredits, EBGSUsers } from '../typings';
+import { CustomEncoder } from './custom.encoder';
 
 
 @Injectable()
@@ -27,5 +28,17 @@ export class ServerService {
 
     getCredits(): Observable<EBGSCredits[]> {
         return this.http.get<EBGSCredits[]>('/frontend/credits');
+    }
+
+    getUsersBegins(page: string, user: string): Observable<EBGSUsers> {
+        return this.http.get<EBGSUsers>('/frontend/users', {
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', user)
+        });
+    }
+
+    getUsers(discordId: string): Observable<EBGSUsers> {
+        return this.http.get<EBGSUsers>('/frontend/users', {
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('discordId', discordId)
+        });
     }
 }

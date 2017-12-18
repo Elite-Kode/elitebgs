@@ -597,6 +597,7 @@ export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistor
 export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>;
 
 export type EBGSUser = EBGSUserSchema;
+export type EBGSUsers = PaginateResult<EBGSUser>;
 
 export type EBGSSystemFactionChart = EBGSSystemFactionChartSchema;
 export type EBGSSystemChart = EBGSSystemChartSchema;

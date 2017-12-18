@@ -1,0 +1,34 @@
+<div class="content-area">
+    <h1>Users</h1>
+    <form [formGroup]="userForm" novalidate>
+        <section class="form-block">
+            <label>Filter User</label>
+            <div class="form-group">
+                <label for="user">Username/Email/Id</label>
+                <input type="text" id="user" placeholder="Garud" formControlName="user">
+            </div>
+        </section>
+    </form>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>Username</clr-dg-column>
+        <clr-dg-column>Discriminator</clr-dg-column>
+        <clr-dg-column>Email</clr-dg-column>
+        <clr-dg-column>Access</clr-dg-column>
+        <clr-dg-column>Discord Id</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any users!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let user of userData">
+            <clr-dg-cell><a routerLink="/admin/users/{{user.id}}">{{user.username}}</a></clr-dg-cell>
+            <clr-dg-cell>{{user.discriminator}}</clr-dg-cell>
+            <clr-dg-cell>{{user.email}}</clr-dg-cell>
+            <clr-dg-cell>{{user.access}}</clr-dg-cell>
+            <clr-dg-cell>{{user.discordId}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} users
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+</div>
