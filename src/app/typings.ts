@@ -344,6 +344,7 @@ export interface EBGSFactionV3Schema {
         }[];
     }[];
     history: {
+        _id: string;
         updated_at: string;
         updated_by: string;
         system: string;
@@ -389,6 +390,7 @@ export interface EBGSSystemV3Schema {
     }[];
     updated_at: string;
     history: {
+        _id: string;
         updated_at: string;
         updated_by: string;
         population: number;
@@ -440,14 +442,14 @@ export interface EBGSSystemV3SchemaWOHistory {
     x: number;
     y: number;
     z: number;
-    population: number
+    population: number;
     government: string;
     allegiance: string;
     state: string
     security: string;
     primary_economy: string;
-    needs_permit: boolean
-    reserve_type: string
+    needs_permit: boolean;
+    reserve_type: string;
     controlling_minor_faction: string;
     factions: {
         name: string;
@@ -467,12 +469,13 @@ interface EBGSUserSchema {
     access: number;
     os_contribution: number;
     patronage: {
-        level: number,
-        since: string
+        level: number;
+        since: string;
     };
     donation: {
-        amount: number,
-        date: string
+        _id: string;
+        amount: number;
+        date: string;
     }[];
     invite: string;
     invite_used: boolean;

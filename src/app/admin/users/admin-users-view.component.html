@@ -1,0 +1,166 @@
+<div class="content-area">
+    <h1>{{userData?.username}}#{{userData?.discriminator}}</h1>
+    <img [src]="'https://cdn.discordapp.com/avatars/' + userData?.id + '/' + userData?.avatar + '.png'" class="profile-icon">
+    <form class="form">
+        <section class="form-block">
+            <label>Restricted Data</label>
+            <div class="form-group">
+                <label>Record id</label>
+                <input id="id" type="text" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord id</label>
+                <input id="discordid" type="text" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord Username</label>
+                <input id="username" type="text" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord Discriminator</label>
+                <input id="discriminator" type="text" disabled>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Personalised Data</label>
+            <div class="form-group">
+                <label>Access Level</label>
+                <input id="access" type="number" min="0" max="2">
+            </div>
+            <div class="form-group">
+                <label>Monitored Factions</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Factions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let faction of userData?.factions">
+                            <td>{{faction.name}}</td>
+                            <td>
+                                <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Monitored Faction</label>
+                <input id="factions" type="text">
+                <button (click)="AddFaction()" class="btn btn-success">Add</button>
+            </div>
+            <div class="form-group">
+                <label>Monitored Systems</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Systems</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let system of userData?.systems">
+                            <td>{{system.name}}</td>
+                            <td>
+                                <button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Monitored System</label>
+                <input id="systems" type="text">
+                <button (click)="AddSystem()" class="btn btn-success">Add</button>
+            </div>
+            <div class="form-group">
+                <label>Factions with Edit Access</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Factions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let faction of userData?.editable_factions">
+                            <td>{{faction.name}}</td>
+                            <td>
+                                <button (click)="removeEditableFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add an Editable Faction</label>
+                <input id="systemsEdit" type="text">
+                <button (click)="AddEditableFaction()" class="btn btn-success">Add</button>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Discord Data</label>
+            <div class="form-group">
+                <label>Discord Invite Code</label>
+                <input id="invite" type="text">
+            </div>
+            <div class="form-group">
+                <label>Invite Use</label>
+                <input id="inviteUsed" type="checkbox">
+            </div>
+            <div class="form-group">
+                <label>Discord Guilds</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Server Icon</th>
+                            <th>Server Name</th>
+                            <th>Server Id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let guild of userData?.guilds">
+                            <td>{{guild.icon}}</td>
+                            <td>{{guild.name}}</td>
+                            <td>{{guild.id}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Contribution Data</label>
+            <div class="form-group">
+                <label>Commits Made</label>
+                <input id="commits" type="number">
+            </div>
+            <div class="form-group">
+                <label>Patronage</label>
+                <input id="level" type="number">
+                <input id="since" type="text">
+            </div>
+            <div class="form-group">
+                <label>Donations</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let donation of userData?.donation">
+                            <td>{{donation._id}}</td>
+                            <td>{{donation.amount}}</td>
+                            <td>{{donation.date}}</td>
+                            <td>
+                                <button (click)="removeDonation(donation._id)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Donation</label>
+                <input id="donations" type="text">
+                <button (click)="AddDonation()" class="btn btn-success">Add</button>
+            </div>
+        </section>
+    </form>
+</div>

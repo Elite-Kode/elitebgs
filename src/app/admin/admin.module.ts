@@ -6,6 +6,7 @@ import { ClarityModule } from 'clarity-angular';
 import { AdminComponent } from './admin.component';
 import { AdminOverviewComponent } from './overview/admin-overview.component';
 import { AdminUsersListComponent } from './users/admin-users-list.component';
+import { AdminUsersViewComponent } from './users/admin-users-view.component';
 import { AdminSystemsComponent } from './systems/admin-systems.component';
 import { AdminFactionsComponent } from './factions/admin-factions.component';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -14,6 +15,7 @@ import { AdminRoutingModule } from './admin-routing.module';
         AdminComponent,
         AdminOverviewComponent,
         AdminUsersListComponent,
+        AdminUsersViewComponent,
         AdminSystemsComponent,
         AdminFactionsComponent
     ],
