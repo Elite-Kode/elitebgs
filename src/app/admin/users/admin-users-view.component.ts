@@ -12,11 +12,22 @@ import { EBGSUser } from '../../typings';
 })
 export class AdminUsersViewComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
+    factionAdd: string;
+    systemAdd: string;
+    editableFactionAdd: string;
+    donationAmount: number;
+    donationDate: string;
     userData: EBGSUser;
     constructor(
         private serverService: ServerService,
         private route: ActivatedRoute
-    ) { }
+    ) {
+        this.factionAdd = '';
+        this.systemAdd = '';
+        this.editableFactionAdd = '';
+        this.donationAmount = 0;
+        this.donationDate = '';
+    }
 
     ngOnInit() {
         this.serverService
@@ -24,5 +35,40 @@ export class AdminUsersViewComponent implements OnInit {
             .subscribe(user => {
                 this.userData = user.docs[0];
             });
+    }
+
+    removeFaction(faction: string) {
+        console.log(`Remove Faction ${faction}`);
+    }
+
+    addFaction() {
+        console.log(`Add Faction ${this.factionAdd}`);
+        this.factionAdd = '';
+    }
+
+    removeSystem(system: string) {
+        console.log(`Remove Faction ${system}`);
+    }
+
+    addSystem() {
+        console.log(`Add System ${this.systemAdd}`);
+        this.systemAdd = '';
+    }
+
+    removeEditableFaction(faction: string) {
+        console.log(`Remove Editable Faction ${faction}`);
+    }
+
+    addEditableFaction() {
+        console.log(`Add Editable Faction ${this.editableFactionAdd}`);
+        this.editableFactionAdd = '';
+    }
+
+    removeDonation(id: string) {
+        console.log(`Remove Donation with id ${id}`);
+    }
+
+    addDonation() {
+        console.log(`Donation of $${this.donationAmount} on ${this.donationDate} added`);
     }
 }

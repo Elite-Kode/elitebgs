@@ -1,31 +1,31 @@
 <div class="content-area">
     <h1>{{userData?.username}}#{{userData?.discriminator}}</h1>
     <img [src]="'https://cdn.discordapp.com/avatars/' + userData?.id + '/' + userData?.avatar + '.png'" class="profile-icon">
-    <form class="form">
+    <form #userForm="ngForm" class="form">
         <section class="form-block">
             <label>Restricted Data</label>
             <div class="form-group">
                 <label>Record id</label>
-                <input id="id" type="text" disabled>
+                <input id="id" name="id" type="text" [(ngModel)]="userData && userData._id" disabled>
             </div>
             <div class="form-group">
                 <label>Discord id</label>
-                <input id="discordid" type="text" disabled>
+                <input id="discordid" name="discordid" type="text" [(ngModel)]="userData && userData.id" disabled>
             </div>
             <div class="form-group">
                 <label>Discord Username</label>
-                <input id="username" type="text" disabled>
+                <input id="username" name="username" type="text" [(ngModel)]="userData && userData.username" disabled>
             </div>
             <div class="form-group">
                 <label>Discord Discriminator</label>
-                <input id="discriminator" type="text" disabled>
+                <input id="discriminator" name="discriminator" type="text" [(ngModel)]="userData && userData.discriminator" disabled>
             </div>
         </section>
         <section class="form-block">
             <label>Personalised Data</label>
             <div class="form-group">
                 <label>Access Level</label>
-                <input id="access" type="number" min="0" max="2">
+                <input id="access" name="access" type="number" min="0" max="2" [(ngModel)]="userData && userData.access">
             </div>
             <div class="form-group">
                 <label>Monitored Factions</label>
@@ -46,8 +46,8 @@
                     </tbody>
                 </table>
                 <label>Add a Monitored Faction</label>
-                <input id="factions" type="text">
-                <button (click)="AddFaction()" class="btn btn-success">Add</button>
+                <input id="factions" name="factions" type="text" [(ngModel)]="factionAdd">
+                <button (click)="addFaction()" class="btn btn-success">Add</button>
             </div>
             <div class="form-group">
                 <label>Monitored Systems</label>
@@ -68,8 +68,8 @@
                     </tbody>
                 </table>
                 <label>Add a Monitored System</label>
-                <input id="systems" type="text">
-                <button (click)="AddSystem()" class="btn btn-success">Add</button>
+                <input id="systems" name="systems" type="text" [(ngModel)]="systemAdd">
+                <button (click)="addSystem()" class="btn btn-success">Add</button>
             </div>
             <div class="form-group">
                 <label>Factions with Edit Access</label>
@@ -90,19 +90,19 @@
                     </tbody>
                 </table>
                 <label>Add an Editable Faction</label>
-                <input id="systemsEdit" type="text">
-                <button (click)="AddEditableFaction()" class="btn btn-success">Add</button>
+                <input id="factionsEdit" name="factionsEdit" type="text" [(ngModel)]="editableFactionAdd">
+                <button (click)="addEditableFaction()" class="btn btn-success">Add</button>
             </div>
         </section>
         <section class="form-block">
             <label>Discord Data</label>
             <div class="form-group">
                 <label>Discord Invite Code</label>
-                <input id="invite" type="text">
+                <input id="invite" name="invite" type="text" [(ngModel)]="userData && userData.invite">
             </div>
             <div class="form-group">
                 <label>Invite Use</label>
-                <input id="inviteUsed" type="checkbox">
+                <input id="inviteUsed" name="inviteUsed" type="checkbox" [(ngModel)]="userData && userData.invite_used">
             </div>
             <div class="form-group">
                 <label>Discord Guilds</label>
@@ -128,12 +128,12 @@
             <label>Contribution Data</label>
             <div class="form-group">
                 <label>Commits Made</label>
-                <input id="commits" type="number">
+                <input id="commits" name="commits" type="number" [(ngModel)]="userData && userData.os_contribution">
             </div>
             <div class="form-group">
                 <label>Patronage</label>
-                <input id="level" type="number">
-                <input id="since" type="text">
+                <input id="level" name="level" type="number" [(ngModel)]="userData && userData.patronage.level">
+                <input id="since" name="since" type="text" [(ngModel)]="userData && userData.patronage.since">
             </div>
             <div class="form-group">
                 <label>Donations</label>
@@ -158,8 +158,9 @@
                     </tbody>
                 </table>
                 <label>Add a Donation</label>
-                <input id="donations" type="text">
-                <button (click)="AddDonation()" class="btn btn-success">Add</button>
+                <input id="donation" name="donation" placeholder="Amount in USD" type="number" [(ngModel)]="donationAmount">
+                <input id="date" name="date" placeholder="Date" type="text" [(ngModel)]="donationDate">
+                <button (click)="addDonation()" class="btn btn-success">Add</button>
             </div>
         </section>
     </form>
