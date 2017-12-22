@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { EBGSDonor, EBGSPatron, EBGSCredits, EBGSUsers } from '../typings';
+import { EBGSDonor, EBGSPatron, EBGSCredits, EBGSUsers, EBGSUser } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 
@@ -40,5 +40,9 @@ export class ServerService {
         return this.http.get<EBGSUsers>('/frontend/users', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('id', id)
         });
+    }
+
+    putUser(user: EBGSUser): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/users', user);
     }
 }

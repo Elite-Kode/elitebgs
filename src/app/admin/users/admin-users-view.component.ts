@@ -1,6 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { State } from 'clarity-angular';
+import cloneDeep from 'lodash-es/cloneDeep'
 import { IAdminUsers } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
 import { EBGSUser } from '../../typings';
@@ -18,6 +19,9 @@ export class AdminUsersViewComponent implements OnInit {
     donationAmount: number;
     donationDate: string;
     userData: EBGSUser;
+    userUnderEdit: EBGSUser;
+    successAlertState = false;
+    failureAlertState = false;
     constructor(
         private serverService: ServerService,
         private route: ActivatedRoute
@@ -30,45 +34,101 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getUsers();
+    }
+
+    getUsers() {
         this.serverService
             .getUsers(this.route.snapshot.paramMap.get('userid'))
             .subscribe(user => {
                 this.userData = user.docs[0];
+                this.userUnderEdit = cloneDeep(this.userData);
             });
     }
 
     removeFaction(faction: string) {
-        console.log(`Remove Faction ${faction}`);
+        this.userUnderEdit.factions.splice(this.userUnderEdit.factions.findIndex(element => {
+            return element.name_lower === faction.toLowerCase();
+        }));
     }
 
     addFaction() {
-        console.log(`Add Faction ${this.factionAdd}`);
+        this.userUnderEdit.factions.push({
+            name: this.factionAdd,
+            name_lower: this.factionAdd.toLowerCase()
+        });
         this.factionAdd = '';
     }
 
     removeSystem(system: string) {
-        console.log(`Remove Faction ${system}`);
+        this.userUnderEdit.systems.splice(this.userUnderEdit.systems.findIndex(element => {
+            return element.name_lower === system.toLowerCase();
+        }));
     }
 
     addSystem() {
-        console.log(`Add System ${this.systemAdd}`);
+        this.userUnderEdit.systems.push({
+            name: this.systemAdd,
+            name_lower: this.systemAdd.toLowerCase()
+        });
         this.systemAdd = '';
     }
 
     removeEditableFaction(faction: string) {
-        console.log(`Remove Editable Faction ${faction}`);
+        this.userUnderEdit.editable_factions.splice(this.userUnderEdit.editable_factions.findIndex(element => {
+            return element.name_lower === faction.toLowerCase();
+        }));
     }
 
     addEditableFaction() {
-        console.log(`Add Editable Faction ${this.editableFactionAdd}`);
+        this.userUnderEdit.editable_factions.push({
+            name: this.editableFactionAdd,
+            name_lower: this.editableFactionAdd.toLowerCase()
+        });
         this.editableFactionAdd = '';
     }
 
     removeDonation(id: string) {
-        console.log(`Remove Donation with id ${id}`);
+        this.userUnderEdit.donation.splice(this.userUnderEdit.donation.findIndex(element => {
+            return element._id === id.toLowerCase();
+        }));
     }
 
     addDonation() {
-        console.log(`Donation of $${this.donationAmount} on ${this.donationDate} added`);
+        this.userUnderEdit.donation.push({
+            _id: `(${this.userUnderEdit.donation.length + 1}) Save to Generate Actual Id`,
+            amount: this.donationAmount,
+            date: this.donationDate
+        });
+        this.donationAmount = 0;
+        this.donationDate = '';
+    }
+
+    save() {
+        console.log(`Saving Data`);
+        this.userUnderEdit.donation.forEach(element => {
+            if (element._id && element._id.search(new RegExp(`^\(\d\)\sSave\sto\sGenerate\sActual\sId$`, 'g'))) {
+                delete element._id;
+            }
+        });
+        this.serverService.putUser(this.userUnderEdit)
+            .subscribe(status => {
+                if (status === true) {
+                    this.successAlertState = true;
+                    setTimeout(() => {
+                        this.successAlertState = false;
+                    }, 3000);
+                    this.getUsers();
+                } else {
+                    this.failureAlertState = true;
+                    setTimeout(() => {
+                        this.failureAlertState = false
+                    }, 3000);
+                }
+            });
+    }
+
+    reset() {
+        this.userUnderEdit = cloneDeep(this.userData);
     }
 }
