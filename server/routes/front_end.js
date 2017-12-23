@@ -151,38 +151,73 @@ router.get('/users', (req, res, next) => {
                     .catch(next)
             })
             .catch(next)
+    } else {
+        next();
     }
 });
 
 router.put('/users', (req, res, next) => {
-    if (req.user.access === 0) {
-        require('../models/ebgs_users')
-            .then(users => {
-                let body = req.body;
-                if (validateUser(req.body)) {
-                    users.findOneAndUpdate(
-                        {
-                            _id: req.body._id
-                        },
-                        req.body,
-                        {
-                            upsert: false,
-                            runValidators: true
-                        }).then(data => {
-                            res.send(true);
-                        }).catch((err) => {
-                            console.log(err);
-                            res.send(false);
-                        });
-                } else {
+    try {
+        if (req.user.access === 0) {
+            require('../models/ebgs_users')
+                .then(users => {
+                    let body = req.body;
+                    if (validateUser(req.body)) {
+                        users.findOneAndUpdate(
+                            {
+                                _id: req.body._id
+                            },
+                            req.body,
+                            {
+                                upsert: false,
+                                runValidators: true
+                            }).then(data => {
+                                res.send(true);
+                            }).catch((err) => {
+                                console.log(err);
+                                res.send(false);
+                            });
+                    } else {
+                        res.send(false);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
                     res.send(false);
-                }
+                })
+        } else {
+            res.send(false);
+        }
+    } catch (error) {
+        console.log(error);
+        res.send(false);
+    }
+});
+
+router.get('/scripts', (req, res, next) => {
+    if (req.user.access === 0) {
+        let pathToFile = path.resolve(__dirname, '../modules/scripts');
+        fs.readdir(pathToFile)
+            .then(files => {
+                res.send(files);
             })
-            .catch(err => {
-                console.log(err);
-                res.send(false);
-            })
+            .catch(next);
     } else {
+        next();
+    }
+});
+
+router.put('/scripts/run', (req, res, next) => {
+    try {
+        if (req.user.access === 0) {
+            let script = require(`../modules/scripts/${req.body.script}`);
+            script.run();
+            res.send(true);
+        } else {
+            res.send(false);
+        }
+    } catch (error) {
+        console.log(error);
         res.send(false);
     }
 });
