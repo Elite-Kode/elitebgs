@@ -49,7 +49,7 @@ export class AdminUsersViewComponent implements OnInit {
     removeFaction(faction: string) {
         this.userUnderEdit.factions.splice(this.userUnderEdit.factions.findIndex(element => {
             return element.name_lower === faction.toLowerCase();
-        }));
+        }), 1);
     }
 
     addFaction() {
@@ -63,7 +63,7 @@ export class AdminUsersViewComponent implements OnInit {
     removeSystem(system: string) {
         this.userUnderEdit.systems.splice(this.userUnderEdit.systems.findIndex(element => {
             return element.name_lower === system.toLowerCase();
-        }));
+        }), 1);
     }
 
     addSystem() {
@@ -77,7 +77,7 @@ export class AdminUsersViewComponent implements OnInit {
     removeEditableFaction(faction: string) {
         this.userUnderEdit.editable_factions.splice(this.userUnderEdit.editable_factions.findIndex(element => {
             return element.name_lower === faction.toLowerCase();
-        }));
+        }), 1);
     }
 
     addEditableFaction() {
@@ -91,7 +91,7 @@ export class AdminUsersViewComponent implements OnInit {
     removeDonation(id: string) {
         this.userUnderEdit.donation.splice(this.userUnderEdit.donation.findIndex(element => {
             return element._id === id.toLowerCase();
-        }));
+        }), 1);
     }
 
     addDonation() {
@@ -107,7 +107,7 @@ export class AdminUsersViewComponent implements OnInit {
     save() {
         console.log(`Saving Data`);
         this.userUnderEdit.donation.forEach(element => {
-            if (element._id && element._id.search(new RegExp(`^\(\d\)\sSave\sto\sGenerate\sActual\sId$`, 'g'))) {
+            if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {
                 delete element._id;
             }
         });
