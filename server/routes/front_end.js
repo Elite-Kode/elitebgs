@@ -107,6 +107,86 @@ router.get('/credits', (req, res, next) => {
         });
 });
 
+router.get('/users', (req, res, next) => {
+    if (req.user.access === 0) {
+        require('../models/ebgs_users')
+            .then(users => {
+                let query = new Object;
+                let page = 1;
+                if (req.query.id) {
+                    query._id = req.query.id;
+                }
+                if (req.query.beginsWith) {
+                    query["$or"] = [
+                        {
+                            username: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        },
+                        {
+                            email: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        },
+                        {
+                            id: {
+                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
+                            }
+                        }
+                    ]
+                }
+                if (req.query.page) {
+                    page = req.query.page;
+                }
+                let paginateOptions = {
+                    lean: true,
+                    page: page,
+                    limit: 10,
+                    leanWithId: false
+                };
+                users.paginate(query, paginateOptions)
+                    .then(result => {
+                        res.status(200).json(result);
+                    })
+                    .catch(next)
+            })
+            .catch(next)
+    }
+});
+
+router.put('/users', (req, res, next) => {
+    if (req.user.access === 0) {
+        require('../models/ebgs_users')
+            .then(users => {
+                let body = req.body;
+                if (validateUser(req.body)) {
+                    users.findOneAndUpdate(
+                        {
+                            _id: req.body._id
+                        },
+                        req.body,
+                        {
+                            upsert: false,
+                            runValidators: true
+                        }).then(data => {
+                            res.send(true);
+                        }).catch((err) => {
+                            console.log(err);
+                            res.send(false);
+                        });
+                } else {
+                    res.send(false);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                res.send(false);
+            })
+    } else {
+        res.send(false);
+    }
+});
+
 router.post('/edit', (req, res, next) => {
     userAllowed(req)
         .then(allowed => {
@@ -463,6 +543,45 @@ router.post('/edit', (req, res, next) => {
             res.send(false);
         });
 });
+
+let validateUser = user => {
+    if (_.has(user, '_id')
+        && _.has(user, 'username')
+        && _.has(user, 'email')
+        && _.has(user, 'discriminator')
+        && _.has(user, 'access')
+        && _.has(user, 'os_contribution')
+        && _.has(user, 'patronage')
+    ) {
+        user.factions.forEach(faction => {
+            if (!_.has(faction, 'name')
+                || !_.has(faction, 'name_lower')
+                || faction.name.toLowerCase() !== faction.name_lower
+            ) {
+                return false;
+            }
+        });
+        user.systems.forEach(system => {
+            if (!_.has(system, 'name')
+                || !_.has(system, 'name_lower')
+                || system.name.toLowerCase() !== system.name_lower
+            ) {
+                return false;
+            }
+        });
+        user.editable_factions.forEach(faction => {
+            if (!_.has(faction, 'name')
+                || !_.has(faction, 'name_lower')
+                || faction.name.toLowerCase() !== faction.name_lower
+            ) {
+                return false;
+            }
+        });
+        return true;
+    } else {
+        return false;
+    }
+}
 
 let validateEdit = data => {
     let valid = true;

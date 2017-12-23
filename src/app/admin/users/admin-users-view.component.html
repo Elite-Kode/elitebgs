@@ -1,0 +1,187 @@
+<div class="content-area">
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Updated User
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                User could not be updated due to some error.
+            </span>
+        </div>
+    </clr-alert>
+    <h1>{{userUnderEdit?.username}}#{{userUnderEdit?.discriminator}}</h1>
+    <img [src]="'https://cdn.discordapp.com/avatars/' + userUnderEdit?.id + '/' + userUnderEdit?.avatar + '.png'" class="profile-icon">
+    <form #userForm="ngForm" class="form">
+        <section class="form-block">
+            <label>Restricted Data</label>
+            <div class="form-group">
+                <label>Record id</label>
+                <input id="id" name="id" type="text" [(ngModel)]="userUnderEdit && userUnderEdit._id" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord id</label>
+                <input id="discordid" name="discordid" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.id" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord Username</label>
+                <input id="username" name="username" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.username" disabled>
+            </div>
+            <div class="form-group">
+                <label>Discord Discriminator</label>
+                <input id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator" disabled>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input id="email" name="email" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.email" disabled>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Personalised Data</label>
+            <div class="form-group">
+                <label>Access Level</label>
+                <input id="access" name="access" type="number" min="0" max="2" [(ngModel)]="userUnderEdit && userUnderEdit.access">
+            </div>
+            <div class="form-group">
+                <label>Monitored Factions</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Factions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let faction of userUnderEdit?.factions">
+                            <td>{{faction.name}}</td>
+                            <td>
+                                <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Monitored Faction</label>
+                <input id="factions" name="factions" type="text" [(ngModel)]="factionAdd">
+                <button (click)="addFaction()" class="btn btn-success">Add</button>
+            </div>
+            <div class="form-group">
+                <label>Monitored Systems</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Systems</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let system of userUnderEdit?.systems">
+                            <td>{{system.name}}</td>
+                            <td>
+                                <button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Monitored System</label>
+                <input id="systems" name="systems" type="text" [(ngModel)]="systemAdd">
+                <button (click)="addSystem()" class="btn btn-success">Add</button>
+            </div>
+            <div class="form-group">
+                <label>Factions with Edit Access</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Factions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let faction of userUnderEdit?.editable_factions">
+                            <td>{{faction.name}}</td>
+                            <td>
+                                <button (click)="removeEditableFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add an Editable Faction</label>
+                <input id="factionsEdit" name="factionsEdit" type="text" [(ngModel)]="editableFactionAdd">
+                <button (click)="addEditableFaction()" class="btn btn-success">Add</button>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Discord Data</label>
+            <div class="form-group">
+                <label>Discord Invite Code</label>
+                <input id="invite" name="invite" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.invite">
+            </div>
+            <div class="form-group">
+                <label>Invite Use</label>
+                <input id="inviteUsed" name="inviteUsed" type="checkbox" [(ngModel)]="userUnderEdit && userUnderEdit.invite_used">
+            </div>
+            <div class="form-group">
+                <label>Discord Guilds</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Server Icon</th>
+                            <th>Server Name</th>
+                            <th>Server Id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let guild of userUnderEdit?.guilds">
+                            <td>{{guild.icon}}</td>
+                            <td>{{guild.name}}</td>
+                            <td>{{guild.id}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="form-block">
+            <label>Contribution Data</label>
+            <div class="form-group">
+                <label>Commits Made</label>
+                <input id="commits" name="commits" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.os_contribution">
+            </div>
+            <div class="form-group">
+                <label>Patronage</label>
+                <input id="level" name="level" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.patronage.level">
+                <input id="since" name="since" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.patronage.since">
+            </div>
+            <div class="form-group">
+                <label>Donations</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let donation of userUnderEdit?.donation">
+                            <td>{{donation._id}}</td>
+                            <td>{{donation.amount}}</td>
+                            <td>{{donation.date}}</td>
+                            <td>
+                                <button (click)="removeDonation(donation._id)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Add a Donation</label>
+                <input id="donation" name="donation" placeholder="Amount in USD" type="number" [(ngModel)]="donationAmount">
+                <input id="date" name="date" placeholder="Date" type="text" [(ngModel)]="donationDate">
+                <button (click)="addDonation()" class="btn btn-success">Add</button>
+            </div>
+        </section>
+    </form>
+    <button class="btn btn-success" (click)="save()">Save</button>
+    <button class="btn btn-warning" (click)="reset()">Reset</button>
+</div>

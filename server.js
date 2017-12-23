@@ -304,6 +304,11 @@ passport.use(new DiscordStrategy({
                                             avatar: profile.avatar,
                                             discriminator: profile.discriminator,
                                             access: 1,
+                                            os_contribution: 0,
+                                            patronage: {
+                                                level: 0,
+                                                since: null
+                                            },
                                             invite: invitePromise.code,
                                             invite_used: false,
                                             guilds: profile.guilds
