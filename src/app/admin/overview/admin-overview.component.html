@@ -1,3 +1,32 @@
 <div class="content-area">
     <h1>Overview</h1>
+    <div class="card">
+        <div class="card-header">
+            User Overview
+        </div>
+        <div class="card-block">
+            <div class="card-title">
+                User Stats
+            </div>
+            <div class="card-text">
+                Total Number of Users: {{userCount}}
+                <br> Latest User: {{latestUser}}
+            </div>
+        </div>
+        <div class="card-block">
+            <div class="card-title">
+                Users with Edit Access to Factions
+            </div>
+            <div class="card-text">
+                <clr-tree-node *ngFor="let user of userEditFaction">
+                    <a routerLink="/admin/users/{{user.id}}">{{user.username}}</a>
+                    <ng-template clrIfExpanded>
+                        <clr-tree-node *ngFor="let faction of user.editable_factions">
+                            {{faction.name}}
+                        </clr-tree-node>
+                    </ng-template>
+                </clr-tree-node>
+            </div>
+        </div>
+    </div>
 </div>
