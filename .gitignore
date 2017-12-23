@@ -50,3 +50,6 @@ src/secrets.ts
 
 # Background Images
 src/assets/backgrounds
+
+# Scripts
+server/modules/scripts/*

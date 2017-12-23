@@ -45,4 +45,12 @@ export class ServerService {
     putUser(user: EBGSUser): Observable<boolean> {
         return this.http.put<boolean>('/frontend/users', user);
     }
+
+    getScripts(): Observable<string[]> {
+        return this.http.get<string[]>('/frontend/scripts');
+    }
+
+    putRunScript(script: string): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/scripts/run', { script: script });
+    }
 }
