@@ -8,128 +8,139 @@
     </div>
 </div>
 <div *ngIf="isAuthenticated && isAuthenticated !== undefined">
-    <div class="section-header">
-        <h1>Monitoring Factions</h1>
-        <button (click)="openFactionAddModal()" class="btn btn-primary">+ Add</button>
-    </div>
-    <clr-modal [(clrModalOpen)]="factionModal" [clrModalStaticBackdrop]="'true'">
-        <h3 class="modal-title">Add Factions to Monitor</h3>
-        <div class="modal-body">
-            <h4>Coming Soon...</h4>
-            <p>In the meantime you can add a faction from the
-                <a routerLink="/faction">factions</a> page.</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" (click)="closeFactionAddModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
-        </div>
-    </clr-modal>
-    <div *ngIf="factions.length !== 0">
-        <div class="card" *ngFor="let faction of factions">
-            <div class="card-header">
-                {{faction.name}}
+    <ng-container *ngIf="user && user.access === 2; then banTemplate; else accessTemplate"></ng-container>
+    <ng-template #banTemplate>
+        <h1>You have been Banned from the website.</h1>
+        <p>Please contact the developer for further details</p>
+    </ng-template>
+    <ng-template #accessTemplate>
+        <ng-container *ngIf="user">
+            <div class="section-header">
+                <h1>Monitoring Factions</h1>
+                <button (click)="openFactionAddModal()" class="btn btn-primary">+ Add</button>
             </div>
-            <div class="card-block">
-                <div class="card-title">
-                    Current State
+            <clr-modal [(clrModalOpen)]="factionModal" [clrModalStaticBackdrop]="'true'">
+                <h3 class="modal-title">Add Factions to Monitor</h3>
+                <div class="modal-body">
+                    <h4>Coming Soon...</h4>
+                    <p>In the meantime you can add a faction from the
+                        <a routerLink="/faction">factions</a> page.</p>
                 </div>
-                <div class="card-text">
-                    <clr-datagrid>
-                        <clr-dg-column [clrDgField]="'system_name'">System</clr-dg-column>
-                        <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
-                        <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
-                        <clr-dg-column>Pending States</clr-dg-column>
-                        <clr-dg-column>Recovering States</clr-dg-column>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" (click)="closeFactionAddModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
+                </div>
+            </clr-modal>
+            <div *ngIf="factions.length !== 0">
+                <div class="card" *ngFor="let faction of factions">
+                    <div class="card-header">
+                        <div>{{faction.name}}</div>
+                        <a class="btn btn-primary" routerLink="/faction/{{faction._id}}">Go to Faction</a>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-title">
+                            Current State
+                        </div>
+                        <div class="card-text">
+                            <clr-datagrid>
+                                <clr-dg-column [clrDgField]="'system_name'">System</clr-dg-column>
+                                <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
+                                <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+                                <clr-dg-column>Pending States</clr-dg-column>
+                                <clr-dg-column>Recovering States</clr-dg-column>
 
-                        <clr-dg-placeholder>Unable to fetch data for faction</clr-dg-placeholder>
+                                <clr-dg-placeholder>Unable to fetch data for faction</clr-dg-placeholder>
 
-                        <clr-dg-row *clrDgItems="let presence of faction.faction_presence">
-                            <clr-dg-cell>{{presence.system_name}}</clr-dg-cell>
-                            <clr-dg-cell>{{(presence.influence * 100).toFixed(2)}}%</clr-dg-cell>
-                            <clr-dg-cell>{{presence.state}}</clr-dg-cell>
-                            <clr-dg-cell>
-                                <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
-                            </clr-dg-cell>
-                            <clr-dg-cell>
-                                <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
-                            </clr-dg-cell>
-                        </clr-dg-row>
-                    </clr-datagrid>
+                                <clr-dg-row *clrDgItems="let presence of faction.faction_presence">
+                                    <clr-dg-cell><a routerLink="/system/{{presence.system_id}}">{{presence.system_name}}</a></clr-dg-cell>
+                                    <clr-dg-cell>{{(presence.influence * 100).toFixed(2)}}%</clr-dg-cell>
+                                    <clr-dg-cell>{{presence.state}}</clr-dg-cell>
+                                    <clr-dg-cell>
+                                        <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                                    </clr-dg-cell>
+                                    <clr-dg-cell>
+                                        <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                                    </clr-dg-cell>
+                                </clr-dg-row>
+                            </clr-datagrid>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-title">
+                            Last 10 Days
+                        </div>
+                        <div class="card-text">
+                            <app-faction-chart [factionData]="faction"></app-faction-chart>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-block">
-                <div class="card-title">
-                    Last 10 Days
-                </div>
-                <div class="card-text">
-                    <app-faction-chart [factionData]="faction"></app-faction-chart>
-                </div>
+            <div *ngIf="factions.length === 0">
+                You don't have any monitored factions yet. Add Some!
             </div>
-        </div>
-    </div>
-    <div *ngIf="factions.length === 0">
-        You don't have any monitored factions yet. Add Some!
-    </div>
-    <div class="section-header">
-        <h1>Related Systems</h1>
-        <button (click)="openSystemAddModal()" class="btn btn-primary">+ Add</button>
-    </div>
-    <clr-modal [(clrModalOpen)]="systemModal" [clrModalStaticBackdrop]="'true'">
-        <h3 class="modal-title">Add Systems to Monitor</h3>
-        <div class="modal-body">
-            <h4>Coming Soon...</h4>
-            <p>In the meantime you can add a system from the
-                <a routerLink="/system">systems</a> page.</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" (click)="closeSystemAddModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
-        </div>
-    </clr-modal>
-    <div *ngIf="systems.length !== 0">
-        <div class="card" *ngFor="let system of systems">
-            <div class="card-header">
-                {{system.name}}
+            <div class="section-header">
+                <h1>Related Systems</h1>
+                <button (click)="openSystemAddModal()" class="btn btn-primary">+ Add</button>
             </div>
-            <div class="card-block">
-                <div class="card-title">
-                    Current State
+            <clr-modal [(clrModalOpen)]="systemModal" [clrModalStaticBackdrop]="'true'">
+                <h3 class="modal-title">Add Systems to Monitor</h3>
+                <div class="modal-body">
+                    <h4>Coming Soon...</h4>
+                    <p>In the meantime you can add a system from the
+                        <a routerLink="/system">systems</a> page.</p>
                 </div>
-                <div class="card-text">
-                    <clr-datagrid>
-                        <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
-                        <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
-                        <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
-                        <clr-dg-column>Pending States</clr-dg-column>
-                        <clr-dg-column>Recovering States</clr-dg-column>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" (click)="closeSystemAddModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="basic = false" disabled>Ok</button>
+                </div>
+            </clr-modal>
+            <div *ngIf="systems.length !== 0">
+                <div class="card" *ngFor="let system of systems">
+                    <div class="card-header">
+                        <div>{{system.name}}</div>
+                        <a class="btn btn-primary" routerLink="/system/{{system._id}}">Go to System</a>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-title">
+                            Current State
+                        </div>
+                        <div class="card-text">
+                            <clr-datagrid>
+                                <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
+                                <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
+                                <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+                                <clr-dg-column>Pending States</clr-dg-column>
+                                <clr-dg-column>Recovering States</clr-dg-column>
 
-                        <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
+                                <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
 
-                        <clr-dg-row *clrDgItems="let faction of system.factions">
-                            <clr-dg-cell>{{faction.name}}</clr-dg-cell>
-                            <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
-                            <clr-dg-cell>{{faction.state}}</clr-dg-cell>
-                            <clr-dg-cell>
-                                <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
-                            </clr-dg-cell>
-                            <clr-dg-cell>
-                                <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
-                            </clr-dg-cell>
-                        </clr-dg-row>
-                    </clr-datagrid>
+                                <clr-dg-row *clrDgItems="let faction of system.factions">
+                                    <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
+                                    <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
+                                    <clr-dg-cell>{{faction.state}}</clr-dg-cell>
+                                    <clr-dg-cell>
+                                        <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                                    </clr-dg-cell>
+                                    <clr-dg-cell>
+                                        <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                                    </clr-dg-cell>
+                                </clr-dg-row>
+                            </clr-datagrid>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="card-title">
+                            Last 10 Days
+                        </div>
+                        <div class="card-text">
+                            <app-system-chart [systemData]="system"></app-system-chart>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-block">
-                <div class="card-title">
-                    Last 10 Days
-                </div>
-                <div class="card-text">
-                    <app-system-chart [systemData]="system"></app-system-chart>
-                </div>
+            <div *ngIf="systems.length === 0">
+                You don't have any monitored systems yet. Add Some!
             </div>
-        </div>
-    </div>
-    <div *ngIf="systems.length === 0">
-        You don't have any monitored systems yet. Add Some!
-    </div>
+        </ng-container>
+    </ng-template>
 </div>

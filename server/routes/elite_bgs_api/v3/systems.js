@@ -190,7 +190,63 @@ router.get('/', cors(), (req, res, next) => {
                                 page: aggregateOptions.page,
                                 pages: Math.ceil(items / aggregateOptions.limit)
                             }
-                            res.status(200).json(result);
+                            let resultPromise = [];
+                            result.docs.forEach(system => {
+                                resultPromise.push(new Promise((resolve, reject) => {
+                                    let systemPromise = [];
+                                    let historyPromise = [];
+                                    system.factions.forEach(faction => {
+                                        systemPromise.push(new Promise((resolve, reject) => {
+                                            require('../../../models/ebgs_factions_v3')
+                                                .then(factions => {
+                                                    factions.findOne({ name_lower: faction.name_lower })
+                                                        .then(gotFaction => {
+                                                            faction.faction_id = gotFaction.id;
+                                                            resolve();
+                                                        })
+                                                        .catch(err => {
+                                                            reject(err);
+                                                        });
+                                                })
+                                                .catch(err => {
+                                                    reject(err);
+                                                });
+                                        }));
+                                    });
+                                    system.history.forEach(record => {
+                                        record.factions.forEach(faction => {
+                                            historyPromise.push(new Promise((resolve, reject) => {
+                                                require('../../../models/ebgs_factions_v3')
+                                                    .then(factions => {
+                                                        factions.findOne({ name_lower: faction.name_lower })
+                                                            .then(gotFaction => {
+                                                                faction.faction_id = gotFaction.id;
+                                                                resolve();
+                                                            })
+                                                            .catch(err => {
+                                                                reject(err);
+                                                            });
+                                                    })
+                                                    .catch(err => {
+                                                        reject(err);
+                                                    });
+                                            }))
+                                        })
+                                    })
+                                    Promise.all(systemPromise.concat(historyPromise))
+                                        .then(() => {
+                                            resolve();
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        });
+                                }));
+                            });
+                            Promise.all(resultPromise)
+                                .then(() => {
+                                    res.status(200).json(result);
+                                })
+                                .catch(next);
                         }
                     }
                 )
@@ -203,7 +259,42 @@ router.get('/', cors(), (req, res, next) => {
                 };
                 systems.paginate(query, paginateOptions)
                     .then(result => {
-                        res.status(200).json(result);
+                        let resultPromise = [];
+                        result.docs.forEach(system => {
+                            resultPromise.push(new Promise((resolve, reject) => {
+                                let systemPromise = [];
+                                system.factions.forEach(faction => {
+                                    systemPromise.push(new Promise((resolve, reject) => {
+                                        require('../../../models/ebgs_factions_v3')
+                                            .then(factions => {
+                                                factions.findOne({ name_lower: faction.name_lower })
+                                                    .then(gotFaction => {
+                                                        faction.faction_id = gotFaction.id;
+                                                        resolve();
+                                                    })
+                                                    .catch(err => {
+                                                        reject(err);
+                                                    });
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            });
+                                    }));
+                                });
+                                Promise.all(systemPromise)
+                                    .then(() => {
+                                        resolve();
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    });
+                            }));
+                        });
+                        Promise.all(resultPromise)
+                            .then(() => {
+                                res.status(200).json(result);
+                            })
+                            .catch(next);
                     })
                     .catch(next)
             }

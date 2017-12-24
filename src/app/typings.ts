@@ -330,6 +330,7 @@ export interface EBGSFactionV3Schema {
     home_system_name: string;
     is_player_faction: boolean;
     faction_presence: {
+        system_id: string;
         system_name: string;
         system_name_lower: string;
         state: string;
@@ -345,6 +346,7 @@ export interface EBGSFactionV3Schema {
     }[];
     history: {
         _id: string;
+        system_id: string;
         updated_at: string;
         updated_by: string;
         system: string;
@@ -385,6 +387,7 @@ export interface EBGSSystemV3Schema {
     reserve_type: string
     controlling_minor_faction: string;
     factions: {
+        faction_id: string;
         name: string;
         name_lower: string;
     }[];
@@ -400,6 +403,7 @@ export interface EBGSSystemV3Schema {
         security: string;
         controlling_minor_faction: string;
         factions: {
+            faction_id: string;
             name: string;
             name_lower: string;
         }[];
@@ -418,6 +422,7 @@ interface EBGSFactionV3SchemaWOHistory {
     home_system_name: string;
     is_player_faction: boolean;
     faction_presence: {
+        system_id: string;
         system_name: string;
         system_name_lower: string;
         state: string;
@@ -452,6 +457,7 @@ export interface EBGSSystemV3SchemaWOHistory {
     reserve_type: string;
     controlling_minor_faction: string;
     factions: {
+        faction_id: string;
         name: string;
         name_lower: string;
     }[];
