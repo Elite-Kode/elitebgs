@@ -4,26 +4,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSFactionV3Schema, EBGSSystemV3Schema } from '../../typings';
-
-type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
-
-interface EBGSSystemFactionChart extends EBGSSystemFaction {
-    influence: number;
-    state: string;
-    pending_states: {
-        state: string;
-        trend: number;
-    }[];
-    recovering_states: {
-        state: string;
-        trend: number;
-    }[];
-}
-
-interface EBGSSystemChart extends EBGSSystemV3Schema {
-    factions: EBGSSystemFactionChart[];
-}
+import { EBGSUser, EBGSFactionV3Schema, EBGSSystemChart } from '../../typings';
 
 @Component({
     selector: 'app-home',
