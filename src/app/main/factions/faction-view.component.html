@@ -1,5 +1,30 @@
 <div>
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Added {{factionData?.name}} as a monitored Faction.
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                {{factionData?.name}} could not be added as a monitored Faction due to some error.
+            </span>
+        </div>
+    </clr-alert>
     <h1>{{factionData?.name}}</h1>
+    <ng-container *ngIf="user && user.access === 2; then banTemplate; else accessTemplate"></ng-container>
+    <ng-template #banTemplate>
+        <h1>You have been Banned from the website.</h1>
+        <p>Please contact the developer for further details</p>
+    </ng-template>
+    <ng-template #accessTemplate>
+        <ng-container *ngIf="user">
+            <button (click)="monitor()" class="btn btn-primary" *ngIf="isAuthenticated && isAuthenticated !== undefined">Monitor Faction</button>
+            <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
+        </ng-container>
+    </ng-template>
     <p><b>Government : </b>{{factionData?.government}}</p>
     <p><b>Allegiance : </b>{{factionData?.allegiance}}</p>
     <clr-datagrid>
@@ -12,7 +37,7 @@
         <clr-dg-placeholder>Unable to fetch data for faction</clr-dg-placeholder>
 
         <clr-dg-row *clrDgItems="let presence of factionData?.faction_presence">
-            <clr-dg-cell>{{presence.system_name}}</clr-dg-cell>
+            <clr-dg-cell><a routerLink="/system/{{presence.system_id}}">{{presence.system_name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(presence.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{presence.state}}</clr-dg-cell>
             <clr-dg-cell>

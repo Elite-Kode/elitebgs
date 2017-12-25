@@ -20,17 +20,13 @@ export class FactionListComponent implements OnInit {
     loading = true;
     factionToAdd: string;
     totalRecords = 0;
-    confirmModal: boolean;
-    successAlertState = false;
-    failureAlertState = false;
     private pageNumber = 1;
     private tableState: State;
     factionForm = new FormGroup({
         factionName: new FormControl()
     });
     constructor(
-        private factionService: FactionsService,
-        private authenticationService: AuthenticationService
+        private factionService: FactionsService
     ) { }
 
     showFaction(factions: EBGSFactionsV3WOHistory) {
@@ -65,48 +61,7 @@ export class FactionListComponent implements OnInit {
         this.loading = false;
     }
 
-    addFaction(name: string) {
-        this.factionToAdd = name;
-        this.openConfirmModal();
-    }
-
-    confirmAddFaction() {
-        this.authenticationService
-            .addFactions([this.factionToAdd])
-            .subscribe(status => {
-                if (status === true) {
-                    this.successAlertState = true;
-                    setTimeout(() => {
-                        this.successAlertState = false;
-                    }, 3000);
-                } else {
-                    this.failureAlertState = true;
-                    setTimeout(() => {
-                        this.failureAlertState = false
-                    }, 3000);
-                }
-            });
-        this.closeConfirmModal();
-    }
-
-    openConfirmModal() {
-        this.confirmModal = true;
-    }
-
-    closeConfirmModal() {
-        this.confirmModal = false;
-    }
-
-    getAuthentication() {
-        this.authenticationService
-            .isAuthenticated()
-            .subscribe(status => {
-                this.isAuthenticated = status;
-            });
-    }
-
     ngOnInit() {
-        this.getAuthentication();
         this.factionForm.valueChanges
         .debounceTime(300)
         .switchMap(value => {

@@ -10,25 +10,25 @@ export class FactionsService {
     constructor(private http: HttpClient) { }
 
     getFactionsBegins(page: string, name: string): Observable<EBGSFactionsV3WOHistory> {
-        return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
+        return this.http.get<EBGSFactionsV3WOHistory>('/frontend/factions', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
         });
     }
 
     getFactions(name: string): Observable<EBGSFactionsV3WOHistory> {
-        return this.http.get<EBGSFactionsV3WOHistory>('/api/ebgs/v3/factions', {
+        return this.http.get<EBGSFactionsV3WOHistory>('/frontend/factions', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
         });
     }
 
     getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSFactionsV3> {
-        return this.http.get<EBGSFactionsV3>('/api/ebgs/v3/factions', {
+        return this.http.get<EBGSFactionsV3>('/frontend/factions', {
             params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
         });
     }
 
     getHistory(name: string, timemin: string, timemax: string): Observable<EBGSFactionsV3> {
-        return this.http.get<EBGSFactionsV3>('/api/ebgs/v3/factions', {
+        return this.http.get<EBGSFactionsV3>('/frontend/factions', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         })
     }

@@ -16,22 +16,17 @@ import 'rxjs/add/operator/switchMap';
 })
 export class SystemListComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
-    isAuthenticated: boolean;
     systemData: ISystem[] = [];
     loading = true;
     systemToAdd: string;
     totalRecords = 0;
-    confirmModal: boolean;
-    successAlertState = false;
-    failureAlertState = false;
     private pageNumber = 1;
     private tableState: State;
     systemForm = new FormGroup({
         systemName: new FormControl()
     });
     constructor(
-        private systemService: SystemsService,
-        private authenticationService: AuthenticationService
+        private systemService: SystemsService
     ) { }
 
     showSystem(systems: EBGSSystemsV3WOHistory) {
@@ -70,48 +65,7 @@ export class SystemListComponent implements OnInit {
         this.loading = false;
     }
 
-    addSystem(name: string) {
-        this.systemToAdd = name;
-        this.openConfirmModal();
-    }
-
-    confirmAddSystem() {
-        this.authenticationService
-            .addSystems([this.systemToAdd])
-            .subscribe(status => {
-                if (status === true) {
-                    this.successAlertState = true;
-                    setTimeout(() => {
-                        this.successAlertState = false;
-                    }, 3000);
-                } else {
-                    this.failureAlertState = true;
-                    setTimeout(() => {
-                        this.failureAlertState = false
-                    }, 3000);
-                }
-            });
-        this.closeConfirmModal();
-    }
-
-    openConfirmModal() {
-        this.confirmModal = true;
-    }
-
-    closeConfirmModal() {
-        this.confirmModal = false;
-    }
-
-    getAuthentication() {
-        this.authenticationService
-            .isAuthenticated()
-            .subscribe(status => {
-                this.isAuthenticated = status;
-            });
-    }
-
     ngOnInit() {
-        this.getAuthentication();
         this.systemForm.valueChanges
             .debounceTime(300)
             .switchMap(value => {

@@ -1,7 +1,33 @@
 <div>
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Added {{systemData?.name}} as a monitored System.
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                {{systemData?.name}} could not be added as a monitored System due to some error.
+            </span>
+        </div>
+    </clr-alert>
     <h1>{{systemData?.name}}</h1>
-    <button (click)="openSystemEditModal()" class="btn btn-primary" *ngIf="editAllowed && editAllowed !== undefined">Edit</button>
-    <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
+    <ng-container *ngIf="user && user.access === 2; then banTemplate; else accessTemplate"></ng-container>
+    <ng-template #banTemplate>
+        <h1>You have been Banned from the website.</h1>
+        <p>Please contact the developer for further details</p>
+    </ng-template>
+    <ng-template #accessTemplate>
+        <ng-container *ngIf="user">
+            <div class="btn-group btn-primary">
+                <button (click)="monitor()" class="btn btn-primary" *ngIf="isAuthenticated && isAuthenticated !== undefined">Monitor System</button>
+                <button (click)="openSystemEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
+            </div>
+            <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
+        </ng-container>
+    </ng-template>
     <p><b>Government : </b>{{systemData?.government}}</p>
     <p><b>Allegiance : </b>{{systemData?.allegiance}}</p>
     <p><b>Economy : </b>{{systemData?.primary_economy}}</p>
@@ -17,7 +43,7 @@
         <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
 
         <clr-dg-row *clrDgItems="let faction of systemData?.factions">
-            <clr-dg-cell>{{faction.name}}</clr-dg-cell>
+            <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{faction.state}}</clr-dg-cell>
             <clr-dg-cell>

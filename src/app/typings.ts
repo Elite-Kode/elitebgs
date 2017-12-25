@@ -330,6 +330,7 @@ export interface EBGSFactionV3Schema {
     home_system_name: string;
     is_player_faction: boolean;
     faction_presence: {
+        system_id: string;
         system_name: string;
         system_name_lower: string;
         state: string;
@@ -345,6 +346,7 @@ export interface EBGSFactionV3Schema {
     }[];
     history: {
         _id: string;
+        system_id: string;
         updated_at: string;
         updated_by: string;
         system: string;
@@ -375,16 +377,17 @@ export interface EBGSSystemV3Schema {
     x: number;
     y: number;
     z: number;
-    population: number
+    population: number;
     government: string;
     allegiance: string;
-    state: string
+    state: string;
     security: string;
     primary_economy: string;
-    needs_permit: boolean
-    reserve_type: string
+    needs_permit: boolean;
+    reserve_type: string;
     controlling_minor_faction: string;
     factions: {
+        faction_id: string;
         name: string;
         name_lower: string;
     }[];
@@ -400,6 +403,7 @@ export interface EBGSSystemV3Schema {
         security: string;
         controlling_minor_faction: string;
         factions: {
+            faction_id: string;
             name: string;
             name_lower: string;
         }[];
@@ -418,6 +422,7 @@ interface EBGSFactionV3SchemaWOHistory {
     home_system_name: string;
     is_player_faction: boolean;
     faction_presence: {
+        system_id: string;
         system_name: string;
         system_name_lower: string;
         state: string;
@@ -445,13 +450,14 @@ export interface EBGSSystemV3SchemaWOHistory {
     population: number;
     government: string;
     allegiance: string;
-    state: string
+    state: string;
     security: string;
     primary_economy: string;
     needs_permit: boolean;
     reserve_type: string;
     controlling_minor_faction: string;
     factions: {
+        faction_id: string;
         name: string;
         name_lower: string;
     }[];
@@ -513,16 +519,23 @@ interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
     }[];
 }
 
+type EBGSFactionHistory = EBGSFactionV3Schema['history'][0];
+
+interface EBGSFactionHistoryList extends EBGSFactionHistory {
+    faction: string;
+}
+
 interface EBGSSystemChartSchema extends EBGSSystemV3Schema {
     factions: EBGSSystemFactionChartSchema[];
+    faction_history: EBGSFactionHistoryList[];
 }
 
 interface EBGSSystemPostHistorySchema {
     _id: string;
-    population: number
+    population: number;
     government: string;
     allegiance: string;
-    state: string
+    state: string;
     security: string;
     controlling_minor_faction: string;
     factions: {
@@ -596,6 +609,7 @@ export type StationsV3 = PaginateResult<StationSchema>;
 export type SystemsV3 = PaginateResult<SystemSchema>;
 export type EBGSFactionsV3 = PaginateResult<EBGSFactionV3Schema>;
 export type EBGSSystemsV3 = PaginateResult<EBGSSystemV3Schema>;
+export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
 export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistory>;
 export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>;
 

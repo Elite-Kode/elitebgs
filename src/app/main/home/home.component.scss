@@ -31,3 +31,17 @@
 .section-header .btn {
     margin-right: 0px;
 }
+
+.card-header {
+    display: flex;
+    align-items: flex-end;
+}
+
+.card-header div {
+    flex: 1;
+    line-height: 40px;
+}
+
+.card-header a {
+    margin-right: 0px;
+}

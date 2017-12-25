@@ -1,18 +1,4 @@
 <div>
-    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
-        <div clr-alert-item class="alert-item">
-            <span class="alert-text">
-                Added {{systemToAdd}} as a monitored System.
-            </span>
-        </div>
-    </clr-alert>
-    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
-        <div clr-alert-item class="alert-item">
-            <span class="alert-text">
-                {{systemToAdd}} could not be added as a monitored System due to some error.
-            </span>
-        </div>
-    </clr-alert>
     <h1>Systems</h1>
     <form [formGroup]="systemForm" novalidate>
         <section class="form-block">
@@ -23,16 +9,6 @@
             </div>
         </section>
     </form>
-    <clr-modal [(clrModalOpen)]="confirmModal" [clrModalStaticBackdrop]="'true'">
-        <h3 class="modal-title">Confirm Addition</h3>
-        <div class="modal-body">
-            <p>Do you want to add the System {{systemToAdd}}?</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" (click)="closeConfirmModal()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="confirmAddSystem()">Add System</button>
-        </div>
-    </clr-modal>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>System Name</clr-dg-column>
         <clr-dg-column>System Government</clr-dg-column>
@@ -43,11 +19,7 @@
         <clr-dg-placeholder>Unable to find any systems!</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let system of systemData">
-            <clr-dg-action-overflow>
-                <button routerLink="/system/{{system.id}}" class="action-item">View</button>
-                <button *ngIf="isAuthenticated && isAuthenticated !== undefined" class="action-item" (click)="addSystem(system.name)">Add to Monitor</button>
-            </clr-dg-action-overflow>
-            <clr-dg-cell>{{system.name}}</clr-dg-cell>
+            <clr-dg-cell><a routerLink="/system/{{system.id}}">{{system.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{system.government}}</clr-dg-cell>
             <clr-dg-cell>{{system.allegiance}}</clr-dg-cell>
             <clr-dg-cell>{{system.primary_economy}}</clr-dg-cell>
