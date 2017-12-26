@@ -908,7 +908,15 @@ router.get('/systems', (req, res, next) => {
                                                 allegiance: 1,
                                                 home_system_name: 1,
                                                 is_player_faction: 1,
-                                                faction_presence: 1,
+                                                faction_presence: {
+                                                    $filter: {
+                                                        input: "$faction_presence",
+                                                        as: "system",
+                                                        cond: {
+                                                            $eq: ["$$system.system_name_lower", system.name_lower]
+                                                        }
+                                                    }
+                                                },
                                                 history: {
                                                     $filter: {
                                                         input: "$history",
