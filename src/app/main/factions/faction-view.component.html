@@ -57,5 +57,10 @@
                 <app-faction-chart [factionData]="factionData"></app-faction-chart>
             </div>
         </div>
+        <div class="card-block">
+            <div class="card-text" *ngIf="factionData !== undefined">
+                <google-chart [data]="timelineData"></google-chart>
+            </div>
+        </div>
     </div>
 </div>
