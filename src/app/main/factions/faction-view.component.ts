@@ -17,16 +17,6 @@ export class FactionViewComponent implements OnInit {
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
-    timelineData = {
-        chartType: 'Timeline',
-        dataTable: [
-            ['Name', 'From', 'To'],
-            ['Washington', new Date(1789, 3, 30), new Date(1797, 2, 4)],
-            ['Adams', new Date(1797, 2, 4), new Date(1801, 2, 4)],
-            ['Jefferson', new Date(1801, 2, 4), new Date(1809, 2, 4)]
-        ],
-        options: { 'title': 'States' },
-    };
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute,
@@ -86,9 +76,9 @@ export class FactionViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-            .getUser()
-            .subscribe(user => {
-                this.user = user;
-            });
+        .getUser()
+        .subscribe(user => {
+            this.user = user;
+        });
     }
 }

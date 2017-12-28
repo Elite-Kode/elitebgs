@@ -50,7 +50,6 @@
         "morgan": "^1.8.2",
         "mutationobserver-shim": "^0.3.2",
         "ndjson": "^1.5.0",
-        "ng2-google-charts": "^3.3.0",
         "passport": "^0.3.2",
         "passport-discord": "^0.1.2",
         "passport-http": "^0.3.0",

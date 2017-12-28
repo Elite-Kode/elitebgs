@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClarityModule } from 'clarity-angular';
 import { ChartModule } from 'angular2-highcharts';
-import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 
 import { MainComponent } from './main.component';
 import { HomeComponent } from './home/home.component';
@@ -42,7 +41,6 @@ export function highchartsFactory() {
         ReactiveFormsModule,
         ClarityModule.forRoot(),
         ChartModule,
-        Ng2GoogleChartsModule,
         MainRoutingModule
     ],
     providers: [{
