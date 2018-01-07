@@ -67,6 +67,9 @@ const systemsV3 = require('./server/routes/eddb_api/v3/systems');
 const ebgsFactionsV3 = require('./server/routes/elite_bgs_api/v3/factions');
 const ebgsSystemsV3 = require('./server/routes/elite_bgs_api/v3/systems');
 
+const ebgsFactionsV4 = require('./server/routes/elite_bgs_api/v4/factions');
+const ebgsSystemsV4 = require('./server/routes/elite_bgs_api/v4/systems');
+
 const authCheck = require('./server/routes/auth/auth_check');
 const authDiscord = require('./server/routes/auth/discord');
 const authLogout = require('./server/routes/auth/logout');
@@ -122,6 +125,11 @@ app.use('/api/ebgs/v3/api-docs.json', (req, res, next) => {
     res.send(swagger.EBGSAPIv3);
 });
 
+app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EBGSAPIv4);
+});
+
 app.use('/api/eddb/v1/bodies', bodiesV1);
 app.use('/api/eddb/v1/commodities', commoditiesV1);
 app.use('/api/eddb/v1/factions', factionsV1);
@@ -147,6 +155,7 @@ app.use('/api/eddb/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, 
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
 app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
+app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v4/api-docs.json`));
 
 app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
@@ -170,6 +179,9 @@ app.use('/api/eddb/v3/downloadupdate', downloadUpdateV3);
 
 app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
 app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
+
+app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
+app.use('/api/ebgs/v4/systems', ebgsSystemsV4);
 
 app.use('/auth/check', authCheck);
 app.use('/auth/discord', authDiscord);

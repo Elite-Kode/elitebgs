@@ -17,37 +17,40 @@
 "use strict";
 
 let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
 
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
-    let ObjectId = mongoose.Schema.Types.ObjectId;
 
-    let ebgsHistorySystem = new Schema({
-        system_id: ObjectId,
-        system_name_lower: String,
-        updated_at: Date,
-        updated_by: String,
+    let ebgsSystem = new Schema({
+        eddb_id: Number,
+        name: String,
+        name_lower: { type: String, lowercase: true, index: true },
+        x: Number,
+        y: Number,
+        z: Number,
         population: Number,
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
-        state: { type: String, lowercase: true },
-        security: { type: String, lowercase: true },
-        controlling_minor_faction: { type: String, lowercase: true },
+        government: { type: String, lowercase: true, index: true },
+        allegiance: { type: String, lowercase: true, index: true },
+        state: { type: String, lowercase: true, index: true },
+        security: { type: String, lowercase: true, index: true },
+        primary_economy: { type: String, lowercase: true, index: true },
+        needs_permit: Boolean,      // Not in Journal
+        reserve_type: { type: String, lowercase: true },    // Not in Journal
+        controlling_minor_faction: { type: String, lowercase: true, index: true },
         factions: [{
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
-        }]
+        }],
+        updated_at: Date
     }, { runSettersOnQuery: true });
 
-    ebgsHistorySystem.plugin(mongoosePaginate);
-    ebgsHistorySystem.plugin(mongooseAggregatePaginate);
+    ebgsSystem.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsHistorySystemV3o1', ebgsHistorySystem);
+    let model = connection.model('ebgsSystemV4', ebgsSystem);
 
     resolve(model);
 })

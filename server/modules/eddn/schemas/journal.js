@@ -26,10 +26,10 @@ const ebgsFactionsV3Model = require('../../../models/ebgs_factions_v3');
 const ebgsSystemsV3Model = require('../../../models/ebgs_systems_v3');
 const ebgsStationsV3Model = require('../../../models/ebgs_stations_v3');
 
-const ebgsFactionsV3_1Model = require('../../../models/ebgs_factions_v3.1');
-const ebgsSystemsV3_1Model = require('../../../models/ebgs_systems_v3.1');
-const ebgsHistoryFactionV3_1Model = require('../../../models/ebgs_history_faction_v3.1');
-const ebgsHistorySystemV3_1Model = require('../../../models/ebgs_history_system_v3.1');
+const ebgsFactionsV4Model = require('../../../models/ebgs_factions_v4');
+const ebgsSystemsV4Model = require('../../../models/ebgs_systems_v4');
+const ebgsHistoryFactionV4Model = require('../../../models/ebgs_history_faction_v4');
+const ebgsHistorySystemV4Model = require('../../../models/ebgs_history_system_v4');
 
 module.exports = Journal;
 
@@ -687,7 +687,7 @@ function Journal() {
         }
     }
 
-    this.trackSystemV3_1 = function (message) {
+    this.trackSystemV4 = function (message) {
         if (message.event === "FSDJump" || message.event === "Location") {
             if (message.Factions && this.checkMessage(message)) {
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
@@ -704,7 +704,7 @@ function Journal() {
                     };
                     factionArray.push(factionObject);
                 });
-                ebgsSystemsV3_1Model
+                ebgsSystemsV4Model
                     .then(model => {
                         model.findOne(
                             {
@@ -874,7 +874,7 @@ function Journal() {
                     .catch(err => {
                         console.log(err);
                     });
-                ebgsFactionsV3_1Model
+                ebgsFactionsV4Model
                     .then(model => {
                         let messageFactionsLower = [];
                         message.Factions.forEach(faction => {
@@ -1393,7 +1393,7 @@ function Journal() {
 
     this.setSystemHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
-            ebgsHistorySystemV3_1Model
+            ebgsHistorySystemV4Model
                 .then(model => {
                     let document = new model(historyObject);
                     document.save()
@@ -1412,7 +1412,7 @@ function Journal() {
 
     this.setFactionHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
-            ebgsHistoryFactionV3_1Model
+            ebgsHistoryFactionV4Model
                 .then(model => {
                     let document = new model(historyObject);
                     document.save()
