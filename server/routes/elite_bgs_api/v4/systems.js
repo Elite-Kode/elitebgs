@@ -80,7 +80,7 @@ let router = express.Router();
    *         schema:
    *           type: array
    *           items:
-   *             $ref: '#/definitions/EBGSSystemsPageV3'
+   *             $ref: '#/definitions/EBGSSystemsPageV4'
    */
 router.get('/', cors(), (req, res, next) => {
     let query = new Object;

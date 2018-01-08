@@ -243,8 +243,7 @@ router.post('/edit', (req, res, next) => {
                                     if (system.factions.findIndex(element => {
                                         return element.name_lower === faction.name_lower;
                                     }) === -1) {
-                                        res.send(false);
-                                        return;
+                                        throw 'System with given name not found';
                                     }
                                 });
                                 let controllingFactionPromise = new Promise((resolve, reject) => {
@@ -336,7 +335,9 @@ router.post('/edit', (req, res, next) => {
                                                             .then(model => {
                                                                 let document = new model(historyObject);
                                                                 document.save()
-                                                                    .then(() => { })
+                                                                    .then(() => {
+                                                                        factionUpdate();
+                                                                    })
                                                                     .catch(err => {
                                                                         console.log(err);
                                                                         res.send(false);
@@ -347,7 +348,6 @@ router.post('/edit', (req, res, next) => {
                                                                 res.send(false);
                                                             });
                                                     }
-                                                    factionUpdate();
                                                 }).catch((err) => {
                                                     console.log(err);
                                                     res.send(false);

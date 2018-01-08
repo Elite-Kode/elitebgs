@@ -68,7 +68,7 @@ let router = express.Router();
    *         schema:
    *           type: array
    *           items:
-   *             $ref: '#/definitions/EBGSFactionsPageV3'
+   *             $ref: '#/definitions/EBGSFactionsPageV4'
    */
 router.get('/', cors(), (req, res, next) => {
     let query = new Object;
