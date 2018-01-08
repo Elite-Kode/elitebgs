@@ -81,6 +81,7 @@ let router = express.Router();
    *           type: array
    *           items:
    *             $ref: '#/definitions/EBGSSystemsPageV3'
+   *     deprecated: true
    */
 router.get('/', cors(), (req, res, next) => {
     require('../../../models/ebgs_systems_v3')

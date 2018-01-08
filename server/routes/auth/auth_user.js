@@ -41,13 +41,12 @@ router.post('/edit', (req, res) => {
                             return element.name_lower === faction.toLowerCase();
                         }) === -1) {
                             factionPromise.push(new Promise((resolve, reject) => {
-                                require('../../models/ebgs_factions_v3')
+                                require('../../models/ebgs_factions_v4')
                                     .then(model => {
                                         model.findOne(
                                             {
                                                 name_lower: faction.toLowerCase()
-                                            },
-                                            { history: 0 }
+                                            }
                                         ).lean().then(factionGot => {
                                             if (factionGot) {
                                                 user.factions.push({
@@ -74,13 +73,12 @@ router.post('/edit', (req, res) => {
                             return element.name_lower === system.toLowerCase();
                         }) === -1) {
                             systemPromise.push(new Promise((resolve, reject) => {
-                                require('../../models/ebgs_systems_v3')
+                                require('../../models/ebgs_systems_v4')
                                     .then(model => {
                                         model.findOne(
                                             {
                                                 name_lower: system.toLowerCase()
-                                            },
-                                            { history: 0 }
+                                            }
                                         ).lean().then(systemGot => {
                                             if (systemGot) {
                                                 user.systems.push({

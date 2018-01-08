@@ -16,9 +16,6 @@
 
 "use strict";
 
-let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
-
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
@@ -26,36 +23,25 @@ module.exports = new Promise((resolve, reject) => {
     let Schema = mongoose.Schema;
     let ObjectId = mongoose.Schema.Types.ObjectId;
 
-    let ebgsHistoryFaction = new Schema({
-        faction_id: ObjectId,
-        faction_name_lower: String,
+    let ebgsHistorySystem = new Schema({
+        system_id: { type: ObjectId, index: true },
+        system_name_lower: { type: String, lowercase: true },
         updated_at: { type: Date, index: true },
         updated_by: String,
-        system: String,
-        system_lower: { type: String, lowercase: true },
+        population: Number,
+        government: { type: String, lowercase: true },
+        allegiance: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
-        influence: Number,
-        pending_states: [{
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-        }],
-        recovering_states: [{
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-        }],
-        systems: [{
+        security: { type: String, lowercase: true },
+        controlling_minor_faction: { type: String, lowercase: true },
+        factions: [{
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
         }]
     }, { runSettersOnQuery: true });
 
-    ebgsHistoryFaction.plugin(mongoosePaginate);
-    ebgsHistoryFaction.plugin(mongooseAggregatePaginate);
-
-    let model = connection.model('ebgsHistoryFactionV3o1', ebgsHistoryFaction);
+    let model = connection.model('ebgsHistorySystemV4', ebgsHistorySystem);
 
     resolve(model);
 })

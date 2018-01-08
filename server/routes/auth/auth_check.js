@@ -31,14 +31,13 @@ router.get('/edit', (req, res) => {
         } else {
             let editableFactions = req.user.editable_factions;
             let systemName = req.query.name;
-            require('../../models/ebgs_factions_v3')
+            require('../../models/ebgs_factions_v4')
                 .then(model => {
                     let factionPromise = [];
                     editableFactions.forEach(faction => {
                         factionPromise.push(new Promise((resolve, reject) => {
                             model.findOne(
-                                { name_lower: faction.name_lower },
-                                { history: 0 }
+                                { name_lower: faction.name_lower }
                             ).lean().then(gotFaction => {
                                 if (gotFaction && gotFaction.faction_presence.findIndex(element => {
                                     return element.system_name_lower === systemName.toLowerCase();
