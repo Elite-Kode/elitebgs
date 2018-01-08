@@ -22,8 +22,10 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const ids = require('../id');
 
-const ebgsFactionsV3Model = require('../models/ebgs_factions_v3');
-const ebgsSystemsV3Model = require('../models/ebgs_systems_v3');
+const ebgsFactionsV4Model = require('../models/ebgs_factions_v4');
+const ebgsSystemsV4Model = require('../models/ebgs_systems_v4');
+
+const ebgsUsers = require('../models/ebgs_users');
 
 let router = express.Router();
 
@@ -33,7 +35,7 @@ router.get('/backgroundimages', (req, res, next) => {
 });
 
 router.get('/donors', (req, res, next) => {
-    require('../models/ebgs_users')
+    ebgsUsers
         .then(users => {
             users.aggregate().unwind('donation').project({
                 amount: "$donation.amount",
@@ -55,7 +57,7 @@ router.get('/donors', (req, res, next) => {
 });
 
 router.get('/patrons', (req, res, next) => {
-    require('../models/ebgs_users')
+    ebgsUsers
         .then(users => {
             users.aggregate().match({
                 "patronage.level": { $gt: 0 }
@@ -79,7 +81,7 @@ router.get('/patrons', (req, res, next) => {
 });
 
 router.get('/credits', (req, res, next) => {
-    require('../models/ebgs_users')
+    ebgsUsers
         .then(users => {
             users.aggregate().match({
                 $or: [
@@ -109,7 +111,7 @@ router.get('/credits', (req, res, next) => {
 
 router.get('/users', (req, res, next) => {
     if (req.user.access === 0) {
-        require('../models/ebgs_users')
+        ebgsUsers
             .then(users => {
                 let query = new Object;
                 let page = 1;
@@ -159,7 +161,7 @@ router.get('/users', (req, res, next) => {
 router.put('/users', (req, res, next) => {
     try {
         if (req.user.access === 0) {
-            require('../models/ebgs_users')
+            ebgsUsers
                 .then(users => {
                     let body = req.body;
                     if (validateUser(req.body)) {
@@ -226,7 +228,7 @@ router.post('/edit', (req, res, next) => {
     userAllowed(req)
         .then(allowed => {
             if (validateEdit(req.body) && req.user && allowed) {
-                ebgsSystemsV3Model
+                ebgsSystemsV4Model
                     .then(model => {
                         model.findOne(
                             {
@@ -234,8 +236,7 @@ router.post('/edit', (req, res, next) => {
                                 x: correctCoordinates(req.body.x),
                                 y: correctCoordinates(req.body.y),
                                 z: correctCoordinates(req.body.z)
-                            },
-                            { history: 0 }
+                            }
                         ).lean().then(system => {
                             if (system) {
                                 req.body.factions.forEach(faction => {
@@ -249,13 +250,12 @@ router.post('/edit', (req, res, next) => {
                                 let controllingFactionPromise = new Promise((resolve, reject) => {
                                     req.body.factions.forEach(faction => {
                                         if (faction.name_lower === req.body.controlling_minor_faction) {
-                                            ebgsFactionsV3Model
+                                            ebgsFactionsV4Model
                                                 .then(model => {
                                                     model.findOne(
                                                         {
                                                             name_lower: req.body.controlling_minor_faction
-                                                        },
-                                                        { history: 0 }
+                                                        }
                                                     ).lean().then(factionGot => {
                                                         if (factionGot) {
                                                             resolve([faction.state, factionGot]);
@@ -305,19 +305,17 @@ router.post('/edit', (req, res, next) => {
                                                 updated_at: req.body.updated_at,
                                                 factions: factions
                                             };
-                                            systemObject["$addToSet"] = {
-                                                history: {
-                                                    population: req.body.population,
-                                                    security: security,
-                                                    state: state,
-                                                    government: government,
-                                                    allegiance: allegiance,
-                                                    controlling_minor_faction: req.body.controlling_minor_faction.toLowerCase(),
-                                                    updated_at: req.body.updated_at,
-                                                    factions: factions,
-                                                    updated_by: req.user.email
-                                                }
-                                            }
+                                            let historyObject = {
+                                                population: req.body.population,
+                                                security: security,
+                                                state: state,
+                                                government: government,
+                                                allegiance: allegiance,
+                                                controlling_minor_faction: req.body.controlling_minor_faction.toLowerCase(),
+                                                updated_at: req.body.updated_at,
+                                                factions: factions,
+                                                updated_by: req.user.email
+                                            };
                                             model.findOneAndUpdate(
                                                 {
                                                     name_lower: req.body.name_lower,
@@ -328,8 +326,27 @@ router.post('/edit', (req, res, next) => {
                                                 systemObject,
                                                 {
                                                     upsert: false,
-                                                    runValidators: true
-                                                }).then(data => {
+                                                    runValidators: true,
+                                                    new: true
+                                                }).then(systemReturn => {
+                                                    if (!_.isEmpty(historyObject)) {
+                                                        historyObject.system_id = systemReturn._id;
+                                                        historyObject.system_name_lower = systemReturn.name_lower;
+                                                        require('../models/ebgs_history_system_v4')
+                                                            .then(model => {
+                                                                let document = new model(historyObject);
+                                                                document.save()
+                                                                    .then(() => { })
+                                                                    .catch(err => {
+                                                                        console.log(err);
+                                                                        res.send(false);
+                                                                    })
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err);
+                                                                res.send(false);
+                                                            });
+                                                    }
                                                     factionUpdate();
                                                 }).catch((err) => {
                                                     console.log(err);
@@ -355,7 +372,7 @@ router.post('/edit', (req, res, next) => {
                     });
 
                 function factionUpdate() {
-                    ebgsFactionsV3Model
+                    ebgsFactionsV4Model
                         .then(model => {
                             let editFactionsLower = [];
                             req.body.factions.forEach(faction => {
@@ -367,8 +384,7 @@ router.post('/edit', (req, res, next) => {
                                     faction_presence: {
                                         $elemMatch: { system_name_lower: req.body.name_lower }
                                     }
-                                },
-                                { history: 0 }
+                                }
                             ).lean();
 
                             let allFactionsPresentInEdit = model.find(
@@ -376,8 +392,7 @@ router.post('/edit', (req, res, next) => {
                                     name_lower: {
                                         $in: editFactionsLower
                                     }
-                                },
-                                { history: 0 }
+                                }
                             ).lean();
 
                             Promise.all([allFactionsPresentInSystem, allFactionsPresentInEdit])
@@ -513,20 +528,18 @@ router.post('/edit', (req, res, next) => {
 
                                                     let factionObject = {
                                                         updated_at: req.body.updated_at,
-                                                        faction_presence: factionPresence,
-                                                        $addToSet: {
-                                                            history: {
-                                                                updated_at: req.body.updated_at,
-                                                                updated_by: req.user.email,
-                                                                system: req.body.name,
-                                                                system_lower: req.body.name_lower,
-                                                                state: editFaction.state,
-                                                                influence: editFaction.influence,
-                                                                pending_states: pendingStates,
-                                                                recovering_states: recoveringStates,
-                                                                systems: systemHistory
-                                                            }
-                                                        }
+                                                        faction_presence: factionPresence
+                                                    };
+                                                    let historyObject = {
+                                                        updated_at: req.body.updated_at,
+                                                        updated_by: req.user.email,
+                                                        system: req.body.name,
+                                                        system_lower: req.body.name_lower,
+                                                        state: editFaction.state,
+                                                        influence: editFaction.influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        systems: systemHistory
                                                     };
                                                     factionsAllDetailsPromise.push(new Promise((resolve, reject) => {
                                                         model.findOneAndUpdate(
@@ -536,10 +549,33 @@ router.post('/edit', (req, res, next) => {
                                                             factionObject,
                                                             {
                                                                 upsert: false,
-                                                                runValidators: true
+                                                                runValidators: true,
+                                                                new: true
                                                             })
-                                                            .then(data => {
-                                                                resolve(true);
+                                                            .then(factionReturn => {
+                                                                historyObject.faction_id = factionReturn._id;
+                                                                historyObject.faction_name_lower = factionReturn.name_lower;
+                                                                let historyPromise = new Promise((resolve, reject) => {
+                                                                    require('../models/ebgs_history_faction_v4')
+                                                                        .then(model => {
+                                                                            let document = new model(historyObject);
+                                                                            document.save()
+                                                                                .then(() => {
+                                                                                    resolve();
+                                                                                })
+                                                                                .catch(err => {
+                                                                                    reject(err);
+                                                                                })
+                                                                        })
+                                                                        .catch(err => {
+                                                                            reject(err);
+                                                                        });
+                                                                });
+                                                                historyPromise.then(() => {
+                                                                    resolve(true);
+                                                                }).catch(err => {
+                                                                    resolve(false);
+                                                                });
                                                             })
                                                             .catch(err => {
                                                                 resolve(false);
@@ -638,7 +674,7 @@ router.get('/factions', (req, res, next) => {
                                         allSystems.push(record.system_lower);
                                     }
                                 });
-                                require('../models/ebgs_systems_v4')
+                                ebgsSystemsV4Model
                                     .then(systems => {
                                         systems.find({
                                             name_lower: {
@@ -685,7 +721,7 @@ router.get('/factions', (req, res, next) => {
                         let resultPromise = [];
                         result.docs.forEach(faction => {
                             resultPromise.push(new Promise((resolve, reject) => {
-                                require('../models/ebgs_systems_v4')
+                                ebgsSystemsV4Model
                                     .then(systems => {
                                         systems.find({
                                             name_lower: {
@@ -794,7 +830,7 @@ router.get('/systems', (req, res, next) => {
                                     });
                                 });
                                 system.faction_history = [];
-                                let factionPromise = require('../models/ebgs_factions_v4')
+                                let factionPromise = ebgsFactionsV4Model
                                     .then(factions => {
                                         return factions.find(
                                             {
@@ -890,7 +926,7 @@ router.get('/systems', (req, res, next) => {
                         let resultPromise = [];
                         result.docs.forEach(system => {
                             resultPromise.push(new Promise((resolve, reject) => {
-                                require('../models/ebgs_factions_v4')
+                                ebgsFactionsV4Model
                                     .then(factions => {
                                         factions.find({
                                             name_lower: {
@@ -1073,13 +1109,12 @@ let userAllowed = req => {
         let searchPromise = [];
         user.editable_factions.forEach(faction => {
             searchPromise.push(new Promise((resolve, reject) => {
-                ebgsFactionsV3Model
+                ebgsFactionsV4Model
                     .then(model => {
                         model.findOne(
                             {
                                 name_lower: faction.name_lower
-                            },
-                            { history: 0 }
+                            }
                         ).lean().then(factionGot => {
                             if (factionGot.faction_presence.findIndex(element => {
                                 return element.system_name_lower === body.name_lower;
@@ -1140,7 +1175,7 @@ async function getFactions(query, history, page) {
         limit: 10
     };
     try {
-        let factionModel = await require('../models/ebgs_factions_v4');
+        let factionModel = await ebgsFactionsV4Model;
         let factionResult = await factionModel.paginate(query, paginateOptions);
         if (!_.isEmpty(history)) {
             let historyModel = await require('../models/ebgs_history_faction_v4');
@@ -1191,7 +1226,7 @@ async function getSystems(query, history, page) {
         limit: 10
     };
     try {
-        let systemModel = await require('../models/ebgs_systems_v4');
+        let systemModel = await ebgsSystemsV4Model;
         let systemResult = await systemModel.paginate(query, paginateOptions);
         if (!_.isEmpty(history)) {
             let historyModel = await require('../models/ebgs_history_system_v4');
