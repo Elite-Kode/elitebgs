@@ -153,27 +153,18 @@ async function getFactions(query, history, page) {
                             $gte: history.greater
                         }
                     }).lean().then(record => {
+                        record.forEach(history => {
+                            delete history.faction_id;
+                            delete history.faction_name_lower;
+                        });
+                        faction.history = record;
                         resolve(record);
                     }).catch(err => {
                         reject(err);
                     });
                 }));
             });
-            let allHistory = await Promise.all(historyPromises);
-            allHistory.forEach(factionHistory => {
-                if (factionHistory.length > 0) {
-                    let indexofFaction = factionResult.docs.findIndex((faction) => {
-                        return _.isEqual(faction._id, factionHistory[0].faction_id);
-                    });
-                    if (indexofFaction !== -1) {
-                        factionHistory.forEach(history => {
-                            delete history.faction_id;
-                            delete history.faction_name_lower;
-                        });
-                        factionResult.docs[indexofFaction].history = factionHistory;
-                    }
-                }
-            });
+            await Promise.all(historyPromises);
         }
         return Promise.resolve(factionResult);
     } catch (err) {
