@@ -1189,27 +1189,18 @@ async function getFactions(query, history, page) {
                             $gte: history.greater
                         }
                     }).lean().then(record => {
+                        record.forEach(history => {
+                            delete history.faction_id;
+                            delete history.faction_name_lower;
+                        });
+                        faction.history = record;
                         resolve(record);
                     }).catch(err => {
                         reject(err);
                     });
                 }));
             });
-            let allHistory = await Promise.all(historyPromises);
-            allHistory.forEach(factionHistory => {
-                if (factionHistory.length > 0) {
-                    let indexofFaction = factionResult.docs.findIndex((faction) => {
-                        return _.isEqual(faction._id, factionHistory[0].faction_id);
-                    });
-                    if (indexofFaction !== -1) {
-                        factionHistory.forEach(history => {
-                            delete history.faction_id;
-                            delete history.faction_name_lower;
-                        });
-                        factionResult.docs[indexofFaction].history = factionHistory;
-                    }
-                }
-            });
+            await Promise.all(historyPromises);
         }
         return Promise.resolve(factionResult);
     } catch (err) {
@@ -1240,27 +1231,18 @@ async function getSystems(query, history, page) {
                             $gte: history.greater
                         }
                     }).lean().then(record => {
+                        record.forEach(history => {
+                            delete history.system_id;
+                            delete history.system_name_lower;
+                        });
+                        system.history = record;
                         resolve(record);
                     }).catch(err => {
                         reject(err);
                     });
                 }));
             });
-            let allHistory = await Promise.all(historyPromises);
-            allHistory.forEach(systemHistory => {
-                if (systemHistory.length > 0) {
-                    let indexofSystem = systemResult.docs.findIndex((system) => {
-                        return _.isEqual(system._id, systemHistory[0].system_id);
-                    });
-                    if (indexofSystem !== -1) {
-                        systemHistory.forEach(history => {
-                            delete history.system_id;
-                            delete history.system_name_lower;
-                        });
-                        systemResult.docs[indexofSystem].history = systemHistory;
-                    }
-                }
-            });
+            await Promise.all(historyPromises);
         }
         return Promise.resolve(systemResult);
     } catch (err) {
