@@ -75,7 +75,6 @@ export class HomeComponent implements OnInit {
                         });
                     });
                 });
-                this.getSystems();
             })
             .catch(err => {
                 console.log(err);
