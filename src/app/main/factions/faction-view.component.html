@@ -21,7 +21,7 @@
     </ng-template>
     <ng-template #accessTemplate>
         <ng-container *ngIf="user">
-            <button (click)="monitor()" class="btn btn-primary" *ngIf="isAuthenticated && isAuthenticated !== undefined">Monitor Faction</button>
+            <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor Faction</button>
             <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
         </ng-container>
     </ng-template>

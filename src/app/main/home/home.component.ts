@@ -18,7 +18,6 @@ export class HomeComponent implements OnInit {
     user: EBGSUser;
     factions: EBGSFactionV3Schema[] = [];
     systems: EBGSSystemChart[] = [];
-    monitoredSystems: string[] = [];
     factionModal: boolean;
     systemModal: boolean;
     constructor(
@@ -51,8 +50,8 @@ export class HomeComponent implements OnInit {
             .getUser()
             .subscribe(user => {
                 this.user = user;
-                this.addSystems();
                 this.getFactions();
+                this.getSystems();
             });
     }
 
@@ -65,13 +64,6 @@ export class HomeComponent implements OnInit {
             .parseFactionDataName(factionList)
             .then(factionData => {
                 this.factions = factionData;
-                factionData.forEach(factionDoc => {
-                    factionDoc.faction_presence.forEach(system => {
-                        if (this.monitoredSystems.indexOf(system.system_name) === -1) {
-                            this.monitoredSystems.push(system.system_name);
-                        }
-                    });
-                });
                 this.factions.forEach(faction => {
                     faction.faction_presence.forEach(system => {
                         system.state = FDevIDs.state[system.state].name;
@@ -91,8 +83,12 @@ export class HomeComponent implements OnInit {
     }
 
     getSystems() {
+        const systemList = this.user.systems.map(system => {
+            return system.name;
+        });
+
         this.systemsService
-            .parseSystemDataName(this.monitoredSystems)
+            .parseSystemDataName(systemList)
             .then(systemData => {
                 this.systems = systemData;
                 this.systems.forEach(system => {
@@ -111,12 +107,6 @@ export class HomeComponent implements OnInit {
             .catch(err => {
                 console.log(err);
             });
-    }
-
-    addSystems() {
-        this.user.systems.forEach(system => {
-            this.monitoredSystems.push(system.name);
-        })
     }
 
     openFactionAddModal() {
