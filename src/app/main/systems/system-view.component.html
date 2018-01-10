@@ -22,7 +22,7 @@
     <ng-template #accessTemplate>
         <ng-container *ngIf="user">
             <div class="btn-group btn-primary">
-                <button (click)="monitor()" class="btn btn-primary" *ngIf="isAuthenticated && isAuthenticated !== undefined">Monitor System</button>
+                <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor System</button>
                 <button (click)="openSystemEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
             </div>
             <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>

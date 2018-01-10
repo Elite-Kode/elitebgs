@@ -54,6 +54,20 @@
             <code>HH:mm:ss</code>. For eg. if the time to show the report is 15:25:32 UTC everyday, run the command as
             <code>@BGSBot bgsreport settime 15:25:32</code>.
         </li>
+        <li>
+            Optionally, set up sorting of all output. Setting this up will enable sorting of all data in the order of System or Faction
+            name or influence in either. To set up sorting use the following command
+            <code>@BGSBot sort set &lt;type&gt; &lt;order&gt;</code>. The
+            <code>type</code> must be either
+            <code>influence</code> or
+            <code>name</code> and the
+            <code>order</code> must be either
+            <code>ascending</code> or
+            <code>descending</code>.
+            <code>HH:mm:ss</code>. For eg. if the time to show the report is 15:25:32 UTC everyday, run the command as
+            <code>@BGSBot bgsreport settime 15:25:32</code>. For eg. to sort according to influence in descending order use the following command
+            <code>@BGSBot sort set influence descending</code>
+        </li>
     </ol>
     <p>
         This concludes the set up of the bot.
@@ -187,6 +201,17 @@
         </li>
         <li>
             <code>@BGSBot bgsreport unsettime</code>
+        </li>
+    </ol>
+    <p>
+        To remove or show the sorting setup:
+    </p>
+    <ol>
+        <li>
+            <code>@BGSBot sort show</code>
+        </li>
+        <li>
+            <code>@BGSBot sort remove</code>
         </li>
     </ol>
 </div>
