@@ -192,6 +192,26 @@ router.delete('/edit', (req, res) => {
     }
 });
 
+router.delete('/delete', (req, res) => {
+    if (req.user && (req.user._id === req.query.userid || req.user.access === 0)) {
+        require('../../models/ebgs_users')
+            .then(users => {
+                users.findByIdAndRemove(req.query.userid)
+                    .then(user => {
+                        res.send(true);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.send(false);
+                    });
+            })
+            .catch(err => {
+                console.log(err)
+                res.send(false);
+            });
+    }
+});
+
 let arrayfy = requestParam => {
     let regex = /\s*,\s*/;
     let mainArray = requestParam.split(regex);

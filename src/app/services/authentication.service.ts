@@ -47,4 +47,10 @@ export class AuthenticationService {
             params: new HttpParams().set('editablefaction', faction)
         });
     }
+
+    removeUser(id: string): Observable<boolean> {
+        return this.http.delete<boolean>('/auth/user/delete', {
+            params: new HttpParams().set('userid', id)
+        });
+    }
 }

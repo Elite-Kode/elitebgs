@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-export interface IAdminUsers {
-    id: string;
-    username: string;
-    discriminator: string;
-    email: string;
-    access: number;
-    discordId: string;
-}
-
-export interface IActionMethodsSchema {
-    save: () => void;
-    reset: () => void;
-    delete: () => void;
+export interface IDeleteMethodsSchema {
+    removeFaction: () => void;
+    removeSystem: () => void;
+    removeEditableFaction: () => void;
+    deleteAccount: () => void;
 }
