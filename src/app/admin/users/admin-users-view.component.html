@@ -183,5 +183,16 @@
         </section>
     </form>
     <button class="btn btn-success" (click)="save()">Save</button>
-    <button class="btn btn-warning" (click)="reset()">Reset</button>
+    <button class="btn btn-warning-outline" (click)="reset()">Reset</button>
+    <button class="btn btn-warning" (click)="delete()">Delete</button>
+    <clr-modal [(clrModalOpen)]="warningModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">{{warningTitle}}</h3>
+        <div class="modal-body">
+            <p>{{warningText}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeWarningModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="warningConfirmed()">{{warningProceed}}</button>
+        </div>
+    </clr-modal>
 </div>

@@ -1,9 +1,10 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, HostBinding, OnInit, Inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { State } from 'clarity-angular';
 import cloneDeep from 'lodash-es/cloneDeep'
-import { IAdminUsers } from './admin-users.interface';
+import { IAdminUsers, IActionMethodsSchema } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { EBGSUser } from '../../typings';
 
 @Component({
@@ -22,15 +23,58 @@ export class AdminUsersViewComponent implements OnInit {
     userUnderEdit: EBGSUser;
     successAlertState = false;
     failureAlertState = false;
+    actionMethods: IActionMethodsSchema;
+    warningTitle: string;
+    warningText: string;
+    warningProceed: string;
+    warningModal: boolean;
+    selectedActionMethod: string;
     constructor(
         private serverService: ServerService,
-        private route: ActivatedRoute
+        private authenticationService: AuthenticationService,
+        private route: ActivatedRoute,
+        private router: Router
     ) {
         this.factionAdd = '';
         this.systemAdd = '';
         this.editableFactionAdd = '';
         this.donationAmount = 0;
         this.donationDate = '';
+        this.actionMethods = {
+            save: () => {
+                console.log(`Saving Data`);
+                this.userUnderEdit.donation.forEach(element => {
+                    if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {
+                        delete element._id;
+                    }
+                });
+                this.serverService.putUser(this.userUnderEdit)
+                    .subscribe(status => {
+                        if (status === true) {
+                            this.successAlertState = true;
+                            setTimeout(() => {
+                                this.successAlertState = false;
+                            }, 3000);
+                            this.getUsers();
+                        } else {
+                            this.failureAlertState = true;
+                            setTimeout(() => {
+                                this.failureAlertState = false
+                            }, 3000);
+                        }
+                    });
+            },
+            reset: () => {
+                this.userUnderEdit = cloneDeep(this.userData);
+            },
+            delete: () => {
+                this.authenticationService
+                    .removeUser(this.userData._id)
+                    .subscribe(status => {
+                        this.router.navigateByUrl('/admin/users');
+                    });
+            }
+        }
     }
 
     ngOnInit() {
@@ -105,30 +149,39 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     save() {
-        console.log(`Saving Data`);
-        this.userUnderEdit.donation.forEach(element => {
-            if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {
-                delete element._id;
-            }
-        });
-        this.serverService.putUser(this.userUnderEdit)
-            .subscribe(status => {
-                if (status === true) {
-                    this.successAlertState = true;
-                    setTimeout(() => {
-                        this.successAlertState = false;
-                    }, 3000);
-                    this.getUsers();
-                } else {
-                    this.failureAlertState = true;
-                    setTimeout(() => {
-                        this.failureAlertState = false
-                    }, 3000);
-                }
-            });
+        this.selectedActionMethod = 'save';
+        this.warningTitle = 'Confirm Save'
+        this.warningText = `Would you like to save the changes?`;
+        this.warningProceed = 'Save';
+        this.warningModal = true;
     }
 
     reset() {
-        this.userUnderEdit = cloneDeep(this.userData);
+        this.selectedActionMethod = 'reset';
+        this.warningTitle = 'Confirm Reset'
+        this.warningText = `Would you like to reset all changes?`;
+        this.warningProceed = 'Reset';
+        this.warningModal = true;
+    }
+
+    delete() {
+        this.selectedActionMethod = 'delete';
+        this.warningTitle = 'Confirm Delete'
+        this.warningText = `Would you like to delete the user?`;
+        this.warningProceed = 'Delete';
+        this.warningModal = true;
+    }
+
+    closeWarningModal() {
+        this.warningModal = false;
+    }
+
+    warningConfirmed() {
+        this.actionMethods[this.selectedActionMethod]();
+        this.warningModal = false;
+        this.warningText = null;
+        this.warningTitle = null;
+        this.warningProceed = null;
+        this.selectedActionMethod = null;
     }
 }

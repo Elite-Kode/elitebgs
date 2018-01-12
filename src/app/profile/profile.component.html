@@ -13,6 +13,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
+            <h3>Monitored Factions</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -24,13 +25,16 @@
                     <tr *ngFor="let faction of user?.factions">
                         <td>{{faction.name}}</td>
                         <td>
-                            <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            <button (click)="removeFaction(faction.name)" class="btn btn-danger btn-icon">
+                                <clr-icon shape="trash"></clr-icon>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
+            <h3>Monitored Systems</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -42,7 +46,9 @@
                     <tr *ngFor="let system of user?.systems">
                         <td>{{system.name}}</td>
                         <td>
-                            <button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button>
+                            <button (click)="removeSystem(system.name)" class="btn btn-danger btn-icon">
+                                <clr-icon shape="trash"></clr-icon>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -51,6 +57,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+            <h3>Factions with Edit Access</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -62,11 +69,27 @@
                     <tr *ngFor="let faction of user?.editable_factions">
                         <td>{{faction.name}}</td>
                         <td>
-                            <button (click)="removeEditableFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            <button (click)="removeEditableFaction(faction.name)" class="btn btn-danger btn-icon">
+                                <clr-icon shape="trash"></clr-icon>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    <button (click)="deleteAccount()" class="btn btn-danger btn-icon">
+        <clr-icon shape="trash"></clr-icon>
+        Delete Account
+    </button>
+    <clr-modal [(clrModalOpen)]="warningModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">Confirm Deletion</h3>
+        <div class="modal-body">
+            <p>{{warningText}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeWarningModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="deleteConfirmed()">Delete</button>
+        </div>
+    </clr-modal>
 </div>
