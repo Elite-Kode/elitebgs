@@ -17,8 +17,7 @@
 "use strict";
 
 const express = require('express');
-var cors = require('cors')
-const BluePromise = require('bluebird');
+var cors = require('cors');
 const _ = require('lodash');
 
 let router = express.Router();
@@ -236,7 +235,7 @@ router.get('/', cors(), (req, res, next) => {
                 page = req.query.page;
             }
             if (req.query.permit || req.query.power || req.query.powerstatename) {
-                systemSearch = new BluePromise((resolve, reject) => {
+                systemSearch = new Promise((resolve, reject) => {
                     require('../../../models/systems')
                         .then(systems => {
                             let systemQuery = new Object;

@@ -18,7 +18,6 @@
 
 const express = require('express');
 const passport = require('passport');
-const BluePromise = require('bluebird');
 const _ = require('lodash');
 
 let router = express.Router();
@@ -233,7 +232,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                 query['economies.name_lower'] = req.query.economyname.toLowerCase();
             }
             if (req.query.permit || req.query.power || req.query.powerstatename) {
-                systemSearch = new BluePromise((resolve, reject) => {
+                systemSearch = new Promise((resolve, reject) => {
                     require('../../../models/systems')
                         .then(systems => {
                             let systemQuery = new Object;
