@@ -28,26 +28,26 @@ module.exports = new Promise((resolve, reject) => {
         eddb_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
+        type: { type: String, lowercase: true },
         system: String,
         system_lower: { type: String, lowercase: true },
         updated_at: Date,
         government: { type: String, lowercase: true, index: true },
+        economy: { type: String, lowercase: true, index: true },
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true },
+        distance_from_star: Number,
         controlling_minor_faction: { type: String, lowercase: true, index: true },
-        history: [{
+        services: [{
             _id: false,
-            updated_at: Date,
-            government: { type: String, lowercase: true },
-            allegiance: { type: String, lowercase: true },
-            state: { type: String, lowercase: true },
-            controlling_minor_faction: { type: String, lowercase: true },
+            name: String,
+            name_lower: { type: String, lowercase: true }
         }]
     }, { runSettersOnQuery: true });
 
     ebgsStation.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsStationV3', ebgsStation);
+    let model = connection.model('ebgsStationV4', ebgsStation);
 
     resolve(model);
 })
