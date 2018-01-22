@@ -63,11 +63,11 @@ let router = express.Router();
    *         in: query
    *         type: string
    *       - name: timemin
-   *         description: Minimum time for the faction history in miliseconds.
+   *         description: Minimum time for the system history in miliseconds.
    *         in: query
    *         type: string
    *       - name: timemax
-   *         description: Maximum time for the faction history in miliseconds.
+   *         description: Maximum time for the system history in miliseconds.
    *         in: query
    *         type: string
    *       - name: page

@@ -220,8 +220,12 @@ let paramsEBGSAPIv4 = {
         EBGSSystemHistoryV4: { properties: swaggerDefinitions.ebgsSystemHistoryV4 },
         EBGSSystemPresenceV4: { properties: swaggerDefinitions.ebgsSystemPresenceV4 },
         EBGSSystemsV4: { properties: swaggerDefinitions.ebgsSystemsV4 },
+        EBGSStationHistoryV4: { properties: swaggerDefinitions.ebgsStationHistoryV4 },
+        EBGSStationServicesV4: { properties: swaggerDefinitions.ebgsStationServicesV4 },
+        EBGSStationsV4: { properties: swaggerDefinitions.ebgsStationsV4 },
         EBGSFactionsPageV4: { properties: swaggerDefinitions.pagination('EBGSFactionsV4') },
-        EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') }
+        EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') },
+        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationV4') }
     },
     apis: ['./server/routes/elite_bgs_api/v4/*.js']
 };
