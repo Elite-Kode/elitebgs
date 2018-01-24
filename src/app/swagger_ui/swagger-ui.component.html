@@ -60,7 +60,11 @@
                                         <td>{{parameter.name}}</td>
                                         <td>{{parameter.description}}</td>
                                         <td>{{parameter.in}}</td>
-                                        <td>{{parameter.type}}</td>
+                                        <td *ngIf="parameter.type && parameter.type !== 'integer' && parameter.type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.type}}">{{parameter.type}}</a></td>
+                                        <td *ngIf="parameter.type && parameter.type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{parameter.type}}</a></td>
+                                        <td *ngIf="parameter.$ref" (click)="makeActive(getDefinitionFromRef(parameter.$ref))"><a>{{getDefinitionFromRef(parameter.$ref)}}</a></td>
+                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.items.type}}">{{parameter.items.type}}[]</a></td>
+                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.$ref" (click)="makeActive(getDefinitionFromRef(parameter.items.$ref))"><a>{{getDefinitionFromRef(parameter.items.$ref)}}[]</a></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -78,7 +82,11 @@
                                     <tr *ngFor="let responseType of getResponses(path[0], method)">
                                         <th>{{responseType}}</th>
                                         <td>{{path[1][method].responses[responseType].description}}</td>
-                                        <td>{{getResponseSchema(path[1][method].responses[responseType].schema)}}</td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type !== 'integer' && path[1][method].responses[responseType].schema.type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.type}}">{{path[1][method].responses[responseType].schema.type}}</a></td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{path[1][method].responses[responseType].schema.type}}</a></td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.$ref" (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref))"><a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref)}}</a></td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.type && path[1][method].responses[responseType].schema.items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.items.type}}">{{path[1][method].responses[responseType].schema.items.type}}[]</a></td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.$ref" (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref))"><a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref)}}[]</a></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -101,7 +109,11 @@
                 <tbody>
                     <tr *ngFor="let property of getProperties(definition[0])">
                         <td>{{property}}</td>
-                        <td>{{definition[1].properties[property].type}}</td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type !== 'integer' && definition[1].properties[property].type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].type}}">{{definition[1].properties[property].type}}</a></td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{definition[1].properties[property].type}}</a></td>
+                        <td *ngIf="definition[1].properties[property].$ref" (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].$ref))"><a>{{getDefinitionFromRef(definition[1].properties[property].$ref)}}</a></td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.type && definition[1].properties[property].items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].items.type}}">{{definition[1].properties[property].items.type}}[]</a></td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.$ref" (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].items.$ref))"><a>{{getDefinitionFromRef(definition[1].properties[property].items.$ref)}}[]</a></td>
                     </tr>
                 </tbody>
             </table>

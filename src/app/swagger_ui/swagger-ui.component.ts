@@ -67,14 +67,8 @@ export class SwaggerUIComponent implements OnInit {
         return Object.keys(this.doc.paths[path][method].responses)
     }
 
-    getResponseSchema(schema: Schema): string {
-        if (schema.$ref) {
-            return schema.$ref.replace('#/definitions/', '');
-        } else if (schema.type && schema.type === 'array') {
-            return `[${(<Schema>schema.items).$ref.replace('#/definitions/', '')}]`;
-        } else {
-            return '';
-        }
+    getDefinitionFromRef(ref: string): string {
+        return ref.replace('#/definitions/', '');
     }
 
     onVersionSelect(index: number) {

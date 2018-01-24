@@ -225,7 +225,7 @@ let paramsEBGSAPIv4 = {
         EBGSStationsV4: { properties: swaggerDefinitions.ebgsStationsV4 },
         EBGSFactionsPageV4: { properties: swaggerDefinitions.pagination('EBGSFactionsV4') },
         EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') },
-        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationV4') }
+        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationsV4') }
     },
     apis: ['./server/routes/elite_bgs_api/v4/*.js']
 };
