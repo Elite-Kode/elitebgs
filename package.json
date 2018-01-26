@@ -53,6 +53,7 @@
         "passport": "^0.3.2",
         "passport-discord": "^0.1.2",
         "passport-http": "^0.3.0",
+        "prismjs": "^1.10.0",
         "request": "^2.81.0",
         "request-progress": "^3.0.0",
         "request-promise-native": "^1.0.4",

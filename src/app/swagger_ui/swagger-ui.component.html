@@ -20,7 +20,7 @@
                         <div class="card-header">Endpoint {{path[0]}}</div>
                         <div class="card-block">
                             <div class="card-title">
-                                Method {{method}}
+                                Method {{method.toUpperCase()}}
                                 <span *ngIf="path[1][method].deprecated" class="label label-danger deprecated">Deprecated</span>
                             </div>
                             <div class="card-text">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-sm btn-link">Try API</button>
+                            <button (click)="tryAPI(method, path[0])" class="btn btn-sm btn-link">Try API</button>
                         </div>
                     </div>
                 </ng-container>
@@ -60,11 +60,21 @@
                                         <td>{{parameter.name}}</td>
                                         <td>{{parameter.description}}</td>
                                         <td>{{parameter.in}}</td>
-                                        <td *ngIf="parameter.type && parameter.type !== 'integer' && parameter.type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.type}}">{{parameter.type}}</a></td>
-                                        <td *ngIf="parameter.type && parameter.type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{parameter.type}}</a></td>
-                                        <td *ngIf="parameter.$ref" (click)="makeActive(getDefinitionFromRef(parameter.$ref))"><a>{{getDefinitionFromRef(parameter.$ref)}}</a></td>
-                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.items.type}}">{{parameter.items.type}}[]</a></td>
-                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.$ref" (click)="makeActive(getDefinitionFromRef(parameter.items.$ref))"><a>{{getDefinitionFromRef(parameter.items.$ref)}}[]</a></td>
+                                        <td *ngIf="parameter.type && parameter.type !== 'integer' && parameter.type !== 'array'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.type}}">{{parameter.type}}</a>
+                                        </td>
+                                        <td *ngIf="parameter.type && parameter.type === 'integer'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{parameter.type}}</a>
+                                        </td>
+                                        <td *ngIf="parameter.$ref" (click)="makeActive(getDefinitionFromRef(parameter.$ref))">
+                                            <a>{{getDefinitionFromRef(parameter.$ref)}}</a>
+                                        </td>
+                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.items.type}}">{{parameter.items.type}}[]</a>
+                                        </td>
+                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.$ref" (click)="makeActive(getDefinitionFromRef(parameter.items.$ref))">
+                                            <a>{{getDefinitionFromRef(parameter.items.$ref)}}[]</a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -82,11 +92,22 @@
                                     <tr *ngFor="let responseType of getResponses(path[0], method)">
                                         <th>{{responseType}}</th>
                                         <td>{{path[1][method].responses[responseType].description}}</td>
-                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type !== 'integer' && path[1][method].responses[responseType].schema.type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.type}}">{{path[1][method].responses[responseType].schema.type}}</a></td>
-                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{path[1][method].responses[responseType].schema.type}}</a></td>
-                                        <td *ngIf="path[1][method].responses[responseType].schema.$ref" (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref))"><a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref)}}</a></td>
-                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.type && path[1][method].responses[responseType].schema.items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.items.type}}">{{path[1][method].responses[responseType].schema.items.type}}[]</a></td>
-                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.$ref" (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref))"><a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref)}}[]</a></td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type !== 'integer' && path[1][method].responses[responseType].schema.type !== 'array'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.type}}">{{path[1][method].responses[responseType].schema.type}}</a>
+                                        </td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'integer'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{path[1][method].responses[responseType].schema.type}}</a>
+                                        </td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.$ref" (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref))">
+                                            <a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.$ref)}}</a>
+                                        </td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.type && path[1][method].responses[responseType].schema.items.type !== 'integer'">
+                                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{path[1][method].responses[responseType].schema.items.type}}">{{path[1][method].responses[responseType].schema.items.type}}[]</a>
+                                        </td>
+                                        <td *ngIf="path[1][method].responses[responseType].schema.type && path[1][method].responses[responseType].schema.type === 'array' && path[1][method].responses[responseType].schema.items.$ref"
+                                            (click)="makeActive(getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref))">
+                                            <a>{{getDefinitionFromRef(path[1][method].responses[responseType].schema.items.$ref)}}[]</a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -109,16 +130,77 @@
                 <tbody>
                     <tr *ngFor="let property of getProperties(definition[0])">
                         <td>{{property}}</td>
-                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type !== 'integer' && definition[1].properties[property].type !== 'array'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].type}}">{{definition[1].properties[property].type}}</a></td>
-                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{definition[1].properties[property].type}}</a></td>
-                        <td *ngIf="definition[1].properties[property].$ref" (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].$ref))"><a>{{getDefinitionFromRef(definition[1].properties[property].$ref)}}</a></td>
-                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.type && definition[1].properties[property].items.type !== 'integer'"><a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].items.type}}">{{definition[1].properties[property].items.type}}[]</a></td>
-                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.$ref" (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].items.$ref))"><a>{{getDefinitionFromRef(definition[1].properties[property].items.$ref)}}[]</a></td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type !== 'integer' && definition[1].properties[property].type !== 'array'">
+                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].type}}">{{definition[1].properties[property].type}}</a>
+                        </td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'integer'">
+                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">{{definition[1].properties[property].type}}</a>
+                        </td>
+                        <td *ngIf="definition[1].properties[property].$ref" (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].$ref))">
+                            <a>{{getDefinitionFromRef(definition[1].properties[property].$ref)}}</a>
+                        </td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.type && definition[1].properties[property].items.type !== 'integer'">
+                            <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{definition[1].properties[property].items.type}}">{{definition[1].properties[property].items.type}}[]</a>
+                        </td>
+                        <td *ngIf="definition[1].properties[property].type && definition[1].properties[property].type === 'array' && definition[1].properties[property].items.$ref"
+                            (click)="makeActive(getDefinitionFromRef(definition[1].properties[property].items.$ref))">
+                            <a>{{getDefinitionFromRef(definition[1].properties[property].items.$ref)}}[]</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </section>
     </ng-container>
+    <clr-modal [(clrModalOpen)]="tryAPIModal" [clrModalStaticBackdrop]="'true'" [clrModalSize]="'xl'">
+        <h3 class="modal-title">{{tryAPIMethod?.toUpperCase()}} - {{tryAPIURL}}</h3>
+        <div class="modal-body">
+            <form class="compact" [formGroup]="parametersForm">
+                <section class="form-block">
+                    <label for="parameter_choice">
+                        Add Parameters
+                        <button (click)="addSelectedParameters()" class="btn btn-icon btn-primary">
+                            <clr-icon shape="plus"></clr-icon>
+                            Add Selected Parameters
+                        </button>
+                    </label>
+                    <div class="select multiple">
+                        <select formControlName="parameterChoice" id="parameter_choice" multiple>
+                            <option *ngFor="let parameter of parametersInSelect">
+                                {{parameter.name}}
+                            </option>
+                        </select>
+                    </div>
+                </section>
+                <div class="form-block" formArrayName="parameters">
+                    <div class="card">
+                        <div class="card-header">Parameters</div>
+                        <div class="card-block" *ngFor="let parameter of parametersSelected; let i=index" [formGroupName]="i">
+                            <div class="card-text">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-3">
+                                        <label [for]="'parameter_' + i">{{parameter[0].name}}</label>
+                                    </div>
+                                    <div class="col-sm-11 col-md-8">
+                                        <input formControlName="value" type="text" [id]="'parameter_' + i">
+                                    </div>
+                                    <div class="col-sm-1 col-md-1">
+                                        <button (click)="deselectParameter(parameter[0])" class="btn btn-danger btn-icon">
+                                            <clr-icon shape="trash"></clr-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <pre><code clr-code-highlight="language-json">{{tryAPIResponse}}</code></pre>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" (click)="go()">Go</button>
+            <button class="btn btn-warning" (click)="reset()">Reset</button>
+        </div>
+    </clr-modal>
 </div>
 <nav class="sidenav">
     <section class="sidenav-content">

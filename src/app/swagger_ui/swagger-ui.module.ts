@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { ClarityModule } from 'clarity-angular';
 
@@ -9,7 +10,9 @@ import { SwaggerUIComponent } from './swagger-ui.component';
     ],
     imports: [
         CommonModule,
-        ClarityModule
+        FormsModule,
+        ReactiveFormsModule,
+        ClarityModule.forRoot()
     ],
     providers: [],
     exports: [SwaggerUIComponent]
