@@ -58,6 +58,11 @@ module.exports = new Promise((resolve, reject) => {
             name: String,
             name_lower: String
         }],
+        stations: [{
+            _id: false,
+            name: String,
+            name_lower: String
+        }],
         editable_factions: [{
             _id: false,
             name: String,

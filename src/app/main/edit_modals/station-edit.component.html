@@ -1,0 +1,10 @@
+<clr-modal [clrModalOpen]="stationEditModal" (clrModalOpenChange)="stationModal($event)" [clrModalStaticBackdrop]="'true'"
+    [clrModalSize]="'xl'">
+    <h3 class="modal-title">Edit {{station?.name}}</h3>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" (click)="save()">Save</button>
+        <button class="btn btn-warning" (click)="reset()">Reset</button>
+    </div>
+</clr-modal>

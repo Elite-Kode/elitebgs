@@ -61,6 +61,9 @@ export class FDevIDs {
         },
         '$pirate': {
             'name': 'Pirate'
+        },
+        'pilotsfederation': {
+            'name': 'Pilots Federation'
         }
     };
     public static economy = {
@@ -96,6 +99,15 @@ export class FDevIDs {
         },
         '$economy_tourism;': {
             'name': 'Tourism'
+        },
+        '$economy_repair;': {
+            'name': 'Repair'
+        },
+        '$economy_rescue;': {
+            'name': 'Rescue'
+        },
+        '$economy_damaged;': {
+            'name': 'Damaged'
         }
     };
     public static government = {
@@ -158,5 +170,67 @@ export class FDevIDs {
         '$system_security_medium;': {
             'name': 'Medium'
         }
+    }
+    public static station = {
+        'coriolis': {
+            'name': 'Coriolis Starport'
+        },
+        'coriolis starport': {
+            'name': 'Coriolis Starport'
+        },
+        'bernal': {
+            'name': 'Ocellus Starport'
+        },
+        'ocellus starport': {
+            'name': 'Ocellus Starport'
+        },
+        'orbis': {
+            'name': 'Orbis Starport'
+        },
+        'orbis starport': {
+            'name': 'Orbis Starport'
+        },
+        'outpost': {
+            'name': 'Outpost'
+        },
+        'civilian outpost': {
+            'name': 'Outpost'
+        },
+        'commercial outpost': {
+            'name': 'Outpost'
+        },
+        'industrial outpost': {
+            'name': 'Outpost'
+        },
+        'military outpost': {
+            'name': 'Outpost'
+        },
+        'mining outpost': {
+            'name': 'Outpost'
+        },
+        'scientific outpost': {
+            'name': 'Outpost'
+        },
+        'surfacestation': {
+            'name': 'Planetary Outpost'
+        },
+        'crateroutpost': {
+            'name': 'Planetary Outpost'
+        },
+        'planetary outpost': {
+            'name': 'Planetary Outpost'
+        },
+        'planetary port': {
+            'name': 'Planetary Port'
+        },
+        'craterport': {
+            'name': 'Planetary Port'
+        },
+        'asteroidbase': {
+            'name': 'Asteroid base'
+        },
+        'megaship': {
+            'name': 'Mega ship'
+        },
     }
 }

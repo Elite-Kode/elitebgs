@@ -410,7 +410,7 @@ export interface EBGSSystemV3Schema {
     }[];
 }
 
-interface EBGSFactionV3SchemaWOHistory {
+export interface EBGSFactionV3SchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -462,6 +462,63 @@ export interface EBGSSystemV3SchemaWOHistory {
         name_lower: string;
     }[];
     updated_at: string;
+}
+
+export interface EBGSStationV4Schema {
+    _id: string;
+    __v: number;
+    eddb_id: number;
+    name: string;
+    name_lower: string;
+    type: string;
+    system: string;
+    system_lower: string;
+    updated_at: string;
+    government: string;
+    economy: string;
+    allegiance: string;
+    state: string;
+    distance_from_star: number;
+    controlling_minor_faction: string;
+    services: {
+        name: string;
+        name_lower: string;
+    }[];
+    history: {
+        _id: string;
+        updated_at: string;
+        updated_by: string;
+        government: string;
+        allegiance: string;
+        state: string;
+        controlling_minor_faction: string;
+        services: {
+            name: string;
+            name_lower: string;
+        }[];
+    }[];
+}
+
+export interface EBGSStationV4SchemaWOHistory {
+    _id: string;
+    __v: number;
+    eddb_id: number;
+    name: string;
+    name_lower: string;
+    type: string;
+    system: string;
+    system_lower: string;
+    updated_at: string;
+    government: string;
+    economy: string;
+    allegiance: string;
+    state: string;
+    distance_from_star: number;
+    controlling_minor_faction: string;
+    services: {
+        name: string;
+        name_lower: string;
+    }[];
 }
 
 interface EBGSUserSchema {
@@ -612,6 +669,9 @@ export type EBGSSystemsV3 = PaginateResult<EBGSSystemV3Schema>;
 export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
 export type EBGSFactionsV3WOHistory = PaginateResult<EBGSFactionV3SchemaWOHistory>;
 export type EBGSSystemsV3WOHistory = PaginateResult<EBGSSystemV3SchemaWOHistory>;
+
+export type EBGSStationsV4 = PaginateResult<EBGSStationV4Schema>;
+export type EBGSStationsV4WOHistory = PaginateResult<EBGSStationV4SchemaWOHistory>;
 
 export type EBGSUser = EBGSUserSchema;
 export type EBGSUsers = PaginateResult<EBGSUser>;

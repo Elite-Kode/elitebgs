@@ -6,6 +6,8 @@ import { FactionListComponent } from './factions/faction-list.component';
 import { FactionViewComponent } from './factions/faction-view.component';
 import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
+import { StationListComponent } from './stations/station-list.component';
+import { StationViewComponent } from './stations/station-view.component';
 
 const mainRoutes: Routes = [
     {
@@ -31,6 +33,14 @@ const mainRoutes: Routes = [
             {
                 path: 'faction/:factionid',
                 component: FactionViewComponent
+            },
+            {
+                path: 'station',
+                component: StationListComponent
+            },
+            {
+                path: 'station/:stationid',
+                component: StationViewComponent
             }
         ]
     }
