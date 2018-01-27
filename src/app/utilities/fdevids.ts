@@ -227,10 +227,10 @@ export class FDevIDs {
             'name': 'Planetary Port'
         },
         'asteroidbase': {
-            'name': 'Asteroid base'
+            'name': 'Asteroid Base'
         },
         'megaship': {
-            'name': 'Mega ship'
+            'name': 'Mega Ship'
         },
     }
 }
