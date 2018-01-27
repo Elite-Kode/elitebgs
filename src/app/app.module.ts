@@ -25,8 +25,10 @@ import { PageNotFoundComponent } from './page_not_found/page-not-found.component
 
 import { SystemsService } from './services/systems.service';
 import { FactionsService } from './services/factions.service';
+import { StationsService } from './services/stations.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ServerService } from './services/server.service';
+import { TryAPIService } from './services/tryapi.service';
 
 @NgModule({
     declarations: [
@@ -55,7 +57,7 @@ import { ServerService } from './services/server.service';
         AppRoutingModule,
         ClarityModule.forRoot()
     ],
-    providers: [SystemsService, FactionsService, AuthenticationService, ServerService],
+    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, TryAPIService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

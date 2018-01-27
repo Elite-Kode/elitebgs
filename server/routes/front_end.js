@@ -30,7 +30,7 @@ const ebgsUsers = require('../models/ebgs_users');
 let router = express.Router();
 
 router.get('/backgroundimages', (req, res, next) => {
-    let pathToFile = path.resolve(__dirname, '../../src/assets/backgrounds');
+    let pathToFile = path.resolve(__dirname, '../../dist/assets/backgrounds');
     res.send(fs.readdirSync(pathToFile));
 });
 
@@ -965,6 +965,75 @@ router.get('/systems', (req, res, next) => {
     }
 });
 
+router.get('/stations', (req, res, next) => {
+    let query = new Object;
+    let page = 1;
+    let history = false;
+    let greaterThanTime;
+    let lesserThanTime;
+
+    if (req.query.id) {
+        query._id = req.query.id;
+    }
+    if (req.query.name) {
+        query.name_lower = req.query.name.toLowerCase();
+    }
+    if (req.query.type) {
+        query.type = req.query.type.toLowerCase();
+    }
+    if (req.query.system) {
+        query.system_lower = req.query.system.toLowerCase();
+    }
+    if (req.query.economy) {
+        query.economy = req.query.economy.toLowerCase();
+    }
+    if (req.query.allegiance) {
+        query.allegiance = req.query.allegiance.toLowerCase();
+    }
+    if (req.query.government) {
+        query.government = req.query.government.toLowerCase();
+    }
+    if (req.query.state) {
+        query.state = req.query.state.toLowerCase();
+    }
+    if (req.query.beginsWith) {
+        query.name_lower = {
+            $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
+        }
+    }
+    if (req.query.page) {
+        page = req.query.page;
+    }
+    if (req.query.timemin && req.query.timemax) {
+        history = true;
+        greaterThanTime = new Date(Number(req.query.timemin));
+        lesserThanTime = new Date(Number(req.query.timemax));
+    }
+    if (req.query.timemin && !req.query.timemax) {
+        history = true;
+        greaterThanTime = new Date(Number(req.query.timemin));
+        lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+    }
+    if (!req.query.timemin && req.query.timemax) {
+        history = true;
+        greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
+        lesserThanTime = new Date(Number(req.query.timemax));
+    }
+    if (history) {
+        getStations(query, { greater: greaterThanTime, lesser: lesserThanTime }, page)
+            .then(result => {
+                res.status(200).json(result);
+            })
+            .catch(next);
+    } else {
+        getStations(query, {}, page)
+            .then(result => {
+                res.status(200).json(result);
+            })
+            .catch(next);
+    }
+});
+
 let validateUser = user => {
     if (_.has(user, '_id')
         && _.has(user, 'username')
@@ -1245,6 +1314,48 @@ async function getSystems(query, history, page) {
             await Promise.all(historyPromises);
         }
         return Promise.resolve(systemResult);
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+async function getStations(query, history, page) {
+    let paginateOptions = {
+        select: { history: 0 },
+        lean: true,
+        leanWithId: false,
+        page: page,
+        limit: 10
+    };
+    try {
+        let stationModel = await require('../models/ebgs_stations_v4');
+        let stationResult = await stationModel.paginate(query, paginateOptions);
+        if (!_.isEmpty(history)) {
+            let historyModel = await require('../models/ebgs_history_station_v4');
+            let historyPromises = [];
+            stationResult.docs.forEach(station => {
+                historyPromises.push(new Promise((resolve, reject) => {
+                    historyModel.find({
+                        station_id: station._id,
+                        updated_at: {
+                            $lte: history.lesser,
+                            $gte: history.greater
+                        }
+                    }).lean().then(record => {
+                        record.forEach(history => {
+                            delete history.station_id;
+                            delete history.station_name_lower;
+                        });
+                        station.history = record;
+                        resolve(record);
+                    }).catch(err => {
+                        reject(err);
+                    });
+                }));
+            });
+            await Promise.all(historyPromises);
+        }
+        return Promise.resolve(stationResult);
     } catch (err) {
         return Promise.reject(err);
     }

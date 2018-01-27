@@ -1,0 +1,36 @@
+<div>
+    <h1>Stations</h1>
+    <form [formGroup]="stationForm" novalidate>
+        <section class="form-block">
+            <label>Filter Station</label>
+            <div class="form-group">
+                <label for="stationName">Station Name</label>
+                <input type="text" id="stationName" placeholder="Carpini Terminal" formControlName="stationName">
+            </div>
+        </section>
+    </form>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>Station Name</clr-dg-column>
+        <clr-dg-column>Station Type</clr-dg-column>
+        <clr-dg-column>Station Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>Economy</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any stations!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let station of stationData">
+            <clr-dg-cell><a routerLink="/station/{{station.id}}">{{station.name}}</a></clr-dg-cell>
+            <clr-dg-cell>{{station.type}}</clr-dg-cell>
+            <clr-dg-cell>{{station.government}}</clr-dg-cell>
+            <clr-dg-cell>{{station.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{station.economy}}</clr-dg-cell>
+            <clr-dg-cell>{{station.state}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} stations
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+</div>

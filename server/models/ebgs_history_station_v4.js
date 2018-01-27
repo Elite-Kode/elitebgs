@@ -16,38 +16,30 @@
 
 "use strict";
 
-let mongoosePaginate = require('mongoose-paginate');
-
 module.exports = new Promise((resolve, reject) => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
     let Schema = mongoose.Schema;
+    let ObjectId = mongoose.Schema.Types.ObjectId;
 
-    let ebgsStation = new Schema({
-        eddb_id: Number,
-        name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        system: String,
-        system_lower: { type: String, lowercase: true },
-        updated_at: Date,
-        government: { type: String, lowercase: true, index: true },
-        allegiance: { type: String, lowercase: true, index: true },
+    let ebgsHistoryStation = new Schema({
+        station_id: { type: ObjectId, index: true },
+        station_name_lower: { type: String, lowercase: true },
+        updated_at: { type: Date, index: true },
+        updated_by: String,
+        government: { type: String, lowercase: true },
+        allegiance: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
-        controlling_minor_faction: { type: String, lowercase: true, index: true },
-        history: [{
+        controlling_minor_faction: { type: String, lowercase: true },
+        services: [{
             _id: false,
-            updated_at: Date,
-            government: { type: String, lowercase: true },
-            allegiance: { type: String, lowercase: true },
-            state: { type: String, lowercase: true },
-            controlling_minor_faction: { type: String, lowercase: true },
+            name: String,
+            name_lower: { type: String, lowercase: true }
         }]
     }, { runSettersOnQuery: true });
 
-    ebgsStation.plugin(mongoosePaginate);
-
-    let model = connection.model('ebgsStationV3', ebgsStation);
+    let model = connection.model('ebgsHistoryStationV4', ebgsHistoryStation);
 
     resolve(model);
 })

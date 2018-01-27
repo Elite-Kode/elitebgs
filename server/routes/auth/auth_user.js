@@ -35,6 +35,7 @@ router.post('/edit', (req, res) => {
                 let user = req.user;
                 let factionPromise = [];
                 let systemPromise = [];
+                let stationPromise = [];
                 if (req.body.factions) {
                     arrayfy(req.body.factions).forEach(faction => {
                         if (user.factions.findIndex(element => {
@@ -99,7 +100,39 @@ router.post('/edit', (req, res) => {
                         }
                     });
                 }
-                Promise.all(factionPromise.concat(systemPromise))
+                if (req.body.stations) {
+                    arrayfy(req.body.stations).forEach(station => {
+                        if (user.stations.findIndex(element => {
+                            return element.name_lower === station.toLowerCase();
+                        }) === -1) {
+                            stationPromise.push(new Promise((resolve, reject) => {
+                                require('../../models/ebgs_stations_v4')
+                                    .then(model => {
+                                        model.findOne(
+                                            {
+                                                name_lower: station.toLowerCase()
+                                            }
+                                        ).lean().then(stationGot => {
+                                            if (stationGot) {
+                                                user.stations.push({
+                                                    name: station,
+                                                    name_lower: station.toLowerCase()
+                                                });
+                                                resolve();
+                                            } else {
+                                                reject(new Error("Station not present"));
+                                            }
+                                        }).catch(err => {
+                                            reject(err);
+                                        });
+                                    }).catch(err => {
+                                        reject(err);
+                                    });
+                            }));
+                        }
+                    });
+                }
+                Promise.all(factionPromise.concat(systemPromise).concat(stationPromise))
                     .then(() => {
                         users.findOneAndUpdate(
                             {

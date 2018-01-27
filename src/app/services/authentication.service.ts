@@ -30,6 +30,10 @@ export class AuthenticationService {
         return this.http.post<boolean>('/auth/user/edit', { systems: systems.join() });
     }
 
+    addStations(stations: string[]): Observable<boolean> {
+        return this.http.post<boolean>('/auth/user/edit', { stations: stations.join() });
+    }
+
     removeFaction(faction: string): Observable<boolean> {
         return this.http.delete<boolean>('/auth/user/edit', {
             params: new HttpParams().set('faction', faction)

@@ -1,0 +1,36 @@
+<div>
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Added {{stationData?.name}} as a monitored Station.
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                {{stationData?.name}} could not be added as a monitored Station due to some error.
+            </span>
+        </div>
+    </clr-alert>
+    <h1>{{stationData?.name}}</h1>
+    <ng-container *ngIf="user && user.access === 2; then banTemplate; else accessTemplate"></ng-container>
+    <ng-template #banTemplate>
+        <h1>You have been Banned from the website.</h1>
+        <p>Please contact the developer for further details</p>
+    </ng-template>
+    <ng-template #accessTemplate>
+        <ng-container *ngIf="user">
+            <div class="btn-group btn-primary">
+                <button (click)="monitor()" class="btn btn-primary" [disabled]="true">Monitor Station</button>
+                <button (click)="openStationEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
+            </div>
+            <app-station-edit [(modalOpen)]="editModal" [station]="stationData" *ngIf="editAllowed && editAllowed !== undefined"></app-station-edit>
+        </ng-container>
+    </ng-template>
+    <p><b>Type : </b>{{stationData?.type}}</p>
+    <p><b>Government : </b>{{stationData?.government}}</p>
+    <p><b>Allegiance : </b>{{stationData?.allegiance}}</p>
+    <p><b>Economy : </b>{{stationData?.economy}}</p>
+    <p><b>State : </b>{{stationData?.state}}</p>
+</div>

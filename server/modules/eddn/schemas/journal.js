@@ -24,12 +24,13 @@ const ebgsSystemsModel = require('../../../models/ebgs_systems');
 
 const ebgsFactionsV3Model = require('../../../models/ebgs_factions_v3');
 const ebgsSystemsV3Model = require('../../../models/ebgs_systems_v3');
-const ebgsStationsV3Model = require('../../../models/ebgs_stations_v3');
 
 const ebgsFactionsV4Model = require('../../../models/ebgs_factions_v4');
 const ebgsSystemsV4Model = require('../../../models/ebgs_systems_v4');
+const ebgsStationsV4Model = require('../../../models/ebgs_stations_v4');
 const ebgsHistoryFactionV4Model = require('../../../models/ebgs_history_faction_v4');
 const ebgsHistorySystemV4Model = require('../../../models/ebgs_history_system_v4');
+const ebgsHistoryStationV4Model = require('../../../models/ebgs_history_station_v4');
 
 module.exports = Journal;
 
@@ -160,7 +161,7 @@ function Journal() {
 
     this.trackSystemV3 = function (message) {
         if (message.event === "FSDJump" || message.event === "Location") {
-            if (message.Factions && this.checkMessage(message)) {
+            if (message.Factions && this.checkMessage1(message)) {
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
                     return faction.Name === "Pilots Federation Local Branch";
                 });
@@ -689,7 +690,7 @@ function Journal() {
 
     this.trackSystemV4 = function (message) {
         if (message.event === "FSDJump" || message.event === "Location") {
-            if (message.Factions && this.checkMessage(message)) {
+            if (message.Factions && this.checkMessage1(message)) {
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
                     return faction.Name === "Pilots Federation Local Branch";
                 });
@@ -1305,10 +1306,179 @@ function Journal() {
                         console.log(err);
                     });
             }
+        } else if (message.event === "Docked") {
+            if (this.checkMessage2(message)) {
+                let serviceArray = [];
+                message.StationServices.forEach(service => {
+                    let serviceObject = {
+                        name: service,
+                        name_lower: service.toLowerCase()
+                    };
+                    serviceArray.push(serviceObject);
+                });
+                ebgsStationsV4Model
+                    .then(model => {
+                        model.findOne(
+                            {
+                                name_lower: message.StationName.toLowerCase(),
+                                system_lower: message.StarSystem.toLowerCase()
+                            }
+                        ).lean().then(station => {
+                            let hasEddbId = false;
+                            let stationObject = {};
+                            let historyObject = {};
+                            let eddbIdPromise;
+                            if (station) {   // Station exists in db
+                                if (station.updated_at < new Date(message.timestamp)) {
+                                    if (!station.eddb_id) {
+                                        eddbIdPromise = this.getStationEDDBId(message.StationName);
+                                    } else {
+                                        stationObject.eddb_id = station.eddb_id;
+                                        hasEddbId = true;
+                                    }
+                                    if (station.government !== message.StationGovernment.toLowerCase() ||
+                                        station.allegiance !== message.StationAllegiance.toLowerCase() ||
+                                        station.state !== message.FactionState.toLowerCase() ||
+                                        station.controlling_minor_faction !== message.StationFaction.toLowerCase() ||
+                                        !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
+
+                                        stationObject.type = message.StationType;
+                                        stationObject.system = message.StarSystem;
+                                        stationObject.system_lower = message.StarSystem.toLowerCase();
+                                        stationObject.government = message.StationGovernment;
+                                        stationObject.economy = message.StationEconomy;
+                                        stationObject.allegiance = message.StationAllegiance;
+                                        stationObject.state = message.FactionState;
+                                        stationObject.distance_from_star = message.DistFromStarLS;
+                                        stationObject.controlling_minor_faction = message.StationFaction;
+                                        stationObject.services = serviceArray;
+                                        stationObject.updated_at = message.timestamp;
+
+                                        historyObject.updated_at = message.timestamp;
+                                        historyObject.updated_by = "EDDN";
+                                        historyObject.government = message.StationGovernment;
+                                        historyObject.allegiance = message.StationAllegiance;
+                                        historyObject.state = message.FactionState;
+                                        historyObject.controlling_minor_faction = message.StationFaction;
+                                        historyObject.services = serviceArray;
+                                    } else {
+                                        stationObject.updated_at = message.timestamp;
+                                    }
+                                }
+                            } else {
+                                eddbIdPromise = this.getStationEDDBId(message.StationName);
+                                stationObject = {
+                                    name: message.StationName,
+                                    name_lower: message.StationName.toLowerCase(),
+                                    system: message.StarSystem,
+                                    system_lower: message.StarSystem.toLowerCase(),
+                                    type: message.StationType,
+                                    government: message.StationGovernment,
+                                    economy: message.StationEconomy,
+                                    allegiance: message.StationAllegiance,
+                                    state: message.FactionState,
+                                    distance_from_star: message.DistFromStarLS,
+                                    controlling_minor_faction: message.StationFaction,
+                                    services: serviceArray,
+                                    updated_at: message.timestamp,
+                                };
+
+                                historyObject = {
+                                    updated_at: message.timestamp,
+                                    updated_by: "EDDN",
+                                    government: message.StationGovernment,
+                                    allegiance: message.StationAllegiance,
+                                    state: message.FactionState,
+                                    controlling_minor_faction: message.StationFaction,
+                                    services: serviceArray
+                                };
+                            }
+                            if (!_.isEmpty(stationObject)) {
+                                if (hasEddbId) {
+                                    model.findOneAndUpdate(
+                                        {
+                                            name_lower: message.StationName.toLowerCase(),
+                                            system_lower: message.StarSystem.toLowerCase()
+                                        },
+                                        stationObject,
+                                        {
+                                            upsert: true,
+                                            runValidators: true,
+                                            new: true
+                                        })
+                                        .then(stationReturn => {
+                                            if (!_.isEmpty(historyObject)) {
+                                                historyObject.station_id = stationReturn._id;
+                                                historyObject.station_name_lower = stationReturn.name_lower;
+                                                this.setStationHistory(historyObject);
+                                            }
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        })
+                                } else {
+                                    eddbIdPromise
+                                        .then(id => {
+                                            stationObject.eddb_id = id;
+                                            model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StationName.toLowerCase(),
+                                                    system_lower: message.StarSystem.toLowerCase()
+                                                },
+                                                stationObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true,
+                                                    new: true
+                                                })
+                                                .then(stationReturn => {
+                                                    if (!_.isEmpty(historyObject)) {
+                                                        historyObject.station_id = stationReturn._id;
+                                                        historyObject.station_name_lower = stationReturn.name_lower;
+                                                        this.setStationHistory(historyObject);
+                                                    }
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                })
+                                        })
+                                        .catch(() => {      // If eddb id cannot be fetched, create the record without it.
+                                            model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StationName.toLowerCase(),
+                                                    system_lower: message.StarSystem.toLowerCase()
+                                                },
+                                                stationObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true,
+                                                    new: true
+                                                })
+                                                .then(stationReturn => {
+                                                    if (!_.isEmpty(historyObject)) {
+                                                        historyObject.station_id = stationReturn._id;
+                                                        historyObject.station_name_lower = stationReturn.name_lower;
+                                                        this.setStationHistory(historyObject);
+                                                    }
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err);
+                                                })
+                                        })
+                                }
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
         }
     }
 
-    this.checkMessage = function (message) {
+    this.checkMessage1 = function (message) {
         if (
             message.StarSystem &&
             message.SystemFaction &&
@@ -1321,6 +1491,36 @@ function Journal() {
             message.event &&
             message.SystemGovernment &&
             message.Population
+        ) {
+            if (!message.FactionState) {
+                message.FactionState = "None";
+            }
+            let messageTimestamp = new Date(message.timestamp);
+            let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
+            if (messageTimestamp < oldestTimestamp) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    this.checkMessage2 = function (message) {
+        if (
+            message.StarSystem &&
+            message.timestamp &&
+            message.StarPos &&
+            message.event &&
+            message.DistFromStarLS &&
+            message.StationAllegiance &&
+            message.StationEconomy &&
+            message.StationFaction &&
+            message.StationGovernment &&
+            message.StationName &&
+            message.StationServices &&
+            message.StationType
         ) {
             if (!message.FactionState) {
                 message.FactionState = "None";
@@ -1391,6 +1591,30 @@ function Journal() {
         })
     }
 
+    this.getStationEDDBId = function (name) {
+        return new Promise((resolve, reject) => {
+            let requestOptions = {
+                url: "https://elitebgs.kodeblox.com/api/eddb/v3/stations",
+                method: "GET",
+                qs: {
+                    name: name.toLowerCase()
+                }
+            };
+            request(requestOptions, (error, response, body) => {
+                if (!error && response.statusCode == 200) {
+                    let responseObject = JSON.parse(body);
+                    if (responseObject.total > 0) {
+                        resolve(responseObject.docs[0].id);
+                    } else {
+                        reject();
+                    }
+                } else {
+                    reject();
+                }
+            });
+        })
+    }
+
     this.setSystemHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
             ebgsHistorySystemV4Model
@@ -1413,6 +1637,25 @@ function Journal() {
     this.setFactionHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
             ebgsHistoryFactionV4Model
+                .then(model => {
+                    let document = new model(historyObject);
+                    document.save()
+                        .then(() => {
+                            resolve();
+                        })
+                        .catch(err => {
+                            reject(err);
+                        })
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        })
+    }
+
+    this.setStationHistory = function (historyObject) {
+        return new Promise((resolve, reject) => {
+            ebgsHistoryStationV4Model
                 .then(model => {
                     let document = new model(historyObject);
                     document.save()
