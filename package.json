@@ -1,6 +1,6 @@
 {
     "name": "elitebgs",
-    "version": "1.4.4",
+    "version": "2.0.0",
     "license": "Apache-2.0",
     "scripts": {
         "ng": "ng",
@@ -25,11 +25,11 @@
         "@clr/ui": "^0.11.0",
         "@webcomponents/custom-elements": "^1.0.2",
         "JSONStream": "^1.3.1",
-        "angular2-highcharts": "^0.5.5",
+        "angular-highcharts": "^5.2.6",
         "body-parser": "^1.17.2",
         "bugsnag": "^1.12.1",
         "connect-mongo": "^1.3.2",
-        "core-js": "^2.5.1",
+        "core-js": "^2.4.1",
         "cors": "^2.8.4",
         "csvtojson": "^1.1.7",
         "discord.js": "^11.2.1",
@@ -37,6 +37,7 @@
         "express-session": "^1.15.5",
         "filesize": "^3.5.10",
         "fs-extra": "^5.0.0",
+        "highcharts": "^6.0.5",
         "lodash": "^4.17.4",
         "lodash-es": "^4.17.4",
         "mongoose": "^4.11.9",
@@ -51,16 +52,17 @@
         "request": "^2.81.0",
         "request-progress": "^3.0.0",
         "request-promise-native": "^1.0.4",
-        "rxjs": "^5.5.2",
+        "rxjs": "^5.5.6",
         "swagger-jsdoc": "^1.9.7",
         "swagger-ui-express": "^2.0.7",
         "unhandled-rejection": "^1.0.0",
         "zmq": "^2.15.3",
-        "zone.js": "^0.8.17"
+        "zone.js": "^0.8.19"
     },
     "devDependencies": {
-        "@angular/cli": "^1.6.4",
+        "@angular/cli": "^1.6.6",
         "@angular/compiler-cli": "^5.2.0",
+        "@types/highcharts": "^5.0.16",
         "@types/jasmine": "^2.5.54",
         "@types/mongoose-paginate": "^5.0.6",
         "@types/node": "^9.3.0",
@@ -71,7 +73,6 @@
         "nodemon": "^1.11.0",
         "pm2": "^2.6.1",
         "tslint": "^5.7.0",
-        "typescript": "2.4.2",
-        "uglify-js": "2.8.29"
+        "typescript": "~2.5.3"
     }
 }

@@ -1,4 +1,9 @@
 {
+    "watch": [
+        "server.js",
+        "server/",
+        "bin/"
+    ],
     "ignore": [
         "dist/*",
         "server/dumps/*",

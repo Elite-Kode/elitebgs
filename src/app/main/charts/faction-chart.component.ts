@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { Options, IndividualSeriesOptions } from 'highcharts';
+import { Chart } from 'angular-highcharts';
 
 @Component({
     selector: 'app-faction-chart',
@@ -10,6 +11,7 @@ import { Options, IndividualSeriesOptions } from 'highcharts';
 export class FactionChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
+    chart: Chart;
     constructor() { }
 
     ngOnInit(): void {
@@ -56,5 +58,6 @@ export class FactionChartComponent implements OnInit {
             title: { text: 'Influence trend' },
             series: series
         };
+        this.chart = new Chart(this.options);
     }
 }

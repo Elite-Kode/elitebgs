@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { Options, IndividualSeriesOptions } from 'highcharts';
+import { Chart } from 'angular-highcharts';
 
 @Component({
     selector: 'app-system-chart',
@@ -10,6 +11,7 @@ import { Options, IndividualSeriesOptions } from 'highcharts';
 export class SystemChartComponent implements OnInit {
     @Input() systemData: EBGSSystemChart;
     options: Options;
+    chart: Chart;
     constructor() { }
 
     ngOnInit(): void {
@@ -58,5 +60,6 @@ export class SystemChartComponent implements OnInit {
             title: { text: 'Influence trend' },
             series: series
         };
+        this.chart = new Chart(this.options);
     }
 }
