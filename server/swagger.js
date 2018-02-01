@@ -21,11 +21,14 @@ let swaggerJsDoc = require('swagger-jsdoc');
 let swaggerDefinitions = require('./swaggerDefinitions');
 
 let host = '';
+let schemes = '';
 
 if (process.env.NODE_ENV === 'development') {
     host = 'localhost:3001';
+    schemes = 'http';
 } else if (process.env.NODE_ENV === 'production') {
-    host = 'localhost:4001';
+    host = 'elitebgs.kodeblox.com';
+    schemes = 'https';
 }
 
 let makeSwaggerSpec = (params, security) => {
@@ -33,7 +36,8 @@ let makeSwaggerSpec = (params, security) => {
         info: params.info,
         host: host,
         basePath: params.basePath,
-        definitions: params.definitions
+        definitions: params.definitions,
+        schemes: schemes
     };
 
     if (security) {
@@ -58,7 +62,7 @@ let paramsEDDBAPIv1 = {
         version: '1.0.0',
         description: 'An API for EDDB Data',
     },
-    basePath: '/api/eddb/v1/',
+    basePath: '/api/eddb/v1',
     definitions: {
         AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
         Bodies: { properties: swaggerDefinitions.bodies },
@@ -84,7 +88,7 @@ let paramsEDDBAPIv2 = {
         version: '2.0.0',
         description: 'An API for EDDB Data',
     },
-    basePath: '/api/eddb/v2/',
+    basePath: '/api/eddb/v2',
     definitions: {
         AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
         Bodies: { properties: swaggerDefinitions.bodies },
@@ -115,7 +119,7 @@ let paramsEDDBAPIv3 = {
         version: '3.0.0',
         description: 'An API for EDDB Data',
     },
-    basePath: '/api/eddb/v3/',
+    basePath: '/api/eddb/v3',
     definitions: {
         AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
         Bodies: { properties: swaggerDefinitions.bodies },
@@ -146,7 +150,7 @@ let paramsEBGSAPIv1 = {
         version: '1.0.0',
         description: 'An API for Elite BGS',
     },
-    basePath: '/api/ebgs/v1/',
+    basePath: '/api/ebgs/v1',
     definitions: {
         EBGSFactionHistory: { properties: swaggerDefinitions.ebgsFactionHistory },
         EBGSFactionPresence: { properties: swaggerDefinitions.ebgsFactionPresence },
@@ -166,7 +170,7 @@ let paramsEBGSAPIv2 = {
         version: '2.0.0',
         description: 'An API for Elite BGS',
     },
-    basePath: '/api/ebgs/v2/',
+    basePath: '/api/ebgs/v2',
     definitions: {
         EBGSFactionHistory: { properties: swaggerDefinitions.ebgsFactionHistory },
         EBGSFactionPresence: { properties: swaggerDefinitions.ebgsFactionPresence },
@@ -188,7 +192,7 @@ let paramsEBGSAPIv3 = {
         version: '3.0.0',
         description: 'An API for Elite BGS',
     },
-    basePath: '/api/ebgs/v3/',
+    basePath: '/api/ebgs/v3',
     definitions: {
         EBGSFactionHistoryV3: { properties: swaggerDefinitions.ebgsFactionHistoryV3 },
         EBGSFactionPresenceV3: { properties: swaggerDefinitions.ebgsFactionPresenceV3 },
@@ -211,7 +215,7 @@ let paramsEBGSAPIv4 = {
         version: '4.0.0',
         description: 'An API for Elite BGS',
     },
-    basePath: '/api/ebgs/v4/',
+    basePath: '/api/ebgs/v4',
     definitions: {
         EBGSFactionHistoryV4: { properties: swaggerDefinitions.ebgsFactionHistoryV4 },
         EBGSFactionPresenceV4: { properties: swaggerDefinitions.ebgsFactionPresenceV4 },
@@ -220,8 +224,12 @@ let paramsEBGSAPIv4 = {
         EBGSSystemHistoryV4: { properties: swaggerDefinitions.ebgsSystemHistoryV4 },
         EBGSSystemPresenceV4: { properties: swaggerDefinitions.ebgsSystemPresenceV4 },
         EBGSSystemsV4: { properties: swaggerDefinitions.ebgsSystemsV4 },
+        EBGSStationHistoryV4: { properties: swaggerDefinitions.ebgsStationHistoryV4 },
+        EBGSStationServicesV4: { properties: swaggerDefinitions.ebgsStationServicesV4 },
+        EBGSStationsV4: { properties: swaggerDefinitions.ebgsStationsV4 },
         EBGSFactionsPageV4: { properties: swaggerDefinitions.pagination('EBGSFactionsV4') },
-        EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') }
+        EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') },
+        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationsV4') }
     },
     apis: ['./server/routes/elite_bgs_api/v4/*.js']
 };

@@ -6,7 +6,7 @@ import { EliteBgsApiDocsComponent } from './docs/elite-bgs-api-docs.component';
 
 const eliteBgsApiRoutes: Routes = [
     {
-        path: 'api/elitebgs',
+        path: 'api/ebgs',
         component: EliteBgsApiComponent,
         children: [
             {
