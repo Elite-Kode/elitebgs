@@ -12,7 +12,7 @@ import { SwaggerUIComponent } from './swagger-ui.component';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        ClarityModule.forRoot()
+        ClarityModule,
     ],
     providers: [],
     exports: [SwaggerUIComponent]

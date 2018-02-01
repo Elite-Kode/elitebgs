@@ -17,7 +17,7 @@ import { EddbApiRoutingModule } from './eddb-api-routing.module';
     imports: [
         CommonModule,
         FormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         SwaggerUIModule,
         EddbApiRoutingModule
     ],

@@ -37,7 +37,7 @@ import { MainRoutingModule } from './main-routing.module';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         ChartModule,
         MainRoutingModule
     ],

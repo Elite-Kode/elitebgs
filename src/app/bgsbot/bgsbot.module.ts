@@ -16,7 +16,7 @@ import { BGSBotRoutingModule } from './bgsbot-routing.module';
     imports: [
         CommonModule,
         FormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         BGSBotRoutingModule
     ],
     providers: [],

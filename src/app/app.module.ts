@@ -55,7 +55,7 @@ import { TryAPIService } from './services/tryapi.service';
         AdminModule,
         MainModule,
         AppRoutingModule,
-        ClarityModule.forRoot()
+        ClarityModule
     ],
     providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, TryAPIService],
     bootstrap: [AppComponent]
