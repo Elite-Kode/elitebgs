@@ -12,8 +12,8 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { StationListComponent } from './stations/station-list.component';
 import { StationViewComponent } from './stations/station-view.component';
-import { FactionChartComponent } from './charts/faction-chart.component';
-import { SystemChartComponent } from './charts/system-chart.component';
+import { FactionInfluenceChartComponent } from './charts/faction-influence-chart.component';
+import { SystemInfluenceChartComponent } from './charts/system-influence-chart.component';
 import { SystemEditComponent } from './edit_modals/system-edit.component';
 import { StationEditComponent } from './edit_modals/station-edit.component';
 import { MainRoutingModule } from './main-routing.module';
@@ -28,8 +28,8 @@ import { MainRoutingModule } from './main-routing.module';
         FactionViewComponent,
         StationListComponent,
         StationViewComponent,
-        SystemChartComponent,
-        FactionChartComponent,
+        SystemInfluenceChartComponent,
+        FactionInfluenceChartComponent,
         SystemEditComponent,
         StationEditComponent
     ],

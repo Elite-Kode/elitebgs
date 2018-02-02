@@ -4,11 +4,11 @@ import { Options, IndividualSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 
 @Component({
-    selector: 'app-faction-chart',
-    templateUrl: './faction-chart.component.html'
+    selector: 'app-faction-influence-chart',
+    templateUrl: './faction-influence-chart.component.html'
 })
 
-export class FactionChartComponent implements OnInit {
+export class FactionInfluenceChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
     chart: Chart;

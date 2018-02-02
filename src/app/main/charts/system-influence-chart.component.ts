@@ -4,11 +4,11 @@ import { Options, IndividualSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 
 @Component({
-    selector: 'app-system-chart',
-    templateUrl: './system-chart.component.html'
+    selector: 'app-system-influence-chart',
+    templateUrl: './system-influence-chart.component.html'
 })
 
-export class SystemChartComponent implements OnInit {
+export class SystemInfluenceChartComponent implements OnInit {
     @Input() systemData: EBGSSystemChart;
     options: Options;
     chart: Chart;
