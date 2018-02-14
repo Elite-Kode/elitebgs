@@ -64,5 +64,13 @@
                 <app-system-influence-chart [systemData]="systemData"></app-system-influence-chart>
             </div>
         </div>
+        <div class="card-block">
+            <div class="card-title">
+                Last 10 Days
+            </div>
+            <div class="card-text" *ngIf="systemData !== undefined">
+                <app-system-state-chart [systemData]="systemData"></app-system-state-chart>
+            </div>
+        </div>
     </div>
 </div>
