@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { EBGSSystemChart } from '../../typings';
+import { EBGSFactionV3Schema } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
@@ -22,26 +22,26 @@ import { Chart } from 'angular-highcharts';
 // }
 
 @Component({
-    selector: 'app-system-state-chart',
-    templateUrl: './system-state-chart.component.html',
-    styleUrls: ['./system-state-chart.component.scss']
+    selector: 'app-faction-state-chart',
+    templateUrl: './faction-state-chart.component.html',
+    styleUrls: ['./faction-state-chart.component.scss']
 })
-export class SystemStateChartComponent implements OnInit {
-    @Input() systemData: EBGSSystemChart;
+export class FactionStateChartComponent implements OnInit {
+    @Input() factionData: EBGSFactionV3Schema;
     // options: Options;
     options: any;
     chart: Chart;
     constructor() { }
 
     ngOnInit(): void {
-        const allTimeFactions: string[] = [];
-        const factions: string[] = [];
-        this.systemData.faction_history.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+        const allSystems: string[] = [];
+        const systems: string[] = [];
+        this.factionData.history.forEach(record => {
+            if (allSystems.indexOf(record.system) === -1) {
+                allSystems.push(record.system);
             }
         });
-        this.systemData.faction_history.sort((a, b) => {
+        this.factionData.history.sort((a, b) => {
             if (a.updated_at < b.updated_at) {
                 return -1;
             } else if (a.updated_at > b.updated_at) {
@@ -60,13 +60,13 @@ export class SystemStateChartComponent implements OnInit {
         states.forEach(state => {
             // const data: DataPoint[] = [];
             const data: any[] = [];
-            allTimeFactions.forEach((faction, index) => {
-                factions.push(faction);
+            allSystems.forEach((system, index) => {
+                systems.push(system);
                 let previousState = '';
                 let timeBegin = 0;
                 let timeEnd = 0;
-                this.systemData.faction_history.forEach(record => {
-                    if (record.faction === faction) {
+                this.factionData.history.forEach(record => {
+                    if (record.system === system) {
                         if (previousState !== record.state) {
                             if (record.state === state[0]) {
                                 timeBegin = Date.parse(record.updated_at);
@@ -109,9 +109,9 @@ export class SystemStateChartComponent implements OnInit {
             },
             yAxis: {
                 title: {
-                    text: 'Factions'
+                    text: 'Systems'
                 },
-                categories: factions,
+                categories: systems,
                 reversed: true
             },
             plotOptions: {
@@ -124,10 +124,6 @@ export class SystemStateChartComponent implements OnInit {
                         format: '{point.name}'
                     }
                 }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
             },
             series: series
         };
