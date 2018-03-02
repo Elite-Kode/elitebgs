@@ -52,11 +52,27 @@ export class SystemStateChartComponent implements OnInit {
         });
         // const series: XRangeChartSeriesOptions[] = [];
         const series: any[] = [];
+        const colours = [
+            '#7cb5ec',
+            '#434348',
+            '#90ed7d',
+            '#f7a35c',
+            '#8085e9',
+            '#f15c80',
+            '#e4d354',
+            '#2b908f',
+            '#f45b5b',
+            '#91e8e1',
+            '#3ab795',
+            '#bce784',
+            '#ee6352'
+        ];
         const states: [string, string][] = Object.keys(FDevIDs.state).filter(state => {
             return state !== 'null';
         }).map(state => {
             return [state, FDevIDs.state[state].name];
         }) as [string, string][];
+        let i = 0;
         states.forEach(state => {
             // const data: DataPoint[] = [];
             const data: any[] = [];
@@ -94,8 +110,10 @@ export class SystemStateChartComponent implements OnInit {
             series.push({
                 name: state[1],
                 pointWidth: 20,
-                data: data
+                data: data,
+                color: colours[i]
             });
+            i++;
         });
         this.options = {
             chart: {
@@ -122,7 +140,8 @@ export class SystemStateChartComponent implements OnInit {
                         align: 'center',
                         enabled: true,
                         format: '{point.name}'
-                    }
+                    },
+                    colorByPoint: false
                 }
             },
             tooltip: {
