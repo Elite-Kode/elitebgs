@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from 'clarity-angular';
+import { State } from '@clr/angular';
 import { IAdminUsers } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
 import { EBGSUsers } from '../../typings';

@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
-import { ClarityModule } from 'clarity-angular';
+import { ClarityModule } from '@clr/angular';
 
 import { AppComponent } from './app.component';
 import { EddbApiModule } from './eddb_api/eddb-api.module';
@@ -55,7 +55,7 @@ import { TryAPIService } from './services/tryapi.service';
         AdminModule,
         MainModule,
         AppRoutingModule,
-        ClarityModule.forRoot()
+        ClarityModule
     ],
     providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, TryAPIService],
     bootstrap: [AppComponent]

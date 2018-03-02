@@ -1,15 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
-import { Options, IndividualSeriesOptions } from 'highcharts';
+import { Options, LineChartSeriesOptions } from 'highcharts';
+import { Chart } from 'angular-highcharts';
 
 @Component({
-    selector: 'app-system-chart',
-    templateUrl: './system-chart.component.html'
+    selector: 'app-system-influence-chart',
+    templateUrl: './system-influence-chart.component.html'
 })
 
-export class SystemChartComponent implements OnInit {
+export class SystemInfluenceChartComponent implements OnInit {
     @Input() systemData: EBGSSystemChart;
     options: Options;
+    chart: Chart;
     constructor() { }
 
     ngOnInit(): void {
@@ -28,7 +30,7 @@ export class SystemChartComponent implements OnInit {
                 return 0;
             }
         });
-        const series: IndividualSeriesOptions[] = [];
+        const series: LineChartSeriesOptions[] = [];
         allTimeFactions.forEach(faction => {
             const data: [number, number][] = [];
             this.systemData.faction_history.forEach(record => {
@@ -55,8 +57,14 @@ export class SystemChartComponent implements OnInit {
         });
         this.options = {
             xAxis: { type: 'datetime' },
+            yAxis: {
+                title: {
+                    text: 'Influence'
+                }
+            },
             title: { text: 'Influence trend' },
             series: series
         };
+        this.chart = new Chart(this.options);
     }
 }

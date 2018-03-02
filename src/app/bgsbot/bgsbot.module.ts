@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClarityModule } from 'clarity-angular';
+import { ClarityModule } from '@clr/angular';
 
 import { BGSBotComponent } from './bgsbot.component';
 import { BGSBotOverviewComponent } from './overview/bgsbot-overview.component';
@@ -16,7 +16,7 @@ import { BGSBotRoutingModule } from './bgsbot-routing.module';
     imports: [
         CommonModule,
         FormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         BGSBotRoutingModule
     ],
     providers: [],

@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClarityModule } from 'clarity-angular';
-import { ChartModule } from 'angular2-highcharts';
+import { ClarityModule } from '@clr/angular';
+
+import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
+// import { xrange } from 'highcharts/modules/xrange.src';
+import * as xrange from 'highcharts/modules/xrange.src';
 
 import { MainComponent } from './main.component';
 import { HomeComponent } from './home/home.component';
@@ -12,18 +15,16 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { StationListComponent } from './stations/station-list.component';
 import { StationViewComponent } from './stations/station-view.component';
-import { FactionChartComponent } from './charts/faction-chart.component';
-import { SystemChartComponent } from './charts/system-chart.component';
+import { FactionInfluenceChartComponent } from './charts/faction-influence-chart.component';
+import { FactionStateChartComponent } from './charts/faction-state-chart.component';
+import { SystemInfluenceChartComponent } from './charts/system-influence-chart.component';
+import { SystemStateChartComponent } from './charts/system-state-chart.component';
 import { SystemEditComponent } from './edit_modals/system-edit.component';
 import { StationEditComponent } from './edit_modals/station-edit.component';
 import { MainRoutingModule } from './main-routing.module';
 
-import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
-
-export declare let require: any;
-export function highchartsFactory() {
-    const hc = require('highcharts');
-    return hc;
+export function highchartsModules() {
+    return [xrange];
 }
 
 @NgModule({
@@ -36,8 +37,10 @@ export function highchartsFactory() {
         FactionViewComponent,
         StationListComponent,
         StationViewComponent,
-        SystemChartComponent,
-        FactionChartComponent,
+        SystemInfluenceChartComponent,
+        FactionInfluenceChartComponent,
+        SystemStateChartComponent,
+        FactionStateChartComponent,
         SystemEditComponent,
         StationEditComponent
     ],
@@ -45,14 +48,13 @@ export function highchartsFactory() {
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         ChartModule,
         MainRoutingModule
     ],
-    providers: [{
-        provide: HighchartsStatic,
-        useFactory: highchartsFactory
-    }],
-    exports: [MainComponent]
+    exports: [MainComponent],
+    providers: [
+        { provide: HIGHCHARTS_MODULES, useFactory: highchartsModules }
+    ]
 })
 export class MainModule { }

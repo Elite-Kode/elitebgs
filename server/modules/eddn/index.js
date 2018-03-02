@@ -18,7 +18,6 @@
 
 const zlib = require('zlib');
 const zmq = require('zmq');
-const ajv = require('ajv');
 
 const schemas = require('./schemas');
 

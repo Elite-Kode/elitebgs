@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClarityModule } from 'clarity-angular';
+import { ClarityModule } from '@clr/angular';
 import { SwaggerUIModule } from '../swagger_ui/swagger-ui.module';
 
 import { EliteBgsApiComponent } from './elite-bgs-api.component';
@@ -17,7 +17,7 @@ import { EliteBgsApiRoutingModule } from './elite-bgs-api-routing.module';
     imports: [
         CommonModule,
         FormsModule,
-        ClarityModule.forRoot(),
+        ClarityModule,
         SwaggerUIModule,
         EliteBgsApiRoutingModule
     ],

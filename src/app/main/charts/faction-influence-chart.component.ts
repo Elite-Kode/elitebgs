@@ -1,15 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
-import { Options, IndividualSeriesOptions } from 'highcharts';
+import { Options, LineChartSeriesOptions } from 'highcharts';
+import { Chart } from 'angular-highcharts';
 
 @Component({
-    selector: 'app-faction-chart',
-    templateUrl: './faction-chart.component.html'
+    selector: 'app-faction-influence-chart',
+    templateUrl: './faction-influence-chart.component.html'
 })
 
-export class FactionChartComponent implements OnInit {
+export class FactionInfluenceChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
+    chart: Chart;
     constructor() { }
 
     ngOnInit(): void {
@@ -20,7 +22,7 @@ export class FactionChartComponent implements OnInit {
                 allSystems.push(element.system);
             }
         });
-        const series: IndividualSeriesOptions[] = [];
+        const series: LineChartSeriesOptions[] = [];
         history.sort((a, b) => {
             if (a.updated_at < b.updated_at) {
                 return -1;
@@ -53,8 +55,14 @@ export class FactionChartComponent implements OnInit {
         });
         this.options = {
             xAxis: { type: 'datetime' },
+            yAxis: {
+                title: {
+                    text: 'Influence'
+                }
+            },
             title: { text: 'Influence trend' },
             series: series
         };
+        this.chart = new Chart(this.options);
     }
 }
