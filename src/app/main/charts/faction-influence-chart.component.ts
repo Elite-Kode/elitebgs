@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-faction-influence-chart',
@@ -12,7 +13,7 @@ export class FactionInfluenceChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
     chart: Chart;
-    constructor() { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         const history = this.factionData.history;
@@ -64,5 +65,8 @@ export class FactionInfluenceChartComponent implements OnInit {
             series: series
         };
         this.chart = new Chart(this.options);
+        this.themeService.theme$.subscribe(theme => {
+            this.chart = new Chart(this.options);
+        });
     }
 }

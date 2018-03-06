@@ -3,6 +3,7 @@ import { EBGSFactionV3Schema } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
+import { ThemeService } from '../../services/theme.service';
 
 // declare module 'highcharts' {
 //     interface XRangeChart extends SeriesChart {
@@ -23,15 +24,14 @@ import { Chart } from 'angular-highcharts';
 
 @Component({
     selector: 'app-faction-state-chart',
-    templateUrl: './faction-state-chart.component.html',
-    styleUrls: ['./faction-state-chart.component.scss']
+    templateUrl: './faction-state-chart.component.html'
 })
 export class FactionStateChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     // options: Options;
     options: any;
     chart: Chart;
-    constructor() { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         const allSystems: string[] = [];
@@ -151,5 +151,8 @@ export class FactionStateChartComponent implements OnInit {
             series: series
         };
         this.chart = new Chart(this.options);
+        this.themeService.theme$.subscribe(theme => {
+            this.chart = new Chart(this.options);
+        });
     }
 }

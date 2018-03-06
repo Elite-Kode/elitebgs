@@ -3,6 +3,7 @@ import { EBGSSystemChart } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
+import { ThemeService } from '../../services/theme.service';
 
 // declare module 'highcharts' {
 //     interface XRangeChart extends SeriesChart {
@@ -23,15 +24,14 @@ import { Chart } from 'angular-highcharts';
 
 @Component({
     selector: 'app-system-state-chart',
-    templateUrl: './system-state-chart.component.html',
-    styleUrls: ['./system-state-chart.component.scss']
+    templateUrl: './system-state-chart.component.html'
 })
 export class SystemStateChartComponent implements OnInit {
     @Input() systemData: EBGSSystemChart;
     // options: Options;
     options: any;
     chart: Chart;
-    constructor() { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         const allTimeFactions: string[] = [];
@@ -151,5 +151,8 @@ export class SystemStateChartComponent implements OnInit {
             series: series
         };
         this.chart = new Chart(this.options);
+        this.themeService.theme$.subscribe(theme => {
+            this.chart = new Chart(this.options);
+        });
     }
 }
