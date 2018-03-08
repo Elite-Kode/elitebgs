@@ -63,7 +63,7 @@ export class SystemInfluenceChartComponent implements OnInit, AfterViewInit {
                     text: 'Influence'
                 }
             },
-            title: { text: 'Influence trend' },
+            title: { text: 'Influence Trend' },
             series: series
         };
         this.themeService.theme$.subscribe(theme => {

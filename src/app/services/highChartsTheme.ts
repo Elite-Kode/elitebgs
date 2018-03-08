@@ -1,36 +1,19 @@
 export const HighchartsDarkTheme = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
-        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
+        '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff'
     ],
     chart: {
-        backgroundColor: {
-            linearGradient: {
-                x1: 0,
-                y1: 0,
-                x2: 1,
-                y2: 1
-            },
-            stops: [
-                [0, '#2a2a2b'],
-                [1, '#3e3e40']
-            ]
-        },
-        style: {
-            fontFamily: '\'Unica One\', sans-serif'
-        },
+        backgroundColor: '#22343c',
         plotBorderColor: '#606063'
     },
     title: {
         style: {
-            color: '#E0E0E3',
-            textTransform: 'uppercase',
-            fontSize: '20px'
+            color: '#E0E0E3'
         }
     },
     subtitle: {
         style: {
-            color: '#E0E0E3',
-            textTransform: 'uppercase'
+            color: '#E0E0E3'
         }
     },
     xAxis: {
@@ -214,7 +197,10 @@ export const HighchartsLightTheme = {
         '#e4d354',
         '#2b908f',
         '#f45b5b',
-        '#91e8e1'
+        '#91e8e1',
+        '#3ab795',
+        '#bce784',
+        '#ee6352'
     ],
     symbols: [
         'circle',
