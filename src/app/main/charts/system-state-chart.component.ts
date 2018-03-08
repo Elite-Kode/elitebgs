@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
@@ -26,7 +26,7 @@ import { ThemeService } from '../../services/theme.service';
     selector: 'app-system-state-chart',
     templateUrl: './system-state-chart.component.html'
 })
-export class SystemStateChartComponent implements OnInit {
+export class SystemStateChartComponent implements OnInit, AfterViewInit {
     @Input() systemData: EBGSSystemChart;
     // options: Options;
     options: any;
@@ -150,9 +150,12 @@ export class SystemStateChartComponent implements OnInit {
             },
             series: series
         };
-        this.chart = new Chart(this.options);
         this.themeService.theme$.subscribe(theme => {
             this.chart = new Chart(this.options);
         });
+    }
+
+    ngAfterViewInit() {
+        this.chart.ref.reflow();
     }
 }

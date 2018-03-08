@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
             this.linkRef = this.document.createElement('link');
             this.linkRef.rel = 'stylesheet';
             this.linkRef.href = this.themeService.getTheme().href;
+            this.linkRef.onload = () => this.themeService.themeLoaded();
             this.document.querySelector('head').appendChild(this.linkRef);
         }
     }

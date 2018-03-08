@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
@@ -26,7 +26,7 @@ import { ThemeService } from '../../services/theme.service';
     selector: 'app-faction-state-chart',
     templateUrl: './faction-state-chart.component.html'
 })
-export class FactionStateChartComponent implements OnInit {
+export class FactionStateChartComponent implements OnInit, AfterViewInit {
     @Input() factionData: EBGSFactionV3Schema;
     // options: Options;
     options: any;
@@ -150,9 +150,12 @@ export class FactionStateChartComponent implements OnInit {
             },
             series: series
         };
-        this.chart = new Chart(this.options);
         this.themeService.theme$.subscribe(theme => {
             this.chart = new Chart(this.options);
         });
+    }
+
+    ngAfterViewInit() {
+        this.chart.ref.reflow();
     }
 }

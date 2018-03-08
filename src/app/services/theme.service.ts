@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HighchartsDarkTheme, HighchartsLightTheme } from './highChartsTheme';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Highcharts } from 'angular-highcharts';
 import cloneDeep from 'lodash-es/cloneDeep'
 
@@ -13,7 +13,7 @@ export class ThemeService {
     ];
     defaultHighchartsTheme;
     theme = this.themes[0];
-    themeSource = new Subject<any>();
+    themeSource = new BehaviorSubject<any>(this.theme);
     theme$ = this.themeSource.asObservable();
 
     constructor() {
@@ -39,7 +39,6 @@ export class ThemeService {
         this.theme = this.themes[this.themes.findIndex(theme => {
             return name === theme.name;
         })];
-        this.themeSource.next(this.theme);
         this.setHighchartTheme();
         localStorage.setItem('theme', JSON.stringify(this.theme));
     }
@@ -53,5 +52,9 @@ export class ThemeService {
         }
         Highcharts.setOptions(this.defaultHighchartsTheme);
         Highcharts.setOptions(this.theme.highcharts as any);
+    }
+
+    themeLoaded() {
+        this.themeSource.next(this.theme);
     }
 }
