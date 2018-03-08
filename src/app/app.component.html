@@ -13,8 +13,8 @@
         </div>
         <div class="header-actions">
             <a class="nav-icon nav-link" (click)="switchTheme()">
-                <clr-icon shape="circle" *ngIf="themeService.getTheme().name === 'dark'"></clr-icon>
-                <clr-icon shape="circle" class="is-solid" *ngIf="themeService.getTheme().name === 'light'"></clr-icon>
+                <clr-icon shape="circle" *ngIf="getThemeName() === 'dark'"></clr-icon>
+                <clr-icon shape="circle" class="is-solid" *ngIf="getThemeName() === 'light'"></clr-icon>
             </a>
             <a routerLink="/donate" routerLinkActive="active" class="nav-link"><span class="nav-text">Support Us</span></a>
             <clr-dropdown>
