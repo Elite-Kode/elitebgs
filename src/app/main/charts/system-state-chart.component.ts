@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
+import { ThemeService } from '../../services/theme.service';
 
 // declare module 'highcharts' {
 //     interface XRangeChart extends SeriesChart {
@@ -23,15 +24,14 @@ import { Chart } from 'angular-highcharts';
 
 @Component({
     selector: 'app-system-state-chart',
-    templateUrl: './system-state-chart.component.html',
-    styleUrls: ['./system-state-chart.component.scss']
+    templateUrl: './system-state-chart.component.html'
 })
-export class SystemStateChartComponent implements OnInit {
+export class SystemStateChartComponent implements OnInit, AfterViewInit {
     @Input() systemData: EBGSSystemChart;
     // options: Options;
     options: any;
     chart: Chart;
-    constructor() { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         const allTimeFactions: string[] = [];
@@ -52,21 +52,6 @@ export class SystemStateChartComponent implements OnInit {
         });
         // const series: XRangeChartSeriesOptions[] = [];
         const series: any[] = [];
-        const colours = [
-            '#7cb5ec',
-            '#434348',
-            '#90ed7d',
-            '#f7a35c',
-            '#8085e9',
-            '#f15c80',
-            '#e4d354',
-            '#2b908f',
-            '#f45b5b',
-            '#91e8e1',
-            '#3ab795',
-            '#bce784',
-            '#ee6352'
-        ];
         const states: [string, string][] = Object.keys(FDevIDs.state).filter(state => {
             return state !== 'null';
         }).map(state => {
@@ -110,8 +95,7 @@ export class SystemStateChartComponent implements OnInit {
             series.push({
                 name: state[1],
                 pointWidth: 20,
-                data: data,
-                color: colours[i]
+                data: data
             });
             i++;
         });
@@ -135,6 +119,7 @@ export class SystemStateChartComponent implements OnInit {
             plotOptions: {
                 xrange: {
                     borderRadius: 0,
+                    borderWidth: 0,
                     grouping: false,
                     dataLabels: {
                         align: 'center',
@@ -150,6 +135,12 @@ export class SystemStateChartComponent implements OnInit {
             },
             series: series
         };
-        this.chart = new Chart(this.options);
+        this.themeService.theme$.subscribe(theme => {
+            this.chart = new Chart(this.options);
+        });
+    }
+
+    ngAfterViewInit() {
+        this.chart.ref.reflow();
     }
 }

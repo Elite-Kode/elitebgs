@@ -22,7 +22,12 @@
                 "mstile-150x150.png",
                 "mstile-310x150.png",
                 "mstile-310x310.png",
-                "safari-pinned-tab.svg"
+                "safari-pinned-tab.svg",
+                {
+                    "glob": "clr-ui*.min.css",
+                    "input": "../node_modules/@clr/ui/",
+                    "output": "./styles/"
+                }
             ],
             "index": "index.html",
             "main": "main.ts",
@@ -32,7 +37,6 @@
             "styles": [
                 "styles.scss",
                 "../node_modules/@clr/icons/clr-icons.min.css",
-                "../node_modules/@clr/ui/clr-ui.min.css",
                 "../node_modules/prismjs/themes/prism.css"
             ],
             "scripts": [
