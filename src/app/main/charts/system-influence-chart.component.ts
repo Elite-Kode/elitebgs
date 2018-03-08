@@ -1,18 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-system-influence-chart',
     templateUrl: './system-influence-chart.component.html'
 })
 
-export class SystemInfluenceChartComponent implements OnInit {
+export class SystemInfluenceChartComponent implements OnInit, AfterViewInit {
     @Input() systemData: EBGSSystemChart;
     options: Options;
     chart: Chart;
-    constructor() { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         const allTimeFactions: string[] = [];
@@ -62,9 +63,15 @@ export class SystemInfluenceChartComponent implements OnInit {
                     text: 'Influence'
                 }
             },
-            title: { text: 'Influence trend' },
+            title: { text: 'Influence Trend' },
             series: series
         };
-        this.chart = new Chart(this.options);
+        this.themeService.theme$.subscribe(theme => {
+            this.chart = new Chart(this.options);
+        });
+    }
+
+    ngAfterViewInit() {
+        this.chart.ref.reflow();
     }
 }
