@@ -1,19 +1,18 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
-import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-faction-influence-chart',
     templateUrl: './faction-influence-chart.component.html'
 })
 
-export class FactionInfluenceChartComponent implements OnInit, AfterViewInit {
+export class FactionInfluenceChartComponent implements OnInit {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
     chart: Chart;
-    constructor(private themeService: ThemeService) { }
+    constructor() { }
 
     ngOnInit(): void {
         const history = this.factionData.history;
@@ -61,15 +60,9 @@ export class FactionInfluenceChartComponent implements OnInit, AfterViewInit {
                     text: 'Influence'
                 }
             },
-            title: { text: 'Influence Trend' },
+            title: { text: 'Influence trend' },
             series: series
         };
-        this.themeService.theme$.subscribe(theme => {
-            this.chart = new Chart(this.options);
-        });
-    }
-
-    ngAfterViewInit() {
-        this.chart.ref.reflow();
+        this.chart = new Chart(this.options);
     }
 }

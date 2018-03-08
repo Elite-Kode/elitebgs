@@ -29,7 +29,6 @@ import { StationsService } from './services/stations.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ServerService } from './services/server.service';
 import { TryAPIService } from './services/tryapi.service';
-import { ThemeService } from './services/theme.service';
 
 @NgModule({
     declarations: [
@@ -58,7 +57,7 @@ import { ThemeService } from './services/theme.service';
         AppRoutingModule,
         ClarityModule
     ],
-    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, ThemeService, TryAPIService],
+    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, TryAPIService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
