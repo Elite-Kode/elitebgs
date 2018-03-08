@@ -57,13 +57,13 @@
                 <app-faction-influence-chart [factionData]="factionData"></app-faction-influence-chart>
             </div>
         </div>
-        <div class="card-block">
-            <div class="card-title">
-                Last 10 Days
-            </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
-                <app-faction-state-chart [factionData]="factionData"></app-faction-state-chart>
-            </div>
+    </div>
+    <div class="card-block">
+        <div class="card-title">
+            Last 10 Days
+        </div>
+        <div class="card-text" *ngIf="factionData !== undefined">
+            <app-faction-state-chart [factionData]="factionData"></app-faction-state-chart>
         </div>
     </div>
 </div>
