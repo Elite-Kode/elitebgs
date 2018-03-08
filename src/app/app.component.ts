@@ -61,4 +61,8 @@ export class AppComponent implements OnInit {
         }
         this.linkRef.href = this.themeService.getTheme().href;
     }
+
+    getThemeName() {
+        return this.themeService.getTheme().name;
+    }
 }

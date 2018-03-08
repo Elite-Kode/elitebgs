@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HighchartsDarkTheme, HighchartsLightTheme } from './highChartsTheme';
-import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Highcharts } from 'angular-highcharts';
 import cloneDeep from 'lodash-es/cloneDeep'
