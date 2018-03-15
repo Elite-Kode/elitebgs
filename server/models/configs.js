@@ -27,7 +27,13 @@ module.exports = new Promise((resolve, reject) => {
         admin_channel_id: String,
         invite_channel_id: String,
         editor_role_id: String,
-        guest_role_id: String
+        guest_role_id: String,
+        blacklisted_software: [String],
+        version_software: [{
+            name: String,
+            version: String
+        }],
+        time_offset: Number
     });
 
     let model = connection.model('configs', config);
