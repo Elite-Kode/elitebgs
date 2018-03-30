@@ -1,12 +1,13 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from '@clr/angular';
+import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { EBGSFactionsV3WOHistory } from '../../typings';
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
 
 @Component({
@@ -26,8 +27,11 @@ export class FactionListComponent implements OnInit {
         factionName: new FormControl()
     });
     constructor(
-        private factionService: FactionsService
-    ) { }
+        private factionService: FactionsService,
+        private titleService: Title
+    ) {
+        this.titleService.setTitle('Faction Search - Elite BGS');
+    }
 
     showFaction(factions: EBGSFactionsV3WOHistory) {
         this.totalRecords = factions.total;
@@ -63,19 +67,19 @@ export class FactionListComponent implements OnInit {
 
     ngOnInit() {
         this.factionForm.valueChanges
-        .debounceTime(300)
-        .switchMap(value => {
-            this.loading = true;
-            this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
-            if (!value.factionName) {
-                value.factionName = '';
-            }
-            return this.factionService
-                .getFactionsBegins(this.pageNumber.toString(), value.factionName)
-        })
-        .subscribe(factions => {
-            this.showFaction(factions);
-            this.loading = false;
-        });
+            .debounceTime(300)
+            .switchMap(value => {
+                this.loading = true;
+                this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
+                if (!value.factionName) {
+                    value.factionName = '';
+                }
+                return this.factionService
+                    .getFactionsBegins(this.pageNumber.toString(), value.factionName)
+            })
+            .subscribe(factions => {
+                this.showFaction(factions);
+                this.loading = false;
+            });
     }
 }

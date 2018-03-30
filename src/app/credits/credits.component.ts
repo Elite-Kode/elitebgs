@@ -1,4 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ServerService } from '../services/server.service';
 import { EBGSCredits } from '../typings';
 
@@ -10,7 +11,11 @@ export class CreditsComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     contributers: EBGSCredits[];
     patrons: EBGSCredits[];
-    constructor(private serverService: ServerService) {
+    constructor(
+        private serverService: ServerService,
+        private titleService: Title
+    ) {
+        this.titleService.setTitle('Credits - Elite BGS');
         this.contributers = [];
         this.patrons = [];
     }

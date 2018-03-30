@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
@@ -21,7 +22,8 @@ export class SystemViewComponent implements OnInit {
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private titleService: Title
     ) { }
 
     ngOnInit() {
@@ -44,6 +46,7 @@ export class SystemViewComponent implements OnInit {
                         state.state = FDevIDs.state[state.state].name;
                     });
                 });
+                this.titleService.setTitle(this.systemData.name + ' - Elite BGS');
                 this.getEditAllowed();
             });
     }
