@@ -1,4 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-admin',
@@ -7,5 +8,7 @@ import { Component, HostBinding } from '@angular/core';
 })
 export class AdminComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
-    constructor() { }
+    constructor(private titleService: Title) {
+        this.titleService.setTitle('Admin - Elite BGS');
+    }
 }

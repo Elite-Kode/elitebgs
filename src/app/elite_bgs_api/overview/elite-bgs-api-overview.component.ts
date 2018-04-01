@@ -1,4 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-ebgs-api-overview',
@@ -6,5 +7,7 @@ import { Component, HostBinding } from '@angular/core';
 })
 export class EliteBgsApiOverviewComponent {
     @HostBinding('class.content-container') contentContainer = true;
-    constructor() { }
+    constructor(private titleService: Title) {
+        this.titleService.setTitle('Elite BGS API - Elite BGS');
+    }
 }

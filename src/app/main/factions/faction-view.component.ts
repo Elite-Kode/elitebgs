@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
@@ -20,7 +21,8 @@ export class FactionViewComponent implements OnInit {
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private titleService: Title
     ) { }
 
     ngOnInit() {
@@ -40,6 +42,7 @@ export class FactionViewComponent implements OnInit {
                         state.state = FDevIDs.state[state.state].name;
                     });
                 });
+                this.titleService.setTitle(this.factionData.name + ' - Elite BGS');
             })
     }
 
@@ -76,9 +79,9 @@ export class FactionViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-        .getUser()
-        .subscribe(user => {
-            this.user = user;
-        });
+            .getUser()
+            .subscribe(user => {
+                this.user = user;
+            });
     }
 }

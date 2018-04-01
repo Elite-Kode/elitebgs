@@ -1,4 +1,5 @@
 import { Component, OnInit, HostBinding, Inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { EBGSUser } from 'app/typings';
@@ -21,6 +22,7 @@ export class ProfileComponent implements OnInit {
     deleteMethods: IDeleteMethodsSchema;
     constructor(
         private authenticationService: AuthenticationService,
+        private titleService: Title,
         @Inject(DOCUMENT) private document: Document
     ) {
         this.deleteMethods = {
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
                     });
             }
         }
+        this.titleService.setTitle('Profile - Elite BGS');
     }
 
     ngOnInit(): void {

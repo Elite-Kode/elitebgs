@@ -1,4 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 
@@ -9,7 +10,8 @@ import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 export class EddbApiDocsComponent {
     @HostBinding('class.u-main-container') mainContainer = true;
     specs: IInputSpec[];
-    constructor() {
+    constructor(private titleService: Title) {
+        this.titleService.setTitle('EDDB API Docs - Elite BGS');
         this.specs = [
             {
                 versionName: 'V1',

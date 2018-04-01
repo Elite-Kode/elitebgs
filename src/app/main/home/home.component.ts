@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
@@ -23,8 +24,11 @@ export class HomeComponent implements OnInit {
     constructor(
         private authenticationService: AuthenticationService,
         private factionsService: FactionsService,
-        private systemsService: SystemsService
-    ) { }
+        private systemsService: SystemsService,
+        private titleService: Title
+    ) {
+        this.titleService.setTitle('Elite BGS');
+    }
 
     ngOnInit(): void {
         this.getAuthentication();

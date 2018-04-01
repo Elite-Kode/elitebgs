@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSUser, EBGSStationV4Schema } from '../../typings';
@@ -21,7 +22,8 @@ export class StationViewComponent implements OnInit {
     constructor(
         private stationService: StationsService,
         private route: ActivatedRoute,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private titleService: Title
     ) { }
 
     ngOnInit() {
@@ -35,6 +37,7 @@ export class StationViewComponent implements OnInit {
                 this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
                 this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
                 this.stationData.state = FDevIDs.state[this.stationData.state].name;
+                this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
                 // this.getEditAllowed();
                 this.editAllowed = false;   // Temporarily edit is disabled
             });

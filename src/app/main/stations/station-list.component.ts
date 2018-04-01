@@ -1,6 +1,7 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from '@clr/angular';
+import { Title } from '@angular/platform-browser';
 import { StationsService } from '../../services/stations.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { IStation } from './station.interface';
@@ -26,8 +27,11 @@ export class StationListComponent implements OnInit {
         stationName: new FormControl()
     });
     constructor(
-        private stationService: StationsService
-    ) { }
+        private stationService: StationsService,
+        private titleService: Title
+    ) {
+        this.titleService.setTitle('Station Search - Elite BGS');
+    }
 
     showStation(stations: EBGSStationsV4WOHistory) {
         this.totalRecords = stations.total;

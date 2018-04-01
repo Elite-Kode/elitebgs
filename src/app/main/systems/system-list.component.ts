@@ -1,6 +1,7 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { State } from '@clr/angular';
+import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
@@ -26,8 +27,11 @@ export class SystemListComponent implements OnInit {
         systemName: new FormControl()
     });
     constructor(
-        private systemService: SystemsService
-    ) { }
+        private systemService: SystemsService,
+        private titleService: Title
+    ) {
+        this.titleService.setTitle('System Search - Elite BGS');
+    }
 
     showSystem(systems: EBGSSystemsV3WOHistory) {
         this.totalRecords = systems.total;
