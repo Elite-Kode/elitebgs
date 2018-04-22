@@ -744,7 +744,7 @@ function Journal() {
                                         system_id: system._id
                                     }).sort({ updated_at: -1 })
                                         .limit(2).lean();
-                                    if (systemHistory[1].government !== message.SystemGovernment.toLowerCase() ||
+                                    if (systemHistory.length < 2 || systemHistory[1].government !== message.SystemGovernment.toLowerCase() ||
                                         systemHistory[1].allegiance !== message.SystemAllegiance.toLowerCase() ||
                                         systemHistory[1].state !== message.FactionState.toLowerCase() ||
                                         systemHistory[1].security !== message.SystemSecurity.toLowerCase() ||
@@ -1139,7 +1139,7 @@ function Journal() {
                                                         system_lower: faction.system_name_lower
                                                     }).sort({ updated_at: -1 })
                                                         .limit(2).lean();
-                                                    if (factionHistory[1].system_lower === message.StarSystem.toLowerCase() &&
+                                                    if (factionHistory.length >= 2 && factionHistory[1].system_lower === message.StarSystem.toLowerCase() &&
                                                         factionHistory[1].state === messageFaction.FactionState.toLowerCase() &&
                                                         factionHistory[1].influence === messageFaction.Influence &&
                                                         _.isEqual(_.sortBy(factionHistory[1].pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
@@ -1385,7 +1385,7 @@ function Journal() {
                                         station_id: station._id
                                     }).sort({ updated_at: -1 })
                                         .limit(2).lean();
-                                    if (stationHistory.government !== message.StationGovernment.toLowerCase() ||
+                                    if (stationHistory.length < 2 || stationHistory.government !== message.StationGovernment.toLowerCase() ||
                                         stationHistory.allegiance !== message.StationAllegiance.toLowerCase() ||
                                         stationHistory.state !== message.FactionState.toLowerCase() ||
                                         stationHistory.controlling_minor_faction !== message.StationFaction.toLowerCase() ||
