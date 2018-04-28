@@ -949,7 +949,7 @@ function Journal() {
 
                                         if (!faction.eddb_id) {
                                             try {
-                                                let id = this.getFactionEDDBId(faction.name);
+                                                let id = await this.getFactionEDDBId(faction.name);
                                                 faction.eddb_id = id;
                                                 model.findOneAndUpdate(
                                                     {
@@ -1053,7 +1053,7 @@ function Journal() {
                                             }]
                                         };
                                         try {
-                                            let id = this.getFactionEDDBId(messageFaction.Name);
+                                            let id = await this.getFactionEDDBId(messageFaction.Name);
                                             factionObject.eddb_id = id;
                                             model.findOneAndUpdate(
                                                 {
@@ -1210,48 +1210,47 @@ function Journal() {
                                                 systems: systemHistory
                                             }
                                             if (!dbFaction.eddb_id) {
-                                                this.getFactionEDDBId(messageFaction.Name)
-                                                    .then(id => {
-                                                        factionObject.eddb_id = id;
-                                                        model.findOneAndUpdate(
-                                                            {
-                                                                name: messageFaction.Name
-                                                            },
-                                                            factionObject,
-                                                            {
-                                                                upsert: true,
-                                                                runValidators: true,
-                                                                new: true
-                                                            })
-                                                            .then(factionReturn => {
-                                                                historyObject.faction_id = factionReturn._id;
-                                                                historyObject.faction_name_lower = factionReturn.name_lower;
-                                                                this.setFactionHistory(historyObject);
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(err);
-                                                            });
-                                                    })
-                                                    .catch(() => {
-                                                        model.findOneAndUpdate(
-                                                            {
-                                                                name: messageFaction.Name
-                                                            },
-                                                            factionObject,
-                                                            {
-                                                                upsert: true,
-                                                                runValidators: true,
-                                                                new: true
-                                                            })
-                                                            .then(factionReturn => {
-                                                                historyObject.faction_id = factionReturn._id;
-                                                                historyObject.faction_name_lower = factionReturn.name_lower;
-                                                                this.setFactionHistory(historyObject);
-                                                            })
-                                                            .catch(err => {
-                                                                console.log(err);
-                                                            });
-                                                    });
+                                                try {
+                                                    let id = await this.getFactionEDDBId(messageFaction.Name);
+                                                    factionObject.eddb_id = id;
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                        .then(factionReturn => {
+                                                            historyObject.faction_id = factionReturn._id;
+                                                            historyObject.faction_name_lower = factionReturn.name_lower;
+                                                            this.setFactionHistory(historyObject);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        });
+                                                } catch (err) {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                        .then(factionReturn => {
+                                                            historyObject.faction_id = factionReturn._id;
+                                                            historyObject.faction_name_lower = factionReturn.name_lower;
+                                                            this.setFactionHistory(historyObject);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        });
+                                                }
                                             } else {
                                                 model.findOneAndUpdate(
                                                     {
@@ -1277,40 +1276,39 @@ function Journal() {
                                                 updated_at: message.timestamp
                                             };
                                             if (!dbFaction.eddb_id) {
-                                                this.getFactionEDDBId(messageFaction.Name)
-                                                    .then(id => {
-                                                        factionObject.eddb_id = id;
-                                                        model.findOneAndUpdate(
-                                                            {
-                                                                name: messageFaction.Name
-                                                            },
-                                                            factionObject,
-                                                            {
-                                                                upsert: true,
-                                                                runValidators: true,
-                                                                new: true
-                                                            })
-                                                            .exec()
-                                                            .catch(err => {
-                                                                console.log(err);
-                                                            });
-                                                    })
-                                                    .catch(() => {
-                                                        model.findOneAndUpdate(
-                                                            {
-                                                                name: messageFaction.Name
-                                                            },
-                                                            factionObject,
-                                                            {
-                                                                upsert: true,
-                                                                runValidators: true,
-                                                                new: true
-                                                            })
-                                                            .exec()
-                                                            .catch(err => {
-                                                                console.log(err);
-                                                            });
-                                                    });
+                                                try {
+                                                    let id = await this.getFactionEDDBId(messageFaction.Name);
+                                                    factionObject.eddb_id = id;
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                        .exec()
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        });
+                                                } catch (err) {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                        .exec()
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                        });
+                                                }
                                             } else {
                                                 model.findOneAndUpdate(
                                                     {
