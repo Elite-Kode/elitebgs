@@ -939,7 +939,11 @@ router.get('/systems', (req, res, next) => {
                                                 let index = gotFactions.findIndex(findFaction => {
                                                     return findFaction.name_lower === faction.name_lower;
                                                 });
-                                                faction.faction_id = gotFactions[index]._id;
+                                                if (index !== -1) {
+                                                    faction.faction_id = gotFactions[index]._id;
+                                                } else {
+                                                    faction.faction_id = 0;
+                                                }
                                             })
                                             resolve();
                                         }).catch(err => {
