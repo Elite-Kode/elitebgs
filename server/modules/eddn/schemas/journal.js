@@ -935,8 +935,8 @@ function Journal() {
                             let notInDb = _.difference(messageFactionsLower, dbFactionsLower);
                             // To remove are those factions which are not present in this system anymore
                             // Such factions need to be updated too
-                            toRemove.forEach(factionNameLower => {
-                                factionsPresentInSystemDB.forEach(faction => {
+                            for (let factionNameLower of toRemove) {
+                                for (let faction of factionsPresentInSystemDB) {
                                     if (factionNameLower === faction.name_lower && faction.updated_at < new Date(message.timestamp)) {
                                         let factionPresence = [];
                                         faction.faction_presence.forEach(system => {
@@ -995,12 +995,12 @@ function Journal() {
                                                 })
                                         }
                                     }
-                                })
-                            })
+                                }
+                            }
                             // Not In DB means that the message contains a faction which is not present in the db yet
                             // So one must create a new record
-                            notInDb.forEach(factionNameLower => {
-                                message.Factions.forEach(messageFaction => {
+                            for (let factionNameLower of notInDb) {
+                                for (let messageFaction of message.Factions) {
                                     if (messageFaction.Name.toLowerCase() === factionNameLower) {
                                         let pendingStates = [];
                                         if (messageFaction.PendingStates) {
@@ -1094,8 +1094,8 @@ function Journal() {
                                                 });
                                         }
                                     }
-                                })
-                            })
+                                }
+                            }
                             // dbFactionsLower are the factions present in the db. So next we need to update them
                             // factionsAllDetails has all the factions details
                             for (let dbFaction of factionsAllDetails) {
