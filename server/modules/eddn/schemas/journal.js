@@ -1383,11 +1383,11 @@ function Journal() {
                                         station_id: station._id
                                     }).sort({ updated_at: -1 })
                                         .limit(2).lean();
-                                    if (stationHistory.length < 2 || stationHistory.government !== message.StationGovernment.toLowerCase() ||
-                                        stationHistory.allegiance !== message.StationAllegiance.toLowerCase() ||
-                                        stationHistory.state !== message.FactionState.toLowerCase() ||
-                                        stationHistory.controlling_minor_faction !== message.StationFaction.toLowerCase() ||
-                                        !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
+                                    if (stationHistory.length < 2 || stationHistory[1].government !== message.StationGovernment.toLowerCase() ||
+                                        stationHistory[1].allegiance !== message.StationAllegiance.toLowerCase() ||
+                                        stationHistory[1].state !== message.FactionState.toLowerCase() ||
+                                        stationHistory[1].controlling_minor_faction !== message.StationFaction.toLowerCase() ||
+                                        !_.isEqual(_.sortBy(stationHistory[1].services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
                                         stationObject.type = message.StationType;
                                         stationObject.system = message.StarSystem;
@@ -1628,6 +1628,9 @@ function Journal() {
             ) {
                 if (!message.FactionState) {
                     message.FactionState = "None";
+                }
+                if(!message.StationAllegiance){
+                    message.StationAllegiance = "Independent";
                 }
                 let configCheckModel = await configModel;
                 let configRecord = await configCheckModel.findOne({}).lean();
