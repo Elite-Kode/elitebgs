@@ -19,6 +19,7 @@
 const express = require('express');
 var cors = require('cors');
 const _ = require('lodash');
+const BluePromise = require('bluebird');
 
 let router = express.Router();
 
@@ -108,6 +109,10 @@ let router = express.Router();
    *         type: string
    *       - name: powerstatename
    *         description: Comma seperated states of the powers in influence in the system the station is in.
+   *         in: query
+   *         type: string
+   *       - name: systemname
+   *         description: Name of the system the station is in.
    *         in: query
    *         type: string
    *       - name: page
@@ -234,8 +239,8 @@ router.get('/', cors(), (req, res, next) => {
             if (req.query.page) {
                 page = req.query.page;
             }
-            if (req.query.permit || req.query.power || req.query.powerstatename) {
-                systemSearch = new Promise((resolve, reject) => {
+            if (req.query.permit || req.query.power || req.query.powerstatename || req.query.systemname) {
+                systemSearch = new BluePromise((resolve, reject) => {
                     require('../../../models/systems')
                         .then(systems => {
                             let systemQuery = new Object;
@@ -250,6 +255,9 @@ router.get('/', cors(), (req, res, next) => {
                             if (req.query.powerstatename) {
                                 let powerStates = arrayfy(req.query.powerstatename);
                                 systemQuery.power_state = { $in: powerStates };
+                            }
+                            if (req.query.systemname) {
+                                systemQuery.name_lower = req.query.systemname.toLowerCase();
                             }
                             let systemProjection = {
                                 _id: 0,
@@ -293,7 +301,7 @@ router.get('/', cors(), (req, res, next) => {
                     .catch(next)
             }
 
-            if (factionSearch instanceof BluePromise && systemSearch instanceof BluePromise) {
+            if ((factionSearch instanceof BluePromise) && (systemSearch instanceof BluePromise)) {
                 let searches = {
                     faction: factionSearch,
                     system: systemSearch

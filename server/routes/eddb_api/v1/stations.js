@@ -19,6 +19,7 @@
 const express = require('express');
 const passport = require('passport');
 const _ = require('lodash');
+const BluePromise = require('bluebird');
 
 let router = express.Router();
 
@@ -232,7 +233,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                 query['economies.name_lower'] = req.query.economyname.toLowerCase();
             }
             if (req.query.permit || req.query.power || req.query.powerstatename) {
-                systemSearch = new Promise((resolve, reject) => {
+                systemSearch = new BluePromise((resolve, reject) => {
                     require('../../../models/systems')
                         .then(systems => {
                             let systemQuery = new Object;
@@ -287,7 +288,7 @@ router.get('/', passport.authenticate('basic', { session: false }), (req, res, n
                     .catch(next)
             }
 
-            if (factionSearch instanceof BluePromise && systemSearch instanceof BluePromise) {
+            if ((factionSearch instanceof BluePromise) && (systemSearch instanceof BluePromise)) {
                 let searches = {
                     faction: factionSearch,
                     system: systemSearch
