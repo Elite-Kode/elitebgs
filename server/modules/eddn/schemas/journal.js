@@ -19,6 +19,7 @@
 const _ = require('lodash');
 const request = require('request');
 const semver = require('semver');
+const moment = require('moment');
 
 const ebgsFactionsModel = require('../../../models/ebgs_factions');
 const ebgsSystemsModel = require('../../../models/ebgs_systems');
@@ -750,7 +751,8 @@ function Journal() {
                                         systemHistory[1].security !== message.SystemSecurity.toLowerCase() ||
                                         systemHistory[1].population !== message.Population ||
                                         systemHistory[1].controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
-                                        !_.isEqual(_.sortBy(systemHistory[1].factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
+                                        !_.isEqual(_.sortBy(systemHistory[1].factions, ['name_lower']), _.sortBy(factionArray, ['name_lower'])) ||
+                                        moment.duration(moment(message.timestamp).diff(systemHistory[1].updated_at)).asHours() > 48) {
 
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
@@ -1143,7 +1145,8 @@ function Journal() {
                                                         factionHistory[1].state === messageFaction.FactionState.toLowerCase() &&
                                                         factionHistory[1].influence === messageFaction.Influence &&
                                                         _.isEqual(_.sortBy(factionHistory[1].pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
-                                                        _.isEqual(_.sortBy(factionHistory[1].recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                                                        _.isEqual(_.sortBy(factionHistory[1].recovering_states, ['state']), _.sortBy(recoveringStates, ['state'])) &&
+                                                        moment.duration(moment(message.timestamp).diff(factionHistory[1].updated_at)).asHours() < 48) {
                                                         doUpdate = false;
                                                         dontUpdateTime = true;
                                                     }
@@ -1387,7 +1390,8 @@ function Journal() {
                                         stationHistory[1].allegiance !== message.StationAllegiance.toLowerCase() ||
                                         stationHistory[1].state !== message.FactionState.toLowerCase() ||
                                         stationHistory[1].controlling_minor_faction !== message.StationFaction.toLowerCase() ||
-                                        !_.isEqual(_.sortBy(stationHistory[1].services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
+                                        !_.isEqual(_.sortBy(stationHistory[1].services, ['name_lower']), _.sortBy(serviceArray, ['name_lower'])) ||
+                                        moment.duration(moment(message.timestamp).diff(stationHistory[1].updated_at)).asHours() > 48) {
 
                                         stationObject.type = message.StationType;
                                         stationObject.system = message.StarSystem;
@@ -1629,7 +1633,7 @@ function Journal() {
                 if (!message.FactionState) {
                     message.FactionState = "None";
                 }
-                if(!message.StationAllegiance){
+                if (!message.StationAllegiance) {
                     message.StationAllegiance = "Independent";
                 }
                 let configCheckModel = await configModel;
