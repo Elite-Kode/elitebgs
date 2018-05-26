@@ -14,6 +14,7 @@ import { AdminModule } from './admin/admin.module';
 import { MainModule } from './main/main.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfileComponent } from './profile/profile.component';
+import { ProfileReportComponent } from './profile/profile-report.component';
 import { AboutComponent } from './about/about.component';
 import { TandCComponent } from './about/tandc.component';
 import { DisclaimerComponent } from './about/disclaimer.component';
@@ -35,6 +36,7 @@ import { ThemeService } from './services/theme.service';
     declarations: [
         AppComponent,
         ProfileComponent,
+        ProfileReportComponent,
         AboutComponent,
         TandCComponent,
         DisclaimerComponent,

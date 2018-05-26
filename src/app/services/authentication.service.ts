@@ -57,4 +57,8 @@ export class AuthenticationService {
             params: new HttpParams().set('userid', id)
         });
     }
+
+    putUser(user: EBGSUser): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/users', user);
+    }
 }

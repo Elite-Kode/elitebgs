@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ProfileComponent } from './profile/profile.component';
+import { ProfileReportComponent } from './profile/profile-report.component';
 import { AboutComponent } from './about/about.component';
 import { TandCComponent } from './about/tandc.component';
 import { DisclaimerComponent } from './about/disclaimer.component';
@@ -15,6 +16,10 @@ const appRoutes: Routes = [
     {
         path: 'profile',
         component: ProfileComponent
+    },
+    {
+        path: 'profile/report',
+        component: ProfileReportComponent
     },
     {
         path: 'about',

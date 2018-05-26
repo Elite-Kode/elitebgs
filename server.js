@@ -131,17 +131,17 @@ app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
     res.send(swagger.EBGSAPIv4);
 });
 
-app.use('/api/eddb/v1/bodies', bodiesV1);
-app.use('/api/eddb/v1/commodities', commoditiesV1);
-app.use('/api/eddb/v1/factions', factionsV1);
-app.use('/api/eddb/v1/populatedsystems', populatedSystemsV1);
-app.use('/api/eddb/v1/stations', stationsV1);
-app.use('/api/eddb/v1/systems', systemsV1);
-app.use('/api/eddb/v1/downloaddumps', downloadDumpsV1);
-app.use('/api/eddb/v1/insertdumps', insertDumpsV1);
-app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
-app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
-app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
+// app.use('/api/eddb/v1/bodies', bodiesV1);
+// app.use('/api/eddb/v1/commodities', commoditiesV1);
+// app.use('/api/eddb/v1/factions', factionsV1);
+// app.use('/api/eddb/v1/populatedsystems', populatedSystemsV1);
+// app.use('/api/eddb/v1/stations', stationsV1);
+// app.use('/api/eddb/v1/systems', systemsV1);
+// app.use('/api/eddb/v1/downloaddumps', downloadDumpsV1);
+// app.use('/api/eddb/v1/insertdumps', insertDumpsV1);
+// app.use('/api/eddb/v1/updatedumps', updateDumpsV1);
+// app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
+// app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
 let host = '';
 if (process.env.NODE_ENV === 'development') {
@@ -158,18 +158,18 @@ app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, 
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
 app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v4/api-docs.json`));
 
-app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
-app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
+// app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
+// app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
 
-app.use('/api/eddb/v2/bodies', bodiesV2);
-app.use('/api/eddb/v2/factions', factionsV2);
-app.use('/api/eddb/v2/populatedsystems', populatedSystemsV2);
-app.use('/api/eddb/v2/stations', stationsV2);
-app.use('/api/eddb/v2/systems', systemsV2);
-app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
+// app.use('/api/eddb/v2/bodies', bodiesV2);
+// app.use('/api/eddb/v2/factions', factionsV2);
+// app.use('/api/eddb/v2/populatedsystems', populatedSystemsV2);
+// app.use('/api/eddb/v2/stations', stationsV2);
+// app.use('/api/eddb/v2/systems', systemsV2);
+// app.use('/api/eddb/v2/downloadupdate', downloadUpdateV2);
 
-app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
-app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
+// app.use('/api/ebgs/v2/factions', ebgsFactionsV2);
+// app.use('/api/ebgs/v2/systems', ebgsSystemsV2);
 
 app.use('/api/eddb/v3/bodies', bodiesV3);
 app.use('/api/eddb/v3/factions', factionsV3);
@@ -178,8 +178,8 @@ app.use('/api/eddb/v3/stations', stationsV3);
 app.use('/api/eddb/v3/systems', systemsV3);
 app.use('/api/eddb/v3/downloadupdate', downloadUpdateV3);
 
-app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
-app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
+// app.use('/api/ebgs/v3/factions', ebgsFactionsV3);
+// app.use('/api/ebgs/v3/systems', ebgsSystemsV3);
 
 app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
 app.use('/api/ebgs/v4/systems', ebgsSystemsV4);
@@ -265,14 +265,7 @@ require('./server/models/users')
         console.log(err);
     })
 
-let scopes = ['identify', 'email', 'guilds'];
-
-passport.use(new DiscordStrategy({
-    clientID: secrets.client_id,
-    clientSecret: secrets.client_secret,
-    callbackURL: `http://${host}/auth/discord/callback`,
-    scope: scopes
-}, (accessToken, refreshToken, profile, done) => {
+let onAuthentication = (accessToken, refreshToken, profile, done) => {
     const client = require('./server/modules/discord/client');
     const config = require('./server/models/configs');
     require('./server/models/ebgs_users')
@@ -280,17 +273,21 @@ passport.use(new DiscordStrategy({
             model.findOne({ id: profile.id })
                 .then(user => {
                     if (user) {
-                        let user = {
+                        let updatedUser = {
                             id: profile.id,
                             username: profile.username,
-                            email: profile.email,
-                            avatar: profile.avatar,
                             discriminator: profile.discriminator,
-                            guilds: profile.guilds
+                            guilds: profile.guilds ? profile.guilds : user.guilds
                         };
+                        if (user.email) {
+                            updatedUser.email = profile.email;
+                        }
+                        if (user.avatar || user.avatar === null) {
+                            updatedUser.avatar = profile.avatar
+                        }
                         model.findOneAndUpdate(
                             { id: profile.id },
-                            user,
+                            updatedUser,
                             {
                                 upsert: false,
                                 runValidators: true
@@ -325,7 +322,7 @@ passport.use(new DiscordStrategy({
                                             },
                                             invite: invitePromise.code,
                                             invite_used: false,
-                                            guilds: profile.guilds
+                                            guilds: profile.guilds ? profile.guilds : []
                                         };
                                         model.findOneAndUpdate(
                                             { id: profile.id },
@@ -355,6 +352,27 @@ passport.use(new DiscordStrategy({
         .catch(err => {
             done(err);
         })
-}));
+}
+
+passport.use('discord', new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `http://${host}/auth/discord/callback`,
+    scope: ['identify']
+}, onAuthentication));
+
+passport.use('discord-email', new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `http://${host}/auth/discord/callbackemail`,
+    scope: ['email']
+}, onAuthentication));
+
+passport.use('discord-guilds', new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `http://${host}/auth/discord/callbackguilds`,
+    scope: ['guilds']
+}, onAuthentication));
 
 module.exports = app;

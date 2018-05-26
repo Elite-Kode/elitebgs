@@ -6,7 +6,7 @@ import { ServerService } from '../../services/server.service';
 import { EBGSUsers } from '../../typings';
 
 @Component({
-    selector: 'app-admin-users',
+    selector: 'app-admin-users-list',
     templateUrl: './admin-users-list.component.html'
 })
 export class AdminUsersListComponent implements OnInit {
