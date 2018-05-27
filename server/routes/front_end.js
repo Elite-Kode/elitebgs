@@ -160,16 +160,26 @@ router.get('/users', (req, res, next) => {
 
 router.put('/users', (req, res, next) => {
     try {
-        if (req.user.access === 0) {
+        if (req.user.access === 0 || req.user._id.toString() === req.body._id) {
             ebgsUsers
                 .then(users => {
                     let body = req.body;
-                    if (validateUser(req.body)) {
+                    body.$unset = {};
+                    for (const key in body) {
+                        if (body.hasOwnProperty(key)) {
+                            const element = body[key];
+                            if (element === null) {
+                                delete body[key];
+                                body.$unset[key] = 1;
+                            }
+                        }
+                    }
+                    if (validateUser(body)) {
                         users.findOneAndUpdate(
                             {
-                                _id: req.body._id
+                                _id: body._id
                             },
-                            req.body,
+                            body,
                             {
                                 upsert: false,
                                 runValidators: true
@@ -1041,36 +1051,39 @@ router.get('/stations', (req, res, next) => {
 let validateUser = user => {
     if (_.has(user, '_id')
         && _.has(user, 'username')
-        && _.has(user, 'email')
         && _.has(user, 'discriminator')
         && _.has(user, 'access')
-        && _.has(user, 'os_contribution')
-        && _.has(user, 'patronage')
     ) {
-        user.factions.forEach(faction => {
-            if (!_.has(faction, 'name')
-                || !_.has(faction, 'name_lower')
-                || faction.name.toLowerCase() !== faction.name_lower
-            ) {
-                return false;
-            }
-        });
-        user.systems.forEach(system => {
-            if (!_.has(system, 'name')
-                || !_.has(system, 'name_lower')
-                || system.name.toLowerCase() !== system.name_lower
-            ) {
-                return false;
-            }
-        });
-        user.editable_factions.forEach(faction => {
-            if (!_.has(faction, 'name')
-                || !_.has(faction, 'name_lower')
-                || faction.name.toLowerCase() !== faction.name_lower
-            ) {
-                return false;
-            }
-        });
+        if (user.factions) {
+            user.factions.forEach(faction => {
+                if (!_.has(faction, 'name')
+                    || !_.has(faction, 'name_lower')
+                    || faction.name.toLowerCase() !== faction.name_lower
+                ) {
+                    return false;
+                }
+            });
+        }
+        if (user.systems) {
+            user.systems.forEach(system => {
+                if (!_.has(system, 'name')
+                    || !_.has(system, 'name_lower')
+                    || system.name.toLowerCase() !== system.name_lower
+                ) {
+                    return false;
+                }
+            });
+        }
+        if (user.editable_factions) {
+            user.editable_factions.forEach(faction => {
+                if (!_.has(faction, 'name')
+                    || !_.has(faction, 'name_lower')
+                    || faction.name.toLowerCase() !== faction.name_lower
+                ) {
+                    return false;
+                }
+            });
+        }
         return true;
     } else {
         return false;

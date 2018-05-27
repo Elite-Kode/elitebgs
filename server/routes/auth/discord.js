@@ -24,6 +24,14 @@ let router = express.Router();
 
 router.get('/', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }));
 
+router.get('/email', passport.authenticate('discord-email', { successRedirect: '/profile', failureRedirect: '/' }));
+
+router.get('/guilds', passport.authenticate('discord-guilds', { successRedirect: '/profile', failureRedirect: '/' }));
+
 router.get('/callback', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }));
+
+router.get('/callbackemail', passport.authenticate('discord-email', { successRedirect: '/profile', failureRedirect: '/profile' }));
+
+router.get('/callbackguilds', passport.authenticate('discord-guilds', { successRedirect: '/profile', failureRedirect: '/profile' }));
 
 module.exports = router;

@@ -2,13 +2,13 @@ import { Component, HostBinding, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { State } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
-import { IAdminUsers, IActionMethodsSchema } from './admin-users.interface';
+import { IActionMethodsSchema } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { EBGSUser } from '../../typings';
 
 @Component({
-    selector: 'app-admin-users',
+    selector: 'app-admin-users-view',
     templateUrl: './admin-users-view.component.html',
     styleUrls: ['./admin-users-view.component.scss']
 })
@@ -43,11 +43,13 @@ export class AdminUsersViewComponent implements OnInit {
         this.actionMethods = {
             save: () => {
                 console.log(`Saving Data`);
-                this.userUnderEdit.donation.forEach(element => {
-                    if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {
-                        delete element._id;
-                    }
-                });
+                if (this.userUnderEdit.donation) {
+                    this.userUnderEdit.donation.forEach(element => {
+                        if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {
+                            delete element._id;
+                        }
+                    });
+                }
                 this.serverService.putUser(this.userUnderEdit)
                     .subscribe(status => {
                         if (status === true) {
