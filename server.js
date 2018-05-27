@@ -265,7 +265,7 @@ require('./server/models/users')
         console.log(err);
     })
 
-let onAuthentication = (accessToken, refreshToken, profile, done) => {
+let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
     const client = require('./server/modules/discord/client');
     const config = require('./server/models/configs');
     require('./server/models/ebgs_users')
@@ -279,7 +279,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done) => {
                             discriminator: profile.discriminator,
                             guilds: profile.guilds ? profile.guilds : user.guilds
                         };
-                        if (user.email) {
+                        if (user.email || type === 'email') {
                             updatedUser.email = profile.email;
                         }
                         if (user.avatar || user.avatar === null) {
@@ -311,7 +311,6 @@ let onAuthentication = (accessToken, refreshToken, profile, done) => {
                                         let user = {
                                             id: profile.id,
                                             username: profile.username,
-                                            email: profile.email,
                                             avatar: profile.avatar,
                                             discriminator: profile.discriminator,
                                             access: 1,
@@ -354,25 +353,37 @@ let onAuthentication = (accessToken, refreshToken, profile, done) => {
         })
 }
 
+let onAuthenticationIdentify = (accessToken, refreshToken, profile, done) => {
+    onAuthentication(accessToken, refreshToken, profile, done, 'identify');
+}
+
+let onAuthenticationEmail = (accessToken, refreshToken, profile, done) => {
+    onAuthentication(accessToken, refreshToken, profile, done, 'email');
+}
+
+let onAuthenticationGuilds = (accessToken, refreshToken, profile, done) => {
+    onAuthentication(accessToken, refreshToken, profile, done, 'guilds');
+}
+
 passport.use('discord', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
     callbackURL: `http://${host}/auth/discord/callback`,
     scope: ['identify']
-}, onAuthentication));
+}, onAuthenticationIdentify));
 
 passport.use('discord-email', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
     callbackURL: `http://${host}/auth/discord/callbackemail`,
     scope: ['email']
-}, onAuthentication));
+}, onAuthenticationEmail));
 
 passport.use('discord-guilds', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
     callbackURL: `http://${host}/auth/discord/callbackguilds`,
     scope: ['guilds']
-}, onAuthentication));
+}, onAuthenticationGuilds));
 
 module.exports = app;
