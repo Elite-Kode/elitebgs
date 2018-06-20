@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { EBGSFactionsV3, EBGSFactionsV3WOHistory, EBGSFactionV3Schema } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 

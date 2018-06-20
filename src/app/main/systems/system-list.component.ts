@@ -7,9 +7,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/switchMap';
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-system-list',
@@ -71,8 +70,8 @@ export class SystemListComponent implements OnInit {
 
     ngOnInit() {
         this.systemForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.systemName) {
@@ -80,7 +79,7 @@ export class SystemListComponent implements OnInit {
                 }
                 return this.systemService
                     .getSystemsBegins(this.pageNumber.toString(), value.systemName)
-            })
+            }))
             .subscribe(systems => {
                 this.showSystem(systems);
                 this.loading = false;

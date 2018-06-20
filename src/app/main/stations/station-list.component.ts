@@ -7,9 +7,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { IStation } from './station.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSStationsV4WOHistory } from '../../typings';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/switchMap';
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-station-list',
@@ -73,8 +72,8 @@ export class StationListComponent implements OnInit {
 
     ngOnInit() {
         this.stationForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.stationName) {
@@ -82,7 +81,7 @@ export class StationListComponent implements OnInit {
                 }
                 return this.stationService
                     .getStationsBegins(this.pageNumber.toString(), value.stationName)
-            })
+            }))
             .subscribe(stations => {
                 this.showStation(stations);
                 this.loading = false;

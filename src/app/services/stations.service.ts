@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { EBGSStationsV4WOHistory, EBGSStationsV4, EBGSStationV4Schema } from '../typings';
 // import { FactionsService } from './factions.service';
 import { CustomEncoder } from './custom.encoder';

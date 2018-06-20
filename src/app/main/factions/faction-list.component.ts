@@ -7,8 +7,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { EBGSFactionsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-faction-list',
@@ -67,8 +67,8 @@ export class FactionListComponent implements OnInit {
 
     ngOnInit() {
         this.factionForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.factionName) {
@@ -76,7 +76,7 @@ export class FactionListComponent implements OnInit {
                 }
                 return this.factionService
                     .getFactionsBegins(this.pageNumber.toString(), value.factionName)
-            })
+            }))
             .subscribe(factions => {
                 this.showFaction(factions);
                 this.loading = false;
