@@ -35,6 +35,7 @@ const ebgsHistorySystemV4Model = require('../../../models/ebgs_history_system_v4
 const ebgsHistoryStationV4Model = require('../../../models/ebgs_history_station_v4');
 
 const configModel = require('../../../models/configs');
+const tickTimeModel = require('../../../models/tick_times');
 
 module.exports = Journal;
 
@@ -710,6 +711,7 @@ function Journal() {
                     };
                     factionArray.push(factionObject);
                 });
+                let tickTimes = await (await tickTimeModel).findOne({}).lean();
                 ebgsSystemsV4Model
                     .then(async (model) => {
                         let system = await model.findOne(
@@ -726,6 +728,8 @@ function Journal() {
                         let eddbIdPromise;
                         if (system) {   // System exists in db
                             if (system.updated_at < new Date(message.timestamp)) {
+                                let bubble = system.z < 15000 ? 'sol' : 'colonia';
+
                                 if (!system.eddb_id) {
                                     eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
                                 } else {
@@ -739,7 +743,7 @@ function Journal() {
                                     system.population !== message.Population ||
                                     system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
                                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
-                                    // If the new record is different from the last record, check the second last record
+
                                     let historyModel = await ebgsHistorySystemV4Model;
                                     let timeNow = Date.now();
                                     let systemHistory = await historyModel.find({
@@ -750,6 +754,23 @@ function Journal() {
                                         }
                                     }).sort({ updated_at: -1 }).lean();
                                     if (this.checkSystemWHistory(message, systemHistory, factionArray)) {
+                                        if (moment.duration(moment(new Date(message.timestamp)).diff(moment(system.updated_at))).asMinutes() < tickTimes.delta_minutes) {
+                                            if (bubble === 'sol') {
+                                                if (moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.sol_start))).asHours() > tickTimes.start_gap_hours) {
+                                                    tickTimes.sol_start = message.timestamp;
+                                                }
+                                                tickTimes.sol_end = message.timestamp;
+                                            } else if (bubble === 'colonia') {
+                                                if (moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.colonia_start))).asHours() > tickTimes.start_gap_hours) {
+                                                    tickTimes.colonia_start = message.timestamp;
+                                                }
+                                                tickTimes.colonia_end = message.timestamp;
+                                            }
+                                            systemObject.tick_time = message.timestamp;
+                                            historyObject.tick_time = message.timestamp;
+                                        } else {
+                                            historyObject.tick_time = systemObject.tick_time;
+                                        }
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
                                         systemObject.state = message.FactionState;
@@ -769,7 +790,33 @@ function Journal() {
                                         historyObject.controlling_minor_faction = message.SystemFaction;
                                         historyObject.factions = factionArray;
                                     } else {
-                                        systemObject = {};
+                                        if (await checkFactionDataChanged(message, tickTimes)) {
+                                            if (bubble === 'sol') {
+                                                if (moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.sol_start))).asHours() > tickTimes.start_gap_hours) {
+                                                    tickTimes.sol_start = message.timestamp;
+                                                }
+                                                tickTimes.sol_end = message.timestamp;
+                                            } else if (bubble === 'colonia') {
+                                                if (moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.colonia_start))).asHours() > tickTimes.start_gap_hours) {
+                                                    tickTimes.colonia_start = message.timestamp;
+                                                }
+                                                tickTimes.colonia_end = message.timestamp;
+                                            }
+                                            systemObject.tick_time = message.timestamp;
+                                            systemObject.updated_at = message.timestamp;
+                                            historyObject.updated_at = message.timestamp;
+                                            historyObject.updated_by = "EDDN";
+                                            historyObject.government = message.SystemGovernment;
+                                            historyObject.allegiance = message.SystemAllegiance;
+                                            historyObject.state = message.FactionState;
+                                            historyObject.security = message.SystemSecurity;
+                                            historyObject.population = message.Population;
+                                            historyObject.controlling_minor_faction = message.SystemFaction;
+                                            historyObject.factions = factionArray;
+                                            historyObject.tick_time = message.timestamp;
+                                        } else {
+                                            systemObject = {};
+                                        }
                                     }
                                 } else {
                                     systemObject.updated_at = message.timestamp;
@@ -1099,55 +1146,11 @@ function Journal() {
                             for (let dbFaction of factionsAllDetails) {
                                 for (let messageFaction of message.Factions) {
                                     if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
-                                        let pendingStates = [];
-                                        if (messageFaction.PendingStates) {
-                                            messageFaction.PendingStates.forEach(pendingState => {
-                                                let pendingStateObject = {
-                                                    state: pendingState.State.toLowerCase(),
-                                                    trend: pendingState.Trend
-                                                };
-                                                pendingStates.push(pendingStateObject);
-                                            });
-                                        };
-                                        let recoveringStates = [];
-                                        if (messageFaction.RecoveringStates) {
-                                            messageFaction.RecoveringStates.forEach(recoveringState => {
-                                                let recoveringStateObject = {
-                                                    state: recoveringState.State.toLowerCase(),
-                                                    trend: recoveringState.Trend
-                                                };
-                                                recoveringStates.push(recoveringStateObject);
-                                            });
-                                        };
-
-                                        // Check if the incoming message has any different faction detail
-                                        let doUpdate = true;
-                                        let dontUpdateTime = false;
-                                        for (let faction of dbFaction.faction_presence) {
-                                            if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
-                                                if (faction.state === messageFaction.FactionState.toLowerCase() &&
-                                                    faction.influence === messageFaction.Influence &&
-                                                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
-                                                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
-                                                    doUpdate = false;
-                                                } else {
-                                                    let historyModel = await ebgsHistoryFactionV4Model;
-                                                    let timeNow = Date.now();
-                                                    let factionHistory = await historyModel.find({
-                                                        faction_id: dbFaction._id,
-                                                        system_lower: faction.system_name_lower,
-                                                        updated_at: {
-                                                            $lte: new Date(timeNow),
-                                                            $gte: new Date(timeNow - 172800000)
-                                                        }
-                                                    }).sort({ updated_at: -1 }).lean();
-                                                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, pendingStates, recoveringStates)) {
-                                                        doUpdate = false;
-                                                        dontUpdateTime = true;
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
+                                        let pendingStates = getDoFactionUpdate.pendingStates;
+                                        let recoveringStates = getDoFactionUpdate.recoveringStates;
+                                        let doUpdate = getDoFactionUpdate.doUpdate;
+                                        let dontUpdateTime = getDoFactionUpdate.dontUpdateTime;
                                         if (doUpdate) {
                                             let factionPresentSystemObject = {};
                                             let factionPresence = dbFaction.faction_presence;
@@ -1666,7 +1669,7 @@ function Journal() {
     }
 
     this.checkSystemWHistory = function (message, history, factionArray) {
-        for(let item of history){
+        for (let item of history) {
             if (item.government === message.SystemGovernment.toLowerCase() &&
                 item.allegiance === message.SystemAllegiance.toLowerCase() &&
                 item.state === message.FactionState.toLowerCase() &&
@@ -1681,7 +1684,7 @@ function Journal() {
     }
 
     this.checkFactionWHistory = function (message, messageFaction, history, pendingStates, recoveringStates) {
-        for(let item of history){
+        for (let item of history) {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
                 item.state === messageFaction.FactionState.toLowerCase() &&
                 item.influence === messageFaction.Influence &&
@@ -1694,7 +1697,7 @@ function Journal() {
     }
 
     this.checkStationWHistory = function (message, history, serviceArray) {
-        for(let item of history){
+        for (let item of history) {
             if (item.government === message.StationGovernment.toLowerCase() &&
                 item.allegiance === message.StationAllegiance.toLowerCase() &&
                 item.state === message.FactionState.toLowerCase() &&
@@ -1704,6 +1707,90 @@ function Journal() {
             }
         }
         return true;
+    }
+
+    this.checkFactionDataChanged = async function (message, tickTimes) {
+        let model = await ebgsFactionsV4Model;
+        let messageFactionsLower = [];
+        message.Factions.forEach(faction => {
+            messageFactionsLower.push(faction.Name.toLowerCase());
+        });
+
+        let allFactionsDetails = await model.find(
+            {
+                name_lower: {
+                    $in: messageFactionsLower
+                }
+            }
+        ).lean();
+
+        for (let dbFaction of allFactionsDetails) {
+            let factionChanged = true;
+            for (let messageFaction of message.Factions) {
+                if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
+                    if ((await this.doFactionUpdate(messageFaction, dbFaction, message)).doUpdate &&
+                        moment.duration(moment(new Date(message.timestamp)).diff(moment(dbFaction.updated_at))).asMinutes() < tickTimes.delta_minutes) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    this.doFactionUpdate = async function (messageFaction, dbFaction, message) {
+        let pendingStates = [];
+        if (messageFaction.PendingStates) {
+            messageFaction.PendingStates.forEach(pendingState => {
+                let pendingStateObject = {
+                    state: pendingState.State.toLowerCase(),
+                    trend: pendingState.Trend
+                };
+                pendingStates.push(pendingStateObject);
+            });
+        };
+        let recoveringStates = [];
+        if (messageFaction.RecoveringStates) {
+            messageFaction.RecoveringStates.forEach(recoveringState => {
+                let recoveringStateObject = {
+                    state: recoveringState.State.toLowerCase(),
+                    trend: recoveringState.Trend
+                };
+                recoveringStates.push(recoveringStateObject);
+            });
+        };
+
+        // Check if the incoming message has any different faction detail
+        let doUpdate = true;
+        let dontUpdateTime = false;
+        for (let faction of dbFaction.faction_presence) {
+            if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
+                if (faction.state === messageFaction.FactionState.toLowerCase() &&
+                    faction.influence === messageFaction.Influence &&
+                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
+                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                    doUpdate = false;
+                } else {
+                    let historyModel = await ebgsHistoryFactionV4Model;
+                    let timeNow = Date.now();
+                    let factionHistory = await historyModel.find({
+                        faction_id: dbFaction._id,
+                        system_lower: faction.system_name_lower,
+                        updated_at: {
+                            $lte: new Date(timeNow),
+                            $gte: new Date(timeNow - 172800000)
+                        }
+                    }).sort({ updated_at: -1 }).lean();
+                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, pendingStates, recoveringStates)) {
+                        doUpdate = false;
+                        dontUpdateTime = true;
+                    }
+                }
+            }
+        }
+
+        return { pendingStates, recoveringStates, doUpdate, dontUpdateTime }
     }
 
     this.correctCoordinates = function (value) {
