@@ -26,7 +26,11 @@ export class TickService {
     formatTickTime<T>(time: T): T {
         const formattedTime = <T>{};
         Object.keys(time).reduce((previous, current) => {
-            previous[current] = moment(time[current]).format('HH:mm');
+            if (time[current]) {
+                previous[current] = moment(time[current]).format('HH:mm');
+            } else {
+                previous[current] = undefined;
+            }
             return previous;
         }, formattedTime);
         return formattedTime;
@@ -35,7 +39,11 @@ export class TickService {
     getUpdateTimeFromTick<T>(time: T): T {
         const formattedTime = <T>{};
         Object.keys(time).reduce((previous, current) => {
-            previous[current] = moment(time[current]).format('dddd, MMMM Do YYYY');
+            if (time[current]) {
+                previous[current] = moment(time[current]).format('dddd, MMMM Do YYYY');
+            } else {
+                previous[current] = undefined;
+            }
             return previous;
         }, formattedTime);
         return formattedTime;
