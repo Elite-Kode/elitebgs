@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
     linkRef: HTMLLinkElement;
     galacticTick: GalacticTick;
     galacticTickUpdate: GalacticTick;
+    tickModal = false;
 
     constructor(
         private authenticationService: AuthenticationService,
