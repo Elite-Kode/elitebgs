@@ -7,11 +7,56 @@
             </a>
         </div>
         <div class="header-nav" [clr-nav-level]="1">
-            <a routerLink="/api/eddb" routerLinkActive="active" class="nav-link"><span class="nav-text">EDDB API</span></a>
-            <a routerLink="/api/ebgs" routerLinkActive="active" class="nav-link"><span class="nav-text">Elite BGS API</span></a>
-            <a routerLink="/bgsbot" routerLinkActive="active" class="nav-link"><span class="nav-text">BGSBot</span></a>
-        </div>
+                <a routerLink="/api/eddb" routerLinkActive="active" class="nav-link"><span class="nav-text">EDDB API</span></a>
+                <a routerLink="/api/ebgs" routerLinkActive="active" class="nav-link"><span class="nav-text">Elite BGS API</span></a>
+                <a routerLink="/bgsbot" routerLinkActive="active" class="nav-link"><span class="nav-text">BGSBot</span></a>
+            </div>
         <div class="header-actions">
+            <span class="nav-link nav-text tick">Tick (UTC)</span>
+            <table class="tick">
+                <tr>
+                    <td>Sol</td>
+                    <td>
+                        <div role="tooltip" aria-haspopup="true" class="tooltip tooltip-lg tooltip-bottom-right">
+                            {{galacticTick.sol_start}}
+                            <span class="tooltip-content">
+                                Start of Tick in Sol Bubble
+                                <br> Last Updated: {{galacticTickUpdate.sol_start}}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div role="tooltip" aria-haspopup="true" class="tooltip tooltip-lg tooltip-bottom-right">
+                            {{galacticTick.sol_end}}
+                            <span class="tooltip-content">
+                                End of Tick in Sol Bubble
+                                <br> Last Updated: {{galacticTickUpdate.sol_end}}
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Colonia</td>
+                    <td>
+                        <div role="tooltip" aria-haspopup="true" class="tooltip tooltip-lg tooltip-bottom-right">
+                            {{galacticTick.colonia_start}}
+                            <span class="tooltip-content">
+                                Start of Tick in Colonia Bubble
+                                <br> Last Updated: {{galacticTickUpdate.colonia_start}}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div role="tooltip" aria-haspopup="true" class="tooltip tooltip-lg tooltip-bottom-right">
+                            {{galacticTick.colonia_end}}
+                            <span class="tooltip-content">
+                                End of Tick in Colonia Bubble
+                                <br> Last Updated: {{galacticTickUpdate.colonia_end}}
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
             <a class="nav-icon nav-link" (click)="switchTheme()">
                 <clr-icon shape="sun" *ngIf="getThemeName() === 'dark'"></clr-icon>
                 <clr-icon shape="moon" *ngIf="getThemeName() === 'light'"></clr-icon>
