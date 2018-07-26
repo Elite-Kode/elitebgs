@@ -71,6 +71,8 @@ const ebgsFactionsV4 = require('./server/routes/elite_bgs_api/v4/factions');
 const ebgsSystemsV4 = require('./server/routes/elite_bgs_api/v4/systems');
 const ebgsStationsV4 = require('./server/routes/elite_bgs_api/v4/stations');
 
+const tick = require('./server/routes/elite_bgs_api/v4/tick');
+
 const authCheck = require('./server/routes/auth/auth_check');
 const authDiscord = require('./server/routes/auth/discord');
 const authLogout = require('./server/routes/auth/logout');
@@ -184,6 +186,7 @@ app.use('/api/eddb/v3/downloadupdate', downloadUpdateV3);
 app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
 app.use('/api/ebgs/v4/systems', ebgsSystemsV4);
 app.use('/api/ebgs/v4/stations', ebgsStationsV4);
+app.use('/api/ebgs/v4/tick', tick);
 
 app.use('/auth/check', authCheck);
 app.use('/auth/discord', authDiscord);

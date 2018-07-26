@@ -4,7 +4,8 @@ import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemChart, EBGSUser } from '../../typings';
+import { EBGSSystemChart, EBGSUser, SystemTick } from '../../typings';
+import { TickService } from '../../services/tick.service';
 
 @Component({
     selector: 'app-system-view',
@@ -19,12 +20,18 @@ export class SystemViewComponent implements OnInit {
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
+    systemTick: SystemTick;
+    systemTickUpdate: SystemTick;
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private titleService: Title
-    ) { }
+        private titleService: Title,
+        private tickService: TickService
+    ) {
+        this.systemTick = <SystemTick>{};
+        this.systemTickUpdate = <SystemTick>{};
+    }
 
     ngOnInit() {
         this.getAuthentication();
@@ -48,7 +55,13 @@ export class SystemViewComponent implements OnInit {
                 });
                 this.titleService.setTitle(this.systemData.name + ' - Elite BGS');
                 this.getEditAllowed();
+                this.getSystemTick();
             });
+    }
+
+    getSystemTick() {
+        this.systemTick = this.tickService.formatTickTime({ system_tick: this.systemData.tick_time });
+        this.systemTickUpdate = this.tickService.getUpdateTimeFromTick({ system_tick: this.systemData.tick_time });
     }
 
     openSystemEditModal() {
@@ -96,9 +109,9 @@ export class SystemViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-        .getUser()
-        .subscribe(user => {
-            this.user = user;
-        });
+            .getUser()
+            .subscribe(user => {
+                this.user = user;
+            });
     }
 }
