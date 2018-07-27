@@ -1089,7 +1089,8 @@ function Journal() {
                                                 state: messageFaction.FactionState,
                                                 influence: messageFaction.Influence,
                                                 pending_states: pendingStates,
-                                                recovering_states: recoveringStates
+                                                recovering_states: recoveringStates,
+                                                updated_at: message.timestamp
                                             }]
                                         };
                                         let historyObject = {
@@ -1153,8 +1154,16 @@ function Journal() {
                             // dbFactionsLower are the factions present in the db. So next we need to update them
                             // factionsAllDetails has all the factions details
                             for (let dbFaction of factionsAllDetails) {
+                                let factionPresence = dbFaction.faction_presence.find(presence => {
+                                    return presence.system_name_lower === message.StarSystem.toLowerCase();
+                                });
                                 for (let messageFaction of message.Factions) {
-                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
+                                    if (!factionPresence || !factionPresence.updated_at) {
+                                        factionPresence = {
+                                            updated_at: dbFaction.updated_at
+                                        };
+                                    }
+                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
                                         let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
                                         let pendingStates = getDoFactionUpdate.pendingStates;
                                         let recoveringStates = getDoFactionUpdate.recoveringStates;
@@ -1172,7 +1181,8 @@ function Journal() {
                                                         state: messageFaction.FactionState,
                                                         influence: messageFaction.Influence,
                                                         pending_states: pendingStates,
-                                                        recovering_states: recoveringStates
+                                                        recovering_states: recoveringStates,
+                                                        updated_at: message.timestamp
                                                     };
                                                     factionPresenceArray[index] = factionPresentSystemObject;
                                                 }
@@ -1187,7 +1197,8 @@ function Journal() {
                                                     state: messageFaction.FactionState,
                                                     influence: messageFaction.Influence,
                                                     pending_states: pendingStates,
-                                                    recovering_states: recoveringStates
+                                                    recovering_states: recoveringStates,
+                                                    updated_at: message.timestamp
                                                 });
                                             }
 
@@ -1282,8 +1293,26 @@ function Journal() {
                                                     });
                                             }
                                         } else if (!dontUpdateTime) {
+                                            let factionPresentSystemObject = {};
+                                            let factionPresence = dbFaction.faction_presence;
+
+                                            factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                    factionPresentSystemObject = {
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        updated_at: message.timestamp
+                                                    };
+                                                    factionPresenceArray[index] = factionPresentSystemObject;
+                                                }
+                                            });
                                             let factionObject = {
-                                                updated_at: message.timestamp
+                                                updated_at: message.timestamp,
+                                                faction_presence: factionPresence
                                             };
                                             if (!dbFaction.eddb_id) {
                                                 try {
@@ -1734,10 +1763,19 @@ function Journal() {
         ).lean();
 
         for (let dbFaction of allFactionsDetails) {
+            let factionPresence = dbFaction.faction_presence.find(presence => {
+                return presence.system_name_lower === message.StarSystem.toLowerCase();
+            });
+            if (!factionPresence || !factionPresence.updated_at) {
+                factionPresence = {
+                    updated_at: dbFaction.updated_at
+                };
+            }
             for (let messageFaction of message.Factions) {
-                if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
-                    if ((await this.doFactionUpdate(messageFaction, dbFaction, message)).doUpdate &&
-                        moment.duration(moment(new Date(message.timestamp)).diff(moment(dbFaction.updated_at))).asMinutes() < tickTimes.delta_minutes) {
+                if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
+                    let checkIfFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
+                    if (checkIfFactionUpdate.doUpdate &&
+                        moment.duration(moment(new Date(message.timestamp)).diff(moment(factionPresence.updated_at))).asMinutes() < tickTimes.delta_minutes) {
                         return true;
                     }
                 }
@@ -1772,6 +1810,9 @@ function Journal() {
         // Check if the incoming message has any different faction detail
         let doUpdate = true;
         let dontUpdateTime = false;
+        if (dbFaction.updated_at > new Date(message.timestamp)) {
+            dontUpdateTime = true;
+        }
         for (let faction of dbFaction.faction_presence) {
             if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
                 if (faction.state === messageFaction.FactionState.toLowerCase() &&

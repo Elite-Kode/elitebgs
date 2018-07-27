@@ -31,7 +31,7 @@ module.exports = new Promise((resolve, reject) => {
         type: { type: String, lowercase: true, index: true },
         system: String,
         system_lower: { type: String, lowercase: true, index: true },
-        updated_at: Date,
+        updated_at: { type: Date, index: true },
         government: { type: String, lowercase: true, index: true },
         economy: { type: String, lowercase: true, index: true },
         allegiance: { type: String, lowercase: true, index: true },

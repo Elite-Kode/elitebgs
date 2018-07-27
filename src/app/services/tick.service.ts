@@ -27,7 +27,7 @@ export class TickService {
         const formattedTime = <T>{};
         Object.keys(time).reduce((previous, current) => {
             if (time[current]) {
-                previous[current] = moment(time[current]).format('HH:mm');
+                previous[current] = moment(time[current]).utc().format('HH:mm');
             } else {
                 previous[current] = undefined;
             }
@@ -40,7 +40,7 @@ export class TickService {
         const formattedTime = <T>{};
         Object.keys(time).reduce((previous, current) => {
             if (time[current]) {
-                previous[current] = moment(time[current]).format('dddd, MMMM Do YYYY');
+                previous[current] = moment(time[current]).utc().format('dddd, MMMM Do YYYY');
             } else {
                 previous[current] = undefined;
             }

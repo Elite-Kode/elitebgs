@@ -58,6 +58,19 @@
                 <li>Read as start time and end time of tick</li>
                 <li>Individual system's tick times are recorded in the systems page</li>
             </ul>
+            <h3>Last Update</h3>
+            <table class="table table-vertical table-compact">
+                <tr>
+                    <td>Sol</td>
+                    <td>{{galacticTickUpdate.sol_start}}</td>
+                    <td>{{galacticTickUpdate.sol_end}}</td>
+                </tr>
+                <tr>
+                    <td>Colonia</td>
+                    <td>{{galacticTickUpdate.colonia_start}}</td>
+                    <td>{{galacticTickUpdate.colonia_end}}</td>
+                </tr>
+            </table>
         </div>
     </clr-modal>
     <router-outlet>

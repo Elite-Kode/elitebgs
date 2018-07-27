@@ -343,6 +343,7 @@ export interface EBGSFactionV3Schema {
             state: string;
             trend: number;
         }[];
+        updated_at: string;
     }[];
     history: {
         _id: string;
@@ -575,6 +576,7 @@ interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
         state: string;
         trend: number;
     }[];
+    updated_at: string;
 }
 
 type EBGSFactionHistory = EBGSFactionV3Schema['history'][0];
