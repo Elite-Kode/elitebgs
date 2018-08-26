@@ -141,6 +141,9 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     addDonation() {
+        if (!this.userUnderEdit.donation) {
+            this.userUnderEdit.donation = []
+        }
         this.userUnderEdit.donation.push({
             _id: `(${this.userUnderEdit.donation.length + 1}) Save to Generate Actual Id`,
             amount: this.donationAmount,

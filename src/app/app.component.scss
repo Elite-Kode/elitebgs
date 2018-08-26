@@ -49,28 +49,3 @@
 .nav-icon img {
     border-radius: 50%;
 }
-
-.tick {
-    color: #fafafa;
-    opacity: 0.65;
-}
-
-.tick:hover {
-    opacity: 0.65 !important;
-}
-
-table.tick td {
-    padding: 0px 10px;
-    text-align: center;
-}
-
-table.tick td:first-child{
-    padding: 0px;
-    padding-right: 10px;
-    text-align: right;
-    font-weight: 600;
-}
-
-table.tick {
-    height: inherit;
-}

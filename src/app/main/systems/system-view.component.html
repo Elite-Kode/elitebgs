@@ -34,13 +34,6 @@
     <p><b>State : </b>{{systemData?.state}}</p>
     <p><b>Security : </b>{{systemData?.security}}</p>
     <p><b>Population : </b>{{systemData?.population}}</p>
-    <p *ngIf="systemTick?.system_tick">
-        <b>Tick (UTC) : </b>{{systemTick?.system_tick}}
-        <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-lg tooltip-bottom-right">
-            <clr-icon shape="info-circle" size="24"></clr-icon>
-            <span class="tooltip-content">Last Updated: {{systemTickUpdate?.system_tick}}</span>
-        </span>
-    </p>
     <clr-datagrid>
         <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
         <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
