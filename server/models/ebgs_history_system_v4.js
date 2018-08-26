@@ -38,8 +38,7 @@ module.exports = new Promise((resolve, reject) => {
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
-        }],
-        tick_time: { type: Date, index: true }
+        }]
     }, { runSettersOnQuery: true });
 
     let model = connection.model('ebgsHistorySystemV4', ebgsHistorySystem);

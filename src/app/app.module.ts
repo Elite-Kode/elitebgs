@@ -31,7 +31,6 @@ import { AuthenticationService } from './services/authentication.service';
 import { ServerService } from './services/server.service';
 import { TryAPIService } from './services/tryapi.service';
 import { ThemeService } from './services/theme.service';
-import { TickService } from './services/tick.service';
 
 @NgModule({
     declarations: [
@@ -61,7 +60,7 @@ import { TickService } from './services/tick.service';
         AppRoutingModule,
         ClarityModule
     ],
-    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, ThemeService, TryAPIService, TickService],
+    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, ThemeService, TryAPIService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

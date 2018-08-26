@@ -174,6 +174,9 @@ router.put('/users', (req, res, next) => {
                             }
                         }
                     }
+                    if (_.isEmpty(body.$unset)){
+                        delete body.$unset
+                    }
                     if (validateUser(body)) {
                         users.findOneAndUpdate(
                             {

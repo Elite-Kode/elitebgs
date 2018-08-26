@@ -35,7 +35,6 @@ const ebgsHistorySystemV4Model = require('../../../models/ebgs_history_system_v4
 const ebgsHistoryStationV4Model = require('../../../models/ebgs_history_station_v4');
 
 const configModel = require('../../../models/configs');
-const tickTimeModel = require('../../../models/tick_times');
 
 module.exports = Journal;
 
@@ -711,8 +710,6 @@ function Journal() {
                     };
                     factionArray.push(factionObject);
                 });
-                let tickTimeModelFetch = await tickTimeModel;
-                let tickTimes = await tickTimeModelFetch.findOne({}).lean();
                 ebgsSystemsV4Model
                     .then(async (model) => {
                         let system = await model.findOne(
@@ -729,8 +726,6 @@ function Journal() {
                         let eddbIdPromise;
                         if (system) {   // System exists in db
                             if (system.updated_at < new Date(message.timestamp)) {
-                                let bubble = system.z < 15000 ? 'sol' : 'colonia';
-
                                 if (!system.eddb_id) {
                                     eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
                                 } else {
@@ -755,23 +750,6 @@ function Journal() {
                                         }
                                     }).sort({ updated_at: -1 }).lean();
                                     if (this.checkSystemWHistory(message, systemHistory, factionArray)) {
-                                        if (moment.duration(moment(new Date(message.timestamp)).diff(moment(system.updated_at))).asMinutes() < tickTimes.delta_minutes) {
-                                            if (bubble === 'sol') {
-                                                if (!tickTimes.sol_start || moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.sol_start))).asHours() > tickTimes.start_gap_hours) {
-                                                    tickTimes.sol_start = message.timestamp;
-                                                }
-                                                tickTimes.sol_end = message.timestamp;
-                                            } else if (bubble === 'colonia') {
-                                                if (!tickTimes.colonia_start || moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.colonia_start))).asHours() > tickTimes.start_gap_hours) {
-                                                    tickTimes.colonia_start = message.timestamp;
-                                                }
-                                                tickTimes.colonia_end = message.timestamp;
-                                            }
-                                            systemObject.tick_time = message.timestamp;
-                                            historyObject.tick_time = message.timestamp;
-                                        } else {
-                                            historyObject.tick_time = systemObject.tick_time;
-                                        }
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
                                         systemObject.state = message.FactionState;
@@ -794,42 +772,8 @@ function Journal() {
                                         systemObject = {};
                                     }
                                 } else {
-                                    if (await this.checkFactionDataChanged(message, tickTimes)) {
-                                        if (bubble === 'sol') {
-                                            if (!tickTimes.sol_start || moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.sol_start))).asHours() > tickTimes.start_gap_hours) {
-                                                tickTimes.sol_start = message.timestamp;
-                                            }
-                                            tickTimes.sol_end = message.timestamp;
-                                        } else if (bubble === 'colonia') {
-                                            if (!tickTimes.colonia_start || moment.duration(moment(new Date(message.timestamp)).diff(moment(tickTimes.colonia_start))).asHours() > tickTimes.start_gap_hours) {
-                                                tickTimes.colonia_start = message.timestamp;
-                                            }
-                                            tickTimes.colonia_end = message.timestamp;
-                                        }
-                                        systemObject.tick_time = message.timestamp;
-                                        historyObject.updated_at = message.timestamp;
-                                        historyObject.updated_by = "EDDN";
-                                        historyObject.government = message.SystemGovernment;
-                                        historyObject.allegiance = message.SystemAllegiance;
-                                        historyObject.state = message.FactionState;
-                                        historyObject.security = message.SystemSecurity;
-                                        historyObject.population = message.Population;
-                                        historyObject.controlling_minor_faction = message.SystemFaction;
-                                        historyObject.factions = factionArray;
-                                        historyObject.tick_time = message.timestamp;
-                                    }
                                     systemObject.updated_at = message.timestamp;
                                 }
-                                tickTimeModelFetch.findOneAndUpdate(
-                                    {},
-                                    tickTimes,
-                                    {
-                                        upsert: true,
-                                        runValidators: true,
-                                        new: true
-                                    }).catch(err => {
-                                        console.log(err);
-                                    });
                             }
                         } else {
                             eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
@@ -1607,11 +1551,13 @@ function Journal() {
                 message.StarPos &&
                 message.Factions &&
                 message.event &&
-                message.SystemGovernment &&
-                message.Population
+                message.SystemGovernment
             ) {
                 if (!message.FactionState) {
                     message.FactionState = "None";
+                }
+                if (!message.Population) {
+                    message.Population = 0;
                 }
                 let configCheckModel = await configModel;
                 let configRecord = await configCheckModel.findOne({}).lean();
@@ -1745,44 +1691,6 @@ function Journal() {
             }
         }
         return true;
-    }
-
-    this.checkFactionDataChanged = async function (message, tickTimes) {
-        let model = await ebgsFactionsV4Model;
-        let messageFactionsLower = [];
-        message.Factions.forEach(faction => {
-            messageFactionsLower.push(faction.Name.toLowerCase());
-        });
-
-        let allFactionsDetails = await model.find(
-            {
-                name_lower: {
-                    $in: messageFactionsLower
-                }
-            }
-        ).lean();
-
-        for (let dbFaction of allFactionsDetails) {
-            let factionPresence = dbFaction.faction_presence.find(presence => {
-                return presence.system_name_lower === message.StarSystem.toLowerCase();
-            });
-            if (!factionPresence || !factionPresence.updated_at) {
-                factionPresence = {
-                    updated_at: dbFaction.updated_at
-                };
-            }
-            for (let messageFaction of message.Factions) {
-                if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
-                    let checkIfFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
-                    if (checkIfFactionUpdate.doUpdate &&
-                        moment.duration(moment(new Date(message.timestamp)).diff(moment(factionPresence.updated_at))).asMinutes() < tickTimes.delta_minutes) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     this.doFactionUpdate = async function (messageFaction, dbFaction, message) {

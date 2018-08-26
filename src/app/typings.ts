@@ -408,8 +408,7 @@ export interface EBGSSystemV3Schema {
             name: string;
             name_lower: string;
         }[];
-    }[],
-    tick_time: string
+    }[];
 }
 
 export interface EBGSFactionV3SchemaWOHistory {
@@ -643,17 +642,6 @@ interface EBGSCreditsSchema {
     id: string;
     os_contribution: number;
     level: number;
-}
-
-export interface GalacticTick {
-    sol_start: string,
-    sol_end: string,
-    colonia_start: string,
-    colonia_end: string
-}
-
-export interface SystemTick {
-    system_tick: string
 }
 
 export type BodiesV1 = BodySchema;
