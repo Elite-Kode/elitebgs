@@ -739,21 +739,17 @@ function Journal() {
                                     system.population !== message.Population ||
                                     system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
                                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
-                                    // If the new record is different from the last record, check the second last record
-                                    let historyModel = await ebgsHistorySystemV4Model;
-                                    let systemHistory = await historyModel.find({
-                                        system_id: system._id
-                                    }).sort({ updated_at: -1 })
-                                        .limit(2).lean();
-                                    if (systemHistory.length < 2 || systemHistory[1].government !== message.SystemGovernment.toLowerCase() ||
-                                        systemHistory[1].allegiance !== message.SystemAllegiance.toLowerCase() ||
-                                        systemHistory[1].state !== message.FactionState.toLowerCase() ||
-                                        systemHistory[1].security !== message.SystemSecurity.toLowerCase() ||
-                                        systemHistory[1].population !== message.Population ||
-                                        systemHistory[1].controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
-                                        !_.isEqual(_.sortBy(systemHistory[1].factions, ['name_lower']), _.sortBy(factionArray, ['name_lower'])) ||
-                                        moment.duration(moment(message.timestamp).diff(systemHistory[1].updated_at)).asHours() > 48) {
 
+                                    let historyModel = await ebgsHistorySystemV4Model;
+                                    let timeNow = Date.now();
+                                    let systemHistory = await historyModel.find({
+                                        system_id: system._id,
+                                        updated_at: {
+                                            $lte: new Date(timeNow),
+                                            $gte: new Date(timeNow - 172800000)
+                                        }
+                                    }).sort({ updated_at: -1 }).lean();
+                                    if (this.checkSystemWHistory(message, systemHistory, factionArray)) {
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
                                         systemObject.state = message.FactionState;
@@ -1037,7 +1033,8 @@ function Journal() {
                                                 state: messageFaction.FactionState,
                                                 influence: messageFaction.Influence,
                                                 pending_states: pendingStates,
-                                                recovering_states: recoveringStates
+                                                recovering_states: recoveringStates,
+                                                updated_at: message.timestamp
                                             }]
                                         };
                                         let historyObject = {
@@ -1101,58 +1098,21 @@ function Journal() {
                             // dbFactionsLower are the factions present in the db. So next we need to update them
                             // factionsAllDetails has all the factions details
                             for (let dbFaction of factionsAllDetails) {
+                                let factionPresence = dbFaction.faction_presence.find(presence => {
+                                    return presence.system_name_lower === message.StarSystem.toLowerCase();
+                                });
                                 for (let messageFaction of message.Factions) {
-                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
-                                        let pendingStates = [];
-                                        if (messageFaction.PendingStates) {
-                                            messageFaction.PendingStates.forEach(pendingState => {
-                                                let pendingStateObject = {
-                                                    state: pendingState.State.toLowerCase(),
-                                                    trend: pendingState.Trend
-                                                };
-                                                pendingStates.push(pendingStateObject);
-                                            });
+                                    if (!factionPresence || !factionPresence.updated_at) {
+                                        factionPresence = {
+                                            updated_at: dbFaction.updated_at
                                         };
-                                        let recoveringStates = [];
-                                        if (messageFaction.RecoveringStates) {
-                                            messageFaction.RecoveringStates.forEach(recoveringState => {
-                                                let recoveringStateObject = {
-                                                    state: recoveringState.State.toLowerCase(),
-                                                    trend: recoveringState.Trend
-                                                };
-                                                recoveringStates.push(recoveringStateObject);
-                                            });
-                                        };
-
-                                        // Check if the incoming message has any different faction detail
-                                        let doUpdate = true;
-                                        let dontUpdateTime = false;
-                                        for (let faction of dbFaction.faction_presence) {
-                                            if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
-                                                if (faction.state === messageFaction.FactionState.toLowerCase() &&
-                                                    faction.influence === messageFaction.Influence &&
-                                                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
-                                                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
-                                                    doUpdate = false;
-                                                } else {
-                                                    let historyModel = await ebgsHistoryFactionV4Model;
-                                                    let factionHistory = await historyModel.find({
-                                                        faction_id: dbFaction._id,
-                                                        system_lower: faction.system_name_lower
-                                                    }).sort({ updated_at: -1 })
-                                                        .limit(2).lean();
-                                                    if (factionHistory.length >= 2 && factionHistory[1].system_lower === message.StarSystem.toLowerCase() &&
-                                                        factionHistory[1].state === messageFaction.FactionState.toLowerCase() &&
-                                                        factionHistory[1].influence === messageFaction.Influence &&
-                                                        _.isEqual(_.sortBy(factionHistory[1].pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
-                                                        _.isEqual(_.sortBy(factionHistory[1].recovering_states, ['state']), _.sortBy(recoveringStates, ['state'])) &&
-                                                        moment.duration(moment(message.timestamp).diff(factionHistory[1].updated_at)).asHours() < 48) {
-                                                        doUpdate = false;
-                                                        dontUpdateTime = true;
-                                                    }
-                                                }
-                                            }
-                                        }
+                                    }
+                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
+                                        let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
+                                        let pendingStates = getDoFactionUpdate.pendingStates;
+                                        let recoveringStates = getDoFactionUpdate.recoveringStates;
+                                        let doUpdate = getDoFactionUpdate.doUpdate;
+                                        let dontUpdateTime = getDoFactionUpdate.dontUpdateTime;
                                         if (doUpdate) {
                                             let factionPresentSystemObject = {};
                                             let factionPresence = dbFaction.faction_presence;
@@ -1165,7 +1125,8 @@ function Journal() {
                                                         state: messageFaction.FactionState,
                                                         influence: messageFaction.Influence,
                                                         pending_states: pendingStates,
-                                                        recovering_states: recoveringStates
+                                                        recovering_states: recoveringStates,
+                                                        updated_at: message.timestamp
                                                     };
                                                     factionPresenceArray[index] = factionPresentSystemObject;
                                                 }
@@ -1180,7 +1141,8 @@ function Journal() {
                                                     state: messageFaction.FactionState,
                                                     influence: messageFaction.Influence,
                                                     pending_states: pendingStates,
-                                                    recovering_states: recoveringStates
+                                                    recovering_states: recoveringStates,
+                                                    updated_at: message.timestamp
                                                 });
                                             }
 
@@ -1275,8 +1237,26 @@ function Journal() {
                                                     });
                                             }
                                         } else if (!dontUpdateTime) {
+                                            let factionPresentSystemObject = {};
+                                            let factionPresence = dbFaction.faction_presence;
+
+                                            factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                    factionPresentSystemObject = {
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        updated_at: message.timestamp
+                                                    };
+                                                    factionPresenceArray[index] = factionPresentSystemObject;
+                                                }
+                                            });
                                             let factionObject = {
-                                                updated_at: message.timestamp
+                                                updated_at: message.timestamp,
+                                                faction_presence: factionPresence
                                             };
                                             if (!dbFaction.eddb_id) {
                                                 try {
@@ -1382,17 +1362,15 @@ function Journal() {
                                     !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
                                     let historyModel = await ebgsHistoryStationV4Model;
+                                    let timeNow = Date.now();
                                     let stationHistory = await historyModel.find({
-                                        station_id: station._id
-                                    }).sort({ updated_at: -1 })
-                                        .limit(2).lean();
-                                    if (stationHistory.length < 2 || stationHistory[1].government !== message.StationGovernment.toLowerCase() ||
-                                        stationHistory[1].allegiance !== message.StationAllegiance.toLowerCase() ||
-                                        stationHistory[1].state !== message.FactionState.toLowerCase() ||
-                                        stationHistory[1].controlling_minor_faction !== message.StationFaction.toLowerCase() ||
-                                        !_.isEqual(_.sortBy(stationHistory[1].services, ['name_lower']), _.sortBy(serviceArray, ['name_lower'])) ||
-                                        moment.duration(moment(message.timestamp).diff(stationHistory[1].updated_at)).asHours() > 48) {
-
+                                        station_id: station._id,
+                                        updated_at: {
+                                            $lte: new Date(timeNow),
+                                            $gte: new Date(timeNow - 172800000)
+                                        }
+                                    }).sort({ updated_at: -1 }).lean();
+                                    if (this.checkStationWHistory(message, stationHistory, serviceArray)) {
                                         stationObject.type = message.StationType;
                                         stationObject.system = message.StarSystem;
                                         stationObject.system_lower = message.StarSystem.toLowerCase();
@@ -1573,11 +1551,13 @@ function Journal() {
                 message.StarPos &&
                 message.Factions &&
                 message.event &&
-                message.SystemGovernment &&
-                message.Population
+                message.SystemGovernment
             ) {
                 if (!message.FactionState) {
                     message.FactionState = "None";
+                }
+                if (!message.Population) {
+                    message.Population = 0;
                 }
                 let configCheckModel = await configModel;
                 let configRecord = await configCheckModel.findOne({}).lean();
@@ -1670,6 +1650,104 @@ function Journal() {
         } catch (err) {
             return Promise.reject(err);
         }
+    }
+
+    this.checkSystemWHistory = function (message, history, factionArray) {
+        for (let item of history) {
+            if (item.government === message.SystemGovernment.toLowerCase() &&
+                item.allegiance === message.SystemAllegiance.toLowerCase() &&
+                item.state === message.FactionState.toLowerCase() &&
+                item.security === message.SystemSecurity.toLowerCase() &&
+                item.population === message.Population &&
+                item.controlling_minor_faction === message.SystemFaction.toLowerCase() &&
+                _.isEqual(_.sortBy(item.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    this.checkFactionWHistory = function (message, messageFaction, history, pendingStates, recoveringStates) {
+        for (let item of history) {
+            if (item.system_lower === message.StarSystem.toLowerCase() &&
+                item.state === messageFaction.FactionState.toLowerCase() &&
+                item.influence === messageFaction.Influence &&
+                _.isEqual(_.sortBy(item.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
+                _.isEqual(_.sortBy(item.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    this.checkStationWHistory = function (message, history, serviceArray) {
+        for (let item of history) {
+            if (item.government === message.StationGovernment.toLowerCase() &&
+                item.allegiance === message.StationAllegiance.toLowerCase() &&
+                item.state === message.FactionState.toLowerCase() &&
+                item.controlling_minor_faction === message.StationFaction.toLowerCase() &&
+                _.isEqual(_.sortBy(item.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    this.doFactionUpdate = async function (messageFaction, dbFaction, message) {
+        let pendingStates = [];
+        if (messageFaction.PendingStates) {
+            messageFaction.PendingStates.forEach(pendingState => {
+                let pendingStateObject = {
+                    state: pendingState.State.toLowerCase(),
+                    trend: pendingState.Trend
+                };
+                pendingStates.push(pendingStateObject);
+            });
+        };
+        let recoveringStates = [];
+        if (messageFaction.RecoveringStates) {
+            messageFaction.RecoveringStates.forEach(recoveringState => {
+                let recoveringStateObject = {
+                    state: recoveringState.State.toLowerCase(),
+                    trend: recoveringState.Trend
+                };
+                recoveringStates.push(recoveringStateObject);
+            });
+        };
+
+        // Check if the incoming message has any different faction detail
+        let doUpdate = true;
+        let dontUpdateTime = false;
+        if (dbFaction.updated_at > new Date(message.timestamp)) {
+            dontUpdateTime = true;
+        }
+        for (let faction of dbFaction.faction_presence) {
+            if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
+                if (faction.state === messageFaction.FactionState.toLowerCase() &&
+                    faction.influence === messageFaction.Influence &&
+                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
+                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                    doUpdate = false;
+                } else {
+                    let historyModel = await ebgsHistoryFactionV4Model;
+                    let timeNow = Date.now();
+                    let factionHistory = await historyModel.find({
+                        faction_id: dbFaction._id,
+                        system_lower: faction.system_name_lower,
+                        updated_at: {
+                            $lte: new Date(timeNow),
+                            $gte: new Date(timeNow - 172800000)
+                        }
+                    }).sort({ updated_at: -1 }).lean();
+                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, pendingStates, recoveringStates)) {
+                        doUpdate = false;
+                        dontUpdateTime = true;
+                    }
+                }
+            }
+        }
+
+        return { pendingStates, recoveringStates, doUpdate, dontUpdateTime }
     }
 
     this.correctCoordinates = function (value) {

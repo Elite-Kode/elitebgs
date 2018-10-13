@@ -28,7 +28,7 @@ module.exports = new Promise((resolve, reject) => {
         eddb_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
-        updated_at: Date,
+        updated_at: { type: Date, index: true },
         government: { type: String, lowercase: true, index: true },
         allegiance: { type: String, lowercase: true, index: true },
         home_system_name: { type: String, lowercase: true },    // Not in Journal
@@ -48,7 +48,8 @@ module.exports = new Promise((resolve, reject) => {
                 _id: false,
                 state: { type: String, lowercase: true },
                 trend: Number
-            }]
+            }],
+            updated_at: { type: Date, index: true }
         }]
     }, { runSettersOnQuery: true });
 

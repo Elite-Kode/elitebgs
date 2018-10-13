@@ -40,6 +40,7 @@
         <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
         <clr-dg-column>Pending States</clr-dg-column>
         <clr-dg-column>Recovering States</clr-dg-column>
+        <clr-dg-column>Last Updated At</clr-dg-column>
 
         <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
 
@@ -53,6 +54,7 @@
             <clr-dg-cell>
                 <span class="label" *ngFor="let recovering of faction.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
             </clr-dg-cell>
+            <clr-dg-cell>{{faction.updated_at}}</clr-dg-cell>
         </clr-dg-row>
     </clr-datagrid>
     <div class="card">

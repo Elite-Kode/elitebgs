@@ -96,9 +96,9 @@ export class SystemViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-        .getUser()
-        .subscribe(user => {
-            this.user = user;
-        });
+            .getUser()
+            .subscribe(user => {
+                this.user = user;
+            });
     }
 }

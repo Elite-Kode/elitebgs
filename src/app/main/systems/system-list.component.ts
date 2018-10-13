@@ -1,13 +1,11 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
-import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -21,7 +19,7 @@ export class SystemListComponent implements OnInit {
     systemToAdd: string;
     totalRecords = 0;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     systemForm = new FormGroup({
         systemName: new FormControl()
     });
@@ -52,7 +50,7 @@ export class SystemListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.systemForm.value.systemName;
         this.tableState = tableState;
         this.loading = true;

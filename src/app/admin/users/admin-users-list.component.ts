@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { IAdminUsers } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
 import { EBGSUsers } from '../../typings';
@@ -16,7 +16,7 @@ export class AdminUsersListComponent implements OnInit {
     totalRecords = 0;
     loading = true;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     userForm = new FormGroup({
         user: new FormControl()
     });
@@ -42,7 +42,7 @@ export class AdminUsersListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.userForm.value.user;
         this.tableState = tableState;
         this.loading = true;

@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 
 router.get('/edit', (req, res) => {
     if (req.user) {
-        if (req.user.access === 0) {
+        if (req.user.access === 0 || req.user.access === 3) {
             res.send(true);
         } else {
             let editableFactions = req.user.editable_factions;

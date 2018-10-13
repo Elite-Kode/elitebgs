@@ -1,6 +1,5 @@
 import { Component, HostBinding, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { State } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
@@ -141,6 +140,9 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     addDonation() {
+        if (!this.userUnderEdit.donation) {
+            this.userUnderEdit.donation = []
+        }
         this.userUnderEdit.donation.push({
             _id: `(${this.userUnderEdit.donation.length + 1}) Save to Generate Actual Id`,
             amount: this.donationAmount,

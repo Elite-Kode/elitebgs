@@ -174,6 +174,9 @@ router.put('/users', (req, res, next) => {
                             }
                         }
                     }
+                    if (_.isEmpty(body.$unset)){
+                        delete body.$unset
+                    }
                     if (validateUser(body)) {
                         users.findOneAndUpdate(
                             {
@@ -895,6 +898,7 @@ router.get('/systems', (req, res, next) => {
                                             faction.state = factionRecords[index].faction_presence[0].state;
                                             faction.pending_states = factionRecords[index].faction_presence[0].pending_states;
                                             faction.recovering_states = factionRecords[index].faction_presence[0].recovering_states;
+                                            faction.updated_at = factionRecords[index].faction_presence[0].updated_at;
                                         });
                                         system.history.forEach(record => {
                                             record.factions.forEach(faction => {
@@ -1189,7 +1193,7 @@ let validateEdit = data => {
 let userAllowed = req => {
     let user = req.user;
     let body = req.body;
-    if (user.access === 0) {
+    if (req.user.access === 0 || req.user.access === 3) {
         return Promise.resolve(true);
     } else {
         let searchPromise = [];

@@ -1,6 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -22,7 +22,7 @@ export class FactionListComponent implements OnInit {
     factionToAdd: string;
     totalRecords = 0;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     factionForm = new FormGroup({
         factionName: new FormControl()
     });
@@ -49,7 +49,7 @@ export class FactionListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.factionForm.value.factionName;
         this.tableState = tableState;
         this.loading = true;

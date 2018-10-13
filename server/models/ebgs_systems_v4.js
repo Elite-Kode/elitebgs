@@ -45,7 +45,7 @@ module.exports = new Promise((resolve, reject) => {
             name: String,
             name_lower: { type: String, lowercase: true }
         }],
-        updated_at: Date
+        updated_at: { type: Date, index: true }
     }, { runSettersOnQuery: true });
 
     ebgsSystem.plugin(mongoosePaginate);

@@ -1,9 +1,8 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { StationsService } from '../../services/stations.service';
-import { AuthenticationService } from '../../services/authentication.service';
 import { IStation } from './station.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSStationsV4WOHistory } from '../../typings';
@@ -21,7 +20,7 @@ export class StationListComponent implements OnInit {
     stationToAdd: string;
     totalRecords = 0;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     stationForm = new FormGroup({
         stationName: new FormControl()
     });
@@ -54,7 +53,7 @@ export class StationListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.stationForm.value.stationName;
         this.tableState = tableState;
         this.loading = true;
