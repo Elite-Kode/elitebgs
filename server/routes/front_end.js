@@ -699,6 +699,8 @@ router.get('/factions', (req, res, next) => {
                                                     return findSystem.name_lower === system.system_name_lower;
                                                 });
                                                 system.system_id = gotSystems[index]._id;
+                                                system.controlling = faction.name_lower === gotSystems[index].controlling_minor_faction;
+                                                system.population = gotSystems[index].population
                                             });
                                             faction.history.forEach(record => {
                                                 let index = gotSystems.findIndex(findSystem => {

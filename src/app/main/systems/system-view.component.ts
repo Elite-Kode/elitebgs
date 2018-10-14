@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemChart, EBGSUser } from '../../typings';
+import { EBGSSystemChart, EBGSUser, EBGSSystemFactionChart } from '../../typings';
 
 @Component({
     selector: 'app-system-view',
@@ -19,6 +19,7 @@ export class SystemViewComponent implements OnInit {
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
+    controllingFaction: EBGSSystemFactionChart;
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute,
@@ -45,6 +46,9 @@ export class SystemViewComponent implements OnInit {
                     faction.recovering_states.forEach(state => {
                         state.state = FDevIDs.state[state.state].name;
                     });
+                    if (faction.name_lower === this.systemData.controlling_minor_faction) {
+                        this.controllingFaction = faction;
+                    }
                 });
                 this.titleService.setTitle(this.systemData.name + ' - Elite BGS');
                 this.getEditAllowed();

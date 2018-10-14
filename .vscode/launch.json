@@ -2,17 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach",
             "type": "node",
             "request": "attach",
-            "port": 9229,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": false,
-            "outFiles": [],
-            "localRoot": "${workspaceRoot}",
-            "remoteRoot": null,
-            "protocol": "inspector"
+            "name": "Attach",
+            "port": 9229
         }
     ]
 }

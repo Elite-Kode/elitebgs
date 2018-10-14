@@ -344,6 +344,7 @@ export interface EBGSFactionV3Schema {
             trend: number;
         }[];
         updated_at: string;
+        controlling: boolean;
     }[];
     history: {
         _id: string;
