@@ -22,29 +22,52 @@
     <ng-template #accessTemplate>
         <ng-container *ngIf="user">
             <div class="btn-group btn-primary">
-                <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor System</button>
+                <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor
+                    System</button>
                 <button (click)="openSystemEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
+                <a class="btn btn-primary" href="https://eddb.io/system/{{systemData?.eddb_id}}" target="_blank">EDDB</a>
             </div>
             <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
         </ng-container>
     </ng-template>
-    <p><b>Government : </b>{{systemData?.government}}</p>
-    <p><b>Allegiance : </b>{{systemData?.allegiance}}</p>
-    <p><b>Economy : </b>{{systemData?.primary_economy}}</p>
-    <p><b>State : </b>{{systemData?.state}}</p>
-    <p><b>Security : </b>{{systemData?.security}}</p>
-    <p><b>Population : </b>{{systemData?.population}}</p>
+    <div class="clr-row data-description">
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Government : </b>{{systemData?.government}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Allegiance : </b>{{systemData?.allegiance}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Economy : </b>{{systemData?.primary_economy}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>State : </b>{{systemData?.state}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Security : </b>{{systemData?.security}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Population : </b>{{systemData?.population}}
+        </div>
+        <div class="clr-clr-col-sm-12 clr-clr-col-md-6 clr-clr-col-lg-4 clr-clr-col-xl-3">
+            <b>Controlling Faction : </b><a routerLink="/faction/{{controllingFaction?.faction_id}}">{{controllingFaction?.name}}</a>
+        </div>
+    </div>
     <clr-datagrid>
+        <clr-dg-column class="control-width">👑</clr-dg-column>
         <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
-        <clr-dg-column [clrDgField]="'influence'">Influence</clr-dg-column>
+        <clr-dg-column [clrDgSortBy]="'influence'">Influence</clr-dg-column>
         <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
         <clr-dg-column>Pending States</clr-dg-column>
         <clr-dg-column>Recovering States</clr-dg-column>
-        <clr-dg-column>Last Updated At</clr-dg-column>
+        <clr-dg-column [clrDgSortBy]="'updated_at'">Last Updated At</clr-dg-column>
 
         <clr-dg-placeholder>Unable to fetch data for system</clr-dg-placeholder>
 
         <clr-dg-row *clrDgItems="let faction of systemData?.factions">
+            <clr-dg-cell class="control-width">
+                <ng-container *ngIf="faction.name_lower === controllingFaction?.name_lower">👑</ng-container>
+            </clr-dg-cell>
             <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{faction.state}}</clr-dg-cell>

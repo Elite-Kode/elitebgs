@@ -1,14 +1,14 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { EBGSFactionsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-faction-list',
@@ -22,7 +22,7 @@ export class FactionListComponent implements OnInit {
     factionToAdd: string;
     totalRecords = 0;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     factionForm = new FormGroup({
         factionName: new FormControl()
     });
@@ -49,7 +49,7 @@ export class FactionListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.factionForm.value.factionName;
         this.tableState = tableState;
         this.loading = true;
@@ -67,8 +67,8 @@ export class FactionListComponent implements OnInit {
 
     ngOnInit() {
         this.factionForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.factionName) {
@@ -76,7 +76,7 @@ export class FactionListComponent implements OnInit {
                 }
                 return this.factionService
                     .getFactionsBegins(this.pageNumber.toString(), value.factionName)
-            })
+            }))
             .subscribe(factions => {
                 this.showFaction(factions);
                 this.loading = false;

@@ -14,7 +14,7 @@
         <h4>Version {{doc?.info.version}}</h4>
         <a href="{{currentVersion.specLocation}}">Go to Spec</a>
         <div class="row">
-            <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let path of paths;let i=index">
+            <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4" *ngFor="let path of paths;let i=index">
                 <ng-container *ngFor="let method of getMethods(path[0])">
                     <div class="card">
                         <div class="card-header">Endpoint {{path[0]}}</div>
@@ -177,13 +177,13 @@
                         <div class="card-block" *ngFor="let parameter of parametersSelected; let i=index" [formGroupName]="i">
                             <div class="card-text">
                                 <div class="row">
-                                    <div class="col-sm-12 col-md-3">
+                                    <div class="clr-col-sm-12 clr-col-md-3">
                                         <label [for]="'parameter_' + i">{{parameter[0].name}}</label>
                                     </div>
-                                    <div class="col-sm-11 col-md-8">
+                                    <div class="clr-col-sm-11 clr-col-md-8">
                                         <input formControlName="value" type="text" [id]="'parameter_' + i">
                                     </div>
-                                    <div class="col-sm-1 col-md-1">
+                                    <div class="clr-col-sm-1 clr-col-md-1">
                                         <button (click)="deselectParameter(parameter[0])" class="btn btn-danger btn-icon">
                                             <clr-icon shape="trash"></clr-icon>
                                         </button>
@@ -193,7 +193,7 @@
                         </div>
                     </div>
                 </div>
-                <pre><code clr-code-highlight="language-json">{{tryAPIResponse}}</code></pre>
+                <pre><code>{{tryAPIResponse}}</code></pre>
             </form>
         </div>
         <div class="modal-footer">

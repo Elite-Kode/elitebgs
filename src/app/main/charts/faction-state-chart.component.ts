@@ -141,6 +141,9 @@ export class FactionStateChartComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.chart.ref.reflow();
+        // // this.chart.ref.reflow();
+        // this.chart.ref$.subscribe(chart => {
+        //     chart.reflow();
+        // });
     }
 }

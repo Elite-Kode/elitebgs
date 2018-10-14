@@ -15,6 +15,8 @@ export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
     factionData: EBGSFactionV3Schema;
+    systemsPresence: number;
+    systemsControlled: number;
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
@@ -42,6 +44,14 @@ export class FactionViewComponent implements OnInit {
                         state.state = FDevIDs.state[state.state].name;
                     });
                 });
+                this.systemsPresence = this.factionData.faction_presence.length;
+                this.systemsControlled = this.factionData.faction_presence.reduce((count, system) => {
+                    if (system.controlling) {
+                        return count + 1;
+                    } else {
+                        return count;
+                    }
+                }, 0);
                 this.titleService.setTitle(this.factionData.name + ' - Elite BGS');
             })
     }

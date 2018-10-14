@@ -1,9 +1,10 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { IAdminUsers } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
 import { EBGSUsers } from '../../typings';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-admin-users-list',
@@ -15,7 +16,7 @@ export class AdminUsersListComponent implements OnInit {
     totalRecords = 0;
     loading = true;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     userForm = new FormGroup({
         user: new FormControl()
     });
@@ -41,7 +42,7 @@ export class AdminUsersListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.userForm.value.user;
         this.tableState = tableState;
         this.loading = true;
@@ -59,8 +60,8 @@ export class AdminUsersListComponent implements OnInit {
 
     ngOnInit() {
         this.userForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.user) {
@@ -68,7 +69,7 @@ export class AdminUsersListComponent implements OnInit {
                 }
                 return this.serverService
                     .getUsersBegins(this.pageNumber.toString(), value.user)
-            })
+            }))
             .subscribe(users => {
                 this.showUser(users);
                 this.loading = false;

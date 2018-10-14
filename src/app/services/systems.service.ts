@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { EBGSSystemsV3, EBGSSystemsV3WOHistory, EBGSFactionV3Schema, EBGSSystemChart, EBGSSystemPostHistory, EBGSFactionPostHistory, EBGSSystemChartPaginate } from '../typings';
 import { FactionsService } from './factions.service';
 import { CustomEncoder } from './custom.encoder';

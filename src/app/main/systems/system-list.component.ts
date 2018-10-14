@@ -1,15 +1,12 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { State } from '@clr/angular';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
-import { AuthenticationService } from '../../services/authentication.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/switchMap';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-system-list',
@@ -22,7 +19,7 @@ export class SystemListComponent implements OnInit {
     systemToAdd: string;
     totalRecords = 0;
     private pageNumber = 1;
-    private tableState: State;
+    private tableState: ClrDatagridStateInterface;
     systemForm = new FormGroup({
         systemName: new FormControl()
     });
@@ -53,7 +50,7 @@ export class SystemListComponent implements OnInit {
         });
     }
 
-    refresh(tableState: State) {
+    refresh(tableState: ClrDatagridStateInterface) {
         let beginsWith = this.systemForm.value.systemName;
         this.tableState = tableState;
         this.loading = true;
@@ -71,8 +68,8 @@ export class SystemListComponent implements OnInit {
 
     ngOnInit() {
         this.systemForm.valueChanges
-            .debounceTime(300)
-            .switchMap(value => {
+            .pipe(debounceTime(300))
+            .pipe(switchMap(value => {
                 this.loading = true;
                 this.pageNumber = Math.ceil((this.tableState.page.to + 1) / this.tableState.page.size);
                 if (!value.systemName) {
@@ -80,7 +77,7 @@ export class SystemListComponent implements OnInit {
                 }
                 return this.systemService
                     .getSystemsBegins(this.pageNumber.toString(), value.systemName)
-            })
+            }))
             .subscribe(systems => {
                 this.showSystem(systems);
                 this.loading = false;

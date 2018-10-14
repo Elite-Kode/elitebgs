@@ -1,6 +1,5 @@
 import { Component, HostBinding, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { State } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
