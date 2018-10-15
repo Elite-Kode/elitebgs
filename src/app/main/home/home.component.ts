@@ -104,6 +104,9 @@ export class HomeComponent implements OnInit {
                         faction.recovering_states.forEach(state => {
                             state.state = FDevIDs.state[state.state].name;
                         });
+                        if (faction.name_lower === system.controlling_minor_faction) {
+                            system.controlling_faction = faction;
+                        }
                     });
                 });
             })

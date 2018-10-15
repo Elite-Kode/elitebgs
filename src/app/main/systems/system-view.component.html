@@ -66,7 +66,7 @@
 
         <clr-dg-row *clrDgItems="let faction of systemData?.factions">
             <clr-dg-cell class="control-width">
-                <ng-container *ngIf="faction.name_lower === controllingFaction?.name_lower">👑</ng-container>
+                <ng-container *ngIf="faction.name_lower === systemData?.controlling_faction?.name_lower">👑</ng-container>
             </clr-dg-cell>
             <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
