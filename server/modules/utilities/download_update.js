@@ -21,7 +21,7 @@ const progress = require('request-progress');
 const fs = require('fs-extra');
 const ndjson = require('ndjson');
 const jsonStream = require('JSONStream');
-const csvtojson = require('csvtojson');
+const csvtojson = require('csvtojson/v1');
 const eventEmmiter = require('events').EventEmitter;
 const inherits = require('util').inherits;
 

@@ -50,7 +50,7 @@
             <b>Population : </b>{{systemData?.population}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
-            <b>Controlling Faction : </b><a routerLink="/faction/{{controllingFaction?.faction_id}}">{{controllingFaction?.name}}</a>
+            <b>Controlling Faction : </b><a routerLink="/faction/{{systemData?.controlling_faction?.faction_id}}">{{systemData?.controlling_faction?.name}}</a>
         </div>
     </div>
     <clr-datagrid>
