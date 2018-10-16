@@ -588,6 +588,7 @@ interface EBGSFactionHistoryList extends EBGSFactionHistory {
 interface EBGSSystemChartSchema extends EBGSSystemV3Schema {
     factions: EBGSSystemFactionChartSchema[];
     faction_history: EBGSFactionHistoryList[];
+    controlling_faction: EBGSSystemFactionChartSchema;
 }
 
 interface EBGSSystemPostHistorySchema {

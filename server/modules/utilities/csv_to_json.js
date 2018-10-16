@@ -17,7 +17,7 @@
 "use strict";
 
 const fs = require('fs-extra');
-const csvtojson = require('csvtojson');
+const csvtojson = require('csvtojson/v1');
 const eventEmmiter = require('events').EventEmitter;
 const inherits = require('util').inherits;
 

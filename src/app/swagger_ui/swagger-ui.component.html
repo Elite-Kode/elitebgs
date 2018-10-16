@@ -9,10 +9,13 @@
                 <button (click)="onVersionSelect(i)" type="button" clrDropdownItem *ngFor="let spec of docSpecs;let i = index">{{spec.versionName}}</button>
             </clr-dropdown-menu>
         </clr-dropdown>
+        <div class="btn-group btn-primary right-align">
+            <a class="btn btn-primary" href="{{currentVersion.specLocation}}" target="_blank">Spec</a>
+            <a class="btn btn-primary" href="{{currentVersion.swaggerLocation}}" target="_blank">Swagger</a>
+        </div>
         <h1>{{doc?.info.title}}</h1>
         <h3>{{doc?.info.description}}</h3>
         <h4>Version {{doc?.info.version}}</h4>
-        <a href="{{currentVersion.specLocation}}">Go to Spec</a>
         <div class="row">
             <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4" *ngFor="let path of paths;let i=index">
                 <ng-container *ngFor="let method of getMethods(path[0])">
@@ -72,7 +75,8 @@
                                         <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'">
                                             <a href="https://developer.mozilla.org/en-US/docs/Glossary/{{parameter.items.type}}">{{parameter.items.type}}[]</a>
                                         </td>
-                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.$ref" (click)="makeActive(getDefinitionFromRef(parameter.items.$ref))">
+                                        <td *ngIf="parameter.type && parameter.type === 'array' && parameter.items.$ref"
+                                            (click)="makeActive(getDefinitionFromRef(parameter.items.$ref))">
                                             <a>{{getDefinitionFromRef(parameter.items.$ref)}}[]</a>
                                         </td>
                                     </tr>
@@ -174,7 +178,8 @@
                 <div class="form-block" formArrayName="parameters">
                     <div class="card">
                         <div class="card-header">Parameters</div>
-                        <div class="card-block" *ngFor="let parameter of parametersSelected; let i=index" [formGroupName]="i">
+                        <div class="card-block" *ngFor="let parameter of parametersSelected; let i=index"
+                            [formGroupName]="i">
                             <div class="card-text">
                                 <div class="row">
                                     <div class="clr-col-sm-12 clr-col-md-3">

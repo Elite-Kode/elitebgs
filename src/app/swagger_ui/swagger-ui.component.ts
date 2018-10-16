@@ -7,6 +7,7 @@ import { TryAPIService } from '../services/tryapi.service';
 export interface IInputSpec {
     versionName: string;
     specLocation: string;
+    swaggerLocation: string;
 }
 
 @Component({
@@ -111,15 +112,15 @@ export class SwaggerUIComponent implements OnInit {
     getParameters(path: string, method: string): Parameter[] {
         switch (method) {
             case 'get':
-                return [...this.doc.paths[path].get.parameters];
+                return [...this.doc.paths[path].get.parameters] as Parameter[];
             case 'post':
-                return [...this.doc.paths[path].post.parameters];
+                return [...this.doc.paths[path].post.parameters] as Parameter[];
             case 'patch':
-                return [...this.doc.paths[path].patch.parameters];
+                return [...this.doc.paths[path].patch.parameters] as Parameter[];
             case 'put':
-                return [...this.doc.paths[path].put.parameters];
+                return [...this.doc.paths[path].put.parameters] as Parameter[];
             case 'delete':
-                return [...this.doc.paths[path].delete.parameters];
+                return [...this.doc.paths[path].delete.parameters] as Parameter[];
             default:
                 return null;
         }

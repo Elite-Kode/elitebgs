@@ -144,19 +144,22 @@ app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
 // app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
 let host = '';
+let protocol = '';
 if (process.env.NODE_ENV === 'development') {
     host = 'localhost:3001';
+    protocol = 'http';
 } else if (process.env.NODE_ENV === 'production') {
     host = 'elitebgs.kodeblox.com';
+    protocol = 'https';
 }
 
-app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v1/api-docs.json`));
-app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v2/api-docs.json`));
-app.use('/api/eddb/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/eddb/v3/api-docs.json`));
-app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v1/api-docs.json`));
-app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v2/api-docs.json`));
-app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v3/api-docs.json`));
-app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(null, null, null, null, null, `http://${host}/api/ebgs/v4/api-docs.json`));
+app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv1));
+app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv2));
+app.use('/api/eddb/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv3));
+app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv1));
+app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv2));
+app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv3));
+app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv4));
 
 // app.use('/api/ebgs/v1/factions', ebgsFactionsV1);
 // app.use('/api/ebgs/v1/systems', ebgsSystemsV1);
@@ -368,21 +371,21 @@ let onAuthenticationGuilds = (accessToken, refreshToken, profile, done) => {
 passport.use('discord', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `http://${host}/auth/discord/callback`,
+    callbackURL: `${protocol}://${host}/auth/discord/callback`,
     scope: ['identify']
 }, onAuthenticationIdentify));
 
 passport.use('discord-email', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `http://${host}/auth/discord/callbackemail`,
+    callbackURL: `${protocol}://${host}/auth/discord/callbackemail`,
     scope: ['email']
 }, onAuthenticationEmail));
 
 passport.use('discord-guilds', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `http://${host}/auth/discord/callbackguilds`,
+    callbackURL: `${protocol}://${host}/auth/discord/callbackguilds`,
     scope: ['guilds']
 }, onAuthenticationGuilds));
 
