@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
@@ -26,7 +26,7 @@ import { ThemeService } from '../../services/theme.service';
     selector: 'app-faction-state-chart',
     templateUrl: './faction-state-chart.component.html'
 })
-export class FactionStateChartComponent implements OnInit, AfterViewInit {
+export class FactionStateChartComponent implements OnInit, OnChanges {
     @Input() factionData: EBGSFactionV3Schema;
     // options: Options;
     options: any;
@@ -34,6 +34,10 @@ export class FactionStateChartComponent implements OnInit, AfterViewInit {
     constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
+        this.createChart()
+    }
+
+    createChart(): void {
         const allSystems: string[] = [];
         const systems: string[] = [];
         this.factionData.history.forEach(record => {
@@ -140,10 +144,11 @@ export class FactionStateChartComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
-        // // this.chart.ref.reflow();
-        // this.chart.ref$.subscribe(chart => {
-        //     chart.reflow();
-        // });
+    ngOnChanges(changes: SimpleChanges) {
+        for (const propName in changes) {
+            if (propName === 'factionData' && changes[propName].currentValue) {
+                this.createChart();
+            }
+        }
     }
 }

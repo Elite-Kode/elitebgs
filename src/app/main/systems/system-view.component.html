@@ -80,10 +80,17 @@
             <clr-dg-cell>{{faction.updated_at}}</clr-dg-cell>
         </clr-dg-row>
     </clr-datagrid>
+    <div class="date-filter">
+        <h3>Date Filter</h3>
+        <label>From</label>
+        <input type="date" [clrDate]="fromDateFilter" (clrDateChange)="fromDateChange($event)">
+        <label>To</label>
+        <input type="date" [clrDate]="toDateFilter" (clrDateChange)="toDateChange($event)">
+    </div>
     <div class="card">
         <div class="card-block">
             <div class="card-title">
-                Last 10 Days
+                Last {{daysGap}} Days
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
                 <app-system-influence-chart [systemData]="systemData"></app-system-influence-chart>
@@ -91,7 +98,7 @@
         </div>
         <div class="card-block">
             <div class="card-title">
-                Last 10 Days
+                Last {{daysGap}} Days
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
                 <app-system-state-chart [systemData]="systemData"></app-system-state-chart>

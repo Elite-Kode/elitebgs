@@ -6,6 +6,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSFactionV3Schema, EBGSUser } from '../../typings';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-faction-view',
@@ -19,6 +20,9 @@ export class FactionViewComponent implements OnInit {
     systemsControlled: number;
     successAlertState = false;
     failureAlertState = false;
+    fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
+    toDateFilter = new Date(Date.now());
+    daysGap = 0;
     user: EBGSUser;
     constructor(
         private factionService: FactionsService,
@@ -29,8 +33,13 @@ export class FactionViewComponent implements OnInit {
 
     ngOnInit() {
         this.getAuthentication();
+        this.getFactionData();
+    }
+
+    getFactionData() {
+        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
         this.factionService
-            .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')])
+            .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')], this.fromDateFilter, this.toDateFilter)
             .then(faction => {
                 this.factionData = faction[0];
                 this.factionData.government = StringHandlers.titlify(this.factionData.government);
@@ -93,5 +102,15 @@ export class FactionViewComponent implements OnInit {
             .subscribe(user => {
                 this.user = user;
             });
+    }
+
+    fromDateChange(date: Date) {
+        this.fromDateFilter = date;
+        this.getFactionData();
+    }
+
+    toDateChange(date: Date) {
+        this.toDateFilter = date;
+        this.getFactionData();
     }
 }

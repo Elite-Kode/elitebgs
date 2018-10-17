@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSFactionV3Schema } from '../../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
@@ -9,13 +9,17 @@ import { ThemeService } from '../../services/theme.service';
     templateUrl: './faction-influence-chart.component.html'
 })
 
-export class FactionInfluenceChartComponent implements OnInit, AfterViewInit {
+export class FactionInfluenceChartComponent implements OnInit, OnChanges {
     @Input() factionData: EBGSFactionV3Schema;
     options: Options;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
+        this.createChart();
+    }
+
+    createChart(): void {
         const history = this.factionData.history;
         const allSystems: string[] = [];
         history.forEach(element => {
@@ -69,10 +73,11 @@ export class FactionInfluenceChartComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
-    //     // this.chart.ref.reflow();
-    //     this.chart.ref$.subscribe(chart => {
-    //         chart.reflow();
-    //     });
+    ngOnChanges(changes: SimpleChanges) {
+        for (const propName in changes) {
+            if (propName === 'factionData' && changes[propName].currentValue) {
+                this.createChart();
+            }
+        }
     }
 }

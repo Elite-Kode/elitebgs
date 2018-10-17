@@ -37,21 +37,27 @@ export class FactionsService {
         return this.parseFactionData(factionsList, 'name');
     }
 
-    parseFactionDataId(factionsList: string[]): Promise<EBGSFactionV3Schema[]> {
-        return this.parseFactionData(factionsList, 'id');
+    parseFactionDataId(factionsList: string[], timeMin: Date, timeMax: Date): Promise<EBGSFactionV3Schema[]> {
+        return this.parseFactionData(factionsList, 'id', timeMin, timeMax);
     }
 
-    private parseFactionData(factionsList: string[], type: string): Promise<EBGSFactionV3Schema[]> {
+    private parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionV3Schema[]> {
         const allFactionsGet: Promise<EBGSFactionsV3>[] = [];
         const returnFactions: EBGSFactionV3Schema[] = [];
+        if (timeMin === undefined || timeMin === null) {
+            timeMin = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+        }
+        if (timeMax === undefined || timeMax === null) {
+            timeMax = new Date(Date.now())
+        }
         factionsList.forEach(faction => {
             allFactionsGet.push(new Promise((resolve, reject) => {
                 let history: Observable<EBGSFactionsV3>;
                 if (type === 'name') {
-                    history = this.getHistory(faction, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString());
+                    history = this.getHistory(faction, timeMin.getTime().toString(), timeMax.getTime().toString());
                 }
                 if (type === 'id') {
-                    history = this.getHistoryById(faction, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString())
+                    history = this.getHistoryById(faction, timeMin.getTime().toString(), timeMax.getTime().toString())
                 }
                 history.subscribe(factions => {
                     factions.docs.forEach(gotFaction => {
