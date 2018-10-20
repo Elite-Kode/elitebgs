@@ -5,6 +5,7 @@ import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemChart, EBGSUser } from '../../typings';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-system-view',
@@ -18,6 +19,9 @@ export class SystemViewComponent implements OnInit {
     editModal: boolean;
     successAlertState = false;
     failureAlertState = false;
+    fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
+    toDateFilter = new Date(Date.now());
+    daysGap = 0;
     user: EBGSUser;
     constructor(
         private systemService: SystemsService,
@@ -28,8 +32,13 @@ export class SystemViewComponent implements OnInit {
 
     ngOnInit() {
         this.getAuthentication();
+        this.getSystemData();
+    }
+
+    getSystemData() {
+        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
         this.systemService
-            .parseSystemDataId([this.route.snapshot.paramMap.get('systemid')])
+            .parseSystemDataId([this.route.snapshot.paramMap.get('systemid')], this.fromDateFilter, this.toDateFilter)
             .then(system => {
                 this.systemData = system[0];
                 this.systemData.government = FDevIDs.government[this.systemData.government].name;
@@ -103,5 +112,15 @@ export class SystemViewComponent implements OnInit {
             .subscribe(user => {
                 this.user = user;
             });
+    }
+
+    fromDateChange(date: Date) {
+        this.fromDateFilter = date;
+        this.getSystemData();
+    }
+
+    toDateChange(date: Date) {
+        this.toDateFilter = date;
+        this.getSystemData();
     }
 }

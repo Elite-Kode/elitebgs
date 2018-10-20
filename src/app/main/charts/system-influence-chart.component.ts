@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
@@ -9,13 +9,17 @@ import { ThemeService } from '../../services/theme.service';
     templateUrl: './system-influence-chart.component.html'
 })
 
-export class SystemInfluenceChartComponent implements OnInit, AfterViewInit {
+export class SystemInfluenceChartComponent implements OnInit, OnChanges {
     @Input() systemData: EBGSSystemChart;
     options: Options;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
+        this.createChart();
+    }
+
+    createChart(): void {
         const allTimeFactions: string[] = [];
         this.systemData.faction_history.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
@@ -71,10 +75,11 @@ export class SystemInfluenceChartComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
-        // // this.chart.ref.reflow();
-        // this.chart.ref$.subscribe(chart => {
-        //     chart.reflow();
-        // });
+    ngOnChanges(changes: SimpleChanges) {
+        for (const propName in changes) {
+            if (propName === 'systemData' && changes[propName].currentValue) {
+                this.createChart();
+            }
+        }
     }
 }

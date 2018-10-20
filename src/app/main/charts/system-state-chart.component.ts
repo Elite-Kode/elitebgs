@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
@@ -26,7 +26,7 @@ import { ThemeService } from '../../services/theme.service';
     selector: 'app-system-state-chart',
     templateUrl: './system-state-chart.component.html'
 })
-export class SystemStateChartComponent implements OnInit, AfterViewInit {
+export class SystemStateChartComponent implements OnInit, OnChanges {
     @Input() systemData: EBGSSystemChart;
     // options: Options;
     options: any;
@@ -34,6 +34,10 @@ export class SystemStateChartComponent implements OnInit, AfterViewInit {
     constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
+        this.createChart();
+    }
+
+    createChart(): void {
         const allTimeFactions: string[] = [];
         const factions: string[] = [];
         this.systemData.faction_history.forEach(record => {
@@ -140,10 +144,11 @@ export class SystemStateChartComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit() {
-        // // this.chart.ref.reflow();
-        // this.chart.ref$.subscribe(chart => {
-        //     chart.reflow();
-        // });
+    ngOnChanges(changes: SimpleChanges) {
+        for (const propName in changes) {
+            if (propName === 'systemData' && changes[propName].currentValue) {
+                this.createChart();
+            }
+        }
     }
 }

@@ -1,9 +1,16 @@
-::ng-deep .data-description {
-    padding: 20px 0;
-}
+::ng-deep {
+    .data-description {
+        padding: 20px 0;
+    }
 
-::ng-deep .control-width {
-    width: 60px;
-    min-width: 60px !important;
-}
+    .control-width {
+        width: 60px;
+        min-width: 60px !important;
+    }
 
+    .date-filter {
+        label, .date-container {
+            margin-right: 10px;
+        }
+    }
+}

@@ -41,21 +41,27 @@ export class SystemsService {
         return this.parseSystemData(systemsList, 'name');
     }
 
-    parseSystemDataId(systemsList: string[]): Promise<EBGSSystemChart[]> {
-        return this.parseSystemData(systemsList, 'id');
+    parseSystemDataId(systemsList: string[], timeMin: Date, timeMax: Date): Promise<EBGSSystemChart[]> {
+        return this.parseSystemData(systemsList, 'id', timeMin, timeMax);
     }
 
-    private parseSystemData(systemsList: string[], type: string): Promise<EBGSSystemChart[]> {
+    private parseSystemData(systemsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSSystemChart[]> {
         const allSystemsGet: Promise<EBGSSystemChartPaginate>[] = [];
         const returnSystems: EBGSSystemChart[] = [];
+        if (timeMin === undefined || timeMin === null) {
+            timeMin = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+        }
+        if (timeMax === undefined || timeMax === null) {
+            timeMax = new Date(Date.now())
+        }
         systemsList.forEach(system => {
             allSystemsGet.push(new Promise((resolve, reject) => {
                 let history: Observable<EBGSSystemChartPaginate>;
                 if (type === 'name') {
-                    history = this.getHistory(system, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString());
+                    history = this.getHistory(system, timeMin.getTime().toString(), timeMax.getTime().toString());
                 }
                 if (type === 'id') {
-                    history = this.getHistoryById(system, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString());
+                    history = this.getHistoryById(system, timeMin.getTime().toString(), timeMax.getTime().toString());
                 }
                 history.subscribe(systems => {
                     systems.docs.forEach(gotSystem => {
