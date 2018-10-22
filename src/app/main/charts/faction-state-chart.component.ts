@@ -38,6 +38,7 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
     }
 
     createChart(): void {
+        // Copied over to server\routes\chart_generator.js
         const allSystems: string[] = [];
         const systems: string[] = [];
         this.factionData.history.forEach(record => {

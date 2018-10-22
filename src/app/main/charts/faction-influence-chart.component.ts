@@ -20,6 +20,7 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
     }
 
     createChart(): void {
+        // Copied over to server\routes\chart_generator.js
         const history = this.factionData.history;
         const allSystems: string[] = [];
         history.forEach(element => {

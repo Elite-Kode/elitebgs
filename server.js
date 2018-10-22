@@ -27,6 +27,7 @@ const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
 const DiscordStrategy = require('passport-discord').Strategy;
 const secrets = require('./secrets');
+const processVars = require('./processVars');
 
 const bugsnag = require('./server/bugsnag');
 const swagger = require('./server/swagger');
@@ -76,6 +77,7 @@ const authDiscord = require('./server/routes/auth/discord');
 const authLogout = require('./server/routes/auth/logout');
 const authUser = require('./server/routes/auth/auth_user');
 const frontEnd = require('./server/routes/front_end');
+const chartGenerator = require('./server/routes/chart_generator');
 
 require('./server/modules/eddn');
 require('./server/modules/discord');
@@ -143,16 +145,6 @@ app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
 // app.use('/api/eddb/v1/downloadinsert', downloadInsertV1);
 // app.use('/api/eddb/v1/downloadupdate', downloadUpdateV1);
 
-let host = '';
-let protocol = '';
-if (process.env.NODE_ENV === 'development') {
-    host = 'localhost:3001';
-    protocol = 'http';
-} else if (process.env.NODE_ENV === 'production') {
-    host = 'elitebgs.kodeblox.com';
-    protocol = 'https';
-}
-
 app.use('/api/eddb/v1/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv1));
 app.use('/api/eddb/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv2));
 app.use('/api/eddb/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EDDBAPIv3));
@@ -193,6 +185,7 @@ app.use('/auth/discord', authDiscord);
 app.use('/auth/logout', authLogout);
 app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
+app.use('/chartgenerator', chartGenerator);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
@@ -371,21 +364,21 @@ let onAuthenticationGuilds = (accessToken, refreshToken, profile, done) => {
 passport.use('discord', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `${protocol}://${host}/auth/discord/callback`,
+    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callback`,
     scope: ['identify']
 }, onAuthenticationIdentify));
 
 passport.use('discord-email', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `${protocol}://${host}/auth/discord/callbackemail`,
+    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callbackemail`,
     scope: ['email']
 }, onAuthenticationEmail));
 
 passport.use('discord-guilds', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
-    callbackURL: `${protocol}://${host}/auth/discord/callbackguilds`,
+    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callbackguilds`,
     scope: ['guilds']
 }, onAuthenticationGuilds));
 

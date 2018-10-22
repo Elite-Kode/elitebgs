@@ -19,25 +19,15 @@
 let swaggerJsDoc = require('swagger-jsdoc');
 
 let swaggerDefinitions = require('./swaggerDefinitions');
-
-let host = '';
-let schemes = '';
-
-if (process.env.NODE_ENV === 'development') {
-    host = 'localhost:3001';
-    schemes = 'http';
-} else if (process.env.NODE_ENV === 'production') {
-    host = 'elitebgs.kodeblox.com';
-    schemes = 'https';
-}
+const processVars = require('../processVars');
 
 let makeSwaggerSpec = (params, security) => {
     let swaggerDefinition = {
         info: params.info,
-        host: host,
+        host: processVars.host,
         basePath: params.basePath,
         definitions: params.definitions,
-        schemes: schemes
+        schemes: processVars.protocol
     };
 
     if (security) {

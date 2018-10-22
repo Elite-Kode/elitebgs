@@ -1,5 +1,7 @@
-export class FDevIDs {
-    public static state = {
+// Copied and modified over from src\app\utilities\fdevids.ts
+
+module.exports = {
+    state : {
         null: {
             'name': 'None'
         },
@@ -42,8 +44,8 @@ export class FDevIDs {
         'war': {
             'name': 'War'
         }
-    };
-    public static superpower = {
+    },
+    superpower : {
         'alliance': {
             'name': 'Alliance'
         },
@@ -65,8 +67,8 @@ export class FDevIDs {
         'pilotsfederation': {
             'name': 'Pilots Federation'
         }
-    };
-    public static economy = {
+    },
+    economy : {
         '$economy_agri;': {
             'name': 'Agriculture'
         },
@@ -109,8 +111,8 @@ export class FDevIDs {
         '$economy_damaged;': {
             'name': 'Damaged'
         }
-    };
-    public static government = {
+    },
+    government : {
         '$government_anarchy;': {
             'name': 'Anarchy'
         },
@@ -153,8 +155,8 @@ export class FDevIDs {
         '$government_engineer;': {
             'name': 'Workshop'
         }
-    };
-    public static security = {
+    },
+    security: {
         '$galaxy_map_info_state_anarchy;': {
             'name': 'Anarchy'
         },
@@ -170,8 +172,8 @@ export class FDevIDs {
         '$system_security_medium;': {
             'name': 'Medium'
         }
-    };
-    public static station = {
+    },
+    station : {
         'coriolis': {
             'name': 'Coriolis Starport'
         },
@@ -232,5 +234,5 @@ export class FDevIDs {
         'megaship': {
             'name': 'Mega Ship'
         },
-    };
+    }
 }
