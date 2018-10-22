@@ -137,7 +137,11 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
                 headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
                 pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
             },
-            series: series
+            series: series,
+            exporting: {
+                enabled: true,
+                sourceWidth: 1200
+            }
         };
         this.themeService.theme$.subscribe(theme => {
             this.chart = new Chart(this.options);

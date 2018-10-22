@@ -68,7 +68,11 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
                 }
             },
             title: { text: 'Influence Trend' },
-            series: series
+            series: series,
+            exporting: {
+                enabled: true,
+                sourceWidth: 1200
+            }
         };
         this.themeService.theme$.subscribe(theme => {
             this.chart = new Chart(this.options);
