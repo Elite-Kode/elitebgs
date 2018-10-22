@@ -6,6 +6,7 @@ import { ClarityModule } from '@clr/angular';
 import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
 // import { xrange } from 'highcharts/modules/xrange.src';
 import * as xrange from 'highcharts/modules/xrange.src';
+import * as exporting from 'highcharts/modules/exporting.src';
 
 import { MainComponent } from './main.component';
 import { HomeComponent } from './home/home.component';
@@ -24,7 +25,7 @@ import { StationEditComponent } from './edit_modals/station-edit.component';
 import { MainRoutingModule } from './main-routing.module';
 
 export function highchartsModules() {
-    return [xrange];
+    return [xrange, exporting];
 }
 
 @NgModule({

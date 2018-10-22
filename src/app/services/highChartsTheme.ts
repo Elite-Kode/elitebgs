@@ -1,3 +1,5 @@
+// Copied over to server\modules\highcharts\highChartsTheme.js
+
 export const HighchartsDarkTheme = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff'
