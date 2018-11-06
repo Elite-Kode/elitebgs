@@ -124,7 +124,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                             x: tempBegin[previousStateIndex],
                             x2: Date.parse(record.updated_at),
                             y: sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                            category: faction
+                            faction: faction
                         });
                         previousStates[previousStateIndex] = null;
                     });
@@ -145,7 +145,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                         x: tempBegin[previousStateIndex],
                         x2: Date.now(),
                         y: sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                        yCategory: faction
+                        faction: faction
                     });
                     previousStates[previousStateIndex] = null;
                 }
@@ -236,7 +236,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
             },
             tooltip: {
                 headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.faction}</b><br/>'
             },
             series: series,
             exporting: {
