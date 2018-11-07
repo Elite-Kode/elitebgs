@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSSystemChart } from '../../typings';
 import { FDevIDs } from '../../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
@@ -37,10 +36,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
     // options: Options;
     options: any;
     chart: Chart;
-    constructor(
-        private themeService: ThemeService,
-        @Inject(DOCUMENT) private document: Document
-    ) { }
+    constructor(private themeService: ThemeService) { }
 
     ngOnInit(): void {
         this.createChart();
@@ -48,6 +44,21 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
 
     createChart(): void {
         // Copied over to server\routes\chart_generator.js
+        let stateType;
+        let stateTitle;
+        switch (this.type) {
+            case 'p':
+                stateType = 'pending_states';
+                stateTitle = 'Pending State';
+                break;
+            case 'r':
+                stateType = 'recovering_states';
+                stateTitle = 'Recovering State';
+                break;
+            default:
+                stateType = 'pending_states';
+                stateTitle = 'Pending State';
+        }
         const allTimeFactions: string[] = [];
         const allTimeStates: string[][] = [];
         const maxStatesConcurrent: number[] = [];
@@ -62,18 +73,18 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
             let maxStates = 0;
             this.systemData.faction_history.forEach((record, recordIndex, records) => {
                 if (record.faction === faction) {
-                    if (record.pending_states.length === 0) {
-                        records[recordIndex].pending_states.push({
+                    if (record[stateType].length === 0) {
+                        records[recordIndex][stateType].push({
                             state: 'none',
                             trend: 0
                         });
                     }
-                    record.pending_states.forEach(pendingState => {
-                        if (allStates.indexOf(pendingState.state) === -1) {
-                            allStates.push(pendingState.state);
+                    record[stateType].forEach(recordState => {
+                        if (allStates.indexOf(recordState.state) === -1) {
+                            allStates.push(recordState.state);
                         }
                     });
-                    maxStates = record.pending_states.length > maxStates ? record.pending_states.length : maxStates;
+                    maxStates = record[stateType].length > maxStates ? record[stateType].length : maxStates;
                 }
             });
             allTimeStates.push(allStates);
@@ -109,14 +120,14 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
             this.systemData.faction_history.filter(record => {
                 return record.faction === faction;
             }).forEach(record => {
-                if (!isEqual(record.pending_states.map(pendingStates => {
-                    return pendingStates.state;
+                if (!isEqual(record[stateType].map(recordState => {
+                    return recordState.state;
                 }), previousStates)) {
-                    const statesStarting: string[] = pull(difference(record.pending_states.map(pendingStates => {
-                        return pendingStates.state;
+                    const statesStarting: string[] = pull(difference(record[stateType].map(recordState => {
+                        return recordState.state;
                     }), previousStates), undefined, null);
-                    const statesEnding: string[] = pull(difference(previousStates, record.pending_states.map(pendingStates => {
-                        return pendingStates.state;
+                    const statesEnding: string[] = pull(difference(previousStates, record[stateType].map(recordState => {
+                        return recordState.state;
                     })), undefined, null);
                     statesEnding.forEach(state => {
                         const previousStateIndex = previousStates.indexOf(state);
@@ -162,7 +173,6 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
         for (let i = 0; i < maxStatesConcurrent.length; i++) {
             tickPositions.push(tickPositions[i] + maxStatesConcurrent[i]);
         }
-        const thisDocument = this.document;
         this.options = {
             chart: {
                 type: 'xrange',
@@ -186,7 +196,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                 }
             },
             title: {
-                text: 'Pending State Periods'
+                text: `${stateTitle} Periods`
             },
             xAxis: {
                 type: 'datetime'
