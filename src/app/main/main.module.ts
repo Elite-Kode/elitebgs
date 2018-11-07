@@ -18,6 +18,7 @@ import { StationListComponent } from './stations/station-list.component';
 import { StationViewComponent } from './stations/station-view.component';
 import { FactionInfluenceChartComponent } from './charts/faction-influence-chart.component';
 import { FactionStateChartComponent } from './charts/faction-state-chart.component';
+import { FactionPRStateChartComponent } from './charts/faction-p-r-state-chart.component';
 import { SystemInfluenceChartComponent } from './charts/system-influence-chart.component';
 import { SystemStateChartComponent } from './charts/system-state-chart.component';
 import { SystemPRStateChartComponent } from './charts/system-p-r-state-chart.component';
@@ -44,6 +45,7 @@ export function highchartsModules() {
         SystemStateChartComponent,
         SystemPRStateChartComponent,
         FactionStateChartComponent,
+        FactionPRStateChartComponent,
         SystemEditComponent,
         StationEditComponent
     ],

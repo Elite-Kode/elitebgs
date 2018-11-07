@@ -94,6 +94,12 @@
             <div class="card-text" *ngIf="factionData !== undefined">
                 <app-faction-state-chart [factionData]="factionData"></app-faction-state-chart>
             </div>
+            <div class="card-text" *ngIf="factionData !== undefined">
+                <app-faction-p-r-state-chart [factionData]="factionData" type="p"></app-faction-p-r-state-chart>
+            </div>
+            <div class="card-text" *ngIf="factionData !== undefined">
+                <app-faction-p-r-state-chart [factionData]="factionData" type="r"></app-faction-p-r-state-chart>
+            </div>
         </div>
     </div>
 </div>
