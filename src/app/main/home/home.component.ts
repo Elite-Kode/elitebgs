@@ -6,6 +6,7 @@ import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSUser, EBGSFactionV3Schema, EBGSSystemChart } from '../../typings';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-home',
@@ -113,6 +114,14 @@ export class HomeComponent implements OnInit {
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    getUpdatedAtFormatted(updatedAt) {
+        return {
+            time: moment(updatedAt).utc().format('ddd, MMM D, HH:mm:ss'),
+            fromNow: moment(updatedAt).fromNow(true),
+            ageFlag: moment(Date.now()).diff(moment(updatedAt), 'days', true) - 1
+        }
     }
 
     openFactionAddModal() {
