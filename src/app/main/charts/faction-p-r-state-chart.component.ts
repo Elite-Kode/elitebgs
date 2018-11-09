@@ -47,11 +47,11 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
         let stateType;
         let stateTitle;
         switch (this.type) {
-            case 'p':
+            case 'pending':
                 stateType = 'pending_states';
                 stateTitle = 'Pending State';
                 break;
-            case 'r':
+            case 'recovering':
                 stateType = 'recovering_states';
                 stateTitle = 'Recovering State';
                 break;
