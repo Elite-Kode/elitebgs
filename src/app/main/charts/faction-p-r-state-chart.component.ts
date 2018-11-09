@@ -178,9 +178,10 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
                 type: 'xrange',
                 events: {
                     render() {
-                        const tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                        let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
                             return +this.yAxis[0].ticks[tickPosition.toString()].mark.d.split(' ')[2]
                         }, this);
+                        tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].mark.d.split(' ')[2]].concat(tickAbsolutePositions);
                         const labelPositions = [];
                         for (let i = 1; i < tickAbsolutePositions.length; i++) {
                             labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
@@ -206,7 +207,10 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
                     text: 'Systems'
                 },
                 categories: systems,
-                tickPositions: tickPositions,
+                tickPositioner: function () {
+                    return tickPositions;
+                },
+                startOnTick: false,
                 reversed: true,
                 labels: {
                     formatter: function () {
