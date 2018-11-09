@@ -266,7 +266,15 @@ router.get('/factions/state', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/factions/pending-recovering', (req, res, next) => {
+router.get('/factions/pending', (req, res, next) => {
+    factionPendingRecovering(req, res, next, 'pending');
+});
+
+router.get('/factions/recovering', (req, res, next) => {
+    factionPendingRecovering(req, res, next, 'recovering');
+});
+
+let factionPendingRecovering = (req, res, next, type) => {
     let requestOptions = {
         url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
         qs: {
@@ -281,7 +289,7 @@ router.get('/factions/pending-recovering', (req, res, next) => {
             // Copied over from src\app\main\charts\faction-p-r-state-chart.component.ts
             let stateType;
             let stateTitle;
-            switch (req.query.type) {
+            switch (type) {
                 case 'pending':
                     stateType = 'pending_states';
                     stateTitle = 'Pending State';
@@ -521,7 +529,7 @@ router.get('/factions/pending-recovering', (req, res, next) => {
                 .catch(next);
         })
         .catch(next);
-});
+}
 
 router.get('/systems/influence', (req, res, next) => {
     let requestOptions = {
@@ -767,7 +775,15 @@ router.get('/systems/state', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/systems/pending-recovering', (req, res, next) => {
+router.get('/systems/pending', (req, res, next) => {
+    systemPendingRecovering(req, res, next, 'pending');
+});
+
+router.get('/systems/recovering', (req, res, next) => {
+    systemPendingRecovering(req, res, next, 'recovering');
+});
+
+let systemPendingRecovering = (req, res, next, type) => {
     let requestOptions = {
         url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
         qs: {
@@ -782,7 +798,7 @@ router.get('/systems/pending-recovering', (req, res, next) => {
             // Copied over from src\app\main\charts\system-p-r-state-chart.component.ts
             let stateType;
             let stateTitle;
-            switch (req.query.type) {
+            switch (type) {
                 case 'pending':
                     stateType = 'pending_states';
                     stateTitle = 'Pending State';
@@ -1022,6 +1038,6 @@ router.get('/systems/pending-recovering', (req, res, next) => {
                 .catch(next);
         })
         .catch(next);
-});
+}
 
 module.exports = router;
