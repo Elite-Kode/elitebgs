@@ -266,6 +266,263 @@ router.get('/factions/state', (req, res, next) => {
         .catch(next);
 });
 
+router.get('/factions/pending-recovering', (req, res, next) => {
+    let requestOptions = {
+        url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+        qs: {
+            name: req.query.name,
+            timemin: req.query.timemin,
+            timemax: req.query.timemax
+        },
+        json: true
+    };
+    request.get(requestOptions)
+        .then(response => {
+            // Copied over from src\app\main\charts\faction-p-r-state-chart.component.ts
+            let stateType;
+            let stateTitle;
+            switch (req.query.type) {
+                case 'pending':
+                    stateType = 'pending_states';
+                    stateTitle = 'Pending State';
+                    break;
+                case 'recovering':
+                    stateType = 'recovering_states';
+                    stateTitle = 'Recovering State';
+                    break;
+                default:
+                    stateType = 'pending_states';
+                    stateTitle = 'Pending State';
+            }
+            const allTimeSystems = [];
+            const allTimeStates = [];
+            const maxStatesConcurrent = [];
+            const systems = [];
+            const history = response.docs[0].history;
+            history.forEach(record => {
+                if (allTimeSystems.indexOf(record.system) === -1) {
+                    allTimeSystems.push(record.system);
+                }
+            });
+            allTimeSystems.forEach((system, index) => {
+                const allStates = [];
+                let maxStates = 0;
+                history.forEach((record, recordIndex, records) => {
+                    if (record.system === system) {
+                        if (record[stateType].length === 0) {
+                            records[recordIndex][stateType].push({
+                                state: 'none',
+                                trend: 0
+                            });
+                        }
+                        record[stateType].forEach(recordState => {
+                            if (allStates.indexOf(recordState.state) === -1) {
+                                allStates.push(recordState.state);
+                            }
+                        });
+                        maxStates = record[stateType].length > maxStates ? record[stateType].length : maxStates;
+                    }
+                });
+                allTimeStates.push(allStates);
+                if (maxStates === 0) {
+                    maxStates = 1;
+                }
+                maxStatesConcurrent.push(maxStates);
+            });
+            history.sort((a, b) => {
+                if (a.updated_at < b.updated_at) {
+                    return -1;
+                } else if (a.updated_at > b.updated_at) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            // const series: XRangeChartSeriesOptions[] = [];
+            const series = [];
+            const states = Object.keys(FDevIDs.state).filter(state => {
+                return state !== 'null';
+            }).map(state => {
+                return [state, FDevIDs.state[state].name];
+            });
+            const data = {};
+            states.forEach(state => {
+                data[state[0]] = [];
+            });
+            allTimeSystems.forEach((system, index) => {
+                systems.push(system);
+                const previousStates = new Array(maxStatesConcurrent[index]);
+                const tempBegin = new Array(maxStatesConcurrent[index]);
+                history.filter(record => {
+                    return record.system === system;
+                }).forEach(record => {
+                    if (!_.isEqual(record[stateType].map(recordState => {
+                        return recordState.state;
+                    }), previousStates)) {
+                        const statesStarting = _.pull(_.difference(record[stateType].map(recordState => {
+                            return recordState.state;
+                        }), previousStates), undefined, null);
+                        const statesEnding = _.pull(_.difference(previousStates, record[stateType].map(recordState => {
+                            return recordState.state;
+                        })), undefined, null);
+                        statesEnding.forEach(state => {
+                            const previousStateIndex = previousStates.indexOf(state);
+                            data[state].push({
+                                x: tempBegin[previousStateIndex],
+                                x2: Date.parse(record.updated_at),
+                                y: _.sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
+                                faction: system
+                            });
+                            previousStates[previousStateIndex] = null;
+                        });
+                        statesStarting.forEach(state => {
+                            for (let i = 0; i < previousStates.length; i++) {
+                                if (!previousStates[i]) {
+                                    previousStates[i] = state;
+                                    tempBegin[i] = Date.parse(record.updated_at);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                });
+                previousStates.forEach((state, previousStateIndex) => {
+                    if (state) {
+                        data[state].push({
+                            x: tempBegin[previousStateIndex],
+                            x2: Date.now(),
+                            y: _.sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
+                            faction: system
+                        });
+                        previousStates[previousStateIndex] = null;
+                    }
+                });
+            });
+            states.forEach(state => {
+                series.push({
+                    name: state[1],
+                    pointWidth: 20,
+                    data: data[state[0]]
+                });
+            });
+            const tickPositions = [-1];
+            for (let i = 0; i < maxStatesConcurrent.length; i++) {
+                tickPositions.push(tickPositions[i] + maxStatesConcurrent[i]);
+            }
+            let options = {
+                chart: {
+                    type: 'xrange',
+                    events: {
+                        render() {
+                            let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                                return +this.yAxis[0].ticks[tickPosition.toString()].mark.d.split(' ')[2]
+                            }, this);
+                            tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].mark.d.split(' ')[2]].concat(tickAbsolutePositions);
+                            const labelPositions = [];
+                            for (let i = 1; i < tickAbsolutePositions.length; i++) {
+                                labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
+                            }
+
+                            systems.forEach((faction, index) => {
+                                this.yAxis[0]
+                                    .labelGroup.element.childNodes[index]
+                                    .attributes.y.nodeValue = labelPositions[index]
+                                    + parseFloat(this.yAxis[0].labelGroup.element.childNodes[index].style['font-size']) / 2;
+                            });
+                        }
+                    }
+                },
+                title: {
+                    text: `${stateTitle} Periods`
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Systems'
+                    },
+                    categories: systems,
+                    tickPositioner: function () {
+                        return tickPositions;
+                    },
+                    startOnTick: false,
+                    reversed: true,
+                    labels: {
+                        formatter: function () {
+                            const chart = this.chart;
+                            const axis = this.axis;
+                            let label;
+
+                            if (!chart.yaxisLabelIndex) {
+                                chart.yaxisLabelIndex = 0;
+                            }
+                            if (this.value !== -1) {
+
+                                label = axis.categories[chart.yaxisLabelIndex];
+                                chart.yaxisLabelIndex++;
+
+                                if (chart.yaxisLabelIndex === maxStatesConcurrent.length) {
+                                    chart.yaxisLabelIndex = 0;
+                                }
+
+                                return label;
+                            }
+                        },
+                    },
+                },
+                plotOptions: {
+                    xrange: {
+                        borderRadius: 0,
+                        borderWidth: 0,
+                        grouping: false,
+                        dataLabels: {
+                            align: 'center',
+                            enabled: true,
+                            format: '{point.name}'
+                        },
+                        colorByPoint: false
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+                    pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.faction}</b><br/>'
+                },
+                series: series,
+                exporting: {
+                    enabled: true,
+                    sourceWidth: 1200
+                }
+            };
+            let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+            if (req.query.theme === 'dark') {
+                highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+            }
+            let highchartsRequestOptions = {
+                url: `https://export.highcharts.com/`,
+                formData: {
+                    options: JSON.stringify(options),
+                    type: 'image/png',
+                    filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
+                    resources: JSON.stringify({
+                        js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                    }),
+                    scale: 2
+                },
+                encoding: null,
+                resolveWithFullResponse: true
+            }
+            request.post(highchartsRequestOptions)
+                .then(imageResponse => {
+                    res.set('Content-Type', imageResponse.headers['content-type'])
+                    res.set('Content-Disposition', imageResponse.headers['content-disposition'])
+                    res.send(imageResponse.body);
+                })
+                .catch(next);
+        })
+        .catch(next);
+});
+
 router.get('/systems/influence', (req, res, next) => {
     let requestOptions = {
         url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
@@ -474,6 +731,263 @@ router.get('/systems/state', (req, res, next) => {
                 tooltip: {
                     headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
                     pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+                },
+                series: series,
+                exporting: {
+                    enabled: true,
+                    sourceWidth: 1200
+                }
+            };
+            let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+            if (req.query.theme === 'dark') {
+                highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+            }
+            let highchartsRequestOptions = {
+                url: `https://export.highcharts.com/`,
+                formData: {
+                    options: JSON.stringify(options),
+                    type: 'image/png',
+                    filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
+                    resources: JSON.stringify({
+                        js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                    }),
+                    scale: 2
+                },
+                encoding: null,
+                resolveWithFullResponse: true
+            }
+            request.post(highchartsRequestOptions)
+                .then(imageResponse => {
+                    res.set('Content-Type', imageResponse.headers['content-type'])
+                    res.set('Content-Disposition', imageResponse.headers['content-disposition'])
+                    res.send(imageResponse.body);
+                })
+                .catch(next);
+        })
+        .catch(next);
+});
+
+router.get('/systems/pending-recovering', (req, res, next) => {
+    let requestOptions = {
+        url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+        qs: {
+            name: req.query.name,
+            timemin: req.query.timemin,
+            timemax: req.query.timemax
+        },
+        json: true
+    };
+    request.get(requestOptions)
+        .then(response => {
+            // Copied over from src\app\main\charts\system-p-r-state-chart.component.ts
+            let stateType;
+            let stateTitle;
+            switch (req.query.type) {
+                case 'pending':
+                    stateType = 'pending_states';
+                    stateTitle = 'Pending State';
+                    break;
+                case 'recovering':
+                    stateType = 'recovering_states';
+                    stateTitle = 'Recovering State';
+                    break;
+                default:
+                    stateType = 'pending_states';
+                    stateTitle = 'Pending State';
+            }
+            const allTimeFactions = [];
+            const allTimeStates = [];
+            const maxStatesConcurrent = [];
+            const factions = [];
+            const factionHistory = response.docs[0].faction_history;
+            factionHistory.forEach(record => {
+                if (allTimeFactions.indexOf(record.faction) === -1) {
+                    allTimeFactions.push(record.faction);
+                }
+            });
+            allTimeFactions.forEach((faction, index) => {
+                const allStates = [];
+                let maxStates = 0;
+                factionHistory.forEach((record, recordIndex, records) => {
+                    if (record.faction === faction) {
+                        if (record[stateType].length === 0) {
+                            records[recordIndex][stateType].push({
+                                state: 'none',
+                                trend: 0
+                            });
+                        }
+                        record[stateType].forEach(recordState => {
+                            if (allStates.indexOf(recordState.state) === -1) {
+                                allStates.push(recordState.state);
+                            }
+                        });
+                        maxStates = record[stateType].length > maxStates ? record[stateType].length : maxStates;
+                    }
+                });
+                allTimeStates.push(allStates);
+                if (maxStates === 0) {
+                    maxStates = 1;
+                }
+                maxStatesConcurrent.push(maxStates);
+            });
+            factionHistory.sort((a, b) => {
+                if (a.updated_at < b.updated_at) {
+                    return -1;
+                } else if (a.updated_at > b.updated_at) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            // const series: XRangeChartSeriesOptions[] = [];
+            const series = [];
+            const states = Object.keys(FDevIDs.state).filter(state => {
+                return state !== 'null';
+            }).map(state => {
+                return [state, FDevIDs.state[state].name];
+            });
+            const data = {};
+            states.forEach(state => {
+                data[state[0]] = [];
+            });
+            allTimeFactions.forEach((faction, index) => {
+                factions.push(faction);
+                const previousStates = new Array(maxStatesConcurrent[index]);
+                const tempBegin = new Array(maxStatesConcurrent[index]);
+                factionHistory.filter(record => {
+                    return record.faction === faction;
+                }).forEach(record => {
+                    if (!_.isEqual(record[stateType].map(recordState => {
+                        return recordState.state;
+                    }), previousStates)) {
+                        const statesStarting = _.pull(_.difference(record[stateType].map(recordState => {
+                            return recordState.state;
+                        }), previousStates), undefined, null);
+                        const statesEnding = _.pull(_.difference(previousStates, record[stateType].map(recordState => {
+                            return recordState.state;
+                        })), undefined, null);
+                        statesEnding.forEach(state => {
+                            const previousStateIndex = previousStates.indexOf(state);
+                            data[state].push({
+                                x: tempBegin[previousStateIndex],
+                                x2: Date.parse(record.updated_at),
+                                y: _.sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
+                                faction: faction
+                            });
+                            previousStates[previousStateIndex] = null;
+                        });
+                        statesStarting.forEach(state => {
+                            for (let i = 0; i < previousStates.length; i++) {
+                                if (!previousStates[i]) {
+                                    previousStates[i] = state;
+                                    tempBegin[i] = Date.parse(record.updated_at);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                });
+                previousStates.forEach((state, previousStateIndex) => {
+                    if (state) {
+                        data[state].push({
+                            x: tempBegin[previousStateIndex],
+                            x2: Date.now(),
+                            y: _.sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
+                            faction: faction
+                        });
+                        previousStates[previousStateIndex] = null;
+                    }
+                });
+            });
+            states.forEach(state => {
+                series.push({
+                    name: state[1],
+                    pointWidth: 20,
+                    data: data[state[0]]
+                });
+            });
+            const tickPositions = [-1];
+            for (let i = 0; i < maxStatesConcurrent.length; i++) {
+                tickPositions.push(tickPositions[i] + maxStatesConcurrent[i]);
+            }
+            let options = {
+                chart: {
+                    type: 'xrange',
+                    events: {
+                        render() {
+                            let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                                return +this.yAxis[0].ticks[tickPosition.toString()].mark.d.split(' ')[2]
+                            }, this);
+                            tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].mark.d.split(' ')[2]].concat(tickAbsolutePositions);
+                            const labelPositions = [];
+                            for (let i = 1; i < tickAbsolutePositions.length; i++) {
+                                labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
+                            }
+
+                            factions.forEach((faction, index) => {
+                                this.yAxis[0]
+                                    .labelGroup.element.childNodes[index]
+                                    .attributes.y.nodeValue = labelPositions[index]
+                                    + parseFloat(this.yAxis[0].labelGroup.element.childNodes[index].style['font-size']) / 2;
+                            });
+                        }
+                    }
+                },
+                title: {
+                    text: `${stateTitle} Periods`
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Factions'
+                    },
+                    categories: factions,
+                    tickPositioner: function () {
+                        return tickPositions;
+                    },
+                    startOnTick: false,
+                    reversed: true,
+                    labels: {
+                        formatter: function () {
+                            const chart = this.chart;
+                            const axis = this.axis;
+                            let label;
+
+                            if (!chart.yaxisLabelIndex) {
+                                chart.yaxisLabelIndex = 0;
+                            }
+                            if (this.value !== -1) {
+
+                                label = axis.categories[chart.yaxisLabelIndex];
+                                chart.yaxisLabelIndex++;
+
+                                if (chart.yaxisLabelIndex === maxStatesConcurrent.length) {
+                                    chart.yaxisLabelIndex = 0;
+                                }
+
+                                return label;
+                            }
+                        },
+                    },
+                },
+                plotOptions: {
+                    xrange: {
+                        borderRadius: 0,
+                        borderWidth: 0,
+                        grouping: false,
+                        dataLabels: {
+                            align: 'center',
+                            enabled: true,
+                            format: '{point.name}'
+                        },
+                        colorByPoint: false
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+                    pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.faction}</b><br/>'
                 },
                 series: series,
                 exporting: {
