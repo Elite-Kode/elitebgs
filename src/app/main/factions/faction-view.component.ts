@@ -78,6 +78,14 @@ export class FactionViewComponent implements OnInit {
             });
     }
 
+    getUpdatedAtFormatted(updatedAt) {
+        return {
+            time: moment(updatedAt).utc().format('ddd, MMM D, HH:mm:ss'),
+            fromNow: moment(updatedAt).fromNow(true),
+            ageFlag: moment(Date.now()).diff(moment(updatedAt), 'days', true) - 1
+        }
+    }
+
     monitor() {
         this.authenticationService
             .addFactions([this.factionData.name])
