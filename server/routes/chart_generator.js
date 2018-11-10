@@ -135,7 +135,6 @@ router.get('/factions/state', (req, res, next) => {
             // Copied over from src\app\main\charts\faction-state-chart.component.ts
             const history = response.docs[0].history;
             const allSystems = [];
-            const systems = [];
             history.forEach(record => {
                 if (allSystems.indexOf(record.system) === -1) {
                     allSystems.push(record.system);
@@ -160,7 +159,6 @@ router.get('/factions/state', (req, res, next) => {
             states.forEach(state => {
                 const data = [];
                 allSystems.forEach((system, index) => {
-                    systems.push(system);
                     let previousState = '';
                     let timeBegin = 0;
                     let timeEnd = 0;
@@ -199,6 +197,7 @@ router.get('/factions/state', (req, res, next) => {
             });
             let options = {
                 chart: {
+                    height: 130 + allSystems.length * 40,
                     type: 'xrange'
                 },
                 title: {
@@ -211,7 +210,7 @@ router.get('/factions/state', (req, res, next) => {
                     title: {
                         text: 'Systems'
                     },
-                    categories: systems,
+                    categories: allSystems,
                     reversed: true
                 },
                 plotOptions: {
@@ -419,6 +418,7 @@ let factionPendingRecovering = (req, res, next, type) => {
             }
             let options = {
                 chart: {
+                    height: 130 + sum(maxStatesConcurrent) * 40,
                     type: 'xrange',
                     events: {
                         render() {
@@ -644,7 +644,6 @@ router.get('/systems/state', (req, res, next) => {
             // Copied over from src\app\main\charts\system-state-chart.component.ts
             const factionHistory = response.docs[0].faction_history;
             const allTimeFactions = [];
-            const factions = [];
             factionHistory.forEach(record => {
                 if (allTimeFactions.indexOf(record.faction) === -1) {
                     allTimeFactions.push(record.faction);
@@ -669,7 +668,6 @@ router.get('/systems/state', (req, res, next) => {
             states.forEach(state => {
                 const data = [];
                 allTimeFactions.forEach((faction, index) => {
-                    factions.push(faction);
                     let previousState = '';
                     let timeBegin = 0;
                     let timeEnd = 0;
@@ -708,6 +706,7 @@ router.get('/systems/state', (req, res, next) => {
             });
             let options = {
                 chart: {
+                    height: 130 + allTimeFactions.length * 40,
                     type: 'xrange'
                 },
                 title: {
@@ -720,7 +719,7 @@ router.get('/systems/state', (req, res, next) => {
                     title: {
                         text: 'Factions'
                     },
-                    categories: factions,
+                    categories: allTimeFactions,
                     reversed: true
                 },
                 plotOptions: {
