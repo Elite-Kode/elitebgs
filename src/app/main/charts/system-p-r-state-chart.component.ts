@@ -175,6 +175,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
         }
         this.options = {
             chart: {
+                height: 130 + sum(maxStatesConcurrent) * 40,
                 type: 'xrange',
                 events: {
                     render() {

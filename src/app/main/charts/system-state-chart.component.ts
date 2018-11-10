@@ -40,7 +40,6 @@ export class SystemStateChartComponent implements OnInit, OnChanges {
     createChart(): void {
         // Copied over to server\routes\chart_generator.js
         const allTimeFactions: string[] = [];
-        const factions: string[] = [];
         this.systemData.faction_history.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
                 allTimeFactions.push(record.faction);
@@ -67,7 +66,6 @@ export class SystemStateChartComponent implements OnInit, OnChanges {
             // const data: DataPoint[] = [];
             const data: any[] = [];
             allTimeFactions.forEach((faction, index) => {
-                factions.push(faction);
                 let previousState = '';
                 let timeBegin = 0;
                 let timeEnd = 0;
@@ -106,6 +104,7 @@ export class SystemStateChartComponent implements OnInit, OnChanges {
         });
         this.options = {
             chart: {
+                height: 130 + allTimeFactions.length * 40,
                 type: 'xrange'
             },
             title: {
@@ -118,7 +117,7 @@ export class SystemStateChartComponent implements OnInit, OnChanges {
                 title: {
                     text: 'Factions'
                 },
-                categories: factions,
+                categories: allTimeFactions,
                 reversed: true
             },
             plotOptions: {

@@ -40,7 +40,6 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
     createChart(): void {
         // Copied over to server\routes\chart_generator.js
         const allSystems: string[] = [];
-        const systems: string[] = [];
         this.factionData.history.forEach(record => {
             if (allSystems.indexOf(record.system) === -1) {
                 allSystems.push(record.system);
@@ -67,7 +66,6 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
             // const data: DataPoint[] = [];
             const data: any[] = [];
             allSystems.forEach((system, index) => {
-                systems.push(system);
                 let previousState = '';
                 let timeBegin = 0;
                 let timeEnd = 0;
@@ -106,6 +104,7 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
         });
         this.options = {
             chart: {
+                height: 130 + allSystems.length * 40,
                 type: 'xrange'
             },
             title: {
@@ -118,7 +117,7 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
                 title: {
                     text: 'Systems'
                 },
-                categories: systems,
+                categories: allSystems,
                 reversed: true
             },
             plotOptions: {
