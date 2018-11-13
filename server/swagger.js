@@ -219,7 +219,9 @@ let paramsEBGSAPIv4 = {
         EBGSStationsV4: { properties: swaggerDefinitions.ebgsStationsV4 },
         EBGSFactionsPageV4: { properties: swaggerDefinitions.pagination('EBGSFactionsV4') },
         EBGSSystemsPageV4: { properties: swaggerDefinitions.pagination('EBGSSystemsV4') },
-        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationsV4') }
+        EBGSStationsPageV4: { properties: swaggerDefinitions.pagination('EBGSStationsV4') },
+        TickTimesV4: { properties: swaggerDefinitions.tickTimesV4 },
+        TickTimesHistoryV4: { properties: swaggerDefinitions.tickTimesHistoryV4 }
     },
     apis: ['./server/routes/elite_bgs_api/v4/*.js']
 };

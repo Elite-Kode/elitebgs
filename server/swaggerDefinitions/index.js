@@ -52,3 +52,5 @@ module.exports.solidComposition = require('./solid_composition');
 module.exports.stationItems = require('./station_items');
 module.exports.stations = require('./stations');
 module.exports.systems = require('./systems');
+module.exports.tickTimesV4 = require('./tick_times_v4');
+module.exports.tickTimesHistoryV4 = require('./tick_times_history_v4');
