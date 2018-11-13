@@ -646,6 +646,12 @@ interface EBGSCreditsSchema {
     level: number;
 }
 
+export interface Tick {
+    _id: string;
+    time: string;
+    updated_at: string;
+}
+
 export type BodiesV1 = BodySchema;
 export type CommoditiesV1 = CommoditySchema;
 export type EBGSFactionsV1 = EBGSFactionSchema;

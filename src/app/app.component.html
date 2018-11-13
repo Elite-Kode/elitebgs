@@ -12,6 +12,11 @@
             <a routerLink="/bgsbot" routerLinkActive="active" class="nav-link"><span class="nav-text">BGSBot</span></a>
         </div>
         <div class="header-actions">
+            <a role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right nav-link">
+                <clr-icon shape="clock" style="left: 0"></clr-icon>
+                <span class="tooltip-content">Last Tick (UTC)</span>
+                <span class="nav-text">{{tick.time}}</span>
+            </a>
             <a class="nav-icon nav-link" (click)="switchTheme()">
                 <clr-icon shape="sun" *ngIf="getThemeName() === 'dark'"></clr-icon>
                 <clr-icon shape="moon" *ngIf="getThemeName() === 'light'"></clr-icon>
@@ -20,13 +25,15 @@
             <clr-dropdown>
                 <button class="nav-icon" clrDropdownTrigger>
                     <clr-icon shape="cog" *ngIf="!isAuthenticated && isAuthenticated !== undefined"></clr-icon>
-                    <img [src]="'https://cdn.discordapp.com/avatars/' + user?.id + '/' + user?.avatar + '.png'" class="profile-icon" *ngIf="isAuthenticated && isAuthenticated !== undefined">
+                    <img [src]="'https://cdn.discordapp.com/avatars/' + user?.id + '/' + user?.avatar + '.png'" class="profile-icon"
+                        *ngIf="isAuthenticated && isAuthenticated !== undefined">
                 </button>
                 <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
                     <a routerLink="/" clrDropdownItem *ngIf="!isAuthenticated && isAuthenticated !== undefined">Login</a>
                     <a routerLink="/admin" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined && user?.access === 0">Admin</a>
                     <a routerLink="/profile" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Profile</a>
-                    <a href="/auth/logout" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Log out</a>
+                    <a href="/auth/logout" clrDropdownItem *ngIf="isAuthenticated && isAuthenticated !== undefined">Log
+                        out</a>
                     <a routerLink="/guide" clrDropdownItem>Guide</a>
                     <a routerLink="/credits" clrDropdownItem>Credits</a>
                     <a routerLink="/about" clrDropdownItem>About</a>
