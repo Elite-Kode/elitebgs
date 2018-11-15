@@ -8,6 +8,7 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { StationListComponent } from './stations/station-list.component';
 import { StationViewComponent } from './stations/station-view.component';
+import { TickComponent } from './tick/tick.component';
 
 const mainRoutes: Routes = [
     {
@@ -41,7 +42,11 @@ const mainRoutes: Routes = [
             {
                 path: 'station/:stationid',
                 component: StationViewComponent
-            }
+            },
+            {
+                path: 'tick',
+                component: TickComponent
+            },
         ]
     }
 ];

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tick } from '../typings';
+import { TickV4, TickSchema, TickDisplaySchema } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 import * as moment from 'moment';
 
@@ -12,17 +12,22 @@ export class TickService {
         private http: HttpClient
     ) { }
 
-    getTick(): Observable<Tick> {
-        return this.http.get<Tick>('/api/ebgs/v4/ticks');
+    getTick(): Observable<TickV4> {
+        return this.http.get<TickV4>('/api/ebgs/v4/ticks');
     }
 
-    formatTickTime(time: Tick): Tick {
-        const formattedTime = <Tick>{};
-        Object.keys(time).filter(key => {
-            return key === 'time' || key === 'updated_at';
-        }).forEach(key => {
-            formattedTime[key] = moment(time[key]).utc().format('HH:mm');
+    getTicks(timemin: string, timemax: string): Observable<TickV4> {
+        return this.http.get<TickV4>('/api/ebgs/v4/ticks', {
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('timemin', timemin).set('timemax', timemax)
         });
-        return formattedTime;
+    }
+
+    formatTickTime(time: TickSchema): TickDisplaySchema {
+        return {
+            _id: time._id,
+            time: moment(time.time).utc().format('HH:mm'),
+            timeLocal: moment(time.time).format('HH:mm'),
+            updated_at: moment(time.updated_at).utc().format('ddd, MMM D, HH:mm:ss')
+        };
     }
 }

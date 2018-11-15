@@ -12,10 +12,12 @@
             <a routerLink="/bgsbot" routerLinkActive="active" class="nav-link"><span class="nav-text">BGSBot</span></a>
         </div>
         <div class="header-actions">
-            <a role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right nav-link">
-                <clr-icon shape="clock" style="left: 0"></clr-icon>
+            <a routerLink="/tick" routerLinkActive="active" role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right nav-link">
+                <div class="tick">
+                    <clr-icon shape="clock"></clr-icon>
+                    <span class="nav-text">{{tick.time}}</span>
+                </div>
                 <span class="tooltip-content">Last Tick (UTC)</span>
-                <span class="nav-text">{{tick.time}}</span>
             </a>
             <a class="nav-icon nav-link" (click)="switchTheme()">
                 <clr-icon shape="sun" *ngIf="getThemeName() === 'dark'"></clr-icon>

@@ -646,9 +646,16 @@ interface EBGSCreditsSchema {
     level: number;
 }
 
-export interface Tick {
+export interface TickSchema {
     _id: string;
     time: string;
+    updated_at: string;
+}
+
+export interface TickDisplaySchema {
+    _id: string;
+    time: string;
+    timeLocal: string;
     updated_at: string;
 }
 
@@ -696,3 +703,6 @@ export type EBGSFactionPostHistory = EBGSFactionPostHistorySchema;
 export type EBGSDonor = EBGSDonorSchema;
 export type EBGSPatron = EBGSPatronSchema;
 export type EBGSCredits = EBGSCreditsSchema;
+
+export type TickV4 = TickSchema[];
+export type TickDisplayV4 = TickDisplaySchema[];

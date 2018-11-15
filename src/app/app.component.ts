@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
-import { EBGSUser, Tick } from 'app/typings';
+import { EBGSUser, TickSchema } from 'app/typings';
 import { TickService } from './services/tick.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
     isAuthenticated: boolean;
     user: EBGSUser;
     linkRef: HTMLLinkElement;
-    tick: Tick;
+    tick: TickSchema;
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
             this.linkRef.onload = () => this.themeService.themeLoaded();
             this.document.querySelector('head').appendChild(this.linkRef);
         }
-        this.tick = <Tick>{};
+        this.tick = <TickSchema>{};
     }
 
     ngOnInit(): void {

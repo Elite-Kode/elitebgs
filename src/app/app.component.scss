@@ -49,3 +49,17 @@
 .nav-icon img {
     border-radius: 50%;
 }
+
+.tick {
+    clr-icon {
+        left: 0 !important;
+        position: relative !important;
+        top: 0 !important;
+        transform: unset !important;
+        margin-left: 24px !important;
+    }
+
+    .nav-text {
+        position: relative;
+    }
+}

@@ -19,6 +19,7 @@
 const express = require('express');
 const _ = require('lodash');
 const request = require('request-promise-native');
+const moment = require('moment');
 
 const processVars = require('../../processVars');
 const FDevIDs = require('../fdevids')
@@ -1038,5 +1039,94 @@ let systemPendingRecovering = (req, res, next, type) => {
         })
         .catch(next);
 }
+
+router.get('/tick', (req, res, next) => {
+    let requestOptions = {
+        url: `${processVars.protocol}://${processVars.host}/api/ebgs/v4/ticks`,
+        qs: {
+            timemin: req.query.timemin,
+            timemax: req.query.timemax
+        },
+        json: true
+    };
+    request.get(requestOptions)
+        .then(response => {
+            // Copied over from src\app\main\charts\tick-chart.component.ts
+            const tickData = response;
+            const data = [];
+            const series = [];
+            const firstTick = tickData[tickData.length - 1];
+            tickData.forEach(tick => {
+                const tickMoment = moment(tick.time);
+                const normalisedTime = tickMoment.subtract(moment.duration(tickMoment.diff(firstTick.time, 'days'), 'days'));
+                data.push([
+                    Date.parse(tick.updated_at),
+                    Date.parse(normalisedTime.toISOString())
+                ])
+            });
+            series.push({
+                name: 'Tick',
+                data: data
+            });
+            let options = {
+                xAxis: { type: 'datetime' },
+                yAxis: {
+                    title: {
+                        text: 'Time (UTC)'
+                    },
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        millisecond: '%H:%M',
+                        second: '%H:%M',
+                        minute: '%H:%M',
+                        hour: '%H:%M',
+                        day: '%H:%M',
+                        week: '%H:%M',
+                        month: '%H:%M',
+                        year: '%H:%M'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+                    pointFormatter: function () {
+                        console.log(this);
+                        return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${moment(this.y).utc().format('HH:mm')} UTC</b><br/>`
+                    }
+                },
+                title: { text: 'Tick Trend' },
+                series: series,
+                exporting: {
+                    enabled: true,
+                    sourceWidth: 1200
+                }
+            };
+            let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+            if (req.query.theme === 'dark') {
+                highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+            }
+            let highchartsRequestOptions = {
+                url: `https://export.highcharts.com/`,
+                formData: {
+                    options: JSON.stringify(options),
+                    type: 'image/png',
+                    filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
+                    resources: JSON.stringify({
+                        js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                    }),
+                    scale: 2
+                },
+                encoding: null,
+                resolveWithFullResponse: true
+            }
+            request.post(highchartsRequestOptions)
+                .then(imageResponse => {
+                    res.set('Content-Type', imageResponse.headers['content-type'])
+                    res.set('Content-Disposition', imageResponse.headers['content-disposition'])
+                    res.send(imageResponse.body);
+                })
+                .catch(next);
+        })
+        .catch(next);
+});
 
 module.exports = router;
