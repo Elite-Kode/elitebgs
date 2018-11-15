@@ -419,7 +419,7 @@ let factionPendingRecovering = (req, res, next, type) => {
             }
             let options = {
                 chart: {
-                    height: 130 + sum(maxStatesConcurrent) * 40,
+                    height: 130 + _.sum(maxStatesConcurrent) * 40,
                     type: 'xrange',
                     events: {
                         render() {
@@ -928,6 +928,7 @@ let systemPendingRecovering = (req, res, next, type) => {
             }
             let options = {
                 chart: {
+                    height: 130 + _.sum(maxStatesConcurrent) * 40,
                     type: 'xrange',
                     events: {
                         render() {
