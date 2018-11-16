@@ -18,6 +18,7 @@
 
 const express = require('express');
 const _ = require('lodash');
+const un_eval = require('un-eval');
 const request = require('request-promise-native');
 const moment = require('moment');
 
@@ -422,22 +423,22 @@ let factionPendingRecovering = (req, res, next, type) => {
                     height: 130 + _.sum(maxStatesConcurrent) * 40,
                     type: 'xrange',
                     events: {
-                        render() {
-                            let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                        render: function () {
+                            var tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
                                 return +this.yAxis[0].ticks[tickPosition.toString()].gridLine.d.split(' ')[2]
                             }, this);
                             tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(tickAbsolutePositions);
-                            const labelPositions = [];
-                            for (let i = 1; i < tickAbsolutePositions.length; i++) {
+                            var labelPositions = [];
+                            for (var i = 1; i < tickAbsolutePositions.length; i++) {
                                 labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
                             }
 
-                            systems.forEach((faction, index) => {
+                            systemsRegex.forEach(function (system, index) {
                                 this.yAxis[0]
                                     .labelGroup.element.childNodes[index]
                                     .attributes.y.nodeValue = labelPositions[index]
                                     + parseFloat(this.yAxis[0].labelGroup.element.childNodes[index].style['font-size']) / 2;
-                            });
+                            }, this);
                         }
                     }
                 },
@@ -453,15 +454,15 @@ let factionPendingRecovering = (req, res, next, type) => {
                     },
                     categories: systems,
                     tickPositioner: function () {
-                        return tickPositions;
+                        return tickPositionsRegex;
                     },
                     startOnTick: false,
                     reversed: true,
                     labels: {
                         formatter: function () {
-                            const chart = this.chart;
-                            const axis = this.axis;
-                            let label;
+                            var chart = this.chart;
+                            var axis = this.axis;
+                            var label;
 
                             if (!chart.yaxisLabelIndex) {
                                 chart.yaxisLabelIndex = 0;
@@ -471,7 +472,7 @@ let factionPendingRecovering = (req, res, next, type) => {
                                 label = axis.categories[chart.yaxisLabelIndex];
                                 chart.yaxisLabelIndex++;
 
-                                if (chart.yaxisLabelIndex === maxStatesConcurrent.length) {
+                                if (chart.yaxisLabelIndex === maxStatesConcurrentRegex.length) {
                                     chart.yaxisLabelIndex = 0;
                                 }
 
@@ -510,7 +511,7 @@ let factionPendingRecovering = (req, res, next, type) => {
             let highchartsRequestOptions = {
                 url: `https://export.highcharts.com/`,
                 formData: {
-                    options: JSON.stringify(options),
+                    options: un_eval(options).replace('systemsRegex', JSON.stringify(systems)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                     type: 'image/png',
                     filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
                     resources: JSON.stringify({
@@ -931,22 +932,22 @@ let systemPendingRecovering = (req, res, next, type) => {
                     height: 130 + _.sum(maxStatesConcurrent) * 40,
                     type: 'xrange',
                     events: {
-                        render() {
-                            let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                        render: function () {
+                            var tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
                                 return +this.yAxis[0].ticks[tickPosition.toString()].gridLine.d.split(' ')[2]
                             }, this);
                             tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(tickAbsolutePositions);
-                            const labelPositions = [];
-                            for (let i = 1; i < tickAbsolutePositions.length; i++) {
+                            var labelPositions = [];
+                            for (var i = 1; i < tickAbsolutePositions.length; i++) {
                                 labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
                             }
 
-                            factions.forEach((faction, index) => {
+                            factionsRegex.forEach(function (faction, index) {
                                 this.yAxis[0]
                                     .labelGroup.element.childNodes[index]
                                     .attributes.y.nodeValue = labelPositions[index]
                                     + parseFloat(this.yAxis[0].labelGroup.element.childNodes[index].style['font-size']) / 2;
-                            });
+                            }, this);
                         }
                     }
                 },
@@ -962,15 +963,15 @@ let systemPendingRecovering = (req, res, next, type) => {
                     },
                     categories: factions,
                     tickPositioner: function () {
-                        return tickPositions;
+                        return tickPositionsRegex;
                     },
                     startOnTick: false,
                     reversed: true,
                     labels: {
                         formatter: function () {
-                            const chart = this.chart;
-                            const axis = this.axis;
-                            let label;
+                            var chart = this.chart;
+                            var axis = this.axis;
+                            var label;
 
                             if (!chart.yaxisLabelIndex) {
                                 chart.yaxisLabelIndex = 0;
@@ -980,13 +981,13 @@ let systemPendingRecovering = (req, res, next, type) => {
                                 label = axis.categories[chart.yaxisLabelIndex];
                                 chart.yaxisLabelIndex++;
 
-                                if (chart.yaxisLabelIndex === maxStatesConcurrent.length) {
+                                if (chart.yaxisLabelIndex === maxStatesConcurrentRegex.length) {
                                     chart.yaxisLabelIndex = 0;
                                 }
 
                                 return label;
                             }
-                        },
+                        }
                     },
                 },
                 plotOptions: {
@@ -1019,7 +1020,7 @@ let systemPendingRecovering = (req, res, next, type) => {
             let highchartsRequestOptions = {
                 url: `https://export.highcharts.com/`,
                 formData: {
-                    options: JSON.stringify(options),
+                    options: un_eval(options).replace('factionsRegex', JSON.stringify(factions)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                     type: 'image/png',
                     filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
                     resources: JSON.stringify({

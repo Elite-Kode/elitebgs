@@ -179,16 +179,16 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
                 type: 'xrange',
                 events: {
                     render() {
-                        let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                        let tickAbsolutePositions = this.yAxis[0].tickPositions.map(tickPosition => {
                             return +this.yAxis[0].ticks[tickPosition.toString()].gridLine.d.split(' ')[2]
-                        }, this);
+                        });
                         tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(tickAbsolutePositions);
                         const labelPositions = [];
                         for (let i = 1; i < tickAbsolutePositions.length; i++) {
                             labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
                         }
 
-                        systems.forEach((faction, index) => {
+                        systems.forEach((system, index) => {
                             this.yAxis[0]
                                 .labelGroup.element.childNodes[index]
                                 .attributes.y.nodeValue = labelPositions[index]
@@ -208,13 +208,13 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
                     text: 'Systems'
                 },
                 categories: systems,
-                tickPositioner: function () {
+                tickPositioner() {
                     return tickPositions;
                 },
                 startOnTick: false,
                 reversed: true,
                 labels: {
-                    formatter: function () {
+                    formatter() {
                         const chart = this.chart;
                         const axis = this.axis;
                         let label;

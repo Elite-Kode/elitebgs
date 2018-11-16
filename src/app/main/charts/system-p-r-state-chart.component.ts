@@ -179,9 +179,9 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                 type: 'xrange',
                 events: {
                     render() {
-                        let tickAbsolutePositions = this.yAxis[0].tickPositions.map(function (tickPosition) {
+                        let tickAbsolutePositions = this.yAxis[0].tickPositions.map(tickPosition => {
                             return +this.yAxis[0].ticks[tickPosition.toString()].gridLine.d.split(' ')[2]
-                        }, this);
+                        });
                         tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(tickAbsolutePositions);
                         const labelPositions = [];
                         for (let i = 1; i < tickAbsolutePositions.length; i++) {
@@ -208,13 +208,13 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                     text: 'Factions'
                 },
                 categories: factions,
-                tickPositioner: function () {
+                tickPositioner() {
                     return tickPositions;
                 },
                 startOnTick: false,
                 reversed: true,
                 labels: {
-                    formatter: function () {
+                    formatter() {
                         const chart = this.chart;
                         const axis = this.axis;
                         let label;

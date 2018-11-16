@@ -1,6 +1,6 @@
 {
     "name": "elitebgs",
-    "version": "3.2.8",
+    "version": "3.2.9",
     "license": "Apache-2.0",
     "scripts": {
         "ng": "ng",
@@ -66,6 +66,7 @@
         "socket.io-client": "^2.1.1",
         "swagger-jsdoc": "^3.2.3",
         "swagger-ui-express": "^4.0.1",
+        "un-eval": "^1.2.0",
         "unhandled-rejection": "^1.0.0",
         "zmq": "^2.15.3",
         "zone.js": "^0.8.26"
