@@ -26,7 +26,8 @@ export class TickChartComponent implements OnInit, OnChanges {
         const firstTick = this.tickData[this.tickData.length - 1];
         this.tickData.forEach(tick => {
             const tickMoment = moment(tick.time);
-            const normalisedTime = tickMoment.subtract(moment.duration(tickMoment.diff(firstTick.time, 'days'), 'days'));
+            const firstTickMoment = moment(firstTick.time);
+            const normalisedTime = moment(`${firstTickMoment.format('YYYY-MM-DD')} ${tickMoment.format('HH:mm:ss:SSSZZ')}`, 'YYYY-MM-DD HH:mm:ss:SSSZZ');
             data.push([
                 Date.parse(tick.updated_at),
                 Date.parse(normalisedTime.toISOString())
