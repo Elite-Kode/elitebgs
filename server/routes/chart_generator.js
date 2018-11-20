@@ -1060,7 +1060,8 @@ router.get('/tick', (req, res, next) => {
             const firstTick = tickData[tickData.length - 1];
             tickData.forEach(tick => {
                 const tickMoment = moment(tick.time);
-                const normalisedTime = tickMoment.subtract(moment.duration(tickMoment.diff(firstTick.time, 'days'), 'days'));
+                const firstTickMoment = moment(firstTick.time);
+                const normalisedTime = moment(`${firstTickMoment.format('YYYY-MM-DD')} ${tickMoment.format('HH:mm:ss:SSSZZ')}`, 'YYYY-MM-DD HH:mm:ss:SSSZZ');
                 data.push([
                     Date.parse(tick.updated_at),
                     Date.parse(normalisedTime.toISOString())
