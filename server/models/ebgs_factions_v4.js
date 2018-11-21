@@ -39,6 +39,11 @@ module.exports = new Promise((resolve, reject) => {
             system_name_lower: { type: String, lowercase: true },
             state: { type: String, lowercase: true },
             influence: Number,
+            happiness: { type: String, lowercase: true },
+            active_states: [{
+                _id: false,
+                state: { type: String, lowercase: true }
+            }],
             pending_states: [{
                 _id: false,
                 state: { type: String, lowercase: true },

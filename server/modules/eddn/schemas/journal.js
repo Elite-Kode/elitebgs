@@ -697,7 +697,7 @@ function Journal() {
             try {
                 await this.checkMessage1(message, header);
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
-                    return faction.Name === "Pilots Federation Local Branch";
+                    return faction.Name === "Pilots Federation Local Branch"; // Todo: Add engineers
                 });
                 if (notNeededFactionIndex !== -1) {
                     message.Factions.splice(notNeededFactionIndex, 1);
@@ -775,11 +775,16 @@ function Journal() {
                                     systemObject.updated_at = message.timestamp;
                                 }
                             }
+                            if (!system.system_address || !system.secondary_economy) {
+                                system.system_address = message.SystemAddress;
+                                system.secondary_economy = message.SystemSecondEconomy;
+                            }
                         } else {
                             eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
                             systemObject = {
                                 name: message.StarSystem,
                                 name_lower: message.StarSystem.toLowerCase(),
+                                system_address: message.SystemAddress,
                                 x: this.correctCoordinates(message.StarPos[0]),
                                 y: this.correctCoordinates(message.StarPos[1]),
                                 z: this.correctCoordinates(message.StarPos[2]),
@@ -789,6 +794,7 @@ function Journal() {
                                 security: message.SystemSecurity,
                                 population: message.Population,
                                 primary_economy: message.SystemEconomy,
+                                secondary_economy: message.SystemSecondEconomy,
                                 controlling_minor_faction: message.SystemFaction,
                                 factions: factionArray,
                                 updated_at: message.timestamp
@@ -1000,6 +1006,15 @@ function Journal() {
                             for (let factionNameLower of notInDb) {
                                 for (let messageFaction of message.Factions) {
                                     if (messageFaction.Name.toLowerCase() === factionNameLower) {
+                                        let activeStates = [];
+                                        if (messageFaction.ActiveStates) {
+                                            messageFaction.ActiveStates.forEach(activeState => {
+                                                let activeStateObject = {
+                                                    state: activeState.State.toLowerCase(),
+                                                };
+                                                activeStates.push(activeStateObject);
+                                            });
+                                        };
                                         let pendingStates = [];
                                         if (messageFaction.PendingStates) {
                                             messageFaction.PendingStates.forEach(pendingState => {
@@ -1032,6 +1047,8 @@ function Journal() {
                                                 system_name_lower: message.StarSystem.toLowerCase(),
                                                 state: messageFaction.FactionState,
                                                 influence: messageFaction.Influence,
+                                                happiness: messageFaction.Happiness.toLowerCase(),
+                                                active_states: activeStates,
                                                 pending_states: pendingStates,
                                                 recovering_states: recoveringStates,
                                                 updated_at: message.timestamp
@@ -1044,6 +1061,8 @@ function Journal() {
                                             system_lower: message.StarSystem.toLowerCase(),
                                             state: messageFaction.FactionState,
                                             influence: messageFaction.Influence,
+                                            happiness: messageFaction.Happiness.toLowerCase(),
+                                            active_states: activeStates,
                                             pending_states: pendingStates,
                                             recovering_states: recoveringStates,
                                             systems: [{
@@ -1109,6 +1128,7 @@ function Journal() {
                                     }
                                     if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
                                         let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
+                                        let activeStates = getDoFactionUpdate.activeStates;
                                         let pendingStates = getDoFactionUpdate.pendingStates;
                                         let recoveringStates = getDoFactionUpdate.recoveringStates;
                                         let doUpdate = getDoFactionUpdate.doUpdate;
@@ -1124,6 +1144,8 @@ function Journal() {
                                                         system_name_lower: message.StarSystem.toLowerCase(),
                                                         state: messageFaction.FactionState,
                                                         influence: messageFaction.Influence,
+                                                        happiness: messageFaction.Happiness.toLowerCase(),
+                                                        active_states: activeStates,
                                                         pending_states: pendingStates,
                                                         recovering_states: recoveringStates,
                                                         updated_at: message.timestamp
@@ -1140,6 +1162,8 @@ function Journal() {
                                                     system_name_lower: message.StarSystem.toLowerCase(),
                                                     state: messageFaction.FactionState,
                                                     influence: messageFaction.Influence,
+                                                    happiness: messageFaction.Happiness.toLowerCase(),
+                                                    active_states: activeStates,
                                                     pending_states: pendingStates,
                                                     recovering_states: recoveringStates,
                                                     updated_at: message.timestamp
@@ -1170,6 +1194,8 @@ function Journal() {
                                                 system_lower: message.StarSystem.toLowerCase(),
                                                 state: messageFaction.FactionState,
                                                 influence: messageFaction.Influence,
+                                                happiness: messageFaction.Happiness.toLowerCase(),
+                                                active_states: activeStates,
                                                 pending_states: pendingStates,
                                                 recovering_states: recoveringStates,
                                                 systems: systemHistory
@@ -1247,6 +1273,8 @@ function Journal() {
                                                         system_name_lower: message.StarSystem.toLowerCase(),
                                                         state: messageFaction.FactionState,
                                                         influence: messageFaction.Influence,
+                                                        happiness: messageFaction.Happiness.toLowerCase(),
+                                                        active_states: activeStates,
                                                         pending_states: pendingStates,
                                                         recovering_states: recoveringStates,
                                                         updated_at: message.timestamp
@@ -1544,10 +1572,12 @@ function Journal() {
             if (
                 message.StarSystem &&
                 message.SystemFaction &&
+                message.SystemAddress &&
                 message.timestamp &&
                 message.SystemSecurity &&
                 message.SystemAllegiance &&
                 message.SystemEconomy &&
+                message.SystemSecondEconomy &&
                 message.StarPos &&
                 message.Factions &&
                 message.event &&
@@ -1667,11 +1697,12 @@ function Journal() {
         return true;
     }
 
-    this.checkFactionWHistory = function (message, messageFaction, history, pendingStates, recoveringStates) {
+    this.checkFactionWHistory = function (message, messageFaction, history, activeStates,  pendingStates, recoveringStates) {
         for (let item of history) {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
                 item.state === messageFaction.FactionState.toLowerCase() &&
                 item.influence === messageFaction.Influence &&
+                _.isEqual(_.sortBy(item.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
                 return false;
@@ -1694,6 +1725,15 @@ function Journal() {
     }
 
     this.doFactionUpdate = async function (messageFaction, dbFaction, message) {
+        let activeStates = [];
+        if (messageFaction.ActiveStates) {
+            messageFaction.ActiveStates.forEach(activeState => {
+                let activeStateObject = {
+                    state: activeState.State.toLowerCase()
+                };
+                activeStates.push(activeStateObject);
+            });
+        };
         let pendingStates = [];
         if (messageFaction.PendingStates) {
             messageFaction.PendingStates.forEach(pendingState => {
@@ -1725,6 +1765,7 @@ function Journal() {
             if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
                 if (faction.state === messageFaction.FactionState.toLowerCase() &&
                     faction.influence === messageFaction.Influence &&
+                    _.isEqual(_.sortBy(faction.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
                     doUpdate = false;
@@ -1739,7 +1780,7 @@ function Journal() {
                             $gte: new Date(timeNow - 172800000)
                         }
                     }).sort({ updated_at: -1 }).lean();
-                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, pendingStates, recoveringStates)) {
+                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates)) {
                         doUpdate = false;
                         dontUpdateTime = true;
                     }
