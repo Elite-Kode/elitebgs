@@ -1352,7 +1352,8 @@ function Journal() {
                     console.log(err)
                 }
             }
-        } else if (message.event === "Docked") {
+        }
+        if (message.event === "Docked" || (message.event === "Location" && message.Docked)) {
             try {
                 await this.checkMessage2(message, header)
                 let serviceArray = [];
@@ -1399,14 +1400,9 @@ function Journal() {
                                         }
                                     }).sort({ updated_at: -1 }).lean();
                                     if (this.checkStationWHistory(message, stationHistory, serviceArray)) {
-                                        stationObject.type = message.StationType;
-                                        stationObject.system = message.StarSystem;
-                                        stationObject.system_lower = message.StarSystem.toLowerCase();
                                         stationObject.government = message.StationGovernment;
-                                        stationObject.economy = message.StationEconomy;
                                         stationObject.allegiance = message.StationAllegiance;
                                         stationObject.state = message.FactionState;
-                                        stationObject.distance_from_star = message.DistFromStarLS;
                                         stationObject.controlling_minor_faction = message.StationFaction;
                                         stationObject.services = serviceArray;
                                         stationObject.updated_at = message.timestamp;
@@ -1425,16 +1421,32 @@ function Journal() {
                                     stationObject.updated_at = message.timestamp;
                                 }
                             }
+                            if (!station.market_id || !station.all_economies) {
+                                station.market_id = message.MarketID;
+                                station.all_economies = message.StationEconomies.map(economy => {
+                                    return {
+                                        name: economy.Name,
+                                        proportion: economy.Proportion
+                                    }
+                                });
+                            }
                         } else {
                             eddbIdPromise = this.getStationEDDBId(message.StationName);
                             stationObject = {
                                 name: message.StationName,
                                 name_lower: message.StationName.toLowerCase(),
+                                market_id: message.MarketID,
                                 system: message.StarSystem,
                                 system_lower: message.StarSystem.toLowerCase(),
                                 type: message.StationType,
                                 government: message.StationGovernment,
                                 economy: message.StationEconomy,
+                                all_economies: message.StationEconomies.map(economy => {
+                                    return {
+                                        name: economy.Name,
+                                        proportion: economy.Proportion
+                                    }
+                                }),
                                 allegiance: message.StationAllegiance,
                                 state: message.FactionState,
                                 distance_from_star: message.DistFromStarLS,
@@ -1577,7 +1589,6 @@ function Journal() {
                 message.SystemSecurity &&
                 message.SystemAllegiance &&
                 message.SystemEconomy &&
-                message.SystemSecondEconomy &&
                 message.StarPos &&
                 message.Factions &&
                 message.event &&
@@ -1628,12 +1639,14 @@ function Journal() {
         try {
             if (
                 message.StarSystem &&
+                message.MarketID &&
                 message.timestamp &&
                 message.StarPos &&
                 message.event &&
                 message.DistFromStarLS &&
                 message.StationAllegiance &&
                 message.StationEconomy &&
+                message.StationEconomies &&
                 message.StationFaction &&
                 message.StationGovernment &&
                 message.StationName &&
@@ -1697,7 +1710,7 @@ function Journal() {
         return true;
     }
 
-    this.checkFactionWHistory = function (message, messageFaction, history, activeStates,  pendingStates, recoveringStates) {
+    this.checkFactionWHistory = function (message, messageFaction, history, activeStates, pendingStates, recoveringStates) {
         for (let item of history) {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
                 item.state === messageFaction.FactionState.toLowerCase() &&

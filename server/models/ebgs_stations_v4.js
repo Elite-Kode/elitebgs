@@ -28,12 +28,18 @@ module.exports = new Promise((resolve, reject) => {
         eddb_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
+        market_id: { type: String, index: true },
         type: { type: String, lowercase: true, index: true },
         system: String,
         system_lower: { type: String, lowercase: true, index: true },
         updated_at: { type: Date, index: true },
         government: { type: String, lowercase: true, index: true },
         economy: { type: String, lowercase: true, index: true },
+        all_economies: [{
+            _id: false,
+            name: String,
+            proportion: Number
+        }],
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true, index: true },
         distance_from_star: Number,
