@@ -15,8 +15,6 @@ export class SystemViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
     systemData: EBGSSystemChart;
-    editAllowed: boolean;
-    editModal: boolean;
     successAlertState = false;
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
@@ -59,20 +57,7 @@ export class SystemViewComponent implements OnInit {
                     }
                 });
                 this.titleService.setTitle(this.systemData.name + ' - Elite BGS');
-                this.getEditAllowed();
             });
-    }
-
-    openSystemEditModal() {
-        this.editModal = true;
-    }
-
-    getEditAllowed() {
-        this.authenticationService
-            .isEditAllowed(this.systemData.name_lower)
-            .subscribe(check => {
-                this.editAllowed = check;
-            })
     }
 
     getAuthentication() {

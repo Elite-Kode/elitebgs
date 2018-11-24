@@ -17,6 +17,5 @@
 export interface IDeleteMethodsSchema {
     removeFaction: () => void;
     removeSystem: () => void;
-    removeEditableFaction: () => void;
     deleteAccount: () => void;
 }

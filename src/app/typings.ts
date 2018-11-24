@@ -557,10 +557,6 @@ interface EBGSUserSchema {
         name: string;
         name_lower: string;
     }[];
-    editable_factions: {
-        name: string;
-        name_lower: string;
-    }[];
 }
 
 type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];

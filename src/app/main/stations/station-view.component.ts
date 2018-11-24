@@ -14,8 +14,6 @@ export class StationViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
     stationData: EBGSStationV4Schema;
-    editAllowed: boolean;
-    editModal: boolean;
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
@@ -38,21 +36,7 @@ export class StationViewComponent implements OnInit {
                 this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
                 this.stationData.state = FDevIDs.state[this.stationData.state].name;
                 this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
-                // this.getEditAllowed();
-                this.editAllowed = false;   // Temporarily edit is disabled
             });
-    }
-
-    openStationEditModal() {
-        this.editModal = true;
-    }
-
-    getEditAllowed() {
-        this.authenticationService
-            .isEditAllowed(this.stationData.name_lower)
-            .subscribe(check => {
-                this.editAllowed = check;
-            })
     }
 
     getAuthentication() {

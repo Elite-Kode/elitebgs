@@ -24,8 +24,6 @@ import { SystemInfluenceChartComponent } from './charts/system-influence-chart.c
 import { SystemStateChartComponent } from './charts/system-state-chart.component';
 import { SystemPRStateChartComponent } from './charts/system-p-r-state-chart.component';
 import { TickChartComponent } from './charts/tick-chart.component';
-import { SystemEditComponent } from './edit_modals/system-edit.component';
-import { StationEditComponent } from './edit_modals/station-edit.component';
 import { MainRoutingModule } from './main-routing.module';
 
 export function highchartsModules() {
@@ -49,9 +47,7 @@ export function highchartsModules() {
         TickChartComponent,
         SystemPRStateChartComponent,
         FactionStateChartComponent,
-        FactionPRStateChartComponent,
-        SystemEditComponent,
-        StationEditComponent
+        FactionPRStateChartComponent
     ],
     imports: [
         CommonModule,

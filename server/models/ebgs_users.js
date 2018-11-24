@@ -62,11 +62,6 @@ module.exports = new Promise((resolve, reject) => {
             _id: false,
             name: String,
             name_lower: String
-        }],
-        editable_factions: [{
-            _id: false,
-            name: String,
-            name_lower: String
         }]
     });
 
