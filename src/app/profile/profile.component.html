@@ -8,7 +8,7 @@
 </div>
 <div class="content-area">
     <div>
-        <a class="btn btn-primary" href="/profile/report" *ngIf="isAuthenticated && isAuthenticated !== undefined">Detailed User Report</a>
+        <a class="btn btn-primary" routerLink="/profile/report" *ngIf="isAuthenticated && isAuthenticated !== undefined">Detailed User Report</a>
         <a *ngIf="!user?.invite_used" class="btn btn-primary" [href]="'https://discord.gg/' + user?.invite">Join Discord Server</a>
     </div>
     <div class="row">
