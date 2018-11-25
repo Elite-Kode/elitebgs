@@ -96,14 +96,6 @@ export class ProfileReportComponent implements OnInit {
         this.userUnderEdit.avatar = null;
     }
 
-    deleteEmail() {
-        this.userUnderEdit.email = null;
-    }
-
-    deleteGuilds() {
-        this.userUnderEdit.guilds = [];
-    }
-
     deleteContribution() {
         this.userUnderEdit.os_contribution = null;
     }

@@ -31,11 +31,6 @@
                 <label>Discord Discriminator</label>
                 <input id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator" disabled>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input id="email" name="email" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.email" disabled>
-            </div>
-            <button class="btn btn-warning" (click)="deleteEmail()">Delete Email</button>
         </section>
         <section class="form-block">
             <label>Personalised Data</label>
@@ -69,29 +64,6 @@
                     </tbody>
                 </table>
             </div>
-        </section>
-        <section class="form-block">
-            <label>Discord Data</label>
-            <div class="form-group">
-                <label>Discord Guilds</label>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Server Icon</th>
-                            <th>Server Name</th>
-                            <th>Server Id</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let guild of userUnderEdit?.guilds">
-                            <td>{{guild.icon}}</td>
-                            <td>{{guild.name}}</td>
-                            <td>{{guild.id}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <button class="btn btn-warning" (click)="deleteGuilds()">Delete Guilds</button>
         </section>
         <section class="form-block">
             <label>Contribution Data</label>

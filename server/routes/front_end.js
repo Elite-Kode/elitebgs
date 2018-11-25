@@ -125,11 +125,6 @@ router.get('/users', (req, res, next) => {
                             }
                         },
                         {
-                            email: {
-                                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
-                            }
-                        },
-                        {
                             id: {
                                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`, 'i')
                             }

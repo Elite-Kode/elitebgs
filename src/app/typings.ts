@@ -528,7 +528,6 @@ interface EBGSUserSchema {
     __v: number;
     id: string;
     username: string;
-    email: string;
     avatar: string;
     discriminator: string;
     access: number;
@@ -544,11 +543,6 @@ interface EBGSUserSchema {
     }[];
     invite: string;
     invite_used: boolean;
-    guilds: {
-        id: string;
-        name: string;
-        icon: string;
-    }[];
     factions: {
         name: string;
         name_lower: string;

@@ -18,7 +18,6 @@ export interface IAdminUsers {
     id: string;
     username: string;
     discriminator: string;
-    email: string;
     access: number;
     discordId: string;
 }

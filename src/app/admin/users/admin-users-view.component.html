@@ -34,10 +34,6 @@
                 <label>Discord Discriminator</label>
                 <input id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator" disabled>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input id="email" name="email" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.email" disabled>
-            </div>
         </section>
         <section class="form-block">
             <label>Personalised Data</label>
@@ -99,25 +95,6 @@
             <div class="form-group">
                 <label>Invite Use</label>
                 <input id="inviteUsed" name="inviteUsed" type="checkbox" [(ngModel)]="userUnderEdit && userUnderEdit.invite_used">
-            </div>
-            <div class="form-group">
-                <label>Discord Guilds</label>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Server Icon</th>
-                            <th>Server Name</th>
-                            <th>Server Id</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let guild of userUnderEdit?.guilds">
-                            <td>{{guild.icon}}</td>
-                            <td>{{guild.name}}</td>
-                            <td>{{guild.id}}</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </section>
         <section class="form-block">

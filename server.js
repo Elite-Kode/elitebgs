@@ -275,11 +275,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                         let updatedUser = {
                             id: profile.id,
                             username: profile.username,
-                            discriminator: profile.discriminator,
-                            guilds: profile.guilds ? profile.guilds : user.guilds
-                        };
-                        if (user.email || type === 'email') {
-                            updatedUser.email = profile.email;
+                            discriminator: profile.discriminator
                         }
                         if (user.avatar || user.avatar === null) {
                             updatedUser.avatar = profile.avatar
@@ -319,8 +315,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                                 since: null
                                             },
                                             invite: invitePromise.code,
-                                            invite_used: false,
-                                            guilds: profile.guilds ? profile.guilds : []
+                                            invite_used: false
                                         };
                                         model.findOneAndUpdate(
                                             { id: profile.id },
@@ -356,33 +351,11 @@ let onAuthenticationIdentify = (accessToken, refreshToken, profile, done) => {
     onAuthentication(accessToken, refreshToken, profile, done, 'identify');
 }
 
-let onAuthenticationEmail = (accessToken, refreshToken, profile, done) => {
-    onAuthentication(accessToken, refreshToken, profile, done, 'email');
-}
-
-let onAuthenticationGuilds = (accessToken, refreshToken, profile, done) => {
-    onAuthentication(accessToken, refreshToken, profile, done, 'guilds');
-}
-
 passport.use('discord', new DiscordStrategy({
     clientID: secrets.client_id,
     clientSecret: secrets.client_secret,
     callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callback`,
     scope: ['identify']
 }, onAuthenticationIdentify));
-
-passport.use('discord-email', new DiscordStrategy({
-    clientID: secrets.client_id,
-    clientSecret: secrets.client_secret,
-    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callbackemail`,
-    scope: ['email']
-}, onAuthenticationEmail));
-
-passport.use('discord-guilds', new DiscordStrategy({
-    clientID: secrets.client_id,
-    clientSecret: secrets.client_secret,
-    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callbackguilds`,
-    scope: ['guilds']
-}, onAuthenticationGuilds));
 
 module.exports = app;

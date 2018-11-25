@@ -27,7 +27,6 @@ module.exports = new Promise((resolve, reject) => {
     let user = new Schema({
         id: String,
         username: String,
-        email: String,
         avatar: String,
         discriminator: String,
         access: Number,
@@ -42,12 +41,6 @@ module.exports = new Promise((resolve, reject) => {
         }],
         invite: String,
         invite_used: Boolean,
-        guilds: [{
-            _id: false,
-            id: String,
-            name: String,
-            icon: String
-        }],
         factions: [{
             _id: false,
             name: String,
