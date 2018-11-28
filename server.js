@@ -26,6 +26,9 @@ const mongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const basicStrategy = require('passport-http').BasicStrategy;
 const DiscordStrategy = require('passport-discord').Strategy;
+const ngExpressEngine = require('@nguniversal/express-engine').ngExpressEngine;
+const provideModuleMap = require('@nguniversal/module-map-ngfactory-loader').provideModuleMap;
+const ServerModule = require('./dist/server/main');
 const secrets = require('./secrets');
 const processVars = require('./processVars');
 
@@ -85,6 +88,16 @@ require('./server/modules/discord');
 require('./server/modules/tick/listener');
 
 const app = express();
+
+app.engine('html', ngExpressEngine({
+    bootstrap: ServerModule.AppServerModuleNgFactory,
+    providers: [
+        provideModuleMap(ServerModule.LAZY_MODULE_MAP)
+    ]
+}))
+
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'dist'));
 
 app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
@@ -191,10 +204,13 @@ app.use('/frontend', frontEnd);
 app.use('/chartgenerator', chartGenerator);
 
 // Pass all 404 errors called by browser to angular
-app.all('*', (req, res) => {
-    console.log(`Server 404 request: ${req.originalUrl}`);
-    res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
-});
+// app.all('*', (req, res) => {
+//     console.log(`Server 404 request: ${req.originalUrl}`);
+//     res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
+// });
+app.get('*', (req, res) => {
+    res.render(path.join(__dirname, 'dist', 'index.html'), { req });
+})
 
 // error handlers
 

@@ -48,7 +48,7 @@ import { TickService } from './services/tick.service';
         PageNotFoundComponent
     ],
     imports: [
-        BrowserModule,
+        BrowserModule.withServerTransition({ appId: 'elitebgs' }),
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
@@ -61,7 +61,16 @@ import { TickService } from './services/tick.service';
         AppRoutingModule,
         ClarityModule
     ],
-    providers: [SystemsService, FactionsService, StationsService, AuthenticationService, ServerService, ThemeService, TryAPIService, TickService],
+    providers: [
+        SystemsService,
+        FactionsService,
+        StationsService,
+        AuthenticationService,
+        ServerService,
+        ThemeService,
+        TryAPIService,
+        TickService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
