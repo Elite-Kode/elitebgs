@@ -27,10 +27,10 @@ import sum from 'lodash-es/sum';
 // }
 
 @Component({
-    selector: 'app-faction-p-r-state-chart',
-    templateUrl: './faction-p-r-state-chart.component.html'
+    selector: 'app-faction-a-p-r-state-chart',
+    templateUrl: './faction-a-p-r-state-chart.component.html'
 })
-export class FactionPRStateChartComponent implements OnInit, OnChanges {
+export class FactionAPRStateChartComponent implements OnInit, OnChanges {
     @Input() factionData: EBGSFactionV3Schema;
     @Input() type: string;
     // options: Options;
@@ -47,6 +47,10 @@ export class FactionPRStateChartComponent implements OnInit, OnChanges {
         let stateType;
         let stateTitle;
         switch (this.type) {
+            case 'active':
+                stateType = 'active_states';
+                stateTitle = 'Active State';
+                break;
             case 'pending':
                 stateType = 'pending_states';
                 stateTitle = 'Pending State';

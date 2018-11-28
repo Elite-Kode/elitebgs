@@ -19,10 +19,10 @@ import { StationViewComponent } from './stations/station-view.component';
 import { TickComponent } from './tick/tick.component';
 import { FactionInfluenceChartComponent } from './charts/faction-influence-chart.component';
 import { FactionStateChartComponent } from './charts/faction-state-chart.component';
-import { FactionPRStateChartComponent } from './charts/faction-p-r-state-chart.component';
+import { FactionAPRStateChartComponent } from './charts/faction-a-p-r-state-chart.component';
 import { SystemInfluenceChartComponent } from './charts/system-influence-chart.component';
 import { SystemStateChartComponent } from './charts/system-state-chart.component';
-import { SystemPRStateChartComponent } from './charts/system-p-r-state-chart.component';
+import { SystemAPRStateChartComponent } from './charts/system-a-p-r-state-chart.component';
 import { TickChartComponent } from './charts/tick-chart.component';
 import { MainRoutingModule } from './main-routing.module';
 
@@ -45,9 +45,9 @@ export function highchartsModules() {
         FactionInfluenceChartComponent,
         SystemStateChartComponent,
         TickChartComponent,
-        SystemPRStateChartComponent,
+        SystemAPRStateChartComponent,
         FactionStateChartComponent,
-        FactionPRStateChartComponent
+        FactionAPRStateChartComponent
     ],
     imports: [
         CommonModule,

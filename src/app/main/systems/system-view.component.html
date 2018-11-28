@@ -105,10 +105,13 @@
                 <app-system-state-chart [systemData]="systemData"></app-system-state-chart>
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
-                <app-system-p-r-state-chart [systemData]="systemData" type="pending"></app-system-p-r-state-chart>
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="active"></app-system-a-p-r-state-chart>
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
-                <app-system-p-r-state-chart [systemData]="systemData" type="recovering"></app-system-p-r-state-chart>
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="pending"></app-system-a-p-r-state-chart>
+            </div>
+            <div class="card-text" *ngIf="systemData !== undefined">
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="recovering"></app-system-a-p-r-state-chart>
             </div>
         </div>
     </div>

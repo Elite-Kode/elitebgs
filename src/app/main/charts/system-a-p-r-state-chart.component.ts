@@ -27,10 +27,10 @@ import sum from 'lodash-es/sum';
 // }
 
 @Component({
-    selector: 'app-system-p-r-state-chart',
-    templateUrl: './system-p-r-state-chart.component.html'
+    selector: 'app-system-a-p-r-state-chart',
+    templateUrl: './system-a-p-r-state-chart.component.html'
 })
-export class SystemPRStateChartComponent implements OnInit, OnChanges {
+export class SystemAPRStateChartComponent implements OnInit, OnChanges {
     @Input() systemData: EBGSSystemChart;
     @Input() type: string;
     // options: Options;
@@ -47,6 +47,10 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
         let stateType;
         let stateTitle;
         switch (this.type) {
+            case 'active':
+                stateType = 'active_states';
+                stateTitle = 'Active State';
+                break;
             case 'pending':
                 stateType = 'pending_states';
                 stateTitle = 'Pending State';
