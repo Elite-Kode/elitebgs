@@ -16,17 +16,15 @@
 
 "use strict";
 
-const bugsnag = require("bugsnag");
-const unhandledRejection = require('unhandled-rejection');
+const bugsnag = require('@bugsnag/js');
+const bugsnagExpress = require('@bugsnag/plugin-express');
 
-bugsnag.register(require('../secrets').bugsnag_token, { notifyReleaseStages: ["production"] });
+// bugsnag.register(require('../secrets').bugsnag_token, { notifyReleaseStages: ["production"] });
 
-let rejectionEmitter = unhandledRejection({
-    timeout: 20
+let bugsnagClient = bugsnag({
+    apiKey: require('../secrets').bugsnag_token,
+    notifyReleaseStages: ['development', 'production']
 });
+bugsnagClient.use(bugsnagExpress);
 
-rejectionEmitter.on("unhandledRejection", (error, promise) => {
-    bugsnag.notify(error);
-});
-
-module.exports = bugsnag;
+module.exports = bugsnagClient;

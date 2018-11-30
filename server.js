@@ -29,7 +29,7 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const secrets = require('./secrets');
 const processVars = require('./processVars');
 
-const bugsnag = require('./server/bugsnag');
+const bugsnagClientMiddleware = require('./server/bugsnag').getPlugin('express');
 const swagger = require('./server/swagger');
 
 const bodiesV1 = require('./server/routes/eddb_api/v1/bodies');
@@ -86,8 +86,7 @@ require('./server/modules/tick/listener');
 
 const app = express();
 
-app.use(bugsnag.requestHandler);
-app.use(logger('dev'));
+app.use(bugsnagClientMiddleware.requestHandler);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -197,10 +196,12 @@ app.all('*', (req, res) => {
 });
 
 // error handlers
+app.use(bugsnagClientMiddleware.errorHandler);
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
+    app.use(logger('dev'));
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.send({
@@ -214,7 +215,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
-    app.use(bugsnag.errorHandler);
+    app.use(logger('combined'));
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.send({
@@ -235,10 +236,16 @@ passport.deserializeUser(function (id, done) {
                     done(null, user);
                 })
                 .catch(err => {
+                    bugsnagClientMiddleware.notify(err, {
+                        user: { id: id }
+                    })
                     done(err);
                 })
         })
         .catch(err => {
+            bugsnagClientMiddleware.notify(err, {
+                user: { id: id }
+            })
             done(err);
         })
 });
