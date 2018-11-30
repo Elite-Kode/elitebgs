@@ -46,94 +46,6 @@ let makeSwaggerSpec = (params, security) => {
     return swaggerJsDoc(options);
 }
 
-let paramsEDDBAPIv1 = {
-    info: {
-        title: 'EDDB API',
-        version: '1.0.0',
-        description: 'An API for EDDB Data',
-    },
-    basePath: '/api/eddb/v1',
-    definitions: {
-        AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
-        Bodies: { properties: swaggerDefinitions.bodies },
-        Commodities: { properties: swaggerDefinitions.commodities },
-        Factions: { properties: swaggerDefinitions.factions },
-        Materials: { properties: swaggerDefinitions.materials },
-        PopulatedSystemPresence: { properties: swaggerDefinitions.populatedSystemPresence },
-        PopulatedSystems: { properties: swaggerDefinitions.populatedSystems },
-        Rings: { properties: swaggerDefinitions.rings },
-        SolidComposition: { properties: swaggerDefinitions.solidComposition },
-        StationItems: { properties: swaggerDefinitions.stationItems },
-        Stations: { properties: swaggerDefinitions.stations },
-        Systems: { properties: swaggerDefinitions.systems }
-    },
-    apis: ['./server/routes/eddb_api/v1/*.js']
-};
-
-let swaggerSpecEDDBAPIv1 = makeSwaggerSpec(paramsEDDBAPIv1, true);
-
-let paramsEDDBAPIv2 = {
-    info: {
-        title: 'EDDB API',
-        version: '2.0.0',
-        description: 'An API for EDDB Data',
-    },
-    basePath: '/api/eddb/v2',
-    definitions: {
-        AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
-        Bodies: { properties: swaggerDefinitions.bodies },
-        Commodities: { properties: swaggerDefinitions.commodities },
-        Factions: { properties: swaggerDefinitions.factions },
-        Materials: { properties: swaggerDefinitions.materials },
-        PopulatedSystemPresence: { properties: swaggerDefinitions.populatedSystemPresence },
-        PopulatedSystems: { properties: swaggerDefinitions.populatedSystems },
-        Rings: { properties: swaggerDefinitions.rings },
-        SolidComposition: { properties: swaggerDefinitions.solidComposition },
-        StationItems: { properties: swaggerDefinitions.stationItems },
-        Stations: { properties: swaggerDefinitions.stations },
-        Systems: { properties: swaggerDefinitions.systems },
-        BodiesPage: { properties: swaggerDefinitions.pagination('Bodies') },
-        FactionsPage: { properties: swaggerDefinitions.pagination('Factions') },
-        PopulatedSystemsPage: { properties: swaggerDefinitions.pagination('PopulatedSystems') },
-        StationsPage: { properties: swaggerDefinitions.pagination('Stations') },
-        SystemsPage: { properties: swaggerDefinitions.pagination('Systems') }
-    },
-    apis: ['./server/routes/eddb_api/v2/*.js']
-};
-
-let swaggerSpecEDDBAPIv2 = makeSwaggerSpec(paramsEDDBAPIv2, true);
-
-let paramsEDDBAPIv3 = {
-    info: {
-        title: 'EDDB API',
-        version: '3.0.0',
-        description: 'An API for EDDB Data',
-    },
-    basePath: '/api/eddb/v3',
-    definitions: {
-        AtmosphereComposition: { properties: swaggerDefinitions.atmosphereComposition },
-        Bodies: { properties: swaggerDefinitions.bodies },
-        Commodities: { properties: swaggerDefinitions.commodities },
-        Factions: { properties: swaggerDefinitions.factions },
-        Materials: { properties: swaggerDefinitions.materials },
-        PopulatedSystemPresence: { properties: swaggerDefinitions.populatedSystemPresence },
-        PopulatedSystems: { properties: swaggerDefinitions.populatedSystems },
-        Rings: { properties: swaggerDefinitions.rings },
-        SolidComposition: { properties: swaggerDefinitions.solidComposition },
-        StationItems: { properties: swaggerDefinitions.stationItems },
-        Stations: { properties: swaggerDefinitions.stations },
-        Systems: { properties: swaggerDefinitions.systems },
-        BodiesPage: { properties: swaggerDefinitions.pagination('Bodies') },
-        FactionsPage: { properties: swaggerDefinitions.pagination('Factions') },
-        PopulatedSystemsPage: { properties: swaggerDefinitions.pagination('PopulatedSystems') },
-        StationsPage: { properties: swaggerDefinitions.pagination('Stations') },
-        SystemsPage: { properties: swaggerDefinitions.pagination('Systems') }
-    },
-    apis: ['./server/routes/eddb_api/v3/*.js']
-};
-
-let swaggerSpecEDDBAPIv3 = makeSwaggerSpec(paramsEDDBAPIv3, false);
-
 let paramsEBGSAPIv1 = {
     info: {
         title: 'Elite BGS API',
@@ -228,9 +140,6 @@ let paramsEBGSAPIv4 = {
 
 let swaggerSpecEBGSAPIv4 = makeSwaggerSpec(paramsEBGSAPIv4, false);
 
-module.exports.EDDBAPIv1 = swaggerSpecEDDBAPIv1;
-module.exports.EDDBAPIv2 = swaggerSpecEDDBAPIv2;
-module.exports.EDDBAPIv3 = swaggerSpecEDDBAPIv3;
 module.exports.EBGSAPIv1 = swaggerSpecEBGSAPIv1;
 module.exports.EBGSAPIv2 = swaggerSpecEBGSAPIv2;
 module.exports.EBGSAPIv3 = swaggerSpecEBGSAPIv3;

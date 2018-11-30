@@ -15,18 +15,18 @@ export class EddbApiDocsComponent {
         this.specs = [
             {
                 versionName: 'V1',
-                specLocation: '/api/eddb/v1/api-docs.json',
-                swaggerLocation: '/api/eddb/v1/docs'
+                specLocation: 'https://eddbapi.kodeblox.com/api/v1/api-docs.json',
+                swaggerLocation: 'https://eddbapi.kodeblox.com/api/v1/docs'
             },
             {
                 versionName: 'V2',
-                specLocation: '/api/eddb/v2/api-docs.json',
-                swaggerLocation: '/api/eddb/v2/docs'
+                specLocation: 'https://eddbapi.kodeblox.com/api/v2/api-docs.json',
+                swaggerLocation: 'https://eddbapi.kodeblox.com/api/v2/docs'
             },
             {
                 versionName: 'V3',
-                specLocation: '/api/eddb/v3/api-docs.json',
-                swaggerLocation: '/api/eddb/v3/docs'
+                specLocation: 'https://eddbapi.kodeblox.com/api/v3/api-docs.json',
+                swaggerLocation: 'https://eddbapi.kodeblox.com/api/v3/docs'
             }
         ]
     }
