@@ -157,14 +157,14 @@ passport.deserializeUser(function (id, done) {
                 .catch(err => {
                     bugsnagClientMiddleware.notify(err, {
                         user: { id: id }
-                    })
+                    });
                     done(err);
                 })
         })
         .catch(err => {
             bugsnagClientMiddleware.notify(err, {
                 user: { id: id }
-            })
+            });
             done(err);
         })
 });
@@ -196,6 +196,9 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                 done(null, user);
                             })
                             .catch(err => {
+                                bugsnagClientMiddleware.notify(err, {
+                                    user: updatedUser
+                                });
                                 done(err);
                             });
                     } else {
@@ -234,20 +237,48 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                                 done(null, user);
                                             })
                                             .catch(err => {
+                                                bugsnagClientMiddleware.notify(err, {
+                                                    user: {
+                                                        id: profile.id,
+                                                        username: profile.username,
+                                                        discriminator: profile.discriminator
+                                                    }
+                                                });
                                                 done(err);
                                             });
                                     })
                                 })
                                 .catch(err => {
+                                    bugsnagClientMiddleware.notify(err, {
+                                        user: {
+                                            id: profile.id,
+                                            username: profile.username,
+                                            discriminator: profile.discriminator
+                                        }
+                                    });
                                     done(err);
                                 })
                         }).catch(err => {
+                            bugsnagClientMiddleware.notify(err, {
+                                user: {
+                                    id: profile.id,
+                                    username: profile.username,
+                                    discriminator: profile.discriminator
+                                }
+                            });
                             done(err);
                         });
                     }
                 })
         })
         .catch(err => {
+            bugsnagClientMiddleware.notify(err, {
+                user: {
+                    id: profile.id,
+                    username: profile.username,
+                    discriminator: profile.discriminator
+                }
+            });
             done(err);
         })
 }
