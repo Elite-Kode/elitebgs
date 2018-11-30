@@ -21,6 +21,8 @@ const request = require('request');
 const semver = require('semver');
 const moment = require('moment');
 
+const bugsnagClient = require('../../../bugsnag');
+
 const ebgsFactionsModel = require('../../../models/ebgs_factions');
 const ebgsSystemsModel = require('../../../models/ebgs_systems');
 
@@ -835,6 +837,12 @@ function Journal() {
                                         }
                                     })
                                     .catch((err) => {
+                                        bugsnagClient.notify(err, {
+                                            metadata: {
+                                                message: message,
+                                                systemObject: systemObject
+                                            }
+                                        });
                                         console.log(err);
                                     })
                             } else {
@@ -862,6 +870,12 @@ function Journal() {
                                             }
                                         })
                                         .catch((err) => {
+                                            bugsnagClient.notify(err, {
+                                                metadata: {
+                                                    message: message,
+                                                    systemObject: systemObject
+                                                }
+                                            });
                                             console.log(err);
                                         })
                                 } catch (err) {       // If eddb id cannot be fetched, create the record without it.
@@ -886,6 +900,12 @@ function Journal() {
                                             }
                                         })
                                         .catch((err) => {
+                                            bugsnagClient.notify(err, {
+                                                metadata: {
+                                                    message: message,
+                                                    systemObject: systemObject
+                                                }
+                                            });
                                             console.log(err);
                                         })
                                 }
@@ -893,6 +913,12 @@ function Journal() {
                         }
                     })
                     .catch(err => {
+                        bugsnagClient.notify(err, {
+                            metadata: {
+                                message: message,
+                                systemModel: ebgsSystemsV4Model
+                            }
+                        });
                         console.log(err);
                     })
                 ebgsFactionsV4Model
@@ -940,61 +966,79 @@ function Journal() {
                             // To remove are those factions which are not present in this system anymore
                             // Such factions need to be updated too
                             for (let factionNameLower of toRemove) {
-                                for (let faction of factionsPresentInSystemDB) {
-                                    if (factionNameLower === faction.name_lower && faction.updated_at < new Date(message.timestamp)) {
+                                for (let factionObject of factionsPresentInSystemDB) {
+                                    if (factionNameLower === factionObject.name_lower && factionObject.updated_at < new Date(message.timestamp)) {
                                         let factionPresence = [];
-                                        faction.faction_presence.forEach(system => {
+                                        factionObject.faction_presence.forEach(system => {
                                             if (system.system_name_lower !== message.StarSystem.toLowerCase()) {
                                                 factionPresence.push(system);
                                             }
                                         });
-                                        faction.faction_presence = factionPresence;
-                                        faction.updated_at = message.timestamp;
+                                        factionObject.faction_presence = factionPresence;
+                                        factionObject.updated_at = message.timestamp;
 
-                                        if (!faction.eddb_id) {
+                                        if (!factionObject.eddb_id) {
                                             try {
-                                                let id = await this.getFactionEDDBId(faction.name);
-                                                faction.eddb_id = id;
+                                                let id = await this.getFactionEDDBId(factionObject.name);
+                                                factionObject.eddb_id = id;
                                                 model.findOneAndUpdate(
                                                     {
-                                                        name: faction.name
+                                                        name: factionObject.name
                                                     },
-                                                    faction,
+                                                    factionObject,
                                                     {
                                                         upsert: true,
                                                         runValidators: true
                                                     })
                                                     .exec()
                                                     .catch(err => {
+                                                        bugsnagClient.notify(err, {
+                                                            metadata: {
+                                                                message: message,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
                                                         console.log(err);
                                                     })
                                             } catch (err) {
                                                 model.findOneAndUpdate(
                                                     {
-                                                        name: faction.name
+                                                        name: factionObject.name
                                                     },
-                                                    faction,
+                                                    factionObject,
                                                     {
                                                         upsert: true,
                                                         runValidators: true
                                                     })
                                                     .exec()
                                                     .catch(err => {
+                                                        bugsnagClient.notify(err, {
+                                                            metadata: {
+                                                                message: message,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
                                                         console.log(err);
                                                     })
                                             }
                                         } else {
                                             model.findOneAndUpdate(
                                                 {
-                                                    name: faction.name
+                                                    name: factionObject.name
                                                 },
-                                                faction,
+                                                factionObject,
                                                 {
                                                     upsert: true,
                                                     runValidators: true
                                                 })
                                                 .exec()
                                                 .catch(err => {
+                                                    bugsnagClient.notify(err, {
+                                                        metadata: {
+                                                            message: message,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
                                                     console.log(err);
                                                 })
                                         }
@@ -1089,6 +1133,12 @@ function Journal() {
                                                     this.setFactionHistory(historyObject);
                                                 })
                                                 .catch(err => {
+                                                    bugsnagClient.notify(err, {
+                                                        metadata: {
+                                                            message: message,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
                                                     console.log(err);
                                                 });
                                         } catch (err) {
@@ -1108,6 +1158,12 @@ function Journal() {
                                                     this.setFactionHistory(historyObject);
                                                 })
                                                 .catch(err => {
+                                                    bugsnagClient.notify(err, {
+                                                        metadata: {
+                                                            message: message,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
                                                     console.log(err);
                                                 });
                                         }
@@ -1220,6 +1276,13 @@ function Journal() {
                                                             this.setFactionHistory(historyObject);
                                                         })
                                                         .catch(err => {
+                                                            bugsnagClient.notify(err, {
+                                                                metadata: {
+                                                                    message: message,
+                                                                    messageFaction: messageFaction,
+                                                                    factionObject: factionObject
+                                                                }
+                                                            });
                                                             console.log(err);
                                                         });
                                                 } catch (err) {
@@ -1239,6 +1302,13 @@ function Journal() {
                                                             this.setFactionHistory(historyObject);
                                                         })
                                                         .catch(err => {
+                                                            bugsnagClient.notify(err, {
+                                                                metadata: {
+                                                                    message: message,
+                                                                    messageFaction: messageFaction,
+                                                                    factionObject: factionObject
+                                                                }
+                                                            });
                                                             console.log(err);
                                                         });
                                                 }
@@ -1259,6 +1329,13 @@ function Journal() {
                                                         this.setFactionHistory(historyObject);
                                                     })
                                                     .catch(err => {
+                                                        bugsnagClient.notify(err, {
+                                                            metadata: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
                                                         console.log(err);
                                                     });
                                             }
@@ -1302,6 +1379,13 @@ function Journal() {
                                                         })
                                                         .exec()
                                                         .catch(err => {
+                                                            bugsnagClient.notify(err, {
+                                                                metadata: {
+                                                                    message: message,
+                                                                    messageFaction: messageFaction,
+                                                                    factionObject: factionObject
+                                                                }
+                                                            });
                                                             console.log(err);
                                                         });
                                                 } catch (err) {
@@ -1317,6 +1401,13 @@ function Journal() {
                                                         })
                                                         .exec()
                                                         .catch(err => {
+                                                            bugsnagClient.notify(err, {
+                                                                metadata: {
+                                                                    message: message,
+                                                                    messageFaction: messageFaction,
+                                                                    factionObject: factionObject
+                                                                }
+                                                            });
                                                             console.log(err);
                                                         });
                                                 }
@@ -1333,6 +1424,13 @@ function Journal() {
                                                     })
                                                     .exec()
                                                     .catch(err => {
+                                                        bugsnagClient.notify(err, {
+                                                            metadata: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
                                                         console.log(err);
                                                     });
                                             }
@@ -1341,16 +1439,30 @@ function Journal() {
                                 }
                             }
                         } catch (err) {
+                            bugsnagClient.notify(err, {
+                                metadata: {
+                                    message: message
+                                }
+                            });
                             console.log(err);
                         }
                     })
                     .catch(err => {
+                        bugsnagClient.notify(err, {
+                            metadata: {
+                                message: message,
+                                factionModel: ebgsFactionsV4Model
+                            }
+                        });
                         console.log(err);
                     });
             } catch (err) {
-                if (err) {
-                    console.log(err)
-                }
+                bugsnagClient.notify(err, {
+                    metadata: {
+                        message: message
+                    }
+                });
+                console.log(err)
             }
         }
         if (message.event === "Docked" || (message.event === "Location" && message.Docked)) {
@@ -1486,6 +1598,12 @@ function Journal() {
                                         }
                                     })
                                     .catch((err) => {
+                                        bugsnagClient.notify(err, {
+                                            metadata: {
+                                                message: message,
+                                                stationObject: stationObject
+                                            }
+                                        });
                                         console.log(err);
                                     })
                             } else {
@@ -1511,6 +1629,12 @@ function Journal() {
                                             }
                                         })
                                         .catch((err) => {
+                                            bugsnagClient.notify(err, {
+                                                metadata: {
+                                                    message: message,
+                                                    stationObject: stationObject
+                                                }
+                                            });
                                             console.log(err);
                                         })
                                 } catch (err) {
@@ -1533,6 +1657,12 @@ function Journal() {
                                             }
                                         })
                                         .catch((err) => {
+                                            bugsnagClient.notify(err, {
+                                                metadata: {
+                                                    message: message,
+                                                    stationObject: stationObject
+                                                }
+                                            });
                                             console.log(err);
                                         })
                                 }
@@ -1540,16 +1670,26 @@ function Journal() {
                         }
                     })
                     .catch(err => {
+                        bugsnagClient.notify(err, {
+                            metadata: {
+                                message: message,
+                                stationModel: ebgsStationsV4Model
+                            }
+                        });
                         console.log(err);
                     });
             } catch (err) {
-                if (err) {
-                    console.log(err)
-                }
+                bugsnagClient.notify(err, {
+                    metadata: {
+                        message: message
+                    }
+                });
+                console.log(err)
             }
         }
     }
 
+    // Used in V3
     this.checkMessage = function (message) {
         if (
             message.StarSystem &&
@@ -1579,6 +1719,7 @@ function Journal() {
         }
     }
 
+    // Used in V4 FSDJump
     this.checkMessage1 = async function (message, header) {
         try {
             if (
@@ -1628,13 +1769,14 @@ function Journal() {
                     return Promise.resolve();
                 }
             } else {
-                return Promise.reject();
+                return Promise.reject("Message is not valid");
             }
         } catch (err) {
             return Promise.reject(err);
         }
     }
 
+    // Used in V4 Docked
     this.checkMessage2 = async function (message, header) {
         try {
             if (
@@ -1688,13 +1830,14 @@ function Journal() {
                     return Promise.resolve();
                 }
             } else {
-                return Promise.reject();
+                return Promise.reject("Message is not valid");
             }
         } catch (err) {
             return Promise.reject(err);
         }
     }
 
+    // Used in V4
     this.checkSystemWHistory = function (message, history, factionArray) {
         for (let item of history) {
             if (item.government === message.SystemGovernment.toLowerCase() &&
@@ -1710,6 +1853,7 @@ function Journal() {
         return true;
     }
 
+    // Used in doFactionUpdate
     this.checkFactionWHistory = function (message, messageFaction, history, activeStates, pendingStates, recoveringStates) {
         for (let item of history) {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
@@ -1724,6 +1868,7 @@ function Journal() {
         return true;
     }
 
+    // Used in V4
     this.checkStationWHistory = function (message, history, serviceArray) {
         for (let item of history) {
             if (item.government === message.StationGovernment.toLowerCase() &&
@@ -1737,6 +1882,7 @@ function Journal() {
         return true;
     }
 
+    // Used in V4
     this.doFactionUpdate = async function (messageFaction, dbFaction, message) {
         let activeStates = [];
         if (messageFaction.ActiveStates) {
@@ -1804,12 +1950,14 @@ function Journal() {
         return { pendingStates, recoveringStates, doUpdate, dontUpdateTime }
     }
 
+    // Used in V3 and V4
     this.correctCoordinates = function (value) {
         let floatValue = Number.parseFloat(value);
         let intValue = Math.round(floatValue * 32);
         return intValue / 32;
     }
 
+    // Used in V3 and V4
     this.getSystemEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
@@ -1825,15 +1973,18 @@ function Journal() {
                     if (responseObject.total > 0) {
                         resolve(responseObject.docs[0].id);
                     } else {
-                        reject();
+                        reject(response);
                     }
+                } else if (error) {
+                    reject(error);
                 } else {
-                    reject();
+                    reject(response);
                 }
             });
         })
     }
 
+    // Used in V3 and V4
     this.getFactionEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
@@ -1849,15 +2000,18 @@ function Journal() {
                     if (responseObject.total > 0) {
                         resolve(responseObject.docs[0].id);
                     } else {
-                        reject();
+                        reject(response);
                     }
+                } else if (error) {
+                    reject(error);
                 } else {
-                    reject();
+                    reject(response);
                 }
             });
         })
     }
 
+    // Used in V4
     this.getStationEDDBId = function (name) {
         return new Promise((resolve, reject) => {
             let requestOptions = {
@@ -1873,15 +2027,18 @@ function Journal() {
                     if (responseObject.total > 0) {
                         resolve(responseObject.docs[0].id);
                     } else {
-                        reject();
+                        reject(response);
                     }
+                } else if (error) {
+                    reject(error);
                 } else {
-                    reject();
+                    reject(response);
                 }
             });
         })
     }
 
+    // Used in V4
     this.setSystemHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
             ebgsHistorySystemV4Model
@@ -1901,6 +2058,7 @@ function Journal() {
         })
     }
 
+    // Used in V4
     this.setFactionHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
             ebgsHistoryFactionV4Model
@@ -1920,6 +2078,7 @@ function Journal() {
         })
     }
 
+    // Used in V4
     this.setStationHistory = function (historyObject) {
         return new Promise((resolve, reject) => {
             ebgsHistoryStationV4Model

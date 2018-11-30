@@ -28,7 +28,7 @@ const ebgsUsers = require('../models/ebgs_users');
 
 let router = express.Router();
 
-router.get('/backgroundimages', (req, res, next) => {
+router.get('/backgroundimages', (req, res) => {
     let pathToFile = path.resolve(__dirname, '../../dist/assets/backgrounds');
     res.send(fs.readdirSync(pathToFile));
 });
@@ -44,15 +44,9 @@ router.get('/donors', (req, res, next) => {
                 date: -1
             }).then(donations => {
                 res.send(donations);
-            }).catch(err => {
-                console.log(err);
-                res.send();
-            });
+            }).catch(next);
         })
-        .catch(err => {
-            console.log(err)
-            res.send();
-        });
+        .catch(next);
 });
 
 router.get('/patrons', (req, res, next) => {
@@ -68,15 +62,9 @@ router.get('/patrons', (req, res, next) => {
                 since: -1
             }).then(patrons => {
                 res.send(patrons);
-            }).catch(err => {
-                console.log(err);
-                res.send();
-            });
+            }).catch(next);
         })
-        .catch(err => {
-            console.log(err)
-            res.send();
-        });
+        .catch(next);
 });
 
 router.get('/credits', (req, res, next) => {
@@ -97,15 +85,9 @@ router.get('/credits', (req, res, next) => {
                 since: -1
             }).then(credits => {
                 res.send(credits);
-            }).catch(err => {
-                console.log(err);
-                res.send();
-            });
+            }).catch(next);
         })
-        .catch(err => {
-            console.log(err)
-            res.send();
-        });
+        .catch(next);
 });
 
 router.get('/users', (req, res, next) => {
@@ -147,8 +129,6 @@ router.get('/users', (req, res, next) => {
                     .catch(next)
             })
             .catch(next)
-    } else {
-        next();
     }
 });
 
@@ -182,24 +162,17 @@ router.put('/users', (req, res, next) => {
                                 runValidators: true
                             }).then(data => {
                                 res.send(true);
-                            }).catch((err) => {
-                                console.log(err);
-                                res.send(false);
-                            });
+                            }).catch(next);
                     } else {
                         res.send(false);
                     }
                 })
-                .catch(err => {
-                    console.log(err);
-                    res.send(false);
-                })
+                .catch(next)
         } else {
             res.send(false);
         }
     } catch (error) {
-        console.log(error);
-        res.send(false);
+        next(error);
     }
 });
 
@@ -211,8 +184,6 @@ router.get('/scripts', (req, res, next) => {
                 res.send(files);
             })
             .catch(next);
-    } else {
-        next();
     }
 });
 
@@ -226,8 +197,7 @@ router.put('/scripts/run', (req, res, next) => {
             res.send(false);
         }
     } catch (error) {
-        console.log(error);
-        res.send(false);
+        next(error);
     }
 });
 

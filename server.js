@@ -28,7 +28,8 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const secrets = require('./secrets');
 const processVars = require('./processVars');
 
-const bugsnagClientMiddleware = require('./server/bugsnag').getPlugin('express');
+const bugsnagClient = require('./server/bugsnag');
+const bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
 const swagger = require('./server/swagger');
 
 const ebgsFactionsV1 = require('./server/routes/elite_bgs_api/v1/factions');
@@ -155,14 +156,14 @@ passport.deserializeUser(function (id, done) {
                     done(null, user);
                 })
                 .catch(err => {
-                    bugsnagClientMiddleware.notify(err, {
+                    bugsnagClient.notify(err, {
                         user: { id: id }
                     });
                     done(err);
                 })
         })
         .catch(err => {
-            bugsnagClientMiddleware.notify(err, {
+            bugsnagClient.notify(err, {
                 user: { id: id }
             });
             done(err);
@@ -196,7 +197,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                 done(null, user);
                             })
                             .catch(err => {
-                                bugsnagClientMiddleware.notify(err, {
+                                bugsnagClient.notify(err, {
                                     user: updatedUser
                                 });
                                 done(err);
@@ -237,7 +238,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                                 done(null, user);
                                             })
                                             .catch(err => {
-                                                bugsnagClientMiddleware.notify(err, {
+                                                bugsnagClient.notify(err, {
                                                     user: {
                                                         id: profile.id,
                                                         username: profile.username,
@@ -249,7 +250,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                     })
                                 })
                                 .catch(err => {
-                                    bugsnagClientMiddleware.notify(err, {
+                                    bugsnagClient.notify(err, {
                                         user: {
                                             id: profile.id,
                                             username: profile.username,
@@ -259,7 +260,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                                     done(err);
                                 })
                         }).catch(err => {
-                            bugsnagClientMiddleware.notify(err, {
+                            bugsnagClient.notify(err, {
                                 user: {
                                     id: profile.id,
                                     username: profile.username,
@@ -272,7 +273,7 @@ let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
                 })
         })
         .catch(err => {
-            bugsnagClientMiddleware.notify(err, {
+            bugsnagClient.notify(err, {
                 user: {
                     id: profile.id,
                     username: profile.username,

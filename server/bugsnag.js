@@ -19,8 +19,6 @@
 const bugsnag = require('@bugsnag/js');
 const bugsnagExpress = require('@bugsnag/plugin-express');
 
-// bugsnag.register(require('../secrets').bugsnag_token, { notifyReleaseStages: ["production"] });
-
 let bugsnagClient = bugsnag({
     apiKey: require('../secrets').bugsnag_token,
     notifyReleaseStages: ['development', 'production']

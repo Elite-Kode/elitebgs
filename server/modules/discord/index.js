@@ -17,6 +17,7 @@
 "use strict";
 
 const client = require('./client');
+const bugsnagClient = require('../../bugsnag');
 const secrets = require('../../../secrets');
 
 client.login(secrets.discord_token);
@@ -40,13 +41,34 @@ client.on("guildMemberAdd", member => {
                                                 client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Editor role");
                                             })
                                             .catch(err => {
+                                                bugsnagClient.notify(err, {
+                                                    user: {
+                                                        id: member.id,
+                                                        username: member.user.username,
+                                                        discriminator: member.user.discriminator
+                                                    }
+                                                });
                                                 console.log(err);
                                             });
                                     })
                                     .catch(err => {
+                                        bugsnagClient.notify(err, {
+                                            user: {
+                                                id: member.id,
+                                                username: member.user.username,
+                                                discriminator: member.user.discriminator
+                                            }
+                                        });
                                         console.log(err);
                                     });
                             }).catch(err => {
+                                bugsnagClient.notify(err, {
+                                    user: {
+                                        id: member.id,
+                                        username: member.user.username,
+                                        discriminator: member.user.discriminator
+                                    }
+                                });
                                 console.log(err);
                             });
                         user.invite = "";
@@ -60,6 +82,13 @@ client.on("guildMemberAdd", member => {
                             })
                             .then(() => { })
                             .catch(err => {
+                                bugsnagClient.notify(err, {
+                                    user: {
+                                        id: member.id,
+                                        username: member.user.username,
+                                        discriminator: member.user.discriminator
+                                    }
+                                });
                                 console.log(err);
                             });
                     } else {
@@ -68,23 +97,51 @@ client.on("guildMemberAdd", member => {
                                 configModel.findOne()
                                     .then(config => {
                                         member.addRole(config.guest_role_id)
-                                        .then(guildMember => {
-                                            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
-                                        })
-                                        .catch(err => {
-                                            console.log(err);
-                                        });
+                                            .then(guildMember => {
+                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
+                                            })
+                                            .catch(err => {
+                                                bugsnagClient.notify(err, {
+                                                    user: {
+                                                        id: member.id,
+                                                        username: member.user.username,
+                                                        discriminator: member.user.discriminator
+                                                    }
+                                                });
+                                                console.log(err);
+                                            });
                                     })
                                     .catch(err => {
+                                        bugsnagClient.notify(err, {
+                                            user: {
+                                                id: member.id,
+                                                username: member.user.username,
+                                                discriminator: member.user.discriminator
+                                            }
+                                        });
                                         console.log(err);
                                     })
                             }).catch(err => {
+                                bugsnagClient.notify(err, {
+                                    user: {
+                                        id: member.id,
+                                        username: member.user.username,
+                                        discriminator: member.user.discriminator
+                                    }
+                                });
                                 console.log(err);
                             });
                     }
                 })
         })
         .catch(err => {
+            bugsnagClient.notify(err, {
+                user: {
+                    id: member.id,
+                    username: member.user.username,
+                    discriminator: member.user.discriminator
+                }
+            });
             console.log(err);
         })
 });
