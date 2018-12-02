@@ -76,7 +76,7 @@
           "options": {
             "customWebpackConfig": {
               "path": "./universal-webpack.config.js",
-              "mergeStrategies": { "loaders": "replace" }
+              "mergeStrategies": { "externals": "replace" }
             },
             "outputPath": "dist/server",
             "main": "src/main.server.ts",
