@@ -16,6 +16,13 @@
 
 "use strict";
 
+require('zone.js/dist/zone-node');
+require('reflect-metadata');
+
+const enableProdMode = require('@angular/core').enableProdMode;
+
+enableProdMode();
+
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
@@ -209,7 +216,7 @@ app.use('/chartgenerator', chartGenerator);
 //     res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
 // });
 app.get('*', (req, res) => {
-    res.render(path.join(__dirname, 'dist', 'index.html'), { req });
+    res.render('index', { req });
 })
 
 // error handlers

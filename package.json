@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
-    "start": "run-s buildprod runprod",
+    "start": "run-s buildprod createSSR runprod",
     "startdev": "run-s removebuild createSSR preparedev",
     "build": "ng build",
     "lint": "ng lint",
