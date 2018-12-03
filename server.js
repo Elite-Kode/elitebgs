@@ -110,7 +110,6 @@ app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'dist')));
 app.use(session({
     name: "EliteBGS",
     secret: secrets.session_secret,
@@ -209,6 +208,8 @@ app.use('/auth/logout', authLogout);
 app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
 app.use('/chartgenerator', chartGenerator);
+
+app.get('*.*', express.static(path.join(__dirname, 'dist')));
 
 // Pass all 404 errors called by browser to angular
 // app.all('*', (req, res) => {
