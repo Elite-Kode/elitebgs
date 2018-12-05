@@ -15,10 +15,7 @@
  */
 
 "use strict";
-
-module.exports.atmosphereComposition = require('./atmosphere_composition');
-module.exports.bodies = require('./bodies');
-module.exports.commodities = require('./commodities');
+;
 module.exports.ebgsFactionHistory = require('./ebgs_faction_history');
 module.exports.ebgsFactionPresence = require('./ebgs_faction_presence');
 module.exports.ebgsFactions = require('./ebgs_factions');
@@ -42,15 +39,6 @@ module.exports.ebgsSystemsV4 = require('./ebgs_systems_v4');
 module.exports.ebgsStationHistoryV4 = require('./ebgs_station_history_v4');
 module.exports.ebgsStationServicesV4 = require('./ebgs_station_services_v4');
 module.exports.ebgsStationsV4 = require('./ebgs_stations_v4');
-module.exports.factions = require('./factions');
-module.exports.materials = require('./materials');
 module.exports.pagination = require('./pagination');
-module.exports.populatedSystemPresence = require('./populated_system_presence');
-module.exports.populatedSystems = require('./populated_systems');
-module.exports.rings = require('./rings');
-module.exports.solidComposition = require('./solid_composition');
-module.exports.stationItems = require('./station_items');
-module.exports.stations = require('./stations');
-module.exports.systems = require('./systems');
 module.exports.tickTimesV4 = require('./tick_times_v4');
 module.exports.tickTimesHistoryV4 = require('./tick_times_history_v4');
