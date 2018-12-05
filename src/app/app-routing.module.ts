@@ -11,6 +11,7 @@ import { GuideComponent } from './guide/guide.component';
 import { DonateComponent } from './donate/donate.component';
 import { CreditsComponent } from './credits/credits.component';
 import { PageNotFoundComponent } from './page_not_found/page-not-found.component';
+import { TickComponent } from './tick/tick.component';
 
 const appRoutes: Routes = [
     {
@@ -48,6 +49,10 @@ const appRoutes: Routes = [
     {
         path: 'credits',
         component: CreditsComponent
+    },
+    {
+        path: 'tick',
+        component: TickComponent
     },
     {
         path: '**',

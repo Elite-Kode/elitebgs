@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../../typings';
-import { FDevIDs } from '../../utilities/fdevids';
+import { EBGSFactionV3Schema } from '../typings';
+import { FDevIDs } from '../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from '../services/theme.service';
 import isEqual from 'lodash-es/isEqual';
 import difference from 'lodash-es/difference';
 import pull from 'lodash-es/pull';
@@ -27,11 +27,11 @@ import sum from 'lodash-es/sum';
 // }
 
 @Component({
-    selector: 'app-system-p-r-state-chart',
-    templateUrl: './system-p-r-state-chart.component.html'
+    selector: 'app-faction-p-r-state-chart',
+    templateUrl: './faction-p-r-state-chart.component.html'
 })
-export class SystemPRStateChartComponent implements OnInit, OnChanges {
-    @Input() systemData: EBGSSystemChart;
+export class FactionPRStateChartComponent implements OnInit, OnChanges {
+    @Input() factionData: EBGSFactionV3Schema;
     @Input() type: string;
     // options: Options;
     options: any;
@@ -59,20 +59,20 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                 stateType = 'pending_states';
                 stateTitle = 'Pending State';
         }
-        const allTimeFactions: string[] = [];
+        const allTimeSystems: string[] = [];
         const allTimeStates: string[][] = [];
         const maxStatesConcurrent: number[] = [];
-        const factions: string[] = [];
-        this.systemData.faction_history.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+        const systems: string[] = [];
+        this.factionData.history.forEach(record => {
+            if (allTimeSystems.indexOf(record.system) === -1) {
+                allTimeSystems.push(record.system);
             }
         });
-        allTimeFactions.forEach((faction, index) => {
+        allTimeSystems.forEach((system, index) => {
             const allStates: string[] = [];
             let maxStates = 0;
-            this.systemData.faction_history.forEach((record, recordIndex, records) => {
-                if (record.faction === faction) {
+            this.factionData.history.forEach((record, recordIndex, records) => {
+                if (record.system === system) {
                     if (record[stateType].length === 0) {
                         records[recordIndex][stateType].push({
                             state: 'none',
@@ -93,7 +93,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
             }
             maxStatesConcurrent.push(maxStates);
         });
-        this.systemData.faction_history.sort((a, b) => {
+        this.factionData.history.sort((a, b) => {
             if (a.updated_at < b.updated_at) {
                 return -1;
             } else if (a.updated_at > b.updated_at) {
@@ -113,12 +113,12 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
         states.forEach(state => {
             data[state[0]] = [];
         });
-        allTimeFactions.forEach((faction, index) => {
-            factions.push(faction);
+        allTimeSystems.forEach((system, index) => {
+            systems.push(system);
             const previousStates: string[] = new Array(maxStatesConcurrent[index]);
             const tempBegin: number[] = new Array(maxStatesConcurrent[index]);
-            this.systemData.faction_history.filter(record => {
-                return record.faction === faction;
+            this.factionData.history.filter(record => {
+                return record.system === system;
             }).forEach(record => {
                 if (!isEqual(record[stateType].map(recordState => {
                     return recordState.state;
@@ -135,7 +135,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                             x: tempBegin[previousStateIndex],
                             x2: Date.parse(record.updated_at),
                             y: sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                            faction: faction
+                            faction: system
                         });
                         previousStates[previousStateIndex] = null;
                     });
@@ -156,7 +156,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                         x: tempBegin[previousStateIndex],
                         x2: Date.now(),
                         y: sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                        faction: faction
+                        faction: system
                     });
                     previousStates[previousStateIndex] = null;
                 }
@@ -188,7 +188,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
                             labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2);
                         }
 
-                        factions.forEach((faction, index) => {
+                        systems.forEach((system, index) => {
                             this.yAxis[0]
                                 .labelGroup.element.childNodes[index]
                                 .attributes.y.nodeValue = labelPositions[index]
@@ -205,9 +205,9 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
             },
             yAxis: {
                 title: {
-                    text: 'Factions'
+                    text: 'Systems'
                 },
-                categories: factions,
+                categories: systems,
                 tickPositioner() {
                     return tickPositions;
                 },
@@ -266,7 +266,7 @@ export class SystemPRStateChartComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         for (const propName in changes) {
-            if (propName === 'systemData' && changes[propName].currentValue) {
+            if (propName === 'factionData' && changes[propName].currentValue) {
                 this.createChart();
             }
         }

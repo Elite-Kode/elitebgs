@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { TickV4, TickDisplayV4 } from '../../typings';
+import { TickV4, TickDisplayV4 } from '../typings';
 import { TickService } from 'app/services/tick.service';
 import * as moment from 'moment';
 import { ClrDatagridStateInterface } from '@clr/angular';
