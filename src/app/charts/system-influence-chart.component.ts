@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../../typings';
+import { EBGSSystemChart } from '../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
     selector: 'app-system-influence-chart',

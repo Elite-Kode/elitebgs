@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../../typings';
-import { FDevIDs } from '../../utilities/fdevids';
+import { EBGSSystemChart } from '../typings';
+import { FDevIDs } from '../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
-import { ThemeService } from '../../services/theme.service';
+import { ThemeService } from '../services/theme.service';
 
 // declare module 'highcharts' {
 //     interface XRangeChart extends SeriesChart {
