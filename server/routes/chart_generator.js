@@ -267,15 +267,19 @@ router.get('/factions/state', (req, res, next) => {
         .catch(next);
 });
 
+router.get('/factions/active', (req, res, next) => {
+    factionActivePendingRecovering(req, res, next, 'active');
+});
+
 router.get('/factions/pending', (req, res, next) => {
-    factionPendingRecovering(req, res, next, 'pending');
+    factionActivePendingRecovering(req, res, next, 'pending');
 });
 
 router.get('/factions/recovering', (req, res, next) => {
-    factionPendingRecovering(req, res, next, 'recovering');
+    factionActivePendingRecovering(req, res, next, 'recovering');
 });
 
-let factionPendingRecovering = (req, res, next, type) => {
+let factionActivePendingRecovering = (req, res, next, type) => {
     let requestOptions = {
         url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
         qs: {
@@ -291,6 +295,10 @@ let factionPendingRecovering = (req, res, next, type) => {
             let stateType;
             let stateTitle;
             switch (type) {
+                case 'active':
+                    stateType = 'active_states';
+                    stateTitle = 'Active State';
+                    break;
                 case 'pending':
                     stateType = 'pending_states';
                     stateTitle = 'Pending State';
@@ -776,15 +784,19 @@ router.get('/systems/state', (req, res, next) => {
         .catch(next);
 });
 
+router.get('/systems/active', (req, res, next) => {
+    systemActivePendingRecovering(req, res, next, 'active');
+});
+
 router.get('/systems/pending', (req, res, next) => {
-    systemPendingRecovering(req, res, next, 'pending');
+    systemActivePendingRecovering(req, res, next, 'pending');
 });
 
 router.get('/systems/recovering', (req, res, next) => {
-    systemPendingRecovering(req, res, next, 'recovering');
+    systemActivePendingRecovering(req, res, next, 'recovering');
 });
 
-let systemPendingRecovering = (req, res, next, type) => {
+let systemActivePendingRecovering = (req, res, next, type) => {
     let requestOptions = {
         url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
         qs: {
@@ -800,6 +812,10 @@ let systemPendingRecovering = (req, res, next, type) => {
             let stateType;
             let stateTitle;
             switch (type) {
+                case 'active':
+                    stateType = 'active_states';
+                    stateTitle = 'Active State';
+                    break;
                 case 'pending':
                     stateType = 'pending_states';
                     stateTitle = 'Pending State';
