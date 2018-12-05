@@ -1,5 +1,6 @@
 let host = '';
 let protocol = '';
+let nossr = false;
 if (process.env.NODE_ENV === 'development') {
     host = 'localhost:3001';
     protocol = 'http';
@@ -8,6 +9,10 @@ if (process.env.NODE_ENV === 'development') {
     protocol = 'https';
 }
 
+if (process.argv.indexOf('nossr') !== -1) {
+    nossr = true;
+}
+
 module.exports = {
-    host, protocol
+    host, protocol, nossr
 }

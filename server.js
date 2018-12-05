@@ -16,12 +16,16 @@
 
 "use strict";
 
-require('zone.js/dist/zone-node');
-require('reflect-metadata');
+const processVars = require('./processVars');
 
-const enableProdMode = require('@angular/core').enableProdMode;
+if (!processVars.nossr) {
+    require('zone.js/dist/zone-node');
+    require('reflect-metadata');
 
-enableProdMode();
+    const enableProdMode = require('@angular/core').enableProdMode;
+
+    enableProdMode();
+}
 
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
@@ -35,9 +39,7 @@ const basicStrategy = require('passport-http').BasicStrategy;
 const DiscordStrategy = require('passport-discord').Strategy;
 const ngExpressEngine = require('@nguniversal/express-engine').ngExpressEngine;
 const provideModuleMap = require('@nguniversal/module-map-ngfactory-loader').provideModuleMap;
-const ServerModule = require('./dist/server/main');
 const secrets = require('./secrets');
-const processVars = require('./processVars');
 
 const bugsnag = require('./server/bugsnag');
 const swagger = require('./server/swagger');
@@ -96,20 +98,29 @@ require('./server/modules/tick/listener');
 
 const app = express();
 
-app.engine('html', ngExpressEngine({
-    bootstrap: ServerModule.AppServerModuleNgFactory,
-    providers: [
-        provideModuleMap(ServerModule.LAZY_MODULE_MAP)
-    ]
-}))
+if (!processVars.nossr) {
+    const ServerModule = require('./dist/server/main');
 
-app.set('view engine', 'html');
-app.set('views', path.join(__dirname, 'dist'));
+    app.engine('html', ngExpressEngine({
+        bootstrap: ServerModule.AppServerModuleNgFactory,
+        providers: [
+            provideModuleMap(ServerModule.LAZY_MODULE_MAP)
+        ]
+    }))
+
+    app.set('view engine', 'html');
+    app.set('views', path.join(__dirname, 'dist'));
+}
 
 app.use(bugsnag.requestHandler);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+if (processVars.nossr) {
+    app.use(express.static(path.join(__dirname, 'dist')));
+}
+
 app.use(session({
     name: "EliteBGS",
     secret: secrets.session_secret,
@@ -209,16 +220,19 @@ app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
 app.use('/chartgenerator', chartGenerator);
 
-app.get('*.*', express.static(path.join(__dirname, 'dist')));
-
 // Pass all 404 errors called by browser to angular
-// app.all('*', (req, res) => {
-//     console.log(`Server 404 request: ${req.originalUrl}`);
-//     res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
-// });
-app.get('*', (req, res) => {
-    res.render('index', { req });
-})
+
+if (processVars.nossr) {
+    app.all('*', (req, res) => {
+        console.log(`Server 404 request: ${req.originalUrl}`);
+        res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
+    });
+} else {
+    app.get('*.*', express.static(path.join(__dirname, 'dist')));
+    app.get('*', (req, res) => {
+        res.render('index', { req });
+    })
+}
 
 // error handlers
 
