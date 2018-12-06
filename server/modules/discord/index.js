@@ -26,122 +26,41 @@ client.on("ready", () => {
     console.log("Elite BGS Bot ready");
 });
 
-client.on("guildMemberAdd", member => {
-    require('../../../server/models/ebgs_users')
-        .then(model => {
-            model.findOne({ id: member.id })
-                .then(user => {
-                    if (user) {
-                        require('../../../server/models/configs')
-                            .then(configModel => {
-                                configModel.findOne()
-                                    .then(config => {
-                                        member.addRole(config.editor_role_id)
-                                            .then(guildMember => {
-                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Editor role");
-                                            })
-                                            .catch(err => {
-                                                bugsnagClient.notify(err, {
-                                                    user: {
-                                                        id: member.id,
-                                                        username: member.user.username,
-                                                        discriminator: member.user.discriminator
-                                                    }
-                                                });
-                                                console.log(err);
-                                            });
-                                    })
-                                    .catch(err => {
-                                        bugsnagClient.notify(err, {
-                                            user: {
-                                                id: member.id,
-                                                username: member.user.username,
-                                                discriminator: member.user.discriminator
-                                            }
-                                        });
-                                        console.log(err);
-                                    });
-                            }).catch(err => {
-                                bugsnagClient.notify(err, {
-                                    user: {
-                                        id: member.id,
-                                        username: member.user.username,
-                                        discriminator: member.user.discriminator
-                                    }
-                                });
-                                console.log(err);
-                            });
-                        user.invite = "";
-                        user.invite_used = true;
-                        model.findOneAndUpdate(
-                            { id: member.id },
-                            user,
-                            {
-                                upsert: false,
-                                runValidators: true
-                            })
-                            .then(() => { })
-                            .catch(err => {
-                                bugsnagClient.notify(err, {
-                                    user: {
-                                        id: member.id,
-                                        username: member.user.username,
-                                        discriminator: member.user.discriminator
-                                    }
-                                });
-                                console.log(err);
-                            });
-                    } else {
-                        require('../../../server/models/configs')
-                            .then(configModel => {
-                                configModel.findOne()
-                                    .then(config => {
-                                        member.addRole(config.guest_role_id)
-                                            .then(guildMember => {
-                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
-                                            })
-                                            .catch(err => {
-                                                bugsnagClient.notify(err, {
-                                                    user: {
-                                                        id: member.id,
-                                                        username: member.user.username,
-                                                        discriminator: member.user.discriminator
-                                                    }
-                                                });
-                                                console.log(err);
-                                            });
-                                    })
-                                    .catch(err => {
-                                        bugsnagClient.notify(err, {
-                                            user: {
-                                                id: member.id,
-                                                username: member.user.username,
-                                                discriminator: member.user.discriminator
-                                            }
-                                        });
-                                        console.log(err);
-                                    })
-                            }).catch(err => {
-                                bugsnagClient.notify(err, {
-                                    user: {
-                                        id: member.id,
-                                        username: member.user.username,
-                                        discriminator: member.user.discriminator
-                                    }
-                                });
-                                console.log(err);
-                            });
-                    }
-                })
-        })
-        .catch(err => {
-            bugsnagClient.notify(err, {
-                user: {
-                    id: member.id,
-                    username: member.user.username,
-                    discriminator: member.user.discriminator
-                }
-            });
-            console.log(err);
-        })
+client.on("guildMemberAdd", async member => {
+    try {
+        let model = await require('../../../server/models/ebgs_users');
+        let user = await model.findOne({
+            id: member.id
+        });
+        if (user) {
+            let configModel = await require('../../../server/models/configs');
+            let config = await configModel.findOne();
+            let guildMember = await member.addRole(config.editor_role_id);
+            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Editor role");
+
+            user.invite = "";
+            user.invite_used = true;
+            await model.findOneAndUpdate({
+                    id: member.id
+                },
+                user, {
+                    upsert: false,
+                    runValidators: true
+                });
+        } else {
+            let configModel = await require('../../../server/models/configs');
+            let config = await configModel.findOne();
+            let guildMember = await member.addRole(config.guest_role_id);
+            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
+        }
+    } catch (err) {
+        bugsnagClient.notify(err, {
+            user: {
+                id: member.id,
+                username: member.user.username,
+                discriminator: member.user.discriminator
+            }
+        });
+        console.log(err);
+    }
 });
