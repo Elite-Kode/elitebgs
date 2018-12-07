@@ -1,18 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
-import { SwaggerUIModule } from '../swagger_ui/swagger-ui.module';
 
 import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
 import * as xrange from 'highcharts/modules/xrange.src';
 import * as exporting from 'highcharts/modules/exporting.src';
 
 import { FactionInfluenceChartComponent } from './faction-influence-chart.component';
-import { FactionPRStateChartComponent } from './faction-p-r-state-chart.component';
+import { FactionAPRStateChartComponent } from './faction-a-p-r-state-chart.component';
 import { FactionStateChartComponent } from './faction-state-chart.component';
 import { SystemInfluenceChartComponent } from './system-influence-chart.component';
-import { SystemPRStateChartComponent } from './system-p-r-state-chart.component';
+import { SystemAPRStateChartComponent } from './system-a-p-r-state-chart.component';
 import { SystemStateChartComponent } from './system-state-chart.component';
 import { TickChartComponent } from './tick-chart.component';
 
@@ -23,10 +19,10 @@ export function highchartsModules() {
 @NgModule({
     declarations: [
         FactionInfluenceChartComponent,
-        FactionPRStateChartComponent,
+        FactionAPRStateChartComponent,
         FactionStateChartComponent,
         SystemInfluenceChartComponent,
-        SystemPRStateChartComponent,
+        SystemAPRStateChartComponent,
         SystemStateChartComponent,
         TickChartComponent
     ],
@@ -38,10 +34,10 @@ export function highchartsModules() {
     ],
     exports: [
         FactionInfluenceChartComponent,
-        FactionPRStateChartComponent,
+        FactionAPRStateChartComponent,
         FactionStateChartComponent,
         SystemInfluenceChartComponent,
-        SystemPRStateChartComponent,
+        SystemAPRStateChartComponent,
         SystemStateChartComponent,
         TickChartComponent
     ]
