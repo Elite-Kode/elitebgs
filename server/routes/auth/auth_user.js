@@ -53,7 +53,7 @@ router.post('/edit', async (req, res, next) => {
                                 });
                                 return;
                             } else {
-                                throw (new Error("Faction not present"));
+                                throw new Error("Faction not present");
                             }
                         })());
                     }
@@ -76,7 +76,7 @@ router.post('/edit', async (req, res, next) => {
                                 });
                                 return;
                             } else {
-                                throw(new Error("System not present"));
+                                throw new Error("System not present");
                             }
                         })());
                     }
@@ -99,7 +99,7 @@ router.post('/edit', async (req, res, next) => {
                                 });
                                 return;
                             } else {
-                                throw(new Error("Station not present"));
+                                throw new Error("Station not present");
                             }
                         })());
                     }
