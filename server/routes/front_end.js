@@ -241,86 +241,66 @@ router.get('/factions', async (req, res, next) => {
         }
         if (history) {
             let result = await getFactions(query, { greater: greaterThanTime, lesser: lesserThanTime }, page);
-            await (async (result) => {
-                try {
-                    let resultPromise = [];
-                    result.docs.forEach(faction => {
-                        resultPromise.push(new Promise(async (resolve, reject) => {
-                            try {
-                                let allSystems = [];
-                                faction.faction_presence.forEach(system => {
-                                    allSystems.push(system.system_name_lower);
-                                });
-                                faction.history.forEach(record => {
-                                    if (allSystems.indexOf(record.system_lower) === -1) {
-                                        allSystems.push(record.system_lower);
-                                    }
-                                });
-                                let systems = await ebgsSystemsV4Model;
-                                let gotSystems = await systems.find({
-                                    name_lower: {
-                                        "$in": allSystems
-                                    }
-                                }).lean();
-                                faction.faction_presence.forEach(system => {
-                                    let index = gotSystems.findIndex(findSystem => {
-                                        return findSystem.name_lower === system.system_name_lower;
-                                    });
-                                    system.system_id = gotSystems[index]._id;
-                                    system.controlling = faction.name_lower === gotSystems[index].controlling_minor_faction;
-                                    system.population = gotSystems[index].population
-                                });
-                                faction.history.forEach(record => {
-                                    let index = gotSystems.findIndex(findSystem => {
-                                        return findSystem.name_lower === record.system_lower;
-                                    });
-                                    record.system_id = gotSystems[index]._id;
-                                });
-                                resolve();
-                            } catch (err) {
-                                reject(err);
-                            }
-                        }));
+            let resultPromise = [];
+            result.docs.forEach(faction => {
+                resultPromise.push((async () => {
+                    let allSystems = [];
+                    faction.faction_presence.forEach(system => {
+                        allSystems.push(system.system_name_lower);
                     });
-                    return Promise.resolve(await Promise.all(resultPromise));
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            })(result);
+                    faction.history.forEach(record => {
+                        if (allSystems.indexOf(record.system_lower) === -1) {
+                            allSystems.push(record.system_lower);
+                        }
+                    });
+                    let systems = await ebgsSystemsV4Model;
+                    let gotSystems = await systems.find({
+                        name_lower: {
+                            "$in": allSystems
+                        }
+                    }).lean();
+                    faction.faction_presence.forEach(system => {
+                        let index = gotSystems.findIndex(findSystem => {
+                            return findSystem.name_lower === system.system_name_lower;
+                        });
+                        system.system_id = gotSystems[index]._id;
+                        system.controlling = faction.name_lower === gotSystems[index].controlling_minor_faction;
+                        system.population = gotSystems[index].population
+                    });
+                    faction.history.forEach(record => {
+                        let index = gotSystems.findIndex(findSystem => {
+                            return findSystem.name_lower === record.system_lower;
+                        });
+                        record.system_id = gotSystems[index]._id;
+                    });
+                    return;
+                })());
+            });
+            await Promise.all(resultPromise);
             res.status(200).json(result);
         } else {
             let result = await getFactions(query, {}, page);
-            await (async (result) => {
-                try {
-                    let resultPromise = [];
-                    result.docs.forEach(faction => {
-                        resultPromise.push(new Promise(async (resolve, reject) => {
-                            try {
-                                let systems = await ebgsSystemsV4Model;
-                                let gotSystems = await systems.find({
-                                    name_lower: {
-                                        "$in": faction.faction_presence.map(system => {
-                                            return system.system_name_lower;
-                                        })
-                                    }
-                                }).lean();
-                                faction.faction_presence.forEach(system => {
-                                    let index = gotSystems.findIndex(findSystem => {
-                                        return findSystem.name_lower === system.system_name_lower;
-                                    });
-                                    system.system_id = gotSystems[index]._id;
-                                })
-                                resolve();
-                            } catch (err) {
-                                reject(err);
-                            }
-                        }));
-                    });
-                    return Promise.resolve(await Promise.all(resultPromise));
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            })(result);
+            let resultPromise = [];
+            result.docs.forEach(faction => {
+                resultPromise.push((async () => {
+                    let systems = await ebgsSystemsV4Model;
+                    let gotSystems = await systems.find({
+                        name_lower: {
+                            "$in": faction.faction_presence.map(system => {
+                                return system.system_name_lower;
+                            })
+                        }
+                    }).lean();
+                    faction.faction_presence.forEach(system => {
+                        let index = gotSystems.findIndex(findSystem => {
+                            return findSystem.name_lower === system.system_name_lower;
+                        });
+                        system.system_id = gotSystems[index]._id;
+                    })
+                    return;
+                })());
+            });
+            await Promise.all(resultPromise);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -382,131 +362,111 @@ router.get('/systems', async (req, res, next) => {
         }
         if (history) {
             let result = await getSystems(query, { greater: greaterThanTime, lesser: lesserThanTime }, page);
-            await (async (result) => {
-                try {
-                    let resultPromise = [];
-                    result.docs.forEach(system => {
-                        resultPromise.push(new Promise(async (resolve, reject) => {
-                            try {
-                                let allFactions = [];
-                                system.factions.forEach(faction => {
-                                    allFactions.push(faction.name_lower);
-                                });
-                                system.history.forEach(record => {
-                                    record.factions.forEach(faction => {
-                                        if (allFactions.indexOf(faction.name_lower) === -1) {
-                                            allFactions.push(faction.name_lower);
-                                        }
-                                    });
-                                });
-                                system.faction_history = [];
-                                let factionPromise = (await ebgsFactionsV4Model).find(
-                                    {
-                                        name_lower: {
-                                            "$in": allFactions
-                                        }
-                                    },
-                                    {
-                                        _id: 1,
-                                        eddb_id: 1,
-                                        name: 1,
-                                        name_lower: 1,
-                                        updated_at: 1,
-                                        government: 1,
-                                        allegiance: 1,
-                                        home_system_name: 1,
-                                        is_player_faction: 1,
-                                        faction_presence: {
-                                            $elemMatch: {
-                                                system_name_lower: system.name_lower
-                                            }
-                                        }
-                                    }).lean();
-                                let historyPromise = (await require('../models/ebgs_history_faction_v4')).find(
-                                    {
-                                        updated_at: {
-                                            $lte: lesserThanTime,
-                                            $gte: greaterThanTime
-                                        },
-                                        system_lower: system.name_lower
-                                    }).lean();
-                                let factionHistoryResults = await Promise.all([factionPromise, historyPromise]);
-                                let factionRecords = factionHistoryResults[0];
-                                let historyRecords = factionHistoryResults[1];
-                                system.factions.forEach(faction => {
-                                    let index = factionRecords.findIndex(findFaction => {
-                                        return findFaction.name_lower === faction.name_lower;
-                                    });
-                                    faction.faction_id = factionRecords[index]._id;
-                                    faction.influence = factionRecords[index].faction_presence[0].influence;
-                                    faction.state = factionRecords[index].faction_presence[0].state;
-                                    faction.pending_states = factionRecords[index].faction_presence[0].pending_states;
-                                    faction.recovering_states = factionRecords[index].faction_presence[0].recovering_states;
-                                    faction.updated_at = factionRecords[index].faction_presence[0].updated_at;
-                                });
-                                system.history.forEach(record => {
-                                    record.factions.forEach(faction => {
-                                        let index = factionRecords.findIndex(findFaction => {
-                                            return findFaction.name_lower === faction.name_lower;
-                                        });
-                                        faction.faction_id = factionRecords[index]._id;
-                                    });
-                                });
-                                system.faction_history = historyRecords;
-                                system.faction_history.forEach(record => {
-                                    record.faction = record.faction_name_lower;
-                                    delete record.faction_id;
-                                    delete record.faction_name_lower;
-                                });
-                                resolve();
-                            } catch (err) {
-                                reject(err);
-                            }
-                        }));
+            let resultPromise = [];
+            result.docs.forEach(system => {
+                resultPromise.push((async () => {
+                    let allFactions = [];
+                    system.factions.forEach(faction => {
+                        allFactions.push(faction.name_lower);
                     });
-                    return Promise.resolve(await Promise.all(resultPromise));
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            })(result);
+                    system.history.forEach(record => {
+                        record.factions.forEach(faction => {
+                            if (allFactions.indexOf(faction.name_lower) === -1) {
+                                allFactions.push(faction.name_lower);
+                            }
+                        });
+                    });
+                    system.faction_history = [];
+                    let factionPromise = (await ebgsFactionsV4Model).find(
+                        {
+                            name_lower: {
+                                "$in": allFactions
+                            }
+                        },
+                        {
+                            _id: 1,
+                            eddb_id: 1,
+                            name: 1,
+                            name_lower: 1,
+                            updated_at: 1,
+                            government: 1,
+                            allegiance: 1,
+                            home_system_name: 1,
+                            is_player_faction: 1,
+                            faction_presence: {
+                                $elemMatch: {
+                                    system_name_lower: system.name_lower
+                                }
+                            }
+                        }).lean();
+                    let historyPromise = (await require('../models/ebgs_history_faction_v4')).find(
+                        {
+                            updated_at: {
+                                $lte: lesserThanTime,
+                                $gte: greaterThanTime
+                            },
+                            system_lower: system.name_lower
+                        }).lean();
+                    let factionHistoryResults = await Promise.all([factionPromise, historyPromise]);
+                    let factionRecords = factionHistoryResults[0];
+                    let historyRecords = factionHistoryResults[1];
+                    system.factions.forEach(faction => {
+                        let index = factionRecords.findIndex(findFaction => {
+                            return findFaction.name_lower === faction.name_lower;
+                        });
+                        faction.faction_id = factionRecords[index]._id;
+                        faction.influence = factionRecords[index].faction_presence[0].influence;
+                        faction.state = factionRecords[index].faction_presence[0].state;
+                        faction.pending_states = factionRecords[index].faction_presence[0].pending_states;
+                        faction.recovering_states = factionRecords[index].faction_presence[0].recovering_states;
+                        faction.updated_at = factionRecords[index].faction_presence[0].updated_at;
+                    });
+                    system.history.forEach(record => {
+                        record.factions.forEach(faction => {
+                            let index = factionRecords.findIndex(findFaction => {
+                                return findFaction.name_lower === faction.name_lower;
+                            });
+                            faction.faction_id = factionRecords[index]._id;
+                        });
+                    });
+                    system.faction_history = historyRecords;
+                    system.faction_history.forEach(record => {
+                        record.faction = record.faction_name_lower;
+                        delete record.faction_id;
+                        delete record.faction_name_lower;
+                    });
+                    return;
+                })());
+            });
+            await Promise.all(resultPromise);
             res.status(200).json(result);
         } else {
             let result = await getSystems(query, {}, page);
-            await (async (result) => {
-                try {
-                    let resultPromise = [];
-                    result.docs.forEach(system => {
-                        resultPromise.push(new Promise(async (resolve, reject) => {
-                            try {
-                                let factions = await ebgsFactionsV4Model;
-                                let gotFactions = await factions.find({
-                                    name_lower: {
-                                        "$in": system.factions.map(faction => {
-                                            return faction.name_lower;
-                                        })
-                                    }
-                                });
-                                system.factions.forEach(faction => {
-                                    let index = gotFactions.findIndex(findFaction => {
-                                        return findFaction.name_lower === faction.name_lower;
-                                    });
-                                    if (index !== -1) {
-                                        faction.faction_id = gotFactions[index]._id;
-                                    } else {
-                                        faction.faction_id = 0;
-                                    }
-                                })
-                                resolve();
-                            } catch (err) {
-                                reject(err);
-                            }
-                        }));
+            let resultPromise = [];
+            result.docs.forEach(system => {
+                resultPromise.push((async () => {
+                    let factions = await ebgsFactionsV4Model;
+                    let gotFactions = await factions.find({
+                        name_lower: {
+                            "$in": system.factions.map(faction => {
+                                return faction.name_lower;
+                            })
+                        }
                     });
-                    return Promise.resolve(await Promise.all(resultPromise));
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            })(result);
+                    system.factions.forEach(faction => {
+                        let index = gotFactions.findIndex(findFaction => {
+                            return findFaction.name_lower === faction.name_lower;
+                        });
+                        if (index !== -1) {
+                            faction.faction_id = gotFactions[index]._id;
+                        } else {
+                            faction.faction_id = 0;
+                        }
+                    })
+                    return;
+                })());
+            });
+            await Promise.all(resultPromise);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -621,39 +581,31 @@ async function getFactions(query, history, page) {
         page: page,
         limit: 10
     };
-    try {
-        let factionModel = await ebgsFactionsV4Model;
-        let factionResult = await factionModel.paginate(query, paginateOptions);
-        if (!_.isEmpty(history)) {
-            let historyModel = await require('../models/ebgs_history_faction_v4');
-            let historyPromises = [];
-            factionResult.docs.forEach(faction => {
-                historyPromises.push(new Promise(async (resolve, reject) => {
-                    try {
-                        let record = await historyModel.find({
-                            faction_id: faction._id,
-                            updated_at: {
-                                $lte: history.lesser,
-                                $gte: history.greater
-                            }
-                        }).lean();
-                        record.forEach(history => {
-                            delete history.faction_id;
-                            delete history.faction_name_lower;
-                        });
-                        faction.history = record;
-                        resolve(record);
-                    } catch (err) {
-                        reject(err);
+    let factionModel = await ebgsFactionsV4Model;
+    let factionResult = await factionModel.paginate(query, paginateOptions);
+    if (!_.isEmpty(history)) {
+        let historyModel = await require('../models/ebgs_history_faction_v4');
+        let historyPromises = [];
+        factionResult.docs.forEach(faction => {
+            historyPromises.push((async () => {
+                let record = await historyModel.find({
+                    faction_id: faction._id,
+                    updated_at: {
+                        $lte: history.lesser,
+                        $gte: history.greater
                     }
-                }));
-            });
-            await Promise.all(historyPromises);
-        }
-        return Promise.resolve(factionResult);
-    } catch (err) {
-        return Promise.reject(err);
+                }).lean();
+                record.forEach(history => {
+                    delete history.faction_id;
+                    delete history.faction_name_lower;
+                });
+                faction.history = record;
+                return record;
+            })());
+        });
+        await Promise.all(historyPromises);
     }
+    return factionResult;
 }
 
 async function getSystems(query, history, page) {
@@ -664,39 +616,31 @@ async function getSystems(query, history, page) {
         page: page,
         limit: 10
     };
-    try {
-        let systemModel = await ebgsSystemsV4Model;
-        let systemResult = await systemModel.paginate(query, paginateOptions);
-        if (!_.isEmpty(history)) {
-            let historyModel = await require('../models/ebgs_history_system_v4');
-            let historyPromises = [];
-            systemResult.docs.forEach(system => {
-                historyPromises.push(new Promise(async (resolve, reject) => {
-                    try {
-                        let record = await historyModel.find({
-                            system_id: system._id,
-                            updated_at: {
-                                $lte: history.lesser,
-                                $gte: history.greater
-                            }
-                        }).lean();
-                        record.forEach(history => {
-                            delete history.system_id;
-                            delete history.system_name_lower;
-                        });
-                        system.history = record;
-                        resolve(record);
-                    } catch (err) {
-                        reject(err);
+    let systemModel = await ebgsSystemsV4Model;
+    let systemResult = await systemModel.paginate(query, paginateOptions);
+    if (!_.isEmpty(history)) {
+        let historyModel = await require('../models/ebgs_history_system_v4');
+        let historyPromises = [];
+        systemResult.docs.forEach(system => {
+            historyPromises.push((async () => {
+                let record = await historyModel.find({
+                    system_id: system._id,
+                    updated_at: {
+                        $lte: history.lesser,
+                        $gte: history.greater
                     }
-                }));
-            });
-            await Promise.all(historyPromises);
-        }
-        return Promise.resolve(systemResult);
-    } catch (err) {
-        return Promise.reject(err);
+                }).lean();
+                record.forEach(history => {
+                    delete history.system_id;
+                    delete history.system_name_lower;
+                });
+                system.history = record;
+                return record;
+            })());
+        });
+        await Promise.all(historyPromises);
     }
+    return systemResult;
 }
 
 async function getStations(query, history, page) {
@@ -707,39 +651,31 @@ async function getStations(query, history, page) {
         page: page,
         limit: 10
     };
-    try {
-        let stationModel = await require('../models/ebgs_stations_v4');
-        let stationResult = await stationModel.paginate(query, paginateOptions);
-        if (!_.isEmpty(history)) {
-            let historyModel = await require('../models/ebgs_history_station_v4');
-            let historyPromises = [];
-            stationResult.docs.forEach(station => {
-                historyPromises.push(new Promise(async (resolve, reject) => {
-                    try {
-                        let record = await historyModel.find({
-                            station_id: station._id,
-                            updated_at: {
-                                $lte: history.lesser,
-                                $gte: history.greater
-                            }
-                        }).lean();
-                        record.forEach(history => {
-                            delete history.station_id;
-                            delete history.station_name_lower;
-                        });
-                        station.history = record;
-                        resolve(record);
-                    } catch (err) {
-                        reject(err);
+    let stationModel = await require('../models/ebgs_stations_v4');
+    let stationResult = await stationModel.paginate(query, paginateOptions);
+    if (!_.isEmpty(history)) {
+        let historyModel = await require('../models/ebgs_history_station_v4');
+        let historyPromises = [];
+        stationResult.docs.forEach(station => {
+            historyPromises.push((async () => {
+                let record = await historyModel.find({
+                    station_id: station._id,
+                    updated_at: {
+                        $lte: history.lesser,
+                        $gte: history.greater
                     }
-                }));
-            });
-            await Promise.all(historyPromises);
-        }
-        return Promise.resolve(stationResult);
-    } catch (err) {
-        return Promise.reject(err);
+                }).lean();
+                record.forEach(history => {
+                    delete history.station_id;
+                    delete history.station_name_lower;
+                });
+                station.history = record;
+                return record;
+            })());
+        });
+        await Promise.all(historyPromises);
     }
+    return stationResult;
 }
 
 module.exports = router;
