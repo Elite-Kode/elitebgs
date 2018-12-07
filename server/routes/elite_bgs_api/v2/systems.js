@@ -83,64 +83,62 @@ let router = express.Router();
    *             $ref: '#/definitions/EBGSSystemsPage'
    *     deprecated: true
    */
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
-    require('../../../models/ebgs_systems')
-        .then(systems => {
-            let query = new Object;
-            let page = 1;
+router.get('/', passport.authenticate('basic', { session: false }), async (req, res, next) => {
+    try {
+        let systems = await require('../../../models/ebgs_systems');
+        let query = new Object;
+        let page = 1;
 
-            if (req.query.id) {
-                query._id = req.query.id;
+        if (req.query.id) {
+            query._id = req.query.id;
+        }
+        if (req.query.name) {
+            query.name_lower = req.query.name.toLowerCase();
+        }
+        if (req.query.allegiance) {
+            query.allegiance = req.query.allegiance.toLowerCase();
+        }
+        if (req.query.government) {
+            query.government = req.query.government.toLowerCase();
+        }
+        if (req.query.state) {
+            query.state = req.query.state.toLowerCase();
+        }
+        if (req.query.primaryeconomy) {
+            query.primary_economy = req.query.primaryeconomy.toLowerCase();
+        }
+        if (req.query.power) {
+            let powers = arrayfy(req.query.power);
+            query.power = { $in: powers };
+        }
+        if (req.query.powerstate) {
+            let powerStates = arrayfy(req.query.powerstate);
+            query.power_state = { $in: powerStates };
+        }
+        if (req.query.security) {
+            query.security = req.query.security.toLowerCase();
+        }
+        if (req.query.beginsWith) {
+            query.name_lower = {
+                $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
             }
-            if (req.query.name) {
-                query.name_lower = req.query.name.toLowerCase();
-            }
-            if (req.query.allegiance) {
-                query.allegiance = req.query.allegiance.toLowerCase();
-            }
-            if (req.query.government) {
-                query.government = req.query.government.toLowerCase();
-            }
-            if (req.query.state) {
-                query.state = req.query.state.toLowerCase();
-            }
-            if (req.query.primaryeconomy) {
-                query.primary_economy = req.query.primaryeconomy.toLowerCase();
-            }
-            if (req.query.power) {
-                let powers = arrayfy(req.query.power);
-                query.power = { $in: powers };
-            }
-            if (req.query.powerstate) {
-                let powerStates = arrayfy(req.query.powerstate);
-                query.power_state = { $in: powerStates };
-            }
-            if (req.query.security) {
-                query.security = req.query.security.toLowerCase();
-            }
-            if (req.query.beginsWith) {
-                query.name_lower = {
-                    $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
-                }
-            }
-            if (_.isEmpty(query) && req.user.clearance !== 0) {
-                throw new Error("Add at least 1 query parameter to limit traffic");
-            }
-            if (req.query.page) {
-                page = req.query.page;
-            }
-            let paginateOptions = {
-                lean: true,
-                page: page,
-                limit: 10
-            };
-            systems.paginate(query, paginateOptions)
-                .then(result => {
-                    res.status(200).json(result);
-                })
-                .catch(next)
-        })
-        .catch(next);
+        }
+        if (_.isEmpty(query) && req.user.clearance !== 0) {
+            throw new Error("Add at least 1 query parameter to limit traffic");
+        }
+        if (req.query.page) {
+            page = req.query.page;
+        }
+        let paginateOptions = {
+            lean: true,
+            page: page,
+            limit: 10
+        };
+        let result = await systems.paginate(query, paginateOptions);
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
 });
 
 let arrayfy = requestParam => {

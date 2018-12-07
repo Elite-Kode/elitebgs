@@ -46,38 +46,39 @@ let router = express.Router();
    *           items:
    *             $ref: '#/definitions/TickTimesV4'
    */
-router.get('/', cors(), (req, res, next) => {
-    let query = new Object;
+router.get('/', cors(), async (req, res, next) => {
+    try {
+        let query = new Object;
 
-    if (req.query.timemin && req.query.timemax) {
-        query = {
-            updated_at: {
-                $lte: new Date(Number(req.query.timemax)),
-                $gte: new Date(Number(req.query.timemin))
+        if (req.query.timemin && req.query.timemax) {
+            query = {
+                updated_at: {
+                    $lte: new Date(Number(req.query.timemax)),
+                    $gte: new Date(Number(req.query.timemin))
+                }
             }
         }
-    }
-    if (req.query.timemin && !req.query.timemax) {
-        query = {
-            updated_at: {
-                $lte: new Date(Number(+req.query.timemin + 604800000)),    // Adding seven days worth of miliseconds
-                $gte: new Date(Number(req.query.timemin))
+        if (req.query.timemin && !req.query.timemax) {
+            query = {
+                updated_at: {
+                    $lte: new Date(Number(+req.query.timemin + 604800000)),    // Adding seven days worth of miliseconds
+                    $gte: new Date(Number(req.query.timemin))
+                }
             }
         }
-    }
-    if (!req.query.timemin && req.query.timemax) {
-        query = {
-            updated_at: {
-                $lte: new Date(Number(req.query.timemax)),
-                $gte: new Date(Number(+req.query.timemax - 604800000))    // Subtracting seven days worth of miliseconds
+        if (!req.query.timemin && req.query.timemax) {
+            query = {
+                updated_at: {
+                    $lte: new Date(Number(req.query.timemax)),
+                    $gte: new Date(Number(+req.query.timemax - 604800000))    // Subtracting seven days worth of miliseconds
+                }
             }
         }
+        let result = await getTicks(query);
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
     }
-    getTicks(query)
-        .then(result => {
-            res.status(200).json(result);
-        })
-        .catch(next);
 });
 
 async function getTicks(query) {

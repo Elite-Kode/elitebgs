@@ -148,140 +148,90 @@ if (app.get('env') === 'production') {
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
-passport.deserializeUser(function (id, done) {
-    require('./server/models/ebgs_users')
-        .then(model => {
-            model.findOne({ id: id })
-                .then(user => {
-                    done(null, user);
-                })
-                .catch(err => {
-                    bugsnagClient.notify(err, {
-                        user: { id: id }
-                    });
-                    done(err);
-                })
-        })
-        .catch(err => {
-            bugsnagClient.notify(err, {
-                user: { id: id }
-            });
-            done(err);
-        })
+passport.deserializeUser(async (id, done) => {
+    try {
+        let model = await require('./server/models/ebgs_users');
+        let user = await model.findOne({ id: id })
+        done(null, user);
+    } catch (err) {
+        bugsnagClient.notify(err, {
+            user: { id: id }
+        });
+        done(err);
+    }
 });
 
 let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
     const client = require('./server/modules/discord/client');
-    const config = require('./server/models/configs');
-    require('./server/models/ebgs_users')
-        .then(model => {
-            model.findOne({ id: profile.id })
-                .then(user => {
-                    if (user) {
-                        let updatedUser = {
-                            id: profile.id,
-                            username: profile.username,
-                            discriminator: profile.discriminator
-                        }
-                        if (user.avatar || user.avatar === null) {
-                            updatedUser.avatar = profile.avatar
-                        }
-                        model.findOneAndUpdate(
-                            { id: profile.id },
-                            updatedUser,
-                            {
-                                upsert: false,
-                                runValidators: true
-                            })
-                            .then(() => {
-                                done(null, user);
-                            })
-                            .catch(err => {
-                                bugsnagClient.notify(err, {
-                                    user: updatedUser
-                                });
-                                done(err);
-                            });
-                    } else {
-                        config.then(configModel => {
-                            configModel.findOne()
-                                .then(config => {
-                                    let invite = client.guilds.get(config.guild_id).channels.get(config.invite_channel_id).createInvite({
-                                        maxAge: 0,
-                                        maxUses: 1,
-                                        unique: true
-                                    });
-                                    invite.then(invitePromise => {
-                                        let user = {
-                                            id: profile.id,
-                                            username: profile.username,
-                                            avatar: profile.avatar,
-                                            discriminator: profile.discriminator,
-                                            access: 1,
-                                            os_contribution: 0,
-                                            patronage: {
-                                                level: 0,
-                                                since: null
-                                            },
-                                            invite: invitePromise.code,
-                                            invite_used: false
-                                        };
-                                        model.findOneAndUpdate(
-                                            { id: profile.id },
-                                            user,
-                                            {
-                                                upsert: true,
-                                                runValidators: true
-                                            })
-                                            .then(() => {
-                                                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
-                                                done(null, user);
-                                            })
-                                            .catch(err => {
-                                                bugsnagClient.notify(err, {
-                                                    user: {
-                                                        id: profile.id,
-                                                        username: profile.username,
-                                                        discriminator: profile.discriminator
-                                                    }
-                                                });
-                                                done(err);
-                                            });
-                                    })
-                                })
-                                .catch(err => {
-                                    bugsnagClient.notify(err, {
-                                        user: {
-                                            id: profile.id,
-                                            username: profile.username,
-                                            discriminator: profile.discriminator
-                                        }
-                                    });
-                                    done(err);
-                                })
-                        }).catch(err => {
-                            bugsnagClient.notify(err, {
-                                user: {
-                                    id: profile.id,
-                                    username: profile.username,
-                                    discriminator: profile.discriminator
-                                }
-                            });
-                            done(err);
-                        });
-                    }
-                })
-        })
-        .catch(err => {
-            bugsnagClient.notify(err, {
-                user: {
-                    id: profile.id,
-                    username: profile.username,
-                    discriminator: profile.discriminator
-                }
+    try {
+        let model = await require('./server/models/ebgs_users');
+        let user = await model.findOne({ id: profile.id });
+        if (user) {
+            let updatedUser = {
+                id: profile.id,
+                username: profile.username,
+                discriminator: profile.discriminator
+            }
+            if (user.avatar || user.avatar === null) {
+                updatedUser.avatar = profile.avatar
+            }
+            try {
+                await model.findOneAndUpdate(
+                    { id: profile.id },
+                    updatedUser,
+                    {
+                        upsert: false,
+                        runValidators: true
+                    });
+                done(null, user);
+            } catch (err) {
+                bugsnagClient.notify(err, {
+                    user: updatedUser
+                });
+                done(err);
+            }
+        } else {
+            let configModel = await require('./server/models/configs');
+            let config = await configModel.findOne();
+            let invitePromise = await client.guilds.get(config.guild_id).channels.get(config.invite_channel_id).createInvite({
+                maxAge: 0,
+                maxUses: 1,
+                unique: true
             });
-            done(err);
-        })
+            let user = {
+                id: profile.id,
+                username: profile.username,
+                avatar: profile.avatar,
+                discriminator: profile.discriminator,
+                access: 1,
+                os_contribution: 0,
+                patronage: {
+                    level: 0,
+                    since: null
+                },
+                invite: invitePromise.code,
+                invite_used: false
+            };
+            await model.findOneAndUpdate(
+                { id: profile.id },
+                user,
+                {
+                    upsert: true,
+                    runValidators: true
+                })
+            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+            done(null, user);
+        }
+    } catch (err) {
+        bugsnagClient.notify(err, {
+            user: {
+                id: profile.id,
+                username: profile.username,
+                discriminator: profile.discriminator
+            }
+        });
+        done(err);
+    }
 }
 
 let onAuthenticationIdentify = (accessToken, refreshToken, profile, done) => {
