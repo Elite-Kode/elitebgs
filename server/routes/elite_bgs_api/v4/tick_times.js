@@ -82,17 +82,12 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getTicks(query) {
-    try {
-        let tickTimesV4Model = await require('../../../models/tick_times_v4');
-        let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
-        if (_.isEmpty(query)) {
-            tickTimesResult = await tickTimesResult.limit(1);
-        } else {
-            tickTimesResult = await tickTimesResult;
-        }
-        return Promise.resolve(tickTimesResult);
-    } catch (err) {
-        return Promise.reject(err);
+    let tickTimesV4Model = await require('../../../models/tick_times_v4');
+    let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
+    if (_.isEmpty(query)) {
+        return tickTimesResult.limit(1);
+    } else {
+        return tickTimesResult;
     }
 }
 

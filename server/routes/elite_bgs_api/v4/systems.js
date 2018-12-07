@@ -154,42 +154,34 @@ async function getSystems(query, history, page) {
         page: page,
         limit: 10
     };
-    try {
-        if (_.isEmpty(query)) {
-            throw new Error("Add at least 1 query parameter to limit traffic");
-        }
-        let systemModel = await require('../../../models/ebgs_systems_v4');
-        let systemResult = await systemModel.paginate(query, paginateOptions);
-        if (!_.isEmpty(history)) {
-            let historyModel = await require('../../../models/ebgs_history_system_v4');
-            let historyPromises = [];
-            systemResult.docs.forEach(system => {
-                historyPromises.push(new Promise(async (resolve, reject) => {
-                    try {
-                        let record = await historyModel.find({
-                            system_id: system._id,
-                            updated_at: {
-                                $lte: history.lesser,
-                                $gte: history.greater
-                            }
-                        }).lean();
-                        record.forEach(history => {
-                            delete history.system_id;
-                            delete history.system_name_lower;
-                        });
-                        system.history = record;
-                        resolve(record);
-                    } catch (err) {
-                        reject(err);
-                    }
-                }));
-            });
-            await Promise.all(historyPromises);
-        }
-        return Promise.resolve(systemResult);
-    } catch (err) {
-        return Promise.reject(err);
+    if (_.isEmpty(query)) {
+        throw new Error("Add at least 1 query parameter to limit traffic");
     }
+    let systemModel = await require('../../../models/ebgs_systems_v4');
+    let systemResult = await systemModel.paginate(query, paginateOptions);
+    if (!_.isEmpty(history)) {
+        let historyModel = await require('../../../models/ebgs_history_system_v4');
+        let historyPromises = [];
+        systemResult.docs.forEach(system => {
+            historyPromises.push((async () => {
+                let record = await historyModel.find({
+                    system_id: system._id,
+                    updated_at: {
+                        $lte: history.lesser,
+                        $gte: history.greater
+                    }
+                }).lean();
+                record.forEach(history => {
+                    delete history.system_id;
+                    delete history.system_name_lower;
+                });
+                system.history = record;
+                return record;
+            })());
+        });
+        await Promise.all(historyPromises);
+    }
+    return systemResult;
 }
 
 module.exports = router;

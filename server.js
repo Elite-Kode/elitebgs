@@ -161,7 +161,7 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-let onAuthentication = (accessToken, refreshToken, profile, done, type) => {
+let onAuthentication = async (accessToken, refreshToken, profile, done, type) => {
     const client = require('./server/modules/discord/client');
     try {
         let model = await require('./server/models/ebgs_users');

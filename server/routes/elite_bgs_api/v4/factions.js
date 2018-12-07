@@ -133,42 +133,34 @@ async function getFactions(query, history, page) {
         page: page,
         limit: 10
     };
-    try {
-        if (_.isEmpty(query)) {
-            throw new Error("Add at least 1 query parameter to limit traffic");
-        }
-        let factionModel = await require('../../../models/ebgs_factions_v4');
-        let factionResult = await factionModel.paginate(query, paginateOptions);
-        if (!_.isEmpty(history)) {
-            let historyModel = await require('../../../models/ebgs_history_faction_v4');
-            let historyPromises = [];
-            factionResult.docs.forEach(faction => {
-                historyPromises.push(new Promise(async (resolve, reject) => {
-                    try {
-                        let record = await historyModel.find({
-                            faction_id: faction._id,
-                            updated_at: {
-                                $lte: history.lesser,
-                                $gte: history.greater
-                            }
-                        }).lean();
-                        record.forEach(history => {
-                            delete history.faction_id;
-                            delete history.faction_name_lower;
-                        });
-                        faction.history = record;
-                        resolve(record);
-                    } catch (err) {
-                        reject(err);
-                    }
-                }));
-            });
-            await Promise.all(historyPromises);
-        }
-        return Promise.resolve(factionResult);
-    } catch (err) {
-        return Promise.reject(err);
+    if (_.isEmpty(query)) {
+        throw new Error("Add at least 1 query parameter to limit traffic");
     }
+    let factionModel = await require('../../../models/ebgs_factions_v4');
+    let factionResult = await factionModel.paginate(query, paginateOptions);
+    if (!_.isEmpty(history)) {
+        let historyModel = await require('../../../models/ebgs_history_faction_v4');
+        let historyPromises = [];
+        factionResult.docs.forEach(faction => {
+            historyPromises.push((async () => {
+                let record = await historyModel.find({
+                    faction_id: faction._id,
+                    updated_at: {
+                        $lte: history.lesser,
+                        $gte: history.greater
+                    }
+                }).lean();
+                record.forEach(history => {
+                    delete history.faction_id;
+                    delete history.faction_name_lower;
+                });
+                faction.history = record;
+                return record;
+            })());
+        });
+        await Promise.all(historyPromises);
+    }
+    return factionResult;
 }
 
 module.exports = router;

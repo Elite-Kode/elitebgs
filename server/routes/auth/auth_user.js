@@ -39,9 +39,9 @@ router.post('/edit', async (req, res, next) => {
             if (req.body.factions) {
                 arrayfy(req.body.factions).forEach(faction => {
                     if (user.factions.findIndex(element => {
-                            return element.name_lower === faction.toLowerCase();
-                        }) === -1) {
-                        factionPromise.push(new Promise(async (resolve, reject) => {
+                        return element.name_lower === faction.toLowerCase();
+                    }) === -1) {
+                        factionPromise.push((async () => {
                             let model = require('../../models/ebgs_factions_v4');
                             let factionGot = await model.findOne({
                                 name_lower: faction.toLowerCase()
@@ -51,20 +51,20 @@ router.post('/edit', async (req, res, next) => {
                                     name: faction,
                                     name_lower: faction.toLowerCase()
                                 });
-                                resolve();
+                                return;
                             } else {
-                                reject(new Error("Faction not present"));
+                                throw (new Error("Faction not present"));
                             }
-                        }));
+                        })());
                     }
                 });
             }
             if (req.body.systems) {
                 arrayfy(req.body.systems).forEach(system => {
                     if (user.systems.findIndex(element => {
-                            return element.name_lower === system.toLowerCase();
-                        }) === -1) {
-                        systemPromise.push(new Promise(async (resolve, reject) => {
+                        return element.name_lower === system.toLowerCase();
+                    }) === -1) {
+                        systemPromise.push((async () => {
                             let model = await require('../../models/ebgs_systems_v4');
                             let systemGot = await model.findOne({
                                 name_lower: system.toLowerCase()
@@ -74,21 +74,21 @@ router.post('/edit', async (req, res, next) => {
                                     name: system,
                                     name_lower: system.toLowerCase()
                                 });
-                                resolve();
+                                return;
                             } else {
-                                reject(new Error("System not present"));
+                                throw(new Error("System not present"));
                             }
-                        }));
+                        })());
                     }
                 });
             }
             if (req.body.stations) {
                 arrayfy(req.body.stations).forEach(station => {
                     if (user.stations.findIndex(element => {
-                            return element.name_lower === station.toLowerCase();
-                        }) === -1) {
-                        stationPromise.push(new Promise(async (resolve, reject) => {
-                            let model = require('../../models/ebgs_stations_v4');
+                        return element.name_lower === station.toLowerCase();
+                    }) === -1) {
+                        stationPromise.push((async () => {
+                            let model = await require('../../models/ebgs_stations_v4');
                             let stationGot = await model.findOne({
                                 name_lower: station.toLowerCase()
                             }).lean();
@@ -97,18 +97,18 @@ router.post('/edit', async (req, res, next) => {
                                     name: station,
                                     name_lower: station.toLowerCase()
                                 });
-                                resolve();
+                                return;
                             } else {
-                                reject(new Error("Station not present"));
+                                throw(new Error("Station not present"));
                             }
-                        }));
+                        })());
                     }
                 });
             }
             await Promise.all(factionPromise.concat(systemPromise).concat(stationPromise));
             await users.findOneAndUpdate({
-                    _id: req.user._id
-                },
+                _id: req.user._id
+            },
                 user, {
                     upsert: false,
                     runValidators: true
@@ -150,8 +150,8 @@ router.delete('/edit', async (req, res, next) => {
                 }
             }
             await users.findOneAndUpdate({
-                    _id: req.user._id
-                },
+                _id: req.user._id
+            },
                 user, {
                     upsert: false,
                     runValidators: true
