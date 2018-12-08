@@ -45,6 +45,9 @@ export class SystemViewComponent implements OnInit {
         this.systemData.security = FDevIDs.security[this.systemData.security].name;
         this.systemData.factions.forEach(faction => {
             faction.state = FDevIDs.state[faction.state].name;
+            faction.active_states.forEach(state => {
+                state.state = FDevIDs.state[state.state].name;
+            });
             faction.pending_states.forEach(state => {
                 state.state = FDevIDs.state[state.state].name;
             });

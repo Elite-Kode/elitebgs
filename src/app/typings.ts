@@ -335,6 +335,9 @@ export interface EBGSFactionV3Schema {
         system_name_lower: string;
         state: string;
         influence: number;
+        active_states: {
+            state: string;
+        }[];
         pending_states: {
             state: string;
             trend: number;
@@ -558,6 +561,9 @@ type EBGSSystemFaction = EBGSSystemV3Schema['factions'][0];
 interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
     influence: number;
     state: string;
+    active_states: {
+        state: string;
+    }[];
     pending_states: {
         state: string;
         trend: number;
