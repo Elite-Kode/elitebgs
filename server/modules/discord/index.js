@@ -54,13 +54,7 @@ client.on("guildMemberAdd", async member => {
             client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
         }
     } catch (err) {
-        bugsnagClient.notify(err, {
-            user: {
-                id: member.id,
-                username: member.user.username,
-                discriminator: member.user.discriminator
-            }
-        });
+        bugsnagClient.notify(err);
         console.log(err);
     }
 });

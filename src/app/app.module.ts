@@ -41,7 +41,8 @@ import { BugsnagErrorHandler } from '@bugsnag/plugin-angular'
 
 const bugsnagClient = bugsnag({
     apiKey: Bugsnag.token,
-    notifyReleaseStages: ['development', 'production']
+    notifyReleaseStages: ['development', 'production'],
+    collectUserIp: false
 })
 
 export function errorHandlerFactory() {

@@ -154,9 +154,7 @@ passport.deserializeUser(async (id, done) => {
         let user = await model.findOne({ id: id })
         done(null, user);
     } catch (err) {
-        bugsnagClient.notify(err, {
-            user: { id: id }
-        });
+        bugsnagClient.notify(err);
         done(err);
     }
 });
@@ -185,9 +183,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                     });
                 done(null, user);
             } catch (err) {
-                bugsnagClient.notify(err, {
-                    user: updatedUser
-                });
+                bugsnagClient.notify(err);
                 done(err);
             }
         } else {
@@ -223,13 +219,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
             done(null, user);
         }
     } catch (err) {
-        bugsnagClient.notify(err, {
-            user: {
-                id: profile.id,
-                username: profile.username,
-                discriminator: profile.discriminator
-            }
-        });
+        bugsnagClient.notify(err);
         done(err);
     }
 }
