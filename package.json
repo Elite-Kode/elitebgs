@@ -4,10 +4,11 @@
     "license": "Apache-2.0",
     "scripts": {
         "ng": "ng",
-        "start": "run-s buildprod runprod",
-        "startdev": "run-s removebuild preparedev",
+        "start": "run-s versionfile buildprod runprod",
+        "startdev": "run-s versionfile removebuild preparedev",
         "build": "ng build",
         "lint": "ng lint",
+        "versionfile": "node versionFile.js",
         "removebuild": "rimraf dist",
         "preparedev": "run-p builddev rundev",
         "buildprod": "ng build --prod",

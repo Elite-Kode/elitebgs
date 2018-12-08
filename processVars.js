@@ -8,6 +8,8 @@ if (process.env.NODE_ENV === 'development') {
     protocol = 'https';
 }
 
+let version = require('./server/version');
+
 module.exports = {
-    host, protocol
+    host, protocol, version
 }

@@ -34,6 +34,8 @@ import { TryAPIService } from './services/tryapi.service';
 import { ThemeService } from './services/theme.service';
 import { TickService } from './services/tick.service';
 
+import { environment } from '../environments/environment';
+
 import { Bugsnag } from '../secrets';
 
 import bugsnag from '@bugsnag/js'
@@ -42,7 +44,8 @@ import { BugsnagErrorHandler } from '@bugsnag/plugin-angular'
 const bugsnagClient = bugsnag({
     apiKey: Bugsnag.token,
     notifyReleaseStages: ['development', 'production'],
-    collectUserIp: false
+    collectUserIp: false,
+    appVersion: environment.version
 })
 
 export function errorHandlerFactory() {

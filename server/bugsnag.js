@@ -19,9 +19,12 @@
 const bugsnag = require('@bugsnag/js');
 const bugsnagExpress = require('@bugsnag/plugin-express');
 
+const processVars = require('../processVars');
+
 let bugsnagClient = bugsnag({
     apiKey: require('../secrets').bugsnag_token,
-    notifyReleaseStages: ['development', 'production']
+    notifyReleaseStages: ['development', 'production'],
+    appVersion: processVars.version
 });
 bugsnagClient.use(bugsnagExpress);
 
