@@ -41,8 +41,8 @@ client.on("guildMemberAdd", async member => {
             user.invite = "";
             user.invite_used = true;
             await model.findOneAndUpdate({
-                    id: member.id
-                },
+                id: member.id
+            },
                 user, {
                     upsert: false,
                     runValidators: true
@@ -58,3 +58,8 @@ client.on("guildMemberAdd", async member => {
         console.log(err);
     }
 });
+
+client.on("error", err => {
+    bugsnagClient.notify(err);
+    console.log(err);
+})
