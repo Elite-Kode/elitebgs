@@ -704,7 +704,7 @@ function Journal() {
     }
 
     this.trackSystemV4 = async (message, header) => {
-        if (message.event === "FSDJump" || message.event === "Location") {
+        if (message.event === "FSDJump" || (message.event === "Location" && !message.Docked)) {
             try {
                 await this.checkMessage1(message, header);
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
@@ -847,7 +847,7 @@ function Journal() {
                                     }
                                 } catch (err) {
                                     bugsnagClient.notify(err, {
-                                        metadata: {
+                                        metaData: {
                                             message: message,
                                             systemObject: systemObject
                                         }
@@ -879,7 +879,7 @@ function Journal() {
                                         }
                                     } catch (err) {
                                         bugsnagClient.notify(err, {
-                                            metadata: {
+                                            metaData: {
                                                 message: message,
                                                 systemObject: systemObject
                                             }
@@ -908,7 +908,7 @@ function Journal() {
                                         }
                                     } catch (err) {
                                         bugsnagClient.notify(err, {
-                                            metadata: {
+                                            metaData: {
                                                 message: message,
                                                 systemObject: systemObject
                                             }
@@ -920,7 +920,7 @@ function Journal() {
                         }
                     } catch (err) {
                         bugsnagClient.notify(err, {
-                            metadata: {
+                            metaData: {
                                 message: message,
                                 systemModel: ebgsSystemsV4Model
                             }
@@ -1002,7 +1002,7 @@ function Journal() {
                                                         .exec();
                                                 } catch (err) {
                                                     bugsnagClient.notify(err, {
-                                                        metadata: {
+                                                        metaData: {
                                                             message: message,
                                                             factionObject: factionObject
                                                         }
@@ -1023,7 +1023,7 @@ function Journal() {
                                                         .exec();
                                                 } catch (err) {
                                                     bugsnagClient.notify(err, {
-                                                        metadata: {
+                                                        metaData: {
                                                             message: message,
                                                             factionObject: factionObject
                                                         }
@@ -1045,7 +1045,7 @@ function Journal() {
                                                     .exec();
                                             } catch (err) {
                                                 bugsnagClient.notify(err, {
-                                                    metadata: {
+                                                    metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
@@ -1144,7 +1144,7 @@ function Journal() {
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
                                                 bugsnagClient.notify(err, {
-                                                    metadata: {
+                                                    metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
@@ -1168,7 +1168,7 @@ function Journal() {
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
                                                 bugsnagClient.notify(err, {
-                                                    metadata: {
+                                                    metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
@@ -1285,7 +1285,7 @@ function Journal() {
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
                                                         bugsnagClient.notify(err, {
-                                                            metadata: {
+                                                            metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
@@ -1310,7 +1310,7 @@ function Journal() {
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
                                                         bugsnagClient.notify(err, {
-                                                            metadata: {
+                                                            metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
@@ -1336,7 +1336,7 @@ function Journal() {
                                                     this.setFactionHistory(historyObject);
                                                 } catch (err) {
                                                     bugsnagClient.notify(err, {
-                                                        metadata: {
+                                                        metaData: {
                                                             message: message,
                                                             messageFaction: messageFaction,
                                                             factionObject: factionObject
@@ -1387,7 +1387,7 @@ function Journal() {
                                                             .exec()
                                                     } catch (err) {
                                                         bugsnagClient.notify(err, {
-                                                            metadata: {
+                                                            metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
@@ -1410,7 +1410,7 @@ function Journal() {
                                                             .exec();
                                                     } catch (err) {
                                                         bugsnagClient.notify(err, {
-                                                            metadata: {
+                                                            metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
@@ -1434,7 +1434,7 @@ function Journal() {
                                                         .exec();
                                                 } catch (err) {
                                                     bugsnagClient.notify(err, {
-                                                        metadata: {
+                                                        metaData: {
                                                             message: message,
                                                             messageFaction: messageFaction,
                                                             factionObject: factionObject
@@ -1449,7 +1449,7 @@ function Journal() {
                             }
                         } catch (err) {
                             bugsnagClient.notify(err, {
-                                metadata: {
+                                metaData: {
                                     message: message
                                 }
                             });
@@ -1457,7 +1457,7 @@ function Journal() {
                         }
                     } catch (err) {
                         bugsnagClient.notify(err, {
-                            metadata: {
+                            metaData: {
                                 message: message,
                                 factionModel: ebgsFactionsV4Model
                             }
@@ -1467,7 +1467,7 @@ function Journal() {
                 })();
             } catch (err) {
                 bugsnagClient.notify(err, {
-                    metadata: {
+                    metaData: {
                         message: message
                     }
                 });
@@ -1607,7 +1607,7 @@ function Journal() {
                                 }
                             } catch (err) {
                                 bugsnagClient.notify(err, {
-                                    metadata: {
+                                    metaData: {
                                         message: message,
                                         stationObject: stationObject
                                     }
@@ -1637,7 +1637,7 @@ function Journal() {
                                     }
                                 } catch (err) {
                                     bugsnagClient.notify(err, {
-                                        metadata: {
+                                        metaData: {
                                             message: message,
                                             stationObject: stationObject
                                         }
@@ -1664,7 +1664,7 @@ function Journal() {
                                     }
                                 } catch (err) {
                                     bugsnagClient.notify(err, {
-                                        metadata: {
+                                        metaData: {
                                             message: message,
                                             stationObject: stationObject
                                         }
@@ -1676,7 +1676,7 @@ function Journal() {
                     }
                 } catch (err) {
                     bugsnagClient.notify(err, {
-                        metadata: {
+                        metaData: {
                             message: message,
                             stationModel: ebgsStationsV4Model
                         }
@@ -1685,7 +1685,7 @@ function Journal() {
                 }
             } catch (err) {
                 bugsnagClient.notify(err, {
-                    metadata: {
+                    metaData: {
                         message: message
                     }
                 });
