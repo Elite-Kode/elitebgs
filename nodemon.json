@@ -1,7 +1,5 @@
 {
     "ignore": [
-        "dist/*",
-        "server/dumps/*",
-        "server/references/*"
+        "dist/*"
     ]
 }
