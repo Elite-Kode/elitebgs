@@ -45,7 +45,7 @@ export class SystemsService {
         return this.parseSystemData(systemsList, 'id', timeMin, timeMax);
     }
 
-    private parseSystemData(systemsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSSystemChart[]> {
+    private async parseSystemData(systemsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSSystemChart[]> {
         const allSystemsGet: Promise<EBGSSystemChartPaginate>[] = [];
         const returnSystems: EBGSSystemChart[] = [];
         if (timeMin === undefined || timeMin === null) {
@@ -73,14 +73,7 @@ export class SystemsService {
                 });
             }));
         });
-        return new Promise((resolve, reject) => {
-            Promise.all(allSystemsGet)
-                .then(systems => {
-                    resolve(returnSystems);
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+        await Promise.all(allSystemsGet);
+        return returnSystems;
     }
 }

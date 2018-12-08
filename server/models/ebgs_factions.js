@@ -18,7 +18,7 @@
 
 let mongoosePaginate = require('mongoose-paginate');
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
@@ -62,5 +62,5 @@ module.exports = new Promise((resolve, reject) => {
 
     let model = connection.model('ebgsFaction', ebgsFaction);
 
-    resolve(model);
-})
+    return model;
+})();

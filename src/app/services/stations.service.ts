@@ -45,7 +45,7 @@ export class StationsService {
         return this.parseStationData(systemsList, 'id');
     }
 
-    private parseStationData(stationsList: string[], type: string): Promise<EBGSStationV4Schema[]> {
+    private async parseStationData(stationsList: string[], type: string): Promise<EBGSStationV4Schema[]> {
         const allStationsGet: Promise<EBGSStationsV4>[] = [];
         const returnStations: EBGSStationV4Schema[] = [];
         stationsList.forEach(station => {
@@ -67,14 +67,7 @@ export class StationsService {
                 });
             }));
         });
-        return new Promise((resolve, reject) => {
-            Promise.all(allStationsGet)
-                .then(systems => {
-                    resolve(returnStations);
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+        await Promise.all(allStationsGet);
+        return returnStations;
     }
 }

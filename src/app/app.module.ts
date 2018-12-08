@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ClarityModule } from '@clr/angular';
@@ -33,6 +33,24 @@ import { ServerService } from './services/server.service';
 import { TryAPIService } from './services/tryapi.service';
 import { ThemeService } from './services/theme.service';
 import { TickService } from './services/tick.service';
+
+import { environment } from '../environments/environment';
+
+import { Bugsnag } from '../secrets';
+
+import bugsnag from '@bugsnag/js'
+import { BugsnagErrorHandler } from '@bugsnag/plugin-angular'
+
+const bugsnagClient = bugsnag({
+    apiKey: Bugsnag.token,
+    notifyReleaseStages: ['development', 'production'],
+    collectUserIp: false,
+    appVersion: environment.version
+})
+
+export function errorHandlerFactory() {
+    return new BugsnagErrorHandler(bugsnagClient);
+}
 
 @NgModule({
     declarations: [
@@ -75,7 +93,8 @@ import { TickService } from './services/tick.service';
         ServerService,
         ThemeService,
         TryAPIService,
-        TickService
+        TickService,
+        { provide: ErrorHandler, useFactory: errorHandlerFactory }
     ],
     bootstrap: [AppComponent]
 })

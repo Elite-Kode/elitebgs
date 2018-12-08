@@ -1,6 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { environment } from '../../../environments/environment';
 import { IInputSpec } from '../../swagger_ui/swagger-ui.component';
 
 @Component({
