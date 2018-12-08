@@ -60,60 +60,48 @@ export class HomeComponent implements OnInit {
             });
     }
 
-    getFactions() {
+    async getFactions() {
         const factionList = this.user.factions.map(faction => {
             return faction.name;
         });
 
-        this.factionsService
-            .parseFactionDataName(factionList)
-            .then(factionData => {
-                this.factions = factionData;
-                this.factions.forEach(faction => {
-                    faction.faction_presence.forEach(system => {
-                        system.state = FDevIDs.state[system.state].name;
-                        system.pending_states.forEach(state => {
-                            state.state = FDevIDs.state[state.state].name;
-                        });
-                        system.recovering_states.forEach(state => {
-                            state.state = FDevIDs.state[state.state].name;
-                        });
-                    });
+        const factionData = await this.factionsService.parseFactionDataName(factionList);
+        this.factions = factionData;
+        this.factions.forEach(faction => {
+            faction.faction_presence.forEach(system => {
+                system.state = FDevIDs.state[system.state].name;
+                system.pending_states.forEach(state => {
+                    state.state = FDevIDs.state[state.state].name;
                 });
-            })
-            .catch(err => {
-                console.log(err);
+                system.recovering_states.forEach(state => {
+                    state.state = FDevIDs.state[state.state].name;
+                });
             });
+        });
     }
 
-    getSystems() {
+    async getSystems() {
         const systemList = this.user.systems.map(system => {
             return system.name;
         });
 
-        this.systemsService
-            .parseSystemDataName(systemList)
-            .then(systemData => {
-                this.systems = systemData;
-                this.systems.forEach(system => {
-                    system.state = FDevIDs.state[system.state].name;
-                    system.factions.forEach(faction => {
-                        faction.state = FDevIDs.state[faction.state].name;
-                        faction.pending_states.forEach(state => {
-                            state.state = FDevIDs.state[state.state].name;
-                        });
-                        faction.recovering_states.forEach(state => {
-                            state.state = FDevIDs.state[state.state].name;
-                        });
-                        if (faction.name_lower === system.controlling_minor_faction) {
-                            system.controlling_faction = faction;
-                        }
-                    });
+        const systemData = await this.systemsService.parseSystemDataName(systemList);
+        this.systems = systemData;
+        this.systems.forEach(system => {
+            system.state = FDevIDs.state[system.state].name;
+            system.factions.forEach(faction => {
+                faction.state = FDevIDs.state[faction.state].name;
+                faction.pending_states.forEach(state => {
+                    state.state = FDevIDs.state[state.state].name;
                 });
-            })
-            .catch(err => {
-                console.log(err);
+                faction.recovering_states.forEach(state => {
+                    state.state = FDevIDs.state[state.state].name;
+                });
+                if (faction.name_lower === system.controlling_minor_faction) {
+                    system.controlling_faction = faction;
+                }
             });
+        });
     }
 
     getUpdatedAtFormatted(updatedAt) {

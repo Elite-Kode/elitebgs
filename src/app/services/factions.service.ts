@@ -41,7 +41,7 @@ export class FactionsService {
         return this.parseFactionData(factionsList, 'id', timeMin, timeMax);
     }
 
-    private parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionV3Schema[]> {
+    private async parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionV3Schema[]> {
         const allFactionsGet: Promise<EBGSFactionsV3>[] = [];
         const returnFactions: EBGSFactionV3Schema[] = [];
         if (timeMin === undefined || timeMin === null) {
@@ -69,14 +69,7 @@ export class FactionsService {
                 });
             }));
         });
-        return new Promise((resolve, reject) => {
-            Promise.all(allFactionsGet)
-                .then(factions => {
-                    resolve(returnFactions);
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        })
+        await Promise.all(allFactionsGet);
+        return returnFactions;
     }
 }

@@ -24,19 +24,17 @@ export class StationViewComponent implements OnInit {
         private titleService: Title
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.getAuthentication();
-        this.stationService
-            .parseStationDataId([this.route.snapshot.paramMap.get('stationid')])
-            .then(station => {
-                this.stationData = station[0];
-                this.stationData.type = FDevIDs.station[this.stationData.type].name;
-                this.stationData.government = FDevIDs.government[this.stationData.government].name;
-                this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
-                this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
-                this.stationData.state = FDevIDs.state[this.stationData.state].name;
-                this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
-            });
+        const station = await this.stationService
+            .parseStationDataId([this.route.snapshot.paramMap.get('stationid')]);
+        this.stationData = station[0];
+        this.stationData.type = FDevIDs.station[this.stationData.type].name;
+        this.stationData.government = FDevIDs.government[this.stationData.government].name;
+        this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
+        this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
+        this.stationData.state = FDevIDs.state[this.stationData.state].name;
+        this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
     }
 
     getAuthentication() {
@@ -72,9 +70,9 @@ export class StationViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-        .getUser()
-        .subscribe(user => {
-            this.user = user;
-        });
+            .getUser()
+            .subscribe(user => {
+                this.user = user;
+            });
     }
 }
