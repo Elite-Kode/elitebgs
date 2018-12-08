@@ -1466,12 +1466,14 @@ function Journal() {
                     }
                 })();
             } catch (err) {
-                bugsnagClient.notify(err, {
-                    metaData: {
-                        message: message
-                    }
-                });
-                console.log(err)
+                if (err.message !== 'Message is not valid') {
+                    bugsnagClient.notify(err, {
+                        metaData: {
+                            message: message
+                        }
+                    });
+                    console.log(err);
+                }
             }
         }
         if (message.event === "Docked" || (message.event === "Location" && message.Docked)) {
@@ -1684,12 +1686,14 @@ function Journal() {
                     console.log(err);
                 }
             } catch (err) {
-                bugsnagClient.notify(err, {
-                    metaData: {
-                        message: message
-                    }
-                });
-                console.log(err)
+                if (err.message !== 'Message is not valid') {
+                    bugsnagClient.notify(err, {
+                        metaData: {
+                            message: message
+                        }
+                    });
+                    console.log(err);
+                }
             }
         }
     }
