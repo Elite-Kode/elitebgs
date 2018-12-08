@@ -788,8 +788,8 @@ function Journal() {
                                 }
                             }
                             if (!system.system_address || !system.secondary_economy) {
-                                system.system_address = message.SystemAddress;
-                                system.secondary_economy = message.SystemSecondEconomy;
+                                systemObject.system_address = message.SystemAddress;
+                                systemObject.secondary_economy = message.SystemSecondEconomy;
                             }
                         } else {
                             eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
@@ -1545,8 +1545,8 @@ function Journal() {
                             }
                         }
                         if (!station.market_id || !station.all_economies) {
-                            station.market_id = message.MarketID;
-                            station.all_economies = message.StationEconomies.map(economy => {
+                            stationObject.market_id = message.MarketID;
+                            stationObject.all_economies = message.StationEconomies.map(economy => {
                                 return {
                                     name: economy.Name,
                                     proportion: economy.Proportion
@@ -1925,6 +1925,7 @@ function Journal() {
             if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
                 if (faction.state === messageFaction.FactionState.toLowerCase() &&
                     faction.influence === messageFaction.Influence &&
+                    faction.happiness === messageFaction.Happiness.toLowerCase() &&
                     _.isEqual(_.sortBy(faction.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
