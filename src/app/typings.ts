@@ -18,6 +18,7 @@ export interface EBGSFactionSchema {
         system_name_lower: string;
         state: string;
         influence: number;
+        happiness: string;
         active_states: {
             state: string;
         }[];
@@ -41,6 +42,10 @@ export interface EBGSFactionSchema {
         system_lower: string;
         state: string;
         influence: number;
+        happiness: string;
+        active_states: {
+            state: string;
+        }[];
         pending_states: {
             state: string;
             trend: number;

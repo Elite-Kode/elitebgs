@@ -110,6 +110,9 @@
             <div class="card-text" *ngIf="factionData !== undefined">
                 <app-faction-a-p-r-state-chart [factionData]="factionData" type="recovering"></app-faction-a-p-r-state-chart>
             </div>
+            <div class="card-text" *ngIf="factionData !== undefined">
+                <app-faction-happiness-chart [factionData]="factionData"></app-faction-happiness-chart>
+            </div>
         </div>
     </div>
 </div>
