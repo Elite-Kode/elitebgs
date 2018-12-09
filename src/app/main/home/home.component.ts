@@ -69,6 +69,7 @@ export class HomeComponent implements OnInit {
         this.factions.forEach(faction => {
             faction.faction_presence.forEach(system => {
                 system.state = FDevIDs.state[system.state].name;
+                system.happiness = FDevIDs.happiness[system.happiness].name;
                 system.active_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });
@@ -93,6 +94,7 @@ export class HomeComponent implements OnInit {
             system.state = FDevIDs.state[system.state].name;
             system.factions.forEach(faction => {
                 faction.state = FDevIDs.state[faction.state].name;
+                faction.happiness = FDevIDs.happiness[faction.happiness].name;
                 faction.active_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });

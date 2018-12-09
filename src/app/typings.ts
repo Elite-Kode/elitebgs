@@ -76,6 +76,7 @@ interface EBGSSystemSchema {
     state: string;
     security: string;
     primary_economy: string;
+    secondary_economy: string;
     needs_permit: boolean;
     reserve_type: string;
     controlling_minor_faction: string;
@@ -146,6 +147,7 @@ interface EBGSSystemSchemaWOHistory {
     state: string;
     security: string;
     primary_economy: string;
+    secondary_economy: string;
     needs_permit: boolean;
     reserve_type: string;
     controlling_minor_faction: string;
@@ -249,6 +251,7 @@ type EBGSSystemFaction = EBGSSystemSchema['factions'][0];
 interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
     influence: number;
     state: string;
+    happiness: string;
     active_states: {
         state: string;
     }[];

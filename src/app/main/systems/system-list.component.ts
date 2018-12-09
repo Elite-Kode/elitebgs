@@ -38,6 +38,7 @@ export class SystemListComponent implements OnInit {
             const government = FDevIDs.government[responseSystem.government].name;
             const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
             const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
+            const secondary_economy = FDevIDs.economy[responseSystem.secondary_economy].name;
             const state = FDevIDs.state[responseSystem.state].name;
             return <ISystem>{
                 id: id,
@@ -45,6 +46,7 @@ export class SystemListComponent implements OnInit {
                 government: government,
                 allegiance: allegiance,
                 primary_economy: primary_economy,
+                secondary_economy: secondary_economy,
                 state: state
             };
         });

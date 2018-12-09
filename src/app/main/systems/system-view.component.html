@@ -36,7 +36,10 @@
             <b>Allegiance : </b>{{systemData?.allegiance}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
-            <b>Economy : </b>{{systemData?.primary_economy}}
+            <b>Primary Economy : </b>{{systemData?.primary_economy}}
+        </div>
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Secondary Economy : </b>{{systemData?.secondary_economy}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
             <b>State : </b>{{systemData?.state}}
@@ -56,6 +59,7 @@
         <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
         <clr-dg-column [clrDgSortBy]="'influence'">Influence</clr-dg-column>
         <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+        <clr-dg-column [clrDgField]="'happiness'">Happiness</clr-dg-column>
         <clr-dg-column>Active States</clr-dg-column>
         <clr-dg-column>Pending States</clr-dg-column>
         <clr-dg-column>Recovering States</clr-dg-column>
@@ -70,6 +74,7 @@
             <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{faction.state}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.happiness}}</clr-dg-cell>
             <clr-dg-cell>
                 <span class="label" *ngFor="let active of faction.active_states" class="label-info">{{active.state}}</span>
             </clr-dg-cell>

@@ -47,6 +47,7 @@
         <clr-dg-column [clrDgField]="'system_name'">System</clr-dg-column>
         <clr-dg-column [clrDgSortBy]="'influence'">Influence</clr-dg-column>
         <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+        <clr-dg-column [clrDgField]="'happiness'">Happiness</clr-dg-column>
         <clr-dg-column>Active States</clr-dg-column>
         <clr-dg-column>Pending States</clr-dg-column>
         <clr-dg-column>Recovering States</clr-dg-column>
@@ -62,6 +63,7 @@
             <clr-dg-cell><a routerLink="/system/{{presence.system_id}}">{{presence.system_name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(presence.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{presence.state}}</clr-dg-cell>
+            <clr-dg-cell>{{presence.happiness}}</clr-dg-cell>
             <clr-dg-cell>
                 <span class="label" *ngFor="let active of presence.active_states" class="label-info">{{active.state}}</span>
             </clr-dg-cell>
