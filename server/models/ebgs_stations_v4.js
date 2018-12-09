@@ -37,7 +37,7 @@ module.exports = (async () => {
         economy: { type: String, lowercase: true, index: true },
         all_economies: [{
             _id: false,
-            name: String,
+            name: { type: String, lowercase: true},
             proportion: Number
         }],
         allegiance: { type: String, lowercase: true, index: true },

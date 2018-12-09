@@ -45,7 +45,8 @@ export class FactionViewComponent implements OnInit {
         this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
         this.factionData.faction_presence.forEach(system => {
             system.state = FDevIDs.state[system.state].name;
-            system.happiness = FDevIDs.happiness[system.happiness].name;
+            system.happiness = system.happiness ? FDevIDs.happiness[system.happiness].name : '';
+            system.active_states = system.active_states ? system.active_states : [];
             system.active_states.forEach(state => {
                 state.state = FDevIDs.state[state.state].name;
             });

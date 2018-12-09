@@ -26,7 +26,7 @@ export class StationEconomiesChartComponent implements OnInit, OnChanges {
         const data: any[] = [];
         economies.forEach(element => {
             data.push({
-                name: FDevIDs.economy[element.name].name,
+                name: element.name,
                 y: element.proportion
             })
         });
@@ -39,8 +39,11 @@ export class StationEconomiesChartComponent implements OnInit, OnChanges {
             chart: {
                 type: 'pie'
             },
-            title: { text: 'Economies Spread' },
-            series: series
+            title: null,
+            series: series,
+            exporting: {
+                enabled: false
+            }
         };
         this.themeService.theme$.subscribe(theme => {
             this.chart = new Chart(this.options);
