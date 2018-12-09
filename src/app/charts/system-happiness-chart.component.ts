@@ -38,7 +38,7 @@ export class SystemHappinessChartComponent implements OnInit, OnChanges {
     }
 
     createChart(): void {
-        // Copied over to server\routes\chart_generator.js
+        // Todo: Copied over to server\routes\chart_generator.js
         const allTimeFactions: string[] = [];
         this.systemData.faction_history.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {

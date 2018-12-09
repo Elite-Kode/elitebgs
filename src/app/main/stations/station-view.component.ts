@@ -33,6 +33,9 @@ export class StationViewComponent implements OnInit {
         this.stationData.government = FDevIDs.government[this.stationData.government].name;
         this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
         this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
+        this.stationData.all_economies.forEach(economy => {
+            economy.name = FDevIDs.economy[economy.name].name;
+        });
         this.stationData.state = FDevIDs.state[this.stationData.state].name;
         this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
     }

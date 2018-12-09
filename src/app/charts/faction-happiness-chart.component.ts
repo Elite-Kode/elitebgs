@@ -38,7 +38,7 @@ export class FactionHappinessChartComponent implements OnInit, OnChanges {
     }
 
     createChart(): void {
-        // Copied over to server\routes\chart_generator.js
+        // Todo: Copied over to server\routes\chart_generator.js
         const allSystems: string[] = [];
         this.factionData.history.forEach(record => {
             if (allSystems.indexOf(record.system) === -1) {

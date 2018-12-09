@@ -12,6 +12,7 @@ import { SystemInfluenceChartComponent } from './system-influence-chart.componen
 import { SystemAPRStateChartComponent } from './system-a-p-r-state-chart.component';
 import { SystemStateChartComponent } from './system-state-chart.component';
 import { SystemHappinessChartComponent } from './system-happiness-chart.component';
+import { StationEconomiesChartComponent } from './station-economies-chart.component';
 import { TickChartComponent } from './tick-chart.component';
 
 export function highchartsModules() {
@@ -28,6 +29,7 @@ export function highchartsModules() {
         SystemAPRStateChartComponent,
         SystemStateChartComponent,
         SystemHappinessChartComponent,
+        StationEconomiesChartComponent,
         TickChartComponent
     ],
     imports: [
@@ -45,6 +47,7 @@ export function highchartsModules() {
         SystemAPRStateChartComponent,
         SystemStateChartComponent,
         SystemHappinessChartComponent,
+        StationEconomiesChartComponent,
         TickChartComponent
     ]
 })
