@@ -18,18 +18,29 @@
 
 const zlib = require('zlib');
 const zmq = require('zmq');
+const request = require('request-promise-native');
+
+const sleep = require('util').promisify(setTimeout)
 
 const schemas = require('./schemas');
+const bugsnagClient = require('../../bugsnag');
 
 const sock = zmq.socket('sub');
 
-sock.connect('tcp://eddn.edcd.io:9500');
-console.log('Connected to EDDN relay at port 9500');
+let timer = Date.now();
 
-sock.subscribe('');
-console.log('Subscribed to EDDN');
+const connectToEDDN = () => {
+    sock.connect('tcp://eddn.edcd.io:9500');
+    console.log('Connected to EDDN relay at port 9500');
+
+    sock.subscribe('');
+    console.log('Subscribed to EDDN');
+}
+
+connectToEDDN();
 
 sock.on('message', topic => {
+    timer = Date.now();
     let message = JSON.parse(zlib.inflateSync(topic));
     let journal = new schemas.journal();
 
@@ -60,3 +71,25 @@ sock.on('message', topic => {
         default: //console.log("Schema not Found" + message['$schemaRef']);
     }
 });
+
+setInterval(async () => {
+    if ((Date.now() - timer) > 300000) {
+        let requestOptions = {
+            url: "http://hosting.zaonce.net/launcher-status/status.json",
+            resolveWithFullResponse: true
+        };
+        try {
+            let response = await request.get(requestOptions);
+            if (response.statusCode === 200) {
+                let responseObject = JSON.parse(response.body);
+                if (responseObject.status === 2) {
+                    bugsnagClient.notify(new Error('No message recieved from EDDN for more than 5 minutes'));
+                    connectToEDDN();
+                }
+            }
+        } catch (err) {
+            // Do nothing
+        }
+        timer = Date.now();
+    }
+}, 10000);

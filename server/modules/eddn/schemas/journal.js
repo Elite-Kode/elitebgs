@@ -19,7 +19,6 @@
 const _ = require('lodash');
 const request = require('request-promise-native');
 const semver = require('semver');
-const moment = require('moment');
 
 const bugsnagClient = require('../../../bugsnag');
 
@@ -1962,7 +1961,7 @@ function Journal() {
     // Used in V3 and V4
     this.getSystemEDDBId = async name => {
         let requestOptions = {
-            url: "https://elitebgs.kodeblox.com/api/eddb/v3/populatedsystems",
+            url: "https://eddbapi.kodeblox.com/api/v3/populatedsystems",
             qs: {
                 name: name.toLowerCase()
             },
@@ -1976,8 +1975,6 @@ function Journal() {
             } else {
                 throw new Error(response);
             }
-        } else if (error) {
-            throw new Error(error);
         } else {
             throw new Error(response);
         }
@@ -1986,22 +1983,20 @@ function Journal() {
     // Used in V3 and V4
     this.getFactionEDDBId = async name => {
         let requestOptions = {
-            url: "https://elitebgs.kodeblox.com/api/eddb/v3/factions",
+            url: "https://eddbapi.kodeblox.com/api/v3/factions",
             qs: {
                 name: name.toLowerCase()
             },
             resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
-        if (response.statusCode == 200) {
+        if (response.statusCode === 200) {
             let responseObject = JSON.parse(response.body);
             if (responseObject.total > 0) {
                 return responseObject.docs[0].id;
             } else {
                 throw new Error(response);
             }
-        } else if (error) {
-            throw new Error(error);
         } else {
             throw new Error(response);
         }
@@ -2010,22 +2005,20 @@ function Journal() {
     // Used in V4
     this.getStationEDDBId = async name => {
         let requestOptions = {
-            url: "https://elitebgs.kodeblox.com/api/eddb/v3/stations",
+            url: "https://eddbapi.kodeblox.com/api/v3/stations",
             qs: {
                 name: name.toLowerCase()
             },
             resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
-        if (response.statusCode == 200) {
+        if (response.statusCode === 200) {
             let responseObject = JSON.parse(response.body);
             if (responseObject.total > 0) {
                 return responseObject.docs[0].id;
             } else {
                 throw new Error(response);
             }
-        } else if (error) {
-            throw new Error(error);
         } else {
             throw new Error(response);
         }
