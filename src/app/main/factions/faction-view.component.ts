@@ -5,7 +5,7 @@ import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSFactionV3Schema, EBGSUser } from '../../typings';
+import { EBGSFactionSchema, EBGSUser } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -15,7 +15,7 @@ import * as moment from 'moment';
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    factionData: EBGSFactionV3Schema;
+    factionData: EBGSFactionSchema;
     systemsPresence: number;
     systemsControlled: number;
     successAlertState = false;

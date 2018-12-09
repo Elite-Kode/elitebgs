@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemsV3WOHistory } from '../../typings';
+import { EBGSSystemsWOHistory } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -30,7 +30,7 @@ export class SystemListComponent implements OnInit {
         this.titleService.setTitle('System Search - Elite BGS');
     }
 
-    showSystem(systems: EBGSSystemsV3WOHistory) {
+    showSystem(systems: EBGSSystemsWOHistory) {
         this.totalRecords = systems.total;
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;

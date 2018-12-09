@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSFactionV3Schema } from '../typings';
+import { EBGSFactionSchema } from '../typings';
 import { FDevIDs } from '../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
@@ -31,7 +31,7 @@ import sum from 'lodash-es/sum';
     templateUrl: './faction-a-p-r-state-chart.component.html'
 })
 export class FactionAPRStateChartComponent implements OnInit, OnChanges {
-    @Input() factionData: EBGSFactionV3Schema;
+    @Input() factionData: EBGSFactionSchema;
     @Input() type: string;
     // options: Options;
     options: any;

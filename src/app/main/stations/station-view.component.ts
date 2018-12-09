@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSStationV4Schema } from '../../typings';
+import { EBGSUser, EBGSStationSchema } from '../../typings';
 import { StationsService } from '../../services/stations.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { StationsService } from '../../services/stations.service';
 export class StationViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    stationData: EBGSStationV4Schema;
+    stationData: EBGSStationSchema;
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;

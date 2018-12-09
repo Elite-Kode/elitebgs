@@ -1,11 +1,10 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSFactionV3Schema, EBGSSystemChart } from '../../typings';
+import { EBGSUser, EBGSFactionSchema, EBGSSystemChart } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -18,7 +17,7 @@ export class HomeComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
     user: EBGSUser;
-    factions: EBGSFactionV3Schema[] = [];
+    factions: EBGSFactionSchema[] = [];
     systems: EBGSSystemChart[] = [];
     factionModal: boolean;
     systemModal: boolean;

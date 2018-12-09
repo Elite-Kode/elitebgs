@@ -1,5 +1,5 @@
 import { Component, OnInit, HostBinding, Input } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Spec, Path, Schema, Parameter } from 'swagger-schema-official';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { TryAPIService } from '../services/tryapi.service';

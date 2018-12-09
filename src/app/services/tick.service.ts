@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TickV4, TickSchema, TickDisplaySchema } from '../typings';
+import { Tick, TickSchema, TickDisplaySchema } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 import * as moment from 'moment';
 
@@ -12,12 +12,12 @@ export class TickService {
         private http: HttpClient
     ) { }
 
-    getTick(): Observable<TickV4> {
-        return this.http.get<TickV4>('/api/ebgs/v4/ticks');
+    getTick(): Observable<Tick> {
+        return this.http.get<Tick>('/api/ebgs/v4/ticks');
     }
 
-    getTicks(timemin: string, timemax: string): Observable<TickV4> {
-        return this.http.get<TickV4>('/api/ebgs/v4/ticks', {
+    getTicks(timemin: string, timemax: string): Observable<Tick> {
+        return this.http.get<Tick>('/api/ebgs/v4/ticks', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('timemin', timemin).set('timemax', timemax)
         });
     }

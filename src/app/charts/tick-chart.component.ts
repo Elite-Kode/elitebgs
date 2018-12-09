@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { TickV4 } from '../typings';
+import { Tick } from '../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -10,7 +10,7 @@ import * as moment from 'moment';
     templateUrl: './tick-chart.component.html'
 })
 export class TickChartComponent implements OnInit, OnChanges {
-    @Input() tickData: TickV4;
+    @Input() tickData: Tick;
     options: Options;
     chart: Chart;
     constructor(private themeService: ThemeService) { }

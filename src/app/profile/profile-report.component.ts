@@ -1,7 +1,6 @@
-import { Component, HostBinding, OnInit, Inject } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from './profile-report-users.interface';
-import { ServerService } from '../services/server.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { EBGSUser } from '../typings';
 

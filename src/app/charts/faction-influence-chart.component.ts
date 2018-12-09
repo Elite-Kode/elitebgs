@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSFactionV3Schema } from '../typings';
+import { EBGSFactionSchema } from '../typings';
 import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -10,7 +10,7 @@ import { ThemeService } from '../services/theme.service';
 })
 
 export class FactionInfluenceChartComponent implements OnInit, OnChanges {
-    @Input() factionData: EBGSFactionV3Schema;
+    @Input() factionData: EBGSFactionSchema;
     options: Options;
     chart: Chart;
     constructor(private themeService: ThemeService) { }

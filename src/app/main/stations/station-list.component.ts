@@ -5,8 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { StationsService } from '../../services/stations.service';
 import { IStation } from './station.interface';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSStationsV4WOHistory } from '../../typings';
-import { Observable } from 'rxjs';
+import { EBGSStationsWOHistory } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -31,7 +30,7 @@ export class StationListComponent implements OnInit {
         this.titleService.setTitle('Station Search - Elite BGS');
     }
 
-    showStation(stations: EBGSStationsV4WOHistory) {
+    showStation(stations: EBGSStationsWOHistory) {
         this.totalRecords = stations.total;
         this.stationData = stations.docs.map(responseStation => {
             const id = responseStation._id;
