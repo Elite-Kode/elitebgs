@@ -3,11 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
-import { AuthenticationService } from '../../services/authentication.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
-import { EBGSFactionsV3WOHistory } from '../../typings';
-import { Observable } from 'rxjs';
+import { EBGSFactionsWOHistory } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -33,7 +31,7 @@ export class FactionListComponent implements OnInit {
         this.titleService.setTitle('Faction Search - Elite BGS');
     }
 
-    showFaction(factions: EBGSFactionsV3WOHistory) {
+    showFaction(factions: EBGSFactionsWOHistory) {
         this.totalRecords = factions.total;
         this.factionData = factions.docs.map(responseFaction => {
             const id = responseFaction._id;

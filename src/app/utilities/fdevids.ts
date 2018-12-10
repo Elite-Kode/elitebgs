@@ -233,4 +233,21 @@ export class FDevIDs {
             'name': 'Mega Ship'
         },
     };
+    public static happiness = {
+        '$Faction_HappinessBand1;': {
+            'name': 'Elated'
+        },
+        '$Faction_HappinessBand2;': {
+            'name': 'Happy'
+        },
+        '$Faction_HappinessBand3;': {
+            'name': 'Discontented'
+        },
+        '$Faction_HappinessBand4;': {
+            'name': 'Unhappy'
+        },
+        '$Faction_HappinessBand5;': {
+            'name': 'Despondent'
+        }
+    };
 }

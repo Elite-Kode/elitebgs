@@ -20,5 +20,6 @@ export interface ISystem {
     government: string;
     allegiance: string;
     primary_economy: string;
+    secondary_economy: string;
     state: string;
 }

@@ -8,11 +8,7 @@
 </div>
 <div class="content-area">
     <div>
-        Email: {{user?.email}}
-        <a class="btn btn-primary" href="/auth/discord/email" *ngIf="isAuthenticated && isAuthenticated !== undefined && user.email === undefined">Fetch Email</a>
-        <a class="btn btn-primary" href="/auth/discord/guilds" *ngIf="isAuthenticated && isAuthenticated !== undefined && user.guilds.length === 0">Fetch Guilds</a>
-        <a class="btn btn-primary" href="/auth/discord/guilds" *ngIf="isAuthenticated && isAuthenticated !== undefined && user.guilds.length !== 0">Sync Guilds</a>
-        <a class="btn btn-primary" href="/profile/report" *ngIf="isAuthenticated && isAuthenticated !== undefined">Detailed User Report</a>
+        <a class="btn btn-primary" routerLink="/profile/report" *ngIf="isAuthenticated && isAuthenticated !== undefined">Detailed User Report</a>
         <a *ngIf="!user?.invite_used" class="btn btn-primary" [href]="'https://discord.gg/' + user?.invite">Join Discord Server</a>
     </div>
     <div class="row">
@@ -51,29 +47,6 @@
                         <td>{{system.name}}</td>
                         <td>
                             <button (click)="removeSystem(system.name)" class="btn btn-danger btn-icon">
-                                <clr-icon shape="trash"></clr-icon>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <div class="clr-col-xs-12 clr-col-md-12 clr-col-lg-12 clr-col-xl-12">
-            <h3>Factions with Edit Access</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Factions</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let faction of user?.editable_factions">
-                        <td>{{faction.name}}</td>
-                        <td>
-                            <button (click)="removeEditableFaction(faction.name)" class="btn btn-danger btn-icon">
                                 <clr-icon shape="trash"></clr-icon>
                             </button>
                         </td>

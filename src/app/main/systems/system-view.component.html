@@ -24,10 +24,8 @@
             <div class="btn-group btn-primary">
                 <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor
                     System</button>
-                <button (click)="openSystemEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
                 <a class="btn btn-primary" href="https://eddb.io/system/{{systemData?.eddb_id}}" target="_blank">EDDB</a>
             </div>
-            <app-system-edit [(modalOpen)]="editModal" [system]="systemData" *ngIf="editAllowed && editAllowed !== undefined"></app-system-edit>
         </ng-container>
     </ng-template>
     <div class="clr-row data-description">
@@ -38,7 +36,10 @@
             <b>Allegiance : </b>{{systemData?.allegiance}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
-            <b>Economy : </b>{{systemData?.primary_economy}}
+            <b>Primary Economy : </b>{{systemData?.primary_economy}}
+        </div>
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Secondary Economy : </b>{{systemData?.secondary_economy}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
             <b>State : </b>{{systemData?.state}}
@@ -58,6 +59,8 @@
         <clr-dg-column [clrDgField]="'name'">Faction Name</clr-dg-column>
         <clr-dg-column [clrDgSortBy]="'influence'">Influence</clr-dg-column>
         <clr-dg-column [clrDgField]="'state'">State</clr-dg-column>
+        <clr-dg-column [clrDgField]="'happiness'">Happiness</clr-dg-column>
+        <clr-dg-column>Active States</clr-dg-column>
         <clr-dg-column>Pending States</clr-dg-column>
         <clr-dg-column>Recovering States</clr-dg-column>
         <clr-dg-column [clrDgSortBy]="'updated_at'">Last Updated At (UTC)</clr-dg-column>
@@ -71,6 +74,10 @@
             <clr-dg-cell><a routerLink="/faction/{{faction.faction_id}}">{{faction.name}}</a></clr-dg-cell>
             <clr-dg-cell>{{(faction.influence * 100).toFixed(2)}}%</clr-dg-cell>
             <clr-dg-cell>{{faction.state}}</clr-dg-cell>
+            <clr-dg-cell>{{faction.happiness}}</clr-dg-cell>
+            <clr-dg-cell>
+                <span class="label" *ngFor="let active of faction.active_states" class="label-info">{{active.state}}</span>
+            </clr-dg-cell>
             <clr-dg-cell>
                 <span class="label" *ngFor="let pending of faction.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
             </clr-dg-cell>
@@ -107,10 +114,16 @@
                 <app-system-state-chart [systemData]="systemData"></app-system-state-chart>
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
-                <app-system-p-r-state-chart [systemData]="systemData" type="pending"></app-system-p-r-state-chart>
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="active"></app-system-a-p-r-state-chart>
             </div>
             <div class="card-text" *ngIf="systemData !== undefined">
-                <app-system-p-r-state-chart [systemData]="systemData" type="recovering"></app-system-p-r-state-chart>
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="pending"></app-system-a-p-r-state-chart>
+            </div>
+            <div class="card-text" *ngIf="systemData !== undefined">
+                <app-system-a-p-r-state-chart [systemData]="systemData" type="recovering"></app-system-a-p-r-state-chart>
+            </div>
+            <div class="card-text" *ngIf="systemData !== undefined">
+                <app-system-happiness-chart [systemData]="systemData"></app-system-happiness-chart>
             </div>
         </div>
     </div>

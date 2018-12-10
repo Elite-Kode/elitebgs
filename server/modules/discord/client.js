@@ -17,6 +17,5 @@
 "use strict";
 
 const discord = require('discord.js');
-const secrets = require('../../../secrets');
 
 module.exports = new discord.Client();

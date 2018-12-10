@@ -5,7 +5,7 @@ import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSFactionV3Schema, EBGSUser } from '../../typings';
+import { EBGSFactionSchema, EBGSUser } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -15,7 +15,7 @@ import * as moment from 'moment';
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    factionData: EBGSFactionV3Schema;
+    factionData: EBGSFactionSchema;
     systemsPresence: number;
     systemsControlled: number;
     successAlertState = false;
@@ -36,33 +36,36 @@ export class FactionViewComponent implements OnInit {
         this.getFactionData();
     }
 
-    getFactionData() {
+    async getFactionData() {
         this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
-        this.factionService
-            .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')], this.fromDateFilter, this.toDateFilter)
-            .then(faction => {
-                this.factionData = faction[0];
-                this.factionData.government = StringHandlers.titlify(this.factionData.government);
-                this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
-                this.factionData.faction_presence.forEach(system => {
-                    system.state = FDevIDs.state[system.state].name;
-                    system.pending_states.forEach(state => {
-                        state.state = FDevIDs.state[state.state].name;
-                    });
-                    system.recovering_states.forEach(state => {
-                        state.state = FDevIDs.state[state.state].name;
-                    });
-                });
-                this.systemsPresence = this.factionData.faction_presence.length;
-                this.systemsControlled = this.factionData.faction_presence.reduce((count, system) => {
-                    if (system.controlling) {
-                        return count + 1;
-                    } else {
-                        return count;
-                    }
-                }, 0);
-                this.titleService.setTitle(this.factionData.name + ' - Elite BGS');
-            })
+        const faction = await this.factionService
+            .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')], this.fromDateFilter, this.toDateFilter);
+        this.factionData = faction[0];
+        this.factionData.government = StringHandlers.titlify(this.factionData.government);
+        this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
+        this.factionData.faction_presence.forEach(system => {
+            system.state = FDevIDs.state[system.state].name;
+            system.happiness = system.happiness ? FDevIDs.happiness[system.happiness].name : '';
+            system.active_states = system.active_states ? system.active_states : [];
+            system.active_states.forEach(state => {
+                state.state = FDevIDs.state[state.state].name;
+            });
+            system.pending_states.forEach(state => {
+                state.state = FDevIDs.state[state.state].name;
+            });
+            system.recovering_states.forEach(state => {
+                state.state = FDevIDs.state[state.state].name;
+            });
+        });
+        this.systemsPresence = this.factionData.faction_presence.length;
+        this.systemsControlled = this.factionData.faction_presence.reduce((count, system) => {
+            if (system.controlling) {
+                return count + 1;
+            } else {
+                return count;
+            }
+        }, 0);
+        this.titleService.setTitle(this.factionData.name + ' - Elite BGS');
     }
 
     getAuthentication() {

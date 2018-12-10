@@ -23,14 +23,31 @@
         <ng-container *ngIf="user">
             <div class="btn-group btn-primary">
                 <button (click)="monitor()" class="btn btn-primary" [disabled]="true">Monitor Station</button>
-                <button (click)="openStationEditModal()" class="btn btn-primary" [disabled]="!editAllowed || editAllowed === undefined">Edit</button>
             </div>
-            <app-station-edit [(modalOpen)]="editModal" [station]="stationData" *ngIf="editAllowed && editAllowed !== undefined"></app-station-edit>
         </ng-container>
     </ng-template>
-    <p><b>Type : </b>{{stationData?.type}}</p>
-    <p><b>Government : </b>{{stationData?.government}}</p>
-    <p><b>Allegiance : </b>{{stationData?.allegiance}}</p>
-    <p><b>Economy : </b>{{stationData?.economy}}</p>
-    <p><b>State : </b>{{stationData?.state}}</p>
+    <div class="clr-row data-description">
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Type : </b>{{stationData?.type}}
+        </div>
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Government : </b>{{stationData?.government}}
+        </div>
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Allegiance : </b>{{stationData?.allegiance}}
+        </div>
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>State : </b>{{stationData?.state}}
+        </div>
+    </div>
+    <div class="clr-row data-description">
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>Economy : </b>{{stationData?.economy}}
+        </div>
+    </div>
+    <div class="clr-row data-description">
+        <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
+            <b>All Economies : </b><app-station-economies-chart [stationData]="stationData"></app-station-economies-chart>
+        </div>
+    </div>
 </div>

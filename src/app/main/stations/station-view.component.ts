@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSStationV4Schema } from '../../typings';
+import { EBGSUser, EBGSStationSchema } from '../../typings';
 import { StationsService } from '../../services/stations.service';
 
 @Component({
@@ -13,9 +13,7 @@ import { StationsService } from '../../services/stations.service';
 export class StationViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    stationData: EBGSStationV4Schema;
-    editAllowed: boolean;
-    editModal: boolean;
+    stationData: EBGSStationSchema;
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
@@ -26,33 +24,21 @@ export class StationViewComponent implements OnInit {
         private titleService: Title
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.getAuthentication();
-        this.stationService
-            .parseStationDataId([this.route.snapshot.paramMap.get('stationid')])
-            .then(station => {
-                this.stationData = station[0];
-                this.stationData.type = FDevIDs.station[this.stationData.type].name;
-                this.stationData.government = FDevIDs.government[this.stationData.government].name;
-                this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
-                this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
-                this.stationData.state = FDevIDs.state[this.stationData.state].name;
-                this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
-                // this.getEditAllowed();
-                this.editAllowed = false;   // Temporarily edit is disabled
-            });
-    }
-
-    openStationEditModal() {
-        this.editModal = true;
-    }
-
-    getEditAllowed() {
-        this.authenticationService
-            .isEditAllowed(this.stationData.name_lower)
-            .subscribe(check => {
-                this.editAllowed = check;
-            })
+        const station = await this.stationService
+            .parseStationDataId([this.route.snapshot.paramMap.get('stationid')]);
+        this.stationData = station[0];
+        this.stationData.type = FDevIDs.station[this.stationData.type].name;
+        this.stationData.government = FDevIDs.government[this.stationData.government].name;
+        this.stationData.allegiance = FDevIDs.superpower[this.stationData.allegiance].name;
+        this.stationData.economy = FDevIDs.economy[this.stationData.economy].name;
+        this.stationData.all_economies = this.stationData.all_economies ? this.stationData.all_economies : [];
+        this.stationData.all_economies.forEach(economy => {
+            economy.name = FDevIDs.economy[economy.name].name;
+        });
+        this.stationData.state = FDevIDs.state[this.stationData.state].name;
+        this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
     }
 
     getAuthentication() {
@@ -88,9 +74,9 @@ export class StationViewComponent implements OnInit {
 
     getUser() {
         this.authenticationService
-        .getUser()
-        .subscribe(user => {
-            this.user = user;
-        });
+            .getUser()
+            .subscribe(user => {
+                this.user = user;
+            });
     }
 }

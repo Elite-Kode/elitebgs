@@ -3,10 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
 
-import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
-// import { xrange } from 'highcharts/modules/xrange.src';
-import * as xrange from 'highcharts/modules/xrange.src';
-import * as exporting from 'highcharts/modules/exporting.src';
+import { CustomChartModule } from '../charts/custom-chart.module';
 
 import { MainComponent } from './main.component';
 import { HomeComponent } from './home/home.component';
@@ -16,21 +13,7 @@ import { SystemListComponent } from './systems/system-list.component';
 import { SystemViewComponent } from './systems/system-view.component';
 import { StationListComponent } from './stations/station-list.component';
 import { StationViewComponent } from './stations/station-view.component';
-import { TickComponent } from './tick/tick.component';
-import { FactionInfluenceChartComponent } from './charts/faction-influence-chart.component';
-import { FactionStateChartComponent } from './charts/faction-state-chart.component';
-import { FactionPRStateChartComponent } from './charts/faction-p-r-state-chart.component';
-import { SystemInfluenceChartComponent } from './charts/system-influence-chart.component';
-import { SystemStateChartComponent } from './charts/system-state-chart.component';
-import { SystemPRStateChartComponent } from './charts/system-p-r-state-chart.component';
-import { TickChartComponent } from './charts/tick-chart.component';
-import { SystemEditComponent } from './edit_modals/system-edit.component';
-import { StationEditComponent } from './edit_modals/station-edit.component';
 import { MainRoutingModule } from './main-routing.module';
-
-export function highchartsModules() {
-    return [xrange, exporting];
-}
 
 @NgModule({
     declarations: [
@@ -41,29 +24,16 @@ export function highchartsModules() {
         FactionListComponent,
         FactionViewComponent,
         StationListComponent,
-        StationViewComponent,
-        TickComponent,
-        SystemInfluenceChartComponent,
-        FactionInfluenceChartComponent,
-        SystemStateChartComponent,
-        TickChartComponent,
-        SystemPRStateChartComponent,
-        FactionStateChartComponent,
-        FactionPRStateChartComponent,
-        SystemEditComponent,
-        StationEditComponent
+        StationViewComponent
     ],
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
         ClarityModule,
-        ChartModule,
-        MainRoutingModule
+        MainRoutingModule,
+        CustomChartModule
     ],
-    exports: [MainComponent],
-    providers: [
-        { provide: HIGHCHARTS_MODULES, useFactory: highchartsModules }
-    ]
+    exports: [MainComponent]
 })
 export class MainModule { }

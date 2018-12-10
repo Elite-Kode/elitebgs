@@ -18,7 +18,7 @@
 
 let mongoosePaginate = require('mongoose-paginate');
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
@@ -27,7 +27,6 @@ module.exports = new Promise((resolve, reject) => {
     let user = new Schema({
         id: String,
         username: String,
-        email: String,
         avatar: String,
         discriminator: String,
         access: Number,
@@ -42,12 +41,6 @@ module.exports = new Promise((resolve, reject) => {
         }],
         invite: String,
         invite_used: Boolean,
-        guilds: [{
-            _id: false,
-            id: String,
-            name: String,
-            icon: String
-        }],
         factions: [{
             _id: false,
             name: String,
@@ -62,11 +55,6 @@ module.exports = new Promise((resolve, reject) => {
             _id: false,
             name: String,
             name_lower: String
-        }],
-        editable_factions: [{
-            _id: false,
-            name: String,
-            name_lower: String
         }]
     });
 
@@ -74,5 +62,5 @@ module.exports = new Promise((resolve, reject) => {
 
     let model = connection.model('ebgsUsers', user);
 
-    resolve(model);
-})
+    return model;
+})();

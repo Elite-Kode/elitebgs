@@ -71,117 +71,115 @@ let router = express.Router();
    *             $ref: '#/definitions/EBGSFactionsPageV3'
    *     deprecated: true
    */
-router.get('/', cors(), (req, res, next) => {
-    require('../../../models/ebgs_factions_v3')
-        .then(factions => {
-            let query = new Object;
-            let page = 1;
-            let history = false;
-            let greaterThanTime;
-            let lesserThanTime;
+router.get('/', cors(), async (req, res, next) => {
+    try {
+        let factions = await require('../../../models/ebgs_factions_v3');
+        let query = new Object;
+        let page = 1;
+        let history = false;
+        let greaterThanTime;
+        let lesserThanTime;
 
-            if (req.query.id) {
-                query._id = req.query.id;
+        if (req.query.id) {
+            query._id = req.query.id;
+        }
+        if (req.query.name) {
+            query.name_lower = req.query.name.toLowerCase();
+        }
+        if (req.query.allegiance) {
+            query.allegiance = req.query.allegiance.toLowerCase();
+        }
+        if (req.query.government) {
+            query.government = req.query.government.toLowerCase();
+        }
+        if (req.query.beginsWith) {
+            query.name_lower = {
+                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             }
-            if (req.query.name) {
-                query.name_lower = req.query.name.toLowerCase();
+        }
+        if (req.query.page) {
+            page = req.query.page;
+        }
+        if (req.query.timemin && req.query.timemax) {
+            history = true;
+            greaterThanTime = new Date(Number(req.query.timemin));
+            lesserThanTime = new Date(Number(req.query.timemax));
+        }
+        if (req.query.timemin && !req.query.timemax) {
+            history = true;
+            greaterThanTime = new Date(Number(req.query.timemin));
+            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+        }
+        if (!req.query.timemin && req.query.timemax) {
+            history = true;
+            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
+            lesserThanTime = new Date(Number(req.query.timemax));
+        }
+        if (history) {
+            if (query._id) {
+                query._id = require('../../../db').mongoose.Types.ObjectId(query._id);
             }
-            if (req.query.allegiance) {
-                query.allegiance = req.query.allegiance.toLowerCase();
+            let aggregate = factions.aggregate();
+            let aggregateOptions = {
+                page: page,
+                limit: 10
             }
-            if (req.query.government) {
-                query.government = req.query.government.toLowerCase();
-            }
-            if (req.query.beginsWith) {
-                query.name_lower = {
-                    $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-                }
-            }
-            if (req.query.page) {
-                page = req.query.page;
-            }
-            if (req.query.timemin && req.query.timemax) {
-                history = true;
-                greaterThanTime = new Date(Number(req.query.timemin));
-                lesserThanTime = new Date(Number(req.query.timemax));
-            }
-            if (req.query.timemin && !req.query.timemax) {
-                history = true;
-                greaterThanTime = new Date(Number(req.query.timemin));
-                lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
-            }
-            if (!req.query.timemin && req.query.timemax) {
-                history = true;
-                greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-                lesserThanTime = new Date(Number(req.query.timemax));
-            }
-            if (history) {
-                if (query._id) {
-                    query._id = require('../../../db').mongoose.Types.ObjectId(query._id);
-                }
-                let aggregate = factions.aggregate();
-                let aggregateOptions = {
-                    page: page,
-                    limit: 10
-                }
-                aggregate.match(query).project({
-                    _id: 1,
-                    eddb_id: 1,
-                    name: 1,
-                    name_lower: 1,
-                    updated_at: 1,
-                    government: 1,
-                    allegiance: 1,
-                    home_system_name: 1,
-                    is_player_faction: 1,
-                    faction_presence: 1,
-                    history: {
-                        $filter: {
-                            input: "$history",
-                            as: "record",
-                            cond: {
-                                $and: [
-                                    { $lte: ["$$record.updated_at", lesserThanTime] },
-                                    { $gte: ["$$record.updated_at", greaterThanTime] }
-                                ]
-                            }
+            aggregate.match(query).project({
+                _id: 1,
+                eddb_id: 1,
+                name: 1,
+                name_lower: 1,
+                updated_at: 1,
+                government: 1,
+                allegiance: 1,
+                home_system_name: 1,
+                is_player_faction: 1,
+                faction_presence: 1,
+                history: {
+                    $filter: {
+                        input: "$history",
+                        as: "record",
+                        cond: {
+                            $and: [
+                                { $lte: ["$$record.updated_at", lesserThanTime] },
+                                { $gte: ["$$record.updated_at", greaterThanTime] }
+                            ]
                         }
                     }
-                });
-                factions.aggregatePaginate(
-                    aggregate,
-                    aggregateOptions,
-                    (err, resultDocs, page, items) => {
-                        if (err) {
-                            next(err);
-                        } else {
-                            let result = {
-                                docs: resultDocs,
-                                total: items,
-                                limit: aggregateOptions.limit,
-                                page: aggregateOptions.page,
-                                pages: Math.ceil(items / aggregateOptions.limit)
-                            }
-                            res.status(200).json(result);
+                }
+            });
+            factions.aggregatePaginate(
+                aggregate,
+                aggregateOptions,
+                (err, resultDocs, page, items) => {
+                    if (err) {
+                        next(err);
+                    } else {
+                        let result = {
+                            docs: resultDocs,
+                            total: items,
+                            limit: aggregateOptions.limit,
+                            page: aggregateOptions.page,
+                            pages: Math.ceil(items / aggregateOptions.limit)
                         }
-                    }
-                )
-            } else {
-                let paginateOptions = {
-                    select: { history: 0 },
-                    lean: true,
-                    leanWithId: false,
-                    page: page,
-                    limit: 10
-                };
-                factions.paginate(query, paginateOptions)
-                    .then(result => {
                         res.status(200).json(result);
-                    })
-                    .catch(next)
-            }
-        })
-        .catch(next);
+                    }
+                }
+            )
+        } else {
+            let paginateOptions = {
+                select: { history: 0 },
+                lean: true,
+                leanWithId: false,
+                page: page,
+                limit: 10
+            };
+            let result = await factions.paginate(query, paginateOptions);
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = router;

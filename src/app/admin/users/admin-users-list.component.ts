@@ -30,14 +30,12 @@ export class AdminUsersListComponent implements OnInit {
             const access = responseUser.access;
             const discordId = responseUser.id;
             const discriminator = responseUser.discriminator;
-            const email = responseUser.email;
             return <IAdminUsers>{
                 id: id,
                 username: username,
                 access: access,
                 discordId: discordId,
-                discriminator: discriminator,
-                email: email
+                discriminator: discriminator
             };
         });
     }

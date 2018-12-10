@@ -18,7 +18,7 @@
 
 let mongoosePaginate = require('mongoose-paginate');
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
@@ -28,12 +28,18 @@ module.exports = new Promise((resolve, reject) => {
         eddb_id: Number,
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
+        market_id: { type: String, index: true },
         type: { type: String, lowercase: true, index: true },
         system: String,
         system_lower: { type: String, lowercase: true, index: true },
         updated_at: { type: Date, index: true },
         government: { type: String, lowercase: true, index: true },
         economy: { type: String, lowercase: true, index: true },
+        all_economies: [{
+            _id: false,
+            name: { type: String, lowercase: true},
+            proportion: Number
+        }],
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true, index: true },
         distance_from_star: Number,
@@ -49,5 +55,5 @@ module.exports = new Promise((resolve, reject) => {
 
     let model = connection.model('ebgsStationV4', ebgsStation);
 
-    resolve(model);
-})
+    return model;
+})();

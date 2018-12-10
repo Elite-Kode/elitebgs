@@ -12,12 +12,6 @@ export class AuthenticationService {
         return this.http.get<boolean>('/auth/check');
     }
 
-    isEditAllowed(systemName: string): Observable<boolean> {
-        return this.http.get<boolean>('/auth/check/edit', {
-            params: new HttpParams().set('name', systemName)
-        });
-    }
-
     getUser(): Observable<EBGSUser> {
         return this.http.get<EBGSUser>('/auth/user');
     }
@@ -43,12 +37,6 @@ export class AuthenticationService {
     removeSystem(system: string): Observable<boolean> {
         return this.http.delete<boolean>('/auth/user/edit', {
             params: new HttpParams().set('system', system)
-        });
-    }
-
-    removeEditableFaction(faction: string): Observable<boolean> {
-        return this.http.delete<boolean>('/auth/user/edit', {
-            params: new HttpParams().set('editablefaction', faction)
         });
     }
 

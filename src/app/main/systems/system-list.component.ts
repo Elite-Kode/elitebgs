@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { ISystem } from './system.interface';
 import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemsV3WOHistory } from '../../typings';
+import { EBGSSystemsWOHistory } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -30,7 +30,7 @@ export class SystemListComponent implements OnInit {
         this.titleService.setTitle('System Search - Elite BGS');
     }
 
-    showSystem(systems: EBGSSystemsV3WOHistory) {
+    showSystem(systems: EBGSSystemsWOHistory) {
         this.totalRecords = systems.total;
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;
@@ -38,6 +38,7 @@ export class SystemListComponent implements OnInit {
             const government = FDevIDs.government[responseSystem.government].name;
             const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
             const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
+            const secondary_economy = responseSystem.secondary_economy ? FDevIDs.economy[responseSystem.secondary_economy].name : '';
             const state = FDevIDs.state[responseSystem.state].name;
             return <ISystem>{
                 id: id,
@@ -45,6 +46,7 @@ export class SystemListComponent implements OnInit {
                 government: government,
                 allegiance: allegiance,
                 primary_economy: primary_economy,
+                secondary_economy: secondary_economy,
                 state: state
             };
         });

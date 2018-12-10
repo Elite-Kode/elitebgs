@@ -4,7 +4,7 @@
         <section class="form-block">
             <label>Filter User</label>
             <div class="form-group">
-                <label for="user">Username/Email/Id</label>
+                <label for="user">Username/Id</label>
                 <input type="text" id="user" placeholder="Garud" formControlName="user">
             </div>
         </section>
@@ -12,7 +12,6 @@
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>Username</clr-dg-column>
         <clr-dg-column>Discriminator</clr-dg-column>
-        <clr-dg-column>Email</clr-dg-column>
         <clr-dg-column>Access</clr-dg-column>
         <clr-dg-column>Discord Id</clr-dg-column>
 
@@ -21,7 +20,6 @@
         <clr-dg-row *ngFor="let user of userData">
             <clr-dg-cell><a routerLink="/admin/users/{{user.id}}">{{user.username}}</a></clr-dg-cell>
             <clr-dg-cell>{{user.discriminator}}</clr-dg-cell>
-            <clr-dg-cell>{{user.email}}</clr-dg-cell>
             <clr-dg-cell>{{user.access}}</clr-dg-cell>
             <clr-dg-cell>{{user.discordId}}</clr-dg-cell>
         </clr-dg-row>

@@ -30,23 +30,22 @@ socket.on('message', (data) => {
     saveTick(tickTime);
 });
 
-let saveTick = async (tickTime) => {
-    tickTimesV4Model
-        .then(async (model) => {
-            let existingTicks = await model.find({
-                time: {
-                    $gte: tickTime
-                }
-            }).lean();
-            if (_.isEmpty(existingTicks)) {
-                let document = new model({
-                    time: tickTime,
-                    updated_at: new Date(Date.now())
-                });
-                await document.save();
+let saveTick = async tickTime => {
+    try {
+        let model = await tickTimesV4Model;
+        let existingTicks = await model.find({
+            time: {
+                $gte: tickTime
             }
-        })
-        .catch(err => {
-            reject(err);
-        });
+        }).lean();
+        if (_.isEmpty(existingTicks)) {
+            let document = new model({
+                time: tickTime,
+                updated_at: new Date(Date.now())
+            });
+            document.save();
+        }
+    } catch (err) {
+        console.log(err);
+    }
 }

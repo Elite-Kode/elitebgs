@@ -1,26 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSSystemsV3, EBGSSystemsV3WOHistory, EBGSFactionV3Schema, EBGSSystemChart, EBGSSystemPostHistory, EBGSFactionPostHistory, EBGSSystemChartPaginate } from '../typings';
-import { FactionsService } from './factions.service';
+import { EBGSSystemsWOHistory, EBGSSystemChart, EBGSSystemChartPaginate } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class SystemsService {
 
     constructor(
-        private http: HttpClient,
-        private factionsService: FactionsService
+        private http: HttpClient
     ) { }
 
-    getSystemsBegins(page: string, name: string): Observable<EBGSSystemsV3WOHistory> {
-        return this.http.get<EBGSSystemsV3WOHistory>('/frontend/systems', {
+    getSystemsBegins(page: string, name: string): Observable<EBGSSystemsWOHistory> {
+        return this.http.get<EBGSSystemsWOHistory>('/frontend/systems', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
         });
     }
 
-    getSystems(name: string): Observable<EBGSSystemsV3WOHistory> {
-        return this.http.get<EBGSSystemsV3WOHistory>('/frontend/systems', {
+    getSystems(name: string): Observable<EBGSSystemsWOHistory> {
+        return this.http.get<EBGSSystemsWOHistory>('/frontend/systems', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
         });
     }
@@ -45,7 +43,7 @@ export class SystemsService {
         return this.parseSystemData(systemsList, 'id', timeMin, timeMax);
     }
 
-    private parseSystemData(systemsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSSystemChart[]> {
+    private async parseSystemData(systemsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSSystemChart[]> {
         const allSystemsGet: Promise<EBGSSystemChartPaginate>[] = [];
         const returnSystems: EBGSSystemChart[] = [];
         if (timeMin === undefined || timeMin === null) {
@@ -73,14 +71,7 @@ export class SystemsService {
                 });
             }));
         });
-        return new Promise((resolve, reject) => {
-            Promise.all(allSystemsGet)
-                .then(systems => {
-                    resolve(returnSystems);
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+        await Promise.all(allSystemsGet);
+        return returnSystems;
     }
 }

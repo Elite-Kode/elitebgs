@@ -40,13 +40,6 @@ export class ProfileComponent implements OnInit {
                         this.getUser();
                     });
             },
-            removeEditableFaction: () => {
-                this.authenticationService
-                    .removeEditableFaction(this.selectedDeleteParameters[0])
-                    .subscribe(status => {
-                        this.getUser();
-                    });
-            },
             deleteAccount: () => {
                 this.authenticationService
                     .removeUser(this.user._id)
@@ -91,13 +84,6 @@ export class ProfileComponent implements OnInit {
     removeSystem(name: string) {
         this.selectedDeleteMethod = 'removeSystem';
         this.warningText = `Would you like to delete the system ${name}?`;
-        this.selectedDeleteParameters = [name];
-        this.warningModal = true;
-    }
-
-    removeEditableFaction(name: string) {
-        this.selectedDeleteMethod = 'removeEditableFaction';
-        this.warningText = `Would you like to delete the editable faction ${name}?`;
         this.selectedDeleteParameters = [name];
         this.warningModal = true;
     }

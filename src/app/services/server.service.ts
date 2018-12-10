@@ -14,10 +14,6 @@ export class ServerService {
         return this.http.get<string[]>('/frontend/backgroundimages');
     }
 
-    postEdit(data): Observable<boolean> {
-        return this.http.post<boolean>('/frontend/edit', data);
-    }
-
     getDonors(): Observable<EBGSDonor[]> {
         return this.http.get<EBGSDonor[]>('/frontend/donors');
     }

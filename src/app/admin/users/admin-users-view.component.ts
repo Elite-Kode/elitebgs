@@ -15,7 +15,6 @@ export class AdminUsersViewComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     factionAdd: string;
     systemAdd: string;
-    editableFactionAdd: string;
     donationAmount: number;
     donationDate: string;
     userData: EBGSUser;
@@ -36,7 +35,6 @@ export class AdminUsersViewComponent implements OnInit {
     ) {
         this.factionAdd = '';
         this.systemAdd = '';
-        this.editableFactionAdd = '';
         this.donationAmount = 0;
         this.donationDate = '';
         this.actionMethods = {
@@ -117,20 +115,6 @@ export class AdminUsersViewComponent implements OnInit {
             name_lower: this.systemAdd.toLowerCase()
         });
         this.systemAdd = '';
-    }
-
-    removeEditableFaction(faction: string) {
-        this.userUnderEdit.editable_factions.splice(this.userUnderEdit.editable_factions.findIndex(element => {
-            return element.name_lower === faction.toLowerCase();
-        }), 1);
-    }
-
-    addEditableFaction() {
-        this.userUnderEdit.editable_factions.push({
-            name: this.editableFactionAdd,
-            name_lower: this.editableFactionAdd.toLowerCase()
-        });
-        this.editableFactionAdd = '';
     }
 
     removeDonation(id: string) {

@@ -16,7 +16,7 @@
 
 "use strict";
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
@@ -32,6 +32,11 @@ module.exports = new Promise((resolve, reject) => {
         system_lower: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
         influence: Number,
+        happiness: { type: String, lowercase: true },
+        active_states: [{
+            _id: false,
+            state: { type: String, lowercase: true }
+        }],
         pending_states: [{
             _id: false,
             state: { type: String, lowercase: true },
@@ -51,5 +56,5 @@ module.exports = new Promise((resolve, reject) => {
 
     let model = connection.model('ebgsHistoryFactionV4', ebgsHistoryFaction);
 
-    resolve(model);
-})
+    return model;
+})();

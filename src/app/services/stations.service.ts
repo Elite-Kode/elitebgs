@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSStationsV4WOHistory, EBGSStationsV4, EBGSStationV4Schema } from '../typings';
+import { EBGSStationsWOHistory, EBGSStations, EBGSStationSchema } from '../typings';
 // import { FactionsService } from './factions.service';
 import { CustomEncoder } from './custom.encoder';
 
@@ -13,44 +13,44 @@ export class StationsService {
         // private factionsService: FactionsService
     ) { }
 
-    getStationsBegins(page: string, name: string): Observable<EBGSStationsV4WOHistory> {
-        return this.http.get<EBGSStationsV4WOHistory>('/frontend/stations', {
+    getStationsBegins(page: string, name: string): Observable<EBGSStationsWOHistory> {
+        return this.http.get<EBGSStationsWOHistory>('/frontend/stations', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
         });
     }
 
-    getStations(name: string): Observable<EBGSStationsV4WOHistory> {
-        return this.http.get<EBGSStationsV4WOHistory>('/frontend/stations', {
+    getStations(name: string): Observable<EBGSStationsWOHistory> {
+        return this.http.get<EBGSStationsWOHistory>('/frontend/stations', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
         });
     }
 
-    getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSStationsV4> {
-        return this.http.get<EBGSStationsV4>('/frontend/stations', {
+    getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSStations> {
+        return this.http.get<EBGSStations>('/frontend/stations', {
             params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
         });
     }
 
-    getHistory(name: string, timemin: string, timemax: string): Observable<EBGSStationsV4> {
-        return this.http.get<EBGSStationsV4>('/frontend/stations', {
+    getHistory(name: string, timemin: string, timemax: string): Observable<EBGSStations> {
+        return this.http.get<EBGSStations>('/frontend/stations', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         });
     }
 
-    parseStationDataName(systemsList: string[]): Promise<EBGSStationV4Schema[]> {
+    parseStationDataName(systemsList: string[]): Promise<EBGSStationSchema[]> {
         return this.parseStationData(systemsList, 'name');
     }
 
-    parseStationDataId(systemsList: string[]): Promise<EBGSStationV4Schema[]> {
+    parseStationDataId(systemsList: string[]): Promise<EBGSStationSchema[]> {
         return this.parseStationData(systemsList, 'id');
     }
 
-    private parseStationData(stationsList: string[], type: string): Promise<EBGSStationV4Schema[]> {
-        const allStationsGet: Promise<EBGSStationsV4>[] = [];
-        const returnStations: EBGSStationV4Schema[] = [];
+    private async parseStationData(stationsList: string[], type: string): Promise<EBGSStationSchema[]> {
+        const allStationsGet: Promise<EBGSStations>[] = [];
+        const returnStations: EBGSStationSchema[] = [];
         stationsList.forEach(station => {
             allStationsGet.push(new Promise((resolve, reject) => {
-                let history: Observable<EBGSStationsV4>;
+                let history: Observable<EBGSStations>;
                 if (type === 'name') {
                     history = this.getHistory(station, (Date.now() - 10 * 24 * 60 * 60 * 1000).toString(), Date.now().toString());
                 }
@@ -67,14 +67,7 @@ export class StationsService {
                 });
             }));
         });
-        return new Promise((resolve, reject) => {
-            Promise.all(allStationsGet)
-                .then(systems => {
-                    resolve(returnStations);
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+        await Promise.all(allStationsGet);
+        return returnStations;
     }
 }

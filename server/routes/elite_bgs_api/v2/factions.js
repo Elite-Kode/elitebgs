@@ -79,149 +79,147 @@ let router = express.Router();
    *             $ref: '#/definitions/EBGSFactionsPage'
    *     deprecated: true
    */
-router.get('/', passport.authenticate('basic', { session: false }), (req, res, next) => {
-    require('../../../models/ebgs_factions')
-        .then(factions => {
-            let query = new Object;
-            let page = 1;
+router.get('/', passport.authenticate('basic', { session: false }), async (req, res, next) => {
+    try {
+        let factions = await require('../../../models/ebgs_factions');
+        let query = new Object;
+        let page = 1;
 
-            if (req.query.id) {
-                query._id = req.query.id;
+        if (req.query.id) {
+            query._id = req.query.id;
+        }
+        if (req.query.name) {
+            query.name_lower = req.query.name.toLowerCase();
+        }
+        if (req.query.allegiance) {
+            query.allegiance = req.query.allegiance.toLowerCase();
+        }
+        if (req.query.government) {
+            query.government = req.query.government.toLowerCase();
+        }
+        if (req.query.beginsWith) {
+            query.name_lower = {
+                $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
             }
-            if (req.query.name) {
-                query.name_lower = req.query.name.toLowerCase();
+        }
+        if (req.query.page) {
+            page = req.query.page;
+        }
+
+        let factionSearch = async () => {
+            if (_.isEmpty(query) && req.user.clearance !== 0) {
+                throw new Error("Add at least 1 query parameter to limit traffic");
             }
-            if (req.query.allegiance) {
-                query.allegiance = req.query.allegiance.toLowerCase();
+            let paginateOptions = {
+                lean: true,
+                page: page,
+                limit: 10
+            };
+            let result = await factions.paginate(query, paginateOptions);
+            let states = [];
+            let systems = [];
+            let timemin = null;
+            let timemax = null;
+            if (req.query.state) {
+                states = arrayfy(req.query.state.toLowerCase());
             }
-            if (req.query.government) {
-                query.government = req.query.government.toLowerCase();
+            if (req.query.system) {
+                systems = arrayfy(req.query.system.toLowerCase());
             }
-            if (req.query.beginsWith) {
-                query.name_lower = {
-                    $regex: new RegExp(`^${req.query.beginsWith.toLowerCase()}`)
-                }
-            }
-            if (req.query.page) {
-                page = req.query.page;
+            if (req.query.timemin && req.query.timemax) {
+                timemin = new Date(Number(req.query.timemin));
+                timemax = new Date(Number(req.query.timemax));
             }
 
-            let factionSearch = () => {
-                if (_.isEmpty(query) && req.user.clearance !== 0) {
-                    throw new Error("Add at least 1 query parameter to limit traffic");
-                }
-                let paginateOptions = {
-                    lean: true,
-                    page: page,
-                    limit: 10
-                };
-                factions.paginate(query, paginateOptions)
-                    .then(result => {
-                        let states = [];
-                        let systems = [];
-                        let timemin = null;
-                        let timemax = null;
-                        if (req.query.state) {
-                            states = arrayfy(req.query.state.toLowerCase());
+            if (states.length === 0 && systems.length === 0 && timemin === null && timemax === null) {
+                result.docs.forEach((doc, index, docs) => {
+                    doc.history.sort((a, b) => {
+                        var key1 = a.updated_at;
+                        var key2 = b.updated_at;
+
+                        if (key1 < key2) {
+                            return 1;
+                        } else if (key1 == key2) {
+                            return 0;
+                        } else {
+                            return -1;
                         }
-                        if (req.query.system) {
-                            systems = arrayfy(req.query.system.toLowerCase());
+                    });
+                    doc.history = [doc.history[0]];
+                    docs[index] = doc;
+                })
+            } else if (states.length !== 0 || systems.length !== 0) {
+                result.docs.forEach((doc, index, docs) => {
+                    let historySelected = []
+                    doc.history.forEach(historyDoc => {
+                        let historyBool = false;
+                        if (states.length > 0) {
+                            if (states.find(eachState => {
+                                return historyDoc.state === eachState;
+                            })) {
+                                historyBool = true;
+                            }
                         }
-                        if (req.query.timemin && req.query.timemax) {
-                            timemin = new Date(Number(req.query.timemin));
-                            timemax = new Date(Number(req.query.timemax));
+
+                        if (systems.length > 0) {
+                            if (systems.find(eachSystem => {
+                                return historyDoc.system_lower === eachSystem;
+                            })) {
+                                historyBool = true;
+                            }
                         }
-
-                        if (states.length === 0 && systems.length === 0 && timemin === null && timemax === null) {
-                            result.docs.forEach((doc, index, docs) => {
-                                doc.history.sort((a, b) => {
-                                    var key1 = a.updated_at;
-                                    var key2 = b.updated_at;
-
-                                    if (key1 < key2) {
-                                        return 1;
-                                    } else if (key1 == key2) {
-                                        return 0;
-                                    } else {
-                                        return -1;
-                                    }
-                                });
-                                doc.history = [doc.history[0]];
-                                docs[index] = doc;
-                            })
-                        } else if (states.length !== 0 || systems.length !== 0) {
-                            result.docs.forEach((doc, index, docs) => {
-                                let historySelected = []
-                                doc.history.forEach(historyDoc => {
-                                    let historyBool = false;
-                                    if (states.length > 0) {
-                                        if (states.find(eachState => {
-                                            return historyDoc.state === eachState;
-                                        })) {
-                                            historyBool = true;
-                                        }
-                                    }
-
-                                    if (systems.length > 0) {
-                                        if (systems.find(eachSystem => {
-                                            return historyDoc.system_lower === eachSystem;
-                                        })) {
-                                            historyBool = true;
-                                        }
-                                    }
-                                    if (historyBool === true) {
-                                        historySelected.push(historyDoc);
-                                    }
-                                });
-
-                                if (timemax !== null && timemin !== null) {
-                                    let historySelectedTime = [];
-                                    historySelected.forEach(history => {
-                                        if (history.updated_at > timemin && history.updated_at < timemax) {
-                                            historySelectedTime.push(history);
-                                        }
-                                    })
-                                    historySelected = historySelectedTime;
-                                } else {
-                                    historySelected.sort((a, b) => {
-                                        var key1 = a.updated_at;
-                                        var key2 = b.updated_at;
-
-                                        if (key1 < key2) {
-                                            return 1;
-                                        } else if (key1 == key2) {
-                                            return 0;
-                                        } else {
-                                            return -1;
-                                        }
-                                    });
-                                    if (historySelected.length > 0) {
-                                        historySelected = [historySelected[0]];
-                                    }
-                                }
-                                doc.history = historySelected;
-                                docs[index] = doc;
-                            })
-                        } else if (timemin !== null && timemax !== null) {
-                            result.docs.forEach((doc, index, docs) => {
-                                let historySelected = [];
-                                doc.history.forEach(history => {
-                                    if (history.updated_at > timemin && history.updated_at < timemax) {
-                                        historySelected.push(history);
-                                    }
-                                });
-                                doc.history = historySelected;
-                                docs[index] = doc;
-                            })
+                        if (historyBool === true) {
+                            historySelected.push(historyDoc);
                         }
-                        res.status(200).json(result);
-                    })
-                    .catch(next)
+                    });
+
+                    if (timemax !== null && timemin !== null) {
+                        let historySelectedTime = [];
+                        historySelected.forEach(history => {
+                            if (history.updated_at > timemin && history.updated_at < timemax) {
+                                historySelectedTime.push(history);
+                            }
+                        })
+                        historySelected = historySelectedTime;
+                    } else {
+                        historySelected.sort((a, b) => {
+                            var key1 = a.updated_at;
+                            var key2 = b.updated_at;
+
+                            if (key1 < key2) {
+                                return 1;
+                            } else if (key1 == key2) {
+                                return 0;
+                            } else {
+                                return -1;
+                            }
+                        });
+                        if (historySelected.length > 0) {
+                            historySelected = [historySelected[0]];
+                        }
+                    }
+                    doc.history = historySelected;
+                    docs[index] = doc;
+                })
+            } else if (timemin !== null && timemax !== null) {
+                result.docs.forEach((doc, index, docs) => {
+                    let historySelected = [];
+                    doc.history.forEach(history => {
+                        if (history.updated_at > timemin && history.updated_at < timemax) {
+                            historySelected.push(history);
+                        }
+                    });
+                    doc.history = historySelected;
+                    docs[index] = doc;
+                })
             }
+            res.status(200).json(result);
+        }
 
-            factionSearch();
-        })
-        .catch(next);
+        factionSearch();
+    } catch (err) {
+        next(err);
+    }
 });
 
 let arrayfy = requestParam => {

@@ -19,7 +19,7 @@
 let mongoosePaginate = require('mongoose-paginate');
 let mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
     let mongoose = db.mongoose;
@@ -69,5 +69,5 @@ module.exports = new Promise((resolve, reject) => {
 
     let model = connection.model('ebgsSystemV3', ebgsSystem);
 
-    resolve(model);
-})
+    return model;
+})();
