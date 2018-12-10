@@ -30,11 +30,6 @@ socket.on('message', (data) => {
     saveTick(tickTime);
 });
 
-socket.on('tick', (data) => {
-    let tickTime = new Date(data);
-    saveTick(tickTime);
-});
-
 let saveTick = async tickTime => {
     try {
         let model = await tickTimesV4Model;
