@@ -42,7 +42,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === faction.toLowerCase();
                     }) === -1) {
                         factionPromise.push((async () => {
-                            let model = require('../../models/ebgs_factions_v4');
+                            let model = await require('../../models/ebgs_factions_v4');
                             let factionGot = await model.findOne({
                                 name_lower: faction.toLowerCase()
                             }).lean();
