@@ -50,7 +50,7 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
                         return element.updated_at === record.updated_at;
                     });
                     if (indexInSystem !== -1 && this.systemData.history[indexInSystem].factions.findIndex(element => {
-                        return element.name_lower === faction;
+                        return element.name_lower === faction.toLowerCase();
                     }) === -1) {
                         data.push([Date.parse(record.updated_at), null]);
                     }
