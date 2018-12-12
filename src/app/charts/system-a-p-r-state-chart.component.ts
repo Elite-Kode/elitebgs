@@ -76,7 +76,7 @@ export class SystemAPRStateChartComponent implements OnInit, OnChanges {
             const allStates: string[] = [];
             let maxStates = 0;
             this.systemData.faction_history.forEach((record, recordIndex, records) => {
-                if (record.faction === faction) {
+                if (record.faction === faction && record[stateType]) {
                     if (record[stateType].length === 0) {
                         records[recordIndex][stateType].push({
                             state: 'none',
@@ -124,7 +124,7 @@ export class SystemAPRStateChartComponent implements OnInit, OnChanges {
             this.systemData.faction_history.filter(record => {
                 return record.faction === faction;
             }).forEach(record => {
-                if (!isEqual(record[stateType].map(recordState => {
+                if (record[stateType] && !isEqual(record[stateType].map(recordState => {
                     return recordState.state;
                 }), previousStates)) {
                     const statesStarting: string[] = pull(difference(record[stateType].map(recordState => {
