@@ -152,6 +152,7 @@ async function getFactions(query, history, page) {
                 }).lean();
                 record.forEach(history => {
                     delete history.faction_id;
+                    delete history.faction_name;
                     delete history.faction_name_lower;
                 });
                 faction.history = record;

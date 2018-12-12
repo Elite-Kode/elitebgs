@@ -274,6 +274,7 @@ type EBGSFactionHistory = EBGSFactionSchema['history'][0];
 
 interface EBGSFactionHistoryList extends EBGSFactionHistory {
     faction: string;
+    faction_lower: string;
 }
 
 interface EBGSSystemChartSchema extends EBGSSystemSchema {

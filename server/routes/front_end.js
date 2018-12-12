@@ -431,8 +431,10 @@ router.get('/systems', async (req, res, next) => {
                     });
                     system.faction_history = historyRecords;
                     system.faction_history.forEach(record => {
-                        record.faction = record.faction_name_lower;
+                        record.faction = record.faction_name;
+                        record.faction_lower = record.faction_name_lower;
                         delete record.faction_id;
+                        delete record.faction_name;
                         delete record.faction_name_lower;
                     });
                     return;
@@ -597,6 +599,7 @@ async function getFactions(query, history, page) {
                 }).lean();
                 record.forEach(history => {
                     delete history.faction_id;
+                    delete history.faction_name;
                     delete history.faction_name_lower;
                 });
                 faction.history = record;

@@ -25,6 +25,7 @@ module.exports = (async () => {
 
     let ebgsHistoryFaction = new Schema({
         faction_id: { type: ObjectId, index: true },
+        faction_name: String,
         faction_name_lower: { type: String, lowercase: true },
         updated_at: { type: Date, index: true },
         updated_by: String,

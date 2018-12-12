@@ -1139,6 +1139,7 @@ function Journal() {
                                                         new: true
                                                     });
                                                 historyObject.faction_id = factionReturn._id;
+                                                historyObject.faction_name = factionReturn.name;
                                                 historyObject.faction_name_lower = factionReturn.name_lower;
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
@@ -1163,6 +1164,7 @@ function Journal() {
                                                         new: true
                                                     })
                                                 historyObject.faction_id = factionReturn._id;
+                                                historyObject.faction_name = factionReturn.name;
                                                 historyObject.faction_name_lower = factionReturn.name_lower;
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
@@ -1280,6 +1282,7 @@ function Journal() {
                                                                 new: true
                                                             });
                                                         historyObject.faction_id = factionReturn._id;
+                                                        historyObject.faction_name = factionReturn.name;
                                                         historyObject.faction_name_lower = factionReturn.name_lower;
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
@@ -1305,6 +1308,7 @@ function Journal() {
                                                                 new: true
                                                             });
                                                         historyObject.faction_id = factionReturn._id;
+                                                        historyObject.faction_name = factionReturn.name;
                                                         historyObject.faction_name_lower = factionReturn.name_lower;
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
@@ -1331,6 +1335,7 @@ function Journal() {
                                                             new: true
                                                         })
                                                     historyObject.faction_id = factionReturn._id;
+                                                    historyObject.faction_name = factionReturn.name;
                                                     historyObject.faction_name_lower = factionReturn.name_lower;
                                                     this.setFactionHistory(historyObject);
                                                 } catch (err) {
