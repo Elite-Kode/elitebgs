@@ -234,19 +234,19 @@ export class FDevIDs {
         },
     };
     public static happiness = {
-        '$Faction_HappinessBand1;': {
+        '$faction_happinessband1;': {
             'name': 'Elated'
         },
-        '$Faction_HappinessBand2;': {
+        '$faction_happinessband2;': {
             'name': 'Happy'
         },
-        '$Faction_HappinessBand3;': {
+        '$faction_happinessband3;': {
             'name': 'Discontented'
         },
-        '$Faction_HappinessBand4;': {
+        '$faction_happinessband4;': {
             'name': 'Unhappy'
         },
-        '$Faction_HappinessBand5;': {
+        '$faction_happinessband5;': {
             'name': 'Despondent'
         }
     };
