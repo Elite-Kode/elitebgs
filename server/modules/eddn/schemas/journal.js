@@ -1864,6 +1864,7 @@ function Journal() {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
                 item.state === messageFaction.FactionState.toLowerCase() &&
                 item.influence === messageFaction.Influence &&
+                item.happiness === messageFaction.Happiness.toLowerCase() &&
                 _.isEqual(_.sortBy(item.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
@@ -1889,6 +1890,9 @@ function Journal() {
 
     // Used in V4
     this.doFactionUpdate = async (messageFaction, dbFaction, message) => {
+        if (!messageFaction.Happiness || messageFaction.Happiness.length === 0) {
+            return { pendingStates: [], recoveringStates: [], doUpdate: false, dontUpdateTime: true };
+        }
         let activeStates = [];
         if (messageFaction.ActiveStates) {
             messageFaction.ActiveStates.forEach(activeState => {
