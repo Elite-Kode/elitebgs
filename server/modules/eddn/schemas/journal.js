@@ -1957,7 +1957,7 @@ function Journal() {
             }
         }
 
-        return { pendingStates, recoveringStates, doUpdate, dontUpdateTime }
+        return { activeStates, pendingStates, recoveringStates, doUpdate, dontUpdateTime }
     }
 
     // Used in V3 and V4
