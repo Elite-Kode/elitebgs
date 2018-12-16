@@ -20,6 +20,9 @@ module.exports = {
         'civilwar': {
             'name': 'Civil War'
         },
+        'civilliberty': {
+            'name': 'Civil Liberty'
+        },
         'election': {
             'name': 'Election'
         },
@@ -234,5 +237,22 @@ module.exports = {
         'megaship': {
             'name': 'Mega Ship'
         },
+    },
+    happiness : {
+        '$faction_happinessband1;': {
+            'name': 'Elated'
+        },
+        '$faction_happinessband2;': {
+            'name': 'Happy'
+        },
+        '$faction_happinessband3;': {
+            'name': 'Discontented'
+        },
+        '$faction_happinessband4;': {
+            'name': 'Unhappy'
+        },
+        '$faction_happinessband5;': {
+            'name': 'Despondent'
+        }
     }
 }

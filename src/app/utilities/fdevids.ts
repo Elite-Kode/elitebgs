@@ -18,6 +18,9 @@ export class FDevIDs {
         'civilwar': {
             'name': 'Civil War'
         },
+        'civilliberty': {
+            'name': 'Civil Liberty'
+        },
         'election': {
             'name': 'Election'
         },
