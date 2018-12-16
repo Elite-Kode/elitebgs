@@ -9,7 +9,7 @@ if (secrets.bugsnag_sourcemap_send) {
             apiKey: secrets.bugsnag_token_angular,
             appVersion: require('./server/version'),
             overwrite: true,
-            publicPath: 'dist',
+            publicPath: '/',
             deleteSourceMaps: true
         })
     ];
