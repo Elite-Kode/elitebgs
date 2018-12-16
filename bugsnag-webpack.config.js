@@ -10,7 +10,7 @@ if (secrets.bugsnag_sourcemap_send) {
             apiKey: secrets.bugsnag_token_angular,
             appVersion: processVars.version,
             overwrite: true,
-            publicPath: `${processVars.protocol}://${processVars.host}/`,
+            publicPath: 'https://elitebgs.app/',
             deleteSourceMaps: true
         })
     ];
