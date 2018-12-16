@@ -9,8 +9,11 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./bugsnag-webpack.config.js"
+            },
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -55,7 +58,7 @@
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,
