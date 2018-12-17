@@ -3,7 +3,7 @@
 module.exports = {
     HighchartsDarkTheme: {
         colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
-            '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff'
+            '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff', '#dd5e98'
         ],
         chart: {
             backgroundColor: '#22343c',
@@ -203,7 +203,8 @@ module.exports = {
             '#91e8e1',
             '#3ab795',
             '#bce784',
-            '#ee6352'
+            '#ee6352',
+            '#6c3a5c'
         ],
         symbols: [
             'circle',
