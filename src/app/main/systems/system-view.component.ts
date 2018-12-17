@@ -6,6 +6,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemChart, EBGSUser } from '../../typings';
 import * as moment from 'moment';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-system-view',
@@ -19,6 +21,8 @@ export class SystemViewComponent implements OnInit {
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
     toDateFilter = new Date(Date.now());
+    dateFilterSubject = new Subject<any>();
+    dateFilter$ = this.dateFilterSubject.asObservable();
     daysGap = 0;
     user: EBGSUser;
     constructor(
@@ -31,6 +35,15 @@ export class SystemViewComponent implements OnInit {
     ngOnInit() {
         this.getAuthentication();
         this.getSystemData();
+        this.dateFilter$
+            .pipe(debounceTime(300))
+            .pipe(switchMap(dates => {
+                // this.loading = true;
+                return this.getSystemData();
+            }))
+            .subscribe(() => {
+                // this.loading = false;
+            });
     }
 
     async getSystemData() {
@@ -113,11 +126,17 @@ export class SystemViewComponent implements OnInit {
 
     fromDateChange(date: Date) {
         this.fromDateFilter = date;
-        this.getSystemData();
+        this.dateFilterSubject.next({
+            from: this.fromDateFilter,
+            to: this.toDateFilter
+        });
     }
 
     toDateChange(date: Date) {
         this.toDateFilter = date;
-        this.getSystemData();
+        this.dateFilterSubject.next({
+            from: this.fromDateFilter,
+            to: this.toDateFilter
+        });
     }
 }
