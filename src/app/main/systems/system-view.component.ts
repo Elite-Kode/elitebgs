@@ -32,25 +32,29 @@ export class SystemViewComponent implements OnInit {
         private titleService: Title
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.getAuthentication();
-        this.getSystemData();
+        this.updateSystem((await this.getSystemData())[0]);
         this.dateFilter$
             .pipe(debounceTime(300))
             .pipe(switchMap(dates => {
                 // this.loading = true;
                 return this.getSystemData();
             }))
-            .subscribe(() => {
+            .subscribe(system => {
+                this.updateSystem(system[0]);
                 // this.loading = false;
             });
     }
 
-    async getSystemData() {
-        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
-        const system = await this.systemService
+    async getSystemData(): Promise<EBGSSystemChart[]> {
+        return await this.systemService
             .parseSystemDataId([this.route.snapshot.paramMap.get('systemid')], this.fromDateFilter, this.toDateFilter);
-        this.systemData = system[0];
+    }
+
+    updateSystem(system: EBGSSystemChart) {
+        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
+        this.systemData = system;
         this.systemData.government = FDevIDs.government[this.systemData.government].name;
         this.systemData.allegiance = FDevIDs.superpower[this.systemData.allegiance].name;
         this.systemData.primary_economy = FDevIDs.economy[this.systemData.primary_economy].name;
