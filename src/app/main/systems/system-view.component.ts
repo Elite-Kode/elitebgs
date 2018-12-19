@@ -21,9 +21,10 @@ export class SystemViewComponent implements OnInit {
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
     toDateFilter = new Date(Date.now());
-    dateFilterSubject = new Subject<any>();
+    dateFilterSubject = new Subject<null>();
     dateFilter$ = this.dateFilterSubject.asObservable();
     daysGap = 0;
+    chartLoading = false;
     user: EBGSUser;
     constructor(
         private systemService: SystemsService,
@@ -34,16 +35,18 @@ export class SystemViewComponent implements OnInit {
 
     async ngOnInit() {
         this.getAuthentication();
+        this.chartLoading = true;
         this.updateSystem((await this.getSystemData())[0]);
+        this.chartLoading = false;
         this.dateFilter$
             .pipe(debounceTime(300))
-            .pipe(switchMap(dates => {
-                // this.loading = true;
+            .pipe(switchMap(() => {
+                this.chartLoading = true;
                 return this.getSystemData();
             }))
             .subscribe(system => {
                 this.updateSystem(system[0]);
-                // this.loading = false;
+                this.chartLoading = false;
             });
     }
 
@@ -130,17 +133,11 @@ export class SystemViewComponent implements OnInit {
 
     fromDateChange(date: Date) {
         this.fromDateFilter = date;
-        this.dateFilterSubject.next({
-            from: this.fromDateFilter,
-            to: this.toDateFilter
-        });
+        this.dateFilterSubject.next();
     }
 
     toDateChange(date: Date) {
         this.toDateFilter = date;
-        this.dateFilterSubject.next({
-            from: this.fromDateFilter,
-            to: this.toDateFilter
-        });
+        this.dateFilterSubject.next();
     }
 }

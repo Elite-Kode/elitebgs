@@ -13,4 +13,10 @@
             margin-right: 10px;
         }
     }
+
+    .flex-relative {
+        display: flex;
+        position: relative;
+        flex-flow: column nowrap;
+    }
 }
