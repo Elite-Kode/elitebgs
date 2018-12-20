@@ -1,13 +1,11 @@
 <div>
     <h1>Factions</h1>
-    <form [formGroup]="factionForm" novalidate>
-        <section class="form-block">
-            <label>Filter Faction</label>
-            <div class="form-group">
-                <label for="factionName">Faction Name</label>
-                <input type="text" id="factionName" placeholder="Knights of Karma" formControlName="factionName">
-            </div>
-        </section>
+    <h4>Filter Faction</h4>
+    <form clrForm [formGroup]="factionForm" novalidate>
+        <clr-input-container>
+            <label for="factionName">Faction Name</label>
+            <input clrInput type="text" id="factionName" placeholder="Knights of Karma" formControlName="factionName">
+        </clr-input-container>
     </form>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>Faction Name</clr-dg-column>
