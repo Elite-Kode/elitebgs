@@ -1,13 +1,11 @@
 <div class="content-area">
     <h1>Users</h1>
-    <form [formGroup]="userForm" novalidate>
-        <section class="form-block">
-            <label>Filter User</label>
-            <div class="form-group">
-                <label for="user">Username/Id</label>
-                <input type="text" id="user" placeholder="Garud" formControlName="user">
-            </div>
-        </section>
+    <form clrForm [formGroup]="userForm" novalidate>
+        <h4>Filter User</h4>
+        <clr-input-container>
+            <label for="user">Username/Id</label>
+            <input clrInput type="text" id="user" placeholder="Garud" formControlName="user">
+        </clr-input-container>
     </form>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>Username</clr-dg-column>

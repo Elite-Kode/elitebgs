@@ -6,6 +6,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSSystemChart, EBGSUser } from '../../typings';
 import * as moment from 'moment';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-system-view',
@@ -19,7 +21,10 @@ export class SystemViewComponent implements OnInit {
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
     toDateFilter = new Date(Date.now());
+    dateFilterSubject = new Subject<null>();
+    dateFilter$ = this.dateFilterSubject.asObservable();
     daysGap = 0;
+    chartLoading = false;
     user: EBGSUser;
     constructor(
         private systemService: SystemsService,
@@ -28,16 +33,31 @@ export class SystemViewComponent implements OnInit {
         private titleService: Title
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.getAuthentication();
-        this.getSystemData();
+        this.chartLoading = true;
+        this.updateSystem((await this.getSystemData())[0]);
+        this.chartLoading = false;
+        this.dateFilter$
+            .pipe(debounceTime(300))
+            .pipe(switchMap(() => {
+                this.chartLoading = true;
+                return this.getSystemData();
+            }))
+            .subscribe(system => {
+                this.updateSystem(system[0]);
+                this.chartLoading = false;
+            });
     }
 
-    async getSystemData() {
-        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
-        const system = await this.systemService
+    async getSystemData(): Promise<EBGSSystemChart[]> {
+        return await this.systemService
             .parseSystemDataId([this.route.snapshot.paramMap.get('systemid')], this.fromDateFilter, this.toDateFilter);
-        this.systemData = system[0];
+    }
+
+    updateSystem(system: EBGSSystemChart) {
+        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
+        this.systemData = system;
         this.systemData.government = FDevIDs.government[this.systemData.government].name;
         this.systemData.allegiance = FDevIDs.superpower[this.systemData.allegiance].name;
         this.systemData.primary_economy = FDevIDs.economy[this.systemData.primary_economy].name;
@@ -113,11 +133,11 @@ export class SystemViewComponent implements OnInit {
 
     fromDateChange(date: Date) {
         this.fromDateFilter = date;
-        this.getSystemData();
+        this.dateFilterSubject.next();
     }
 
     toDateChange(date: Date) {
         this.toDateFilter = date;
-        this.getSystemData();
+        this.dateFilterSubject.next();
     }
 }

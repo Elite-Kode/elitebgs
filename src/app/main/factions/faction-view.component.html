@@ -92,28 +92,46 @@
             <div class="card-title">
                 Last {{daysGap}} Days
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-influence-chart [factionData]="factionData"></app-faction-influence-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
         </div>
         <div class="card-block">
             <div class="card-title">
                 Last {{daysGap}} Days
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-state-chart [factionData]="factionData"></app-faction-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-a-p-r-state-chart [factionData]="factionData" type="active"></app-faction-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-a-p-r-state-chart [factionData]="factionData" type="pending"></app-faction-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-a-p-r-state-chart [factionData]="factionData" type="recovering"></app-faction-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="factionData !== undefined">
+            <div class="card-text flex-relative" *ngIf="factionData !== undefined">
                 <app-faction-happiness-chart [factionData]="factionData"></app-faction-happiness-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
         </div>
     </div>

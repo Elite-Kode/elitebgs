@@ -7,6 +7,8 @@ import { StringHandlers } from '../../utilities/stringHandlers';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSFactionSchema, EBGSUser } from '../../typings';
 import * as moment from 'moment';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-faction-view',
@@ -22,7 +24,10 @@ export class FactionViewComponent implements OnInit {
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
     toDateFilter = new Date(Date.now());
+    dateFilterSubject = new Subject<any>();
+    dateFilter$ = this.dateFilterSubject.asObservable();
     daysGap = 0;
+    chartLoading = false;
     user: EBGSUser;
     constructor(
         private factionService: FactionsService,
@@ -31,16 +36,31 @@ export class FactionViewComponent implements OnInit {
         private titleService: Title
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.getAuthentication();
-        this.getFactionData();
+        this.chartLoading = true;
+        this.updateFaction((await this.getFactionData())[0]);
+        this.chartLoading = false;
+        this.dateFilter$
+            .pipe(debounceTime(300))
+            .pipe(switchMap(() => {
+                this.chartLoading = true;
+                return this.getFactionData();
+            }))
+            .subscribe(faction => {
+                this.updateFaction(faction[0]);
+                this.chartLoading = false;
+            });
     }
 
-    async getFactionData() {
-        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
-        const faction = await this.factionService
+    async getFactionData(): Promise<EBGSFactionSchema[]> {
+        return await this.factionService
             .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')], this.fromDateFilter, this.toDateFilter);
-        this.factionData = faction[0];
+    }
+
+    updateFaction(faction: EBGSFactionSchema) {
+        this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
+        this.factionData = faction;
         this.factionData.government = StringHandlers.titlify(this.factionData.government);
         this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
         this.factionData.faction_presence.forEach(system => {
@@ -117,11 +137,11 @@ export class FactionViewComponent implements OnInit {
 
     fromDateChange(date: Date) {
         this.fromDateFilter = date;
-        this.getFactionData();
+        this.dateFilterSubject.next();
     }
 
     toDateChange(date: Date) {
         this.toDateFilter = date;
-        this.getFactionData();
+        this.dateFilterSubject.next();
     }
 }

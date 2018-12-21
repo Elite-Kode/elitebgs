@@ -102,28 +102,46 @@
             <div class="card-title">
                 Last {{daysGap}} Days
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-influence-chart [systemData]="systemData"></app-system-influence-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
         </div>
         <div class="card-block">
             <div class="card-title">
                 Last {{daysGap}} Days
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-state-chart [systemData]="systemData"></app-system-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-a-p-r-state-chart [systemData]="systemData" type="active"></app-system-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-a-p-r-state-chart [systemData]="systemData" type="pending"></app-system-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-a-p-r-state-chart [systemData]="systemData" type="recovering"></app-system-a-p-r-state-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
-            <div class="card-text" *ngIf="systemData !== undefined">
+            <div class="card-text flex-relative" *ngIf="systemData !== undefined">
                 <app-system-happiness-chart [systemData]="systemData"></app-system-happiness-chart>
+                <div class="chart-spinner" *ngIf="chartLoading">
+                    <div class="spinner"></div>
+                </div>
             </div>
         </div>
     </div>

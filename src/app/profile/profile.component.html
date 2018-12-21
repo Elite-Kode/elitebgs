@@ -11,8 +11,8 @@
         <a class="btn btn-primary" routerLink="/profile/report" *ngIf="isAuthenticated && isAuthenticated !== undefined">Detailed User Report</a>
         <a *ngIf="!user?.invite_used" class="btn btn-primary" [href]="'https://discord.gg/' + user?.invite">Join Discord Server</a>
     </div>
-    <div class="row">
-        <div class="clr-col-xs-12 clr-col-md-12 clr-col-lg-6 clr-col-xl-6">
+    <div class="clr-row">
+        <div class="clr-col-12 clr-col-md-12 clr-col-lg-6 clr-col-xl-6">
             <h3>Monitored Factions</h3>
             <table class="table">
                 <thead>
@@ -33,7 +33,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="clr-col-xs-12 clr-col-md-12 clr-col-lg-6 clr-col-xl-6">
+        <div class="clr-col-12 clr-col-md-12 clr-col-lg-6 clr-col-xl-6">
             <h3>Monitored Systems</h3>
             <table class="table">
                 <thead>

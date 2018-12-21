@@ -16,7 +16,7 @@
         <h1>{{doc?.info.title}}</h1>
         <h3>{{doc?.info.description}}</h3>
         <h4>Version {{doc?.info.version}}</h4>
-        <div class="row">
+        <div class="clr-row">
             <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4" *ngFor="let path of paths;let i=index">
                 <ng-container *ngFor="let method of getMethods(path[0])">
                     <div class="card">
@@ -158,37 +158,44 @@
     <clr-modal [(clrModalOpen)]="tryAPIModal" [clrModalStaticBackdrop]="'true'" [clrModalSize]="'xl'">
         <h3 class="modal-title">{{tryAPIMethod?.toUpperCase()}} - {{tryAPIURL}}</h3>
         <div class="modal-body">
-            <form class="compact" [formGroup]="parametersForm">
-                <section class="form-block">
-                    <label for="parameter_choice">
-                        Add Parameters
-                        <button (click)="addSelectedParameters()" class="btn btn-icon btn-primary">
-                            <clr-icon shape="plus"></clr-icon>
-                            Add Selected Parameters
-                        </button>
-                    </label>
-                    <div class="select multiple">
-                        <select formControlName="parameterChoice" id="parameter_choice" multiple>
-                            <option *ngFor="let parameter of parametersInSelect">
-                                {{parameter.name}}
-                            </option>
-                        </select>
+            <form clrForm class="compact" [formGroup]="parametersForm">
+                <div class="clr-form-control clr-row">
+                    <div class="clr-col-12 flex">
+                        <label for="parameter_choice" class="clr-control-label">
+                            Add Parameters
+                        </label>
+                        <div class="clr-col-12 clr-col-md-10 no-padding-right">
+                            <button (click)="addSelectedParameters()" class="btn btn-icon btn-primary right-align">
+                                <clr-icon shape="plus"></clr-icon>
+                                Add Selected Parameters
+                            </button>
+                        </div>
                     </div>
-                </section>
-                <div class="form-block" formArrayName="parameters">
+                    <div class="clr-control-container clr-col-12">
+                        <div class="clr-select-wrapper full-width">
+                            <select class="clr-select full-width" formControlName="parameterChoice" id="parameter_choice"
+                                multiple>
+                                <option *ngFor="let parameter of parametersInSelect">
+                                    {{parameter.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div formArrayName="parameters">
                     <div class="card">
                         <div class="card-header">Parameters</div>
                         <div class="card-block" *ngFor="let parameter of parametersSelected; let i=index"
                             [formGroupName]="i">
                             <div class="card-text">
-                                <div class="row">
-                                    <div class="clr-col-sm-12 clr-col-md-3">
-                                        <label [for]="'parameter_' + i">{{parameter[0].name}}</label>
+                                <div class="clr-form-control clr-row">
+                                    <label [for]="'parameter_' + i">{{parameter[0].name}}</label>
+                                    <div class="clr-control-container clr-col-12 clr-col-md-9">
+                                        <div class="clr-input-wrapper">
+                                            <input class="clr-input" formControlName="value" type="text" [id]="'parameter_' + i">
+                                        </div>
                                     </div>
-                                    <div class="clr-col-sm-11 clr-col-md-8">
-                                        <input formControlName="value" type="text" [id]="'parameter_' + i">
-                                    </div>
-                                    <div class="clr-col-sm-1 clr-col-md-1">
+                                    <div class="clr-col-12 clr-col-md-1">
                                         <button (click)="deselectParameter(parameter[0])" class="btn btn-danger btn-icon">
                                             <clr-icon shape="trash"></clr-icon>
                                         </button>

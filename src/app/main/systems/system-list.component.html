@@ -1,13 +1,11 @@
 <div>
     <h1>Systems</h1>
-    <form [formGroup]="systemForm" novalidate>
-        <section class="form-block">
-            <label>Filter System</label>
-            <div class="form-group">
-                <label for="systemName">System Name</label>
-                <input type="text" id="systemName" placeholder="Qa'wakana" formControlName="systemName">
-            </div>
-        </section>
+    <form clrForm [formGroup]="systemForm" novalidate>
+        <h4>Filter System</h4>
+        <clr-input-container>
+            <label for="systemName">System Name</label>
+            <input clrInput type="text" id="systemName" placeholder="Qa'wakana" formControlName="systemName">
+        </clr-input-container>
     </form>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>System Name</clr-dg-column>

@@ -1,13 +1,11 @@
 <div>
     <h1>Stations</h1>
-    <form [formGroup]="stationForm" novalidate>
-        <section class="form-block">
-            <label>Filter Station</label>
-            <div class="form-group">
-                <label for="stationName">Station Name</label>
-                <input type="text" id="stationName" placeholder="Carpini Terminal" formControlName="stationName">
-            </div>
-        </section>
+    <form clrForm [formGroup]="stationForm" novalidate>
+        <h4>Filter Station</h4>
+        <clr-input-container>
+            <label for="stationName">Station Name</label>
+            <input clrInput type="text" id="stationName" placeholder="Carpini Terminal" formControlName="stationName">
+        </clr-input-container>
     </form>
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>Station Name</clr-dg-column>
