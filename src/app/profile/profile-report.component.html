@@ -16,26 +16,27 @@
     <h1>{{userUnderEdit?.username}}#{{userUnderEdit?.discriminator}}</h1>
     <img [src]="'https://cdn.discordapp.com/avatars/' + userUnderEdit?.id + '/' + userUnderEdit?.avatar + '.png'" class="profile-icon">
     <button class="btn btn-warning" (click)="deleteAvatar()">Delete Avatar</button>
-    <form #userForm="ngForm" class="form">
-        <section class="form-block">
-            <label>Restricted Data</label>
-            <div class="form-group">
-                <label>Discord id</label>
-                <input id="discordid" name="discordid" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.id" disabled>
-            </div>
-            <div class="form-group">
-                <label>Discord Username</label>
-                <input id="username" name="username" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.username" disabled>
-            </div>
-            <div class="form-group">
-                <label>Discord Discriminator</label>
-                <input id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator" disabled>
-            </div>
-        </section>
-        <section class="form-block">
-            <label>Personalised Data</label>
-            <div class="form-group">
-                <label>Monitored Factions</label>
+    <form clrForm>
+        <h4>Restricted Data</h4>
+        <clr-input-container>
+            <label>Discord id</label>
+            <input clrInput id="discordid" name="discordid" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.id"
+                disabled>
+        </clr-input-container>
+        <clr-input-container>
+            <label>Discord Username</label>
+            <input clrInput id="username" name="username" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.username"
+                disabled>
+        </clr-input-container>
+        <clr-input-container>
+            <label>Discord Discriminator</label>
+            <input clrInput id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator"
+                disabled>
+        </clr-input-container>
+        <h4>Personalised Data</h4>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Monitored Factions</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
                 <table class="table">
                     <thead>
                         <tr>
@@ -49,8 +50,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="form-group">
-                <label>Monitored Systems</label>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Monitored Systems</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
                 <table class="table">
                     <thead>
                         <tr>
@@ -64,22 +67,25 @@
                     </tbody>
                 </table>
             </div>
-        </section>
-        <section class="form-block">
-            <label>Contribution Data</label>
-            <div class="form-group">
-                <label>Commits Made</label>
-                <input id="commits" name="commits" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.os_contribution" disabled>
-            </div>
-            <button class="btn btn-warning" (click)="deleteContribution()">Delete Contributions</button>
-            <div class="form-group">
-                <label>Patronage</label>
-                <input id="level" name="level" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.level" disabled>
-                <input id="since" name="since" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since" disabled>
-            </div>
-            <button class="btn btn-warning" (click)="deletePatronage()">Delete Patronage</button>
-            <div class="form-group">
-                <label>Donations</label>
+        </div>
+        <h4>Contribution Data</h4>
+        <clr-input-container>
+            <label>Commits Made</label>
+            <input clrInput id="commits" name="commits" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.os_contribution"
+                disabled>
+        </clr-input-container>
+        <button class="btn btn-warning" (click)="deleteContribution()">Delete Contributions</button>
+        <clr-input-container>
+            <label>Patronage</label>
+            <input clrInput id="level" name="level" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.level"
+                disabled>
+            <input clrInput id="since" name="since" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since"
+                disabled>
+        </clr-input-container>
+        <button class="btn btn-warning" (click)="deletePatronage()">Delete Patronage</button>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Donations</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
                 <table class="table">
                     <thead>
                         <tr>
@@ -97,8 +103,8 @@
                     </tbody>
                 </table>
             </div>
-            <button class="btn btn-warning" (click)="deleteDonations()">Delete Donations</button>
-        </section>
+        </div>
+        <button class="btn btn-warning" (click)="deleteDonations()">Delete Donations</button>
     </form>
     <button class="btn btn-success" (click)="save()">Save</button>
     <button class="btn btn-warning-outline" (click)="reset()">Reset</button>
