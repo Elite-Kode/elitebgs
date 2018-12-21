@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LayoutModule } from '@angular/cdk/layout';
 import { HttpClientModule } from '@angular/common/http';
 import { ClarityModule } from '@clr/angular';
 
@@ -71,6 +72,7 @@ export function errorHandlerFactory() {
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,
+        LayoutModule,
         ReactiveFormsModule,
         HttpClientModule,
         EddbApiModule,

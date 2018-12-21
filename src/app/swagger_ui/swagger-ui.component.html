@@ -214,7 +214,7 @@
         </div>
     </clr-modal>
 </div>
-<nav class="sidenav">
+<nav class="sidenav" [clr-nav-level]="2">
     <section class="sidenav-content">
         <a (click)="makeActive('Home')" class="nav-link" [ngClass]="{'active': sideNavActive['Home']}">Home</a>
         <section class="nav-group collapsible">

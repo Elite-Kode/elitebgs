@@ -12,18 +12,19 @@
             <a routerLink="/bgsbot" routerLinkActive="active" class="nav-link"><span class="nav-text">BGSBot</span></a>
         </div>
         <div class="header-actions">
-            <a routerLink="/tick" routerLinkActive="active" role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right nav-link">
+            <a routerLink="/tick" routerLinkActive="active" role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-bottom-right nav-link">
                 <div class="tick">
                     <clr-icon shape="clock"></clr-icon>
                     <span class="nav-text">{{tick.time}}</span>
                 </div>
                 <span class="tooltip-content">Last Tick (UTC)</span>
             </a>
-            <a class="nav-icon nav-link" (click)="switchTheme()">
+            <a class="nav-icon nav-link theme-selector" (click)="switchTheme()">
                 <clr-icon shape="sun" *ngIf="getThemeName() === 'dark'"></clr-icon>
                 <clr-icon shape="moon" *ngIf="getThemeName() === 'light'"></clr-icon>
             </a>
-            <a routerLink="/donate" routerLinkActive="active" class="nav-link"><span class="nav-text">Support Us</span></a>
+            <a *ngIf="!breakpointTriggered" routerLink="/donate" routerLinkActive="active" class="nav-link"><span class="nav-text">Support
+                    Us</span></a>
             <clr-dropdown>
                 <button class="nav-icon" clrDropdownTrigger>
                     <clr-icon shape="cog" *ngIf="!isAuthenticated && isAuthenticated !== undefined"></clr-icon>
@@ -38,6 +39,7 @@
                         out</a>
                     <a routerLink="/guide" clrDropdownItem>Guide</a>
                     <a routerLink="/credits" clrDropdownItem>Credits</a>
+                    <a *ngIf="breakpointTriggered" routerLink="/donate" clrDropdownItem>Support Us</a>
                     <a routerLink="/about" clrDropdownItem>About</a>
                 </clr-dropdown-menu>
             </clr-dropdown>

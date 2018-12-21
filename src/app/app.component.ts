@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { AuthenticationService } from './services/authentication.service';
 import { ThemeService } from './services/theme.service';
 import { EBGSUser, TickSchema } from 'app/typings';
@@ -16,11 +17,13 @@ export class AppComponent implements OnInit {
     user: EBGSUser;
     linkRef: HTMLLinkElement;
     tick: TickSchema;
+    breakpointTriggered = false;
 
     constructor(
         private authenticationService: AuthenticationService,
         private themeService: ThemeService,
         private tickService: TickService,
+        private breakpointObserver: BreakpointObserver,
         @Inject(DOCUMENT) private document: Document,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
@@ -35,6 +38,11 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.breakpointObserver
+            .observe(['screen and (max-width: 768px)'])
+            .subscribe((state: BreakpointState) => {
+                this.breakpointTriggered = state.matches;
+            });
         this.getAuthentication();
         this.getTick();
     }
