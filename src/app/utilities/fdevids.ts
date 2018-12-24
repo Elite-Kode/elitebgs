@@ -39,6 +39,9 @@ export class FDevIDs {
         'outbreak': {
             'name': 'Outbreak'
         },
+        'pirateattack': {
+            'name': 'Pirate Attack'
+        },
         'retreat': {
             'name': 'Retreat'
         },

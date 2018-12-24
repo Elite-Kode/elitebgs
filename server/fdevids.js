@@ -41,6 +41,9 @@ module.exports = {
         'outbreak': {
             'name': 'Outbreak'
         },
+        'pirateattack': {
+            'name': 'Pirate Attack'
+        },
         'retreat': {
             'name': 'Retreat'
         },

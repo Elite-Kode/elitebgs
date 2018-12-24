@@ -48,7 +48,7 @@
             <b>Security : </b>{{systemData?.security}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
-            <b>Population : </b>{{systemData?.population}}
+            <b>Population : </b>{{systemData?.population | number}}
         </div>
         <div class="clr-col-sm-12 clr-col-md-6 clr-col-lg-4 clr-col-xl-3">
             <b>Controlling Faction : </b><a routerLink="/faction/{{systemData?.controlling_faction?.faction_id}}">{{systemData?.controlling_faction?.name}}</a>
