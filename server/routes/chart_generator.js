@@ -40,7 +40,7 @@ router.get('/factions/influence', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\faction-influence-chart.component.ts
+        // Copied over from src\app\charts\faction-influence-chart.component.ts
         const history = response.docs[0].history;
         const allSystems = [];
         history.forEach(element => {
@@ -68,8 +68,8 @@ router.get('/factions/influence', async (req, res, next) => {
                     ]);
                 } else {
                     if (element.systems.findIndex(systemElement => {
-                            return systemElement.name === system;
-                        }) === -1) {
+                        return systemElement.name === system;
+                    }) === -1) {
                         data.push([Date.parse(element.updated_at), null]);
                     }
                 }
@@ -79,10 +79,6 @@ router.get('/factions/influence', async (req, res, next) => {
                 data: data
             });
         });
-        let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
-        if (req.query.theme === 'dark') {
-            highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
-        }
         let options = {
             xAxis: {
                 type: 'datetime'
@@ -101,6 +97,10 @@ router.get('/factions/influence', async (req, res, next) => {
                 sourceWidth: 1200
             }
         };
+        let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+        if (req.query.theme === 'dark') {
+            highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+        }
         let highchartsRequestOptions = {
             url: `https://export.highcharts.com/`,
             formData: {
@@ -136,7 +136,7 @@ router.get('/factions/state', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\faction-state-chart.component.ts
+        // Copied over from src\app\charts\faction-state-chart.component.ts
         const history = response.docs[0].history;
         const allSystems = [];
         history.forEach(record => {
@@ -291,7 +291,7 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\faction-p-r-state-chart.component.ts
+        // Copied over from src\app\charts\faction-a-p-r-state-chart.component.ts
         let stateType;
         let stateTitle;
         switch (type) {
@@ -325,7 +325,7 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             const allStates = [];
             let maxStates = 0;
             history.forEach((record, recordIndex, records) => {
-                if (record.system === system) {
+                if (record.system === system && record[stateType]) {
                     if (record[stateType].length === 0) {
                         records[recordIndex][stateType].push({
                             state: 'none',
@@ -373,9 +373,9 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             history.filter(record => {
                 return record.system === system;
             }).forEach(record => {
-                if (!_.isEqual(record[stateType].map(recordState => {
-                        return recordState.state;
-                    }), previousStates)) {
+                if (record[stateType] && !_.isEqual(record[stateType].map(recordState => {
+                    return recordState.state;
+                }), previousStates)) {
                     const statesStarting = _.pull(_.difference(record[stateType].map(recordState => {
                         return recordState.state;
                     }), previousStates), undefined, null);
@@ -521,7 +521,7 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             formData: {
                 options: un_eval(options).replace('systemsRegex', JSON.stringify(systems)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
+                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-${stateType}`,
                 resources: JSON.stringify({
                     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
                 }),
@@ -539,6 +539,147 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
     }
 }
 
+router.get('/factions/happiness', async (req, res, next) => {
+    try {
+        let requestOptions = {
+            url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+            qs: {
+                name: req.query.name,
+                timemin: req.query.timemin,
+                timemax: req.query.timemax
+            },
+            json: true
+        };
+        let response = await request.get(requestOptions);
+        // Copied over from src\app\charts\faction-happiness-chart.component.ts
+        const history = response.docs[0].history;
+        const allSystems = [];
+        history.forEach(record => {
+            if (allSystems.indexOf(record.system) === -1) {
+                allSystems.push(record.system);
+            }
+        });
+        history.sort((a, b) => {
+            if (a.updated_at < b.updated_at) {
+                return -1;
+            } else if (a.updated_at > b.updated_at) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        const series = [];
+        const happiness = Object.keys(FDevIDs.happiness).map(happiness => {
+            return [happiness, FDevIDs.happiness[happiness].name];
+        });
+        let i = 0;
+        happiness.forEach(happiness => {
+            const data = [];
+            allSystems.forEach((system, index) => {
+                let previousHappiness = '';
+                let timeBegin = 0;
+                let timeEnd = 0;
+                history.forEach(record => {
+                    if (record.system === system) {
+                        if (previousHappiness !== record.happiness) {
+                            if (record.happiness === happiness[0]) {
+                                timeBegin = Date.parse(record.updated_at);
+                            }
+                            if (previousHappiness === happiness[0] && record.happiness !== happiness[0]) {
+                                timeEnd = Date.parse(record.updated_at);
+                                data.push({
+                                    x: timeBegin,
+                                    x2: timeEnd,
+                                    y: index
+                                });
+                            }
+                            previousHappiness = record.happiness;
+                        }
+                    }
+                });
+                if (previousHappiness === happiness[0]) {
+                    data.push({
+                        x: timeBegin,
+                        x2: Date.now(),
+                        y: index
+                    });
+                }
+            });
+            series.push({
+                name: happiness[1],
+                pointWidth: 20,
+                data: data
+            });
+            i++;
+        });
+        let options = {
+            chart: {
+                height: 130 + allSystems.length * 40,
+                type: 'xrange'
+            },
+            title: {
+                text: 'Happiness Periods'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: 'Systems'
+                },
+                categories: allSystems,
+                reversed: true
+            },
+            plotOptions: {
+                xrange: {
+                    borderRadius: 0,
+                    borderWidth: 0,
+                    grouping: false,
+                    dataLabels: {
+                        align: 'center',
+                        enabled: true,
+                        format: '{point.name}'
+                    },
+                    colorByPoint: false
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+            },
+            series: series,
+            exporting: {
+                enabled: true,
+                sourceWidth: 1200
+            }
+        };
+        let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+        if (req.query.theme === 'dark') {
+            highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+        }
+        let highchartsRequestOptions = {
+            url: `https://export.highcharts.com/`,
+            formData: {
+                options: JSON.stringify(options),
+                type: 'image/png',
+                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-happiness`,
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
+                scale: 2
+            },
+            encoding: null,
+            resolveWithFullResponse: true
+        }
+        let imageResponse = await request.post(highchartsRequestOptions);
+        res.set('Content-Type', imageResponse.headers['content-type'])
+        res.set('Content-Disposition', imageResponse.headers['content-disposition'])
+        res.send(imageResponse.body);
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.get('/systems/influence', async (req, res, next) => {
     try {
         let requestOptions = {
@@ -551,7 +692,7 @@ router.get('/systems/influence', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\system-influence-chart.component.ts
+        // Copied over from src\app\charts\system-influence-chart.component.ts
         const factionHistory = response.docs[0].faction_history;
         const history = response.docs[0].history;
         const allTimeFactions = [];
@@ -583,8 +724,8 @@ router.get('/systems/influence', async (req, res, next) => {
                         return element.updated_at === record.updated_at;
                     });
                     if (indexInSystem !== -1 && history[indexInSystem].factions.findIndex(element => {
-                            return element.name_lower === faction;
-                        }) === -1) {
+                        return element.name_lower === faction.toLowerCase();
+                    }) === -1) {
                         data.push([Date.parse(record.updated_at), null]);
                     }
                 }
@@ -651,7 +792,7 @@ router.get('/systems/state', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\system-state-chart.component.ts
+        // Copied over from src\app\charts\system-state-chart.component.ts
         const factionHistory = response.docs[0].faction_history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
@@ -806,7 +947,7 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\system-p-r-state-chart.component.ts
+        // Copied over from src\app\charts\system-a-p-r-state-chart.component.ts
         let stateType;
         let stateTitle;
         switch (type) {
@@ -888,9 +1029,9 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             factionHistory.filter(record => {
                 return record.faction === faction;
             }).forEach(record => {
-                if (!_.isEqual(record[stateType].map(recordState => {
-                        return recordState.state;
-                    }), previousStates)) {
+                if (record[stateType] && !_.isEqual(record[stateType].map(recordState => {
+                    return recordState.state;
+                }), previousStates)) {
                     const statesStarting = _.pull(_.difference(record[stateType].map(recordState => {
                         return recordState.state;
                     }), previousStates), undefined, null);
@@ -1036,7 +1177,7 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             formData: {
                 options: un_eval(options).replace('factionsRegex', JSON.stringify(factions)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
+                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-${stateType}`,
                 resources: JSON.stringify({
                     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
                 }),
@@ -1054,6 +1195,147 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
     }
 }
 
+router.get('/systems/happiness', async (req, res, next) => {
+    try {
+        let requestOptions = {
+            url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+            qs: {
+                name: req.query.name,
+                timemin: req.query.timemin,
+                timemax: req.query.timemax
+            },
+            json: true
+        };
+        let response = await request.get(requestOptions);
+        // Copied over from src\app\charts\system-happiness-chart.component.ts
+        const factionHistory = response.docs[0].faction_history;
+        const allTimeFactions = [];
+        factionHistory.forEach(record => {
+            if (allTimeFactions.indexOf(record.faction) === -1) {
+                allTimeFactions.push(record.faction);
+            }
+        });
+        factionHistory.sort((a, b) => {
+            if (a.updated_at < b.updated_at) {
+                return -1;
+            } else if (a.updated_at > b.updated_at) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        const series = [];
+        const happiness = Object.keys(FDevIDs.happiness).map(happiness => {
+            return [happiness, FDevIDs.happiness[happiness].name];
+        });
+        let i = 0;
+        happiness.forEach(happiness => {
+            const data = [];
+            allTimeFactions.forEach((faction, index) => {
+                let previousHappiness = '';
+                let timeBegin = 0;
+                let timeEnd = 0;
+                factionHistory.forEach(record => {
+                    if (record.faction === faction) {
+                        if (previousHappiness !== record.happiness) {
+                            if (record.happiness === happiness[0]) {
+                                timeBegin = Date.parse(record.updated_at);
+                            }
+                            if (previousHappiness === happiness[0] && record.happiness !== happiness[0]) {
+                                timeEnd = Date.parse(record.updated_at);
+                                data.push({
+                                    x: timeBegin,
+                                    x2: timeEnd,
+                                    y: index
+                                });
+                            }
+                            previousHappiness = record.happiness;
+                        }
+                    }
+                });
+                if (previousHappiness === happiness[0]) {
+                    data.push({
+                        x: timeBegin,
+                        x2: Date.now(),
+                        y: index
+                    });
+                }
+            });
+            series.push({
+                name: happiness[1],
+                pointWidth: 20,
+                data: data
+            });
+            i++;
+        });
+        let options = {
+            chart: {
+                height: 130 + allTimeFactions.length * 40,
+                type: 'xrange'
+            },
+            title: {
+                text: 'Happiness Periods'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: 'Factions'
+                },
+                categories: allTimeFactions,
+                reversed: true
+            },
+            plotOptions: {
+                xrange: {
+                    borderRadius: 0,
+                    borderWidth: 0,
+                    grouping: false,
+                    dataLabels: {
+                        align: 'center',
+                        enabled: true,
+                        format: '{point.name}'
+                    },
+                    colorByPoint: false
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+            },
+            series: series,
+            exporting: {
+                enabled: true,
+                sourceWidth: 1200
+            }
+        };
+        let highchartsCurrentTheme = highchartsTheme.HighchartsLightTheme;
+        if (req.query.theme === 'dark') {
+            highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
+        }
+        let highchartsRequestOptions = {
+            url: `https://export.highcharts.com/`,
+            formData: {
+                options: JSON.stringify(options),
+                type: 'image/png',
+                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-happiness`,
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
+                scale: 2
+            },
+            encoding: null,
+            resolveWithFullResponse: true
+        }
+        let imageResponse = await request.post(highchartsRequestOptions);
+        res.set('Content-Type', imageResponse.headers['content-type'])
+        res.set('Content-Disposition', imageResponse.headers['content-disposition'])
+        res.send(imageResponse.body);
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.get('/tick', async (req, res, next) => {
     try {
         let requestOptions = {
@@ -1065,7 +1347,7 @@ router.get('/tick', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
-        // Copied over from src\app\main\charts\tick-chart.component.ts
+        // Copied over from src\app\charts\tick-chart.component.ts
         const tickData = response;
         const data = [];
         const series = [];
