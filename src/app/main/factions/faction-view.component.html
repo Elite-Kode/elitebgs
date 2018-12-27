@@ -65,7 +65,7 @@
             <clr-dg-cell>{{presence.state}}</clr-dg-cell>
             <clr-dg-cell>{{presence.happiness}}</clr-dg-cell>
             <clr-dg-cell>
-                <span class="label" *ngFor="let active of presence.active_states" class="label-info">{{active.state}}</span>
+                <span class="label label-info" *ngFor="let active of presence.active_states">{{active.state}}</span>
             </clr-dg-cell>
             <clr-dg-cell>
                 <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
