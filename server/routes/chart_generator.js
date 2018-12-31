@@ -40,8 +40,17 @@ router.get('/factions/influence', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\faction-influence-chart.component.ts
-        const history = response.docs[0].history;
+        const history = responseObject.docs[0].history;
         const allSystems = [];
         history.forEach(element => {
             if (allSystems.indexOf(element.system) === -1) {
@@ -136,8 +145,17 @@ router.get('/factions/state', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\faction-state-chart.component.ts
-        const history = response.docs[0].history;
+        const history = responseObject.docs[0].history;
         const allSystems = [];
         history.forEach(record => {
             if (allSystems.indexOf(record.system) === -1) {
@@ -291,6 +309,15 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\faction-a-p-r-state-chart.component.ts
         let stateType;
         let stateTitle;
@@ -315,7 +342,7 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
         const allTimeStates = [];
         const maxStatesConcurrent = [];
         const systems = [];
-        const history = response.docs[0].history;
+        const history = responseObject.docs[0].history;
         history.forEach(record => {
             if (allTimeSystems.indexOf(record.system) === -1) {
                 allTimeSystems.push(record.system);
@@ -551,8 +578,17 @@ router.get('/factions/happiness', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\faction-happiness-chart.component.ts
-        const history = response.docs[0].history;
+        const history = responseObject.docs[0].history;
         const allSystems = [];
         history.forEach(record => {
             if (allSystems.indexOf(record.system) === -1) {
@@ -692,8 +728,17 @@ router.get('/systems/influence', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\system-influence-chart.component.ts
-        const factionHistory = response.docs[0].faction_history;
+        const factionHistory = responseObject.docs[0].faction_history;
         const history = response.docs[0].history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
@@ -792,8 +837,17 @@ router.get('/systems/state', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\system-state-chart.component.ts
-        const factionHistory = response.docs[0].faction_history;
+        const factionHistory = responseObject.docs[0].faction_history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
@@ -947,6 +1001,15 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\system-a-p-r-state-chart.component.ts
         let stateType;
         let stateTitle;
@@ -971,7 +1034,7 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
         const allTimeStates = [];
         const maxStatesConcurrent = [];
         const factions = [];
-        const factionHistory = response.docs[0].faction_history;
+        const factionHistory = responseObject.docs[0].faction_history;
         factionHistory.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
                 allTimeFactions.push(record.faction);
@@ -1207,8 +1270,17 @@ router.get('/systems/happiness', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\system-happiness-chart.component.ts
-        const factionHistory = response.docs[0].faction_history;
+        const factionHistory = responseObject.docs[0].faction_history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
@@ -1347,8 +1419,17 @@ router.get('/tick', async (req, res, next) => {
             json: true
         };
         let response = await request.get(requestOptions);
+        let responseObject = {};
+        if (response.statusCode === 200) {
+            responseObject = JSON.parse(response.body);
+            if (responseObject.total <= 0) {
+                throw new Error(response);
+            }
+        } else {
+            throw new Error(response);
+        }
         // Copied over from src\app\charts\tick-chart.component.ts
-        const tickData = response;
+        const tickData = responseObject;
         const data = [];
         const series = [];
         const firstTick = tickData[tickData.length - 1];
