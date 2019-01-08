@@ -37,12 +37,13 @@ router.get('/factions/influence', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -142,12 +143,13 @@ router.get('/factions/state', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -306,12 +308,13 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -575,12 +578,13 @@ router.get('/factions/happiness', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -725,12 +729,13 @@ router.get('/systems/influence', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -834,12 +839,13 @@ router.get('/systems/state', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -998,12 +1004,13 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -1267,12 +1274,13 @@ router.get('/systems/happiness', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }
@@ -1416,12 +1424,13 @@ router.get('/tick', async (req, res, next) => {
                 timemin: req.query.timemin,
                 timemax: req.query.timemax
             },
-            json: true
+            json: true,
+            resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         let responseObject = {};
         if (response.statusCode === 200) {
-            responseObject = JSON.parse(response.body);
+            responseObject = response.body;
             if (responseObject.total <= 0) {
                 throw new Error(response);
             }

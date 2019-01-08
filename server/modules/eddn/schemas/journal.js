@@ -1974,11 +1974,12 @@ function Journal() {
             qs: {
                 name: name.toLowerCase()
             },
+            json: true,
             resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         if (response.statusCode === 200) {
-            let responseObject = JSON.parse(response.body);
+            let responseObject = response.body;
             if (responseObject.total > 0) {
                 return responseObject.docs[0].id;
             } else {
@@ -1996,11 +1997,12 @@ function Journal() {
             qs: {
                 name: name.toLowerCase()
             },
+            json: true,
             resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         if (response.statusCode === 200) {
-            let responseObject = JSON.parse(response.body);
+            let responseObject = response.body;
             if (responseObject.total > 0) {
                 return responseObject.docs[0].id;
             } else {
@@ -2018,11 +2020,12 @@ function Journal() {
             qs: {
                 name: name.toLowerCase()
             },
+            json: true,
             resolveWithFullResponse: true
         };
         let response = await request.get(requestOptions);
         if (response.statusCode === 200) {
-            let responseObject = JSON.parse(response.body);
+            let responseObject = response.body;
             if (responseObject.total > 0) {
                 return responseObject.docs[0].id;
             } else {
