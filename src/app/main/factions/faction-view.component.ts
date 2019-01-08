@@ -1,14 +1,16 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ThemeService } from '../../services/theme.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSFactionSchema, EBGSUser } from '../../typings';
 import * as moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import { ClrDatagrid } from '@clr/angular';
 
 @Component({
     selector: 'app-faction-view',
@@ -16,6 +18,7 @@ import { debounceTime, switchMap } from 'rxjs/operators';
 })
 export class FactionViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     factionData: EBGSFactionSchema;
     systemsPresence: number;
@@ -33,8 +36,20 @@ export class FactionViewComponent implements OnInit {
         private factionService: FactionsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private titleService: Title
-    ) { }
+        private titleService: Title,
+        private themeService: ThemeService
+    ) {
+        this.themeService.theme$.subscribe(theme => {
+            let check = true
+            // while (check) {
+            //     if (this.datagrid) {
+                    this.datagrid.resize();
+            //         check = false;
+            //     }
+            // }
+        });
+        console.log('Some test');
+    }
 
     async ngOnInit() {
         this.getAuthentication();
