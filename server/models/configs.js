@@ -25,9 +25,9 @@ module.exports = (async () => {
     let config = new Schema({
         guild_id: String,
         admin_channel_id: String,
-        invite_channel_id: String,
         editor_role_id: String,
         guest_role_id: String,
+        user_role_id: String,
         blacklisted_software: [String],
         version_software: [{
             name: String,

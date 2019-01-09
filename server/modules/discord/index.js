@@ -32,26 +32,13 @@ client.on("guildMemberAdd", async member => {
         let user = await model.findOne({
             id: member.id
         });
+        let configModel = await require('../../../server/models/configs');
+        let config = await configModel.findOne();
+        await member.addRole(config.user_role_id);
         if (user) {
-            let configModel = await require('../../../server/models/configs');
-            let config = await configModel.findOne();
-            let guildMember = await member.addRole(config.editor_role_id);
-            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Editor role");
-
-            user.invite = "";
-            user.invite_used = true;
-            await model.findOneAndUpdate({
-                id: member.id
-            },
-                user, {
-                    upsert: false,
-                    runValidators: true
-                });
+            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("Registered user " + member.id + " has joined");
         } else {
-            let configModel = await require('../../../server/models/configs');
-            let config = await configModel.findOne();
-            let guildMember = await member.addRole(config.guest_role_id);
-            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + member.id + " has been given the Guest role");
+            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("Unregistered user " + member.id + " has joined");
         }
     } catch (err) {
         bugsnagClient.notify(err);

@@ -39,8 +39,6 @@ module.exports = (async () => {
             amount: Number,
             date: Date
         }],
-        invite: String,
-        invite_used: Boolean,
         factions: [{
             _id: false,
             name: String,

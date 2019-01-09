@@ -238,8 +238,6 @@ interface EBGSUserSchema {
         amount: number;
         date: string;
     }[];
-    invite: string;
-    invite_used: boolean;
     factions: {
         name: string;
         name_lower: string;

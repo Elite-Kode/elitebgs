@@ -189,11 +189,6 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
         } else {
             let configModel = await require('./server/models/configs');
             let config = await configModel.findOne();
-            let invitePromise = await client.guilds.get(config.guild_id).channels.get(config.invite_channel_id).createInvite({
-                maxAge: 0,
-                maxUses: 1,
-                unique: true
-            });
             let user = {
                 id: profile.id,
                 username: profile.username,
@@ -204,9 +199,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 patronage: {
                     level: 0,
                     since: null
-                },
-                invite: invitePromise.code,
-                invite_used: false
+                }
             };
             await model.findOneAndUpdate(
                 { id: profile.id },

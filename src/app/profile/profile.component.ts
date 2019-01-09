@@ -13,7 +13,6 @@ export class ProfileComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     @HostBinding('style.flex-direction') flexDirection = 'column';
     isAuthenticated: boolean;
-    inviteCode: String;
     user: EBGSUser;
     warningModal: boolean;
     warningText: String;
