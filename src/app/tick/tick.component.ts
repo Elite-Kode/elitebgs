@@ -1,14 +1,17 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ClrDatagrid } from '@clr/angular';
 import { Tick, TickDisplay } from '../typings';
 import { TickService } from 'app/services/tick.service';
 import * as moment from 'moment';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
     templateUrl: './tick.component.html'
 })
-export class TickComponent implements OnInit {
+export class TickComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     totalRecords = 0;
     daysGap = 0;
     loading = true;
@@ -18,9 +21,16 @@ export class TickComponent implements OnInit {
     tickFormatted: TickDisplay;
     constructor(
         private tickService: TickService,
-        private titleService: Title
+        private titleService: Title,
+        private themeService: ThemeService
     ) {
         this.titleService.setTitle('Tick - Elite BGS');
+    }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
     }
 
     ngOnInit(): void {

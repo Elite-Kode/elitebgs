@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
@@ -16,7 +16,7 @@ import { ClrDatagrid } from '@clr/angular';
     selector: 'app-faction-view',
     templateUrl: './faction-view.component.html'
 })
-export class FactionViewComponent implements OnInit {
+export class FactionViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
     @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
@@ -38,17 +38,12 @@ export class FactionViewComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private titleService: Title,
         private themeService: ThemeService
-    ) {
-        this.themeService.theme$.subscribe(theme => {
-            let check = true
-            // while (check) {
-            //     if (this.datagrid) {
-                    this.datagrid.resize();
-            //         check = false;
-            //     }
-            // }
+    ) { }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
         });
-        console.log('Some test');
     }
 
     async ngOnInit() {

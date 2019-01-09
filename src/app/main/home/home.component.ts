@@ -1,11 +1,13 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ClrDatagrid } from '@clr/angular';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { FDevIDs } from '../../utilities/fdevids';
 import { EBGSUser, EBGSFactionSchema, EBGSSystemChart } from '../../typings';
 import * as moment from 'moment';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-home',
@@ -13,8 +15,9 @@ import * as moment from 'moment';
     styleUrls: ['./home.component.scss']
 })
 
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
+    @ViewChildren(ClrDatagrid) datagrids: QueryList<ClrDatagrid>;
     isAuthenticated: boolean;
     user: EBGSUser;
     factions: EBGSFactionSchema[] = [];
@@ -25,9 +28,16 @@ export class HomeComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private factionsService: FactionsService,
         private systemsService: SystemsService,
-        private titleService: Title
+        private titleService: Title,
+        private themeService: ThemeService
     ) {
         this.titleService.setTitle('Elite BGS');
+    }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrids.forEach(datagrid => datagrid.resize());
+        });
     }
 
     ngOnInit(): void {

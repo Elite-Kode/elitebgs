@@ -1,8 +1,9 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ClrDatagridStateInterface } from '@clr/angular';
+import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
 import { IAdminUsers } from './admin-users.interface';
 import { ServerService } from '../../services/server.service';
+import { ThemeService } from '../../services/theme.service';
 import { EBGSUsers } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
@@ -10,8 +11,9 @@ import { debounceTime, switchMap } from 'rxjs/operators';
     selector: 'app-admin-users-list',
     templateUrl: './admin-users-list.component.html'
 })
-export class AdminUsersListComponent implements OnInit {
+export class AdminUsersListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     userData: IAdminUsers[] = [];
     totalRecords = 0;
     loading = true;
@@ -20,7 +22,16 @@ export class AdminUsersListComponent implements OnInit {
     userForm = new FormGroup({
         user: new FormControl()
     });
-    constructor(private serverService: ServerService) { }
+    constructor(
+        private serverService: ServerService,
+        private themeService: ThemeService
+    ) { }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
+    }
 
     showUser(users: EBGSUsers) {
         this.totalRecords = users.total;
