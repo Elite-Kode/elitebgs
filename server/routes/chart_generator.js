@@ -744,7 +744,7 @@ router.get('/systems/influence', async (req, res, next) => {
         }
         // Copied over from src\app\charts\system-influence-chart.component.ts
         const factionHistory = responseObject.docs[0].faction_history;
-        const history = response.docs[0].history;
+        const history = responseObject.docs[0].history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
             if (allTimeFactions.indexOf(record.faction) === -1) {
