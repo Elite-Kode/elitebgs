@@ -26,7 +26,6 @@ export class ProfileReportComponent implements OnInit {
     ) {
         this.actionMethods = {
             save: () => {
-                console.log(`Saving Data`);
                 this.authenticationService.putUser(this.userUnderEdit)
                     .subscribe(status => {
                         if (status === true) {

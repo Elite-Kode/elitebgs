@@ -1,19 +1,21 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ClrDatagridStateInterface } from '@clr/angular';
+import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
 import { EBGSFactionsWOHistory } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-faction-list',
     templateUrl: './faction-list.component.html',
 })
-export class FactionListComponent implements OnInit {
+export class FactionListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     factionData: IFaction[] = [];
     loading = true;
@@ -26,9 +28,16 @@ export class FactionListComponent implements OnInit {
     });
     constructor(
         private factionService: FactionsService,
-        private titleService: Title
+        private titleService: Title,
+        private themeService: ThemeService
     ) {
         this.titleService.setTitle('Faction Search - Elite BGS');
+    }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
     }
 
     showFaction(factions: EBGSFactionsWOHistory) {

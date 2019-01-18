@@ -39,7 +39,6 @@ export class AdminUsersViewComponent implements OnInit {
         this.donationDate = '';
         this.actionMethods = {
             save: () => {
-                console.log(`Saving Data`);
                 if (this.userUnderEdit.donation) {
                     this.userUnderEdit.donation.forEach(element => {
                         if (element._id && element._id.search(/^\(\d\) Save to Generate Actual Id$/) !== -1) {

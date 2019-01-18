@@ -1,19 +1,23 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { ClrDatagrid } from '@clr/angular';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
+import { ThemeService } from '../../services/theme.service';
 import { EBGSSystemChart, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
+
 @Component({
     selector: 'app-system-view',
     templateUrl: './system-view.component.html'
 })
-export class SystemViewComponent implements OnInit {
+export class SystemViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     systemData: EBGSSystemChart;
     successAlertState = false;
@@ -31,8 +35,15 @@ export class SystemViewComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private titleService: Title,
-        private ingameIdsService: IngameIdsService
+        private ingameIdsService: IngameIdsService,
+        private themeService: ThemeService
     ) { }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
+    }
 
     async ngOnInit() {
         this.getAuthentication();

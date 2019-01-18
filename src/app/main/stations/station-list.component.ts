@@ -1,9 +1,10 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ClrDatagridStateInterface } from '@clr/angular';
+import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { StationsService } from '../../services/stations.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
+import { ThemeService } from '../../services/theme.service';
 import { IStation } from './station.interface';
 import { EBGSStationsWOHistory, IngameIdsSchema } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -12,8 +13,9 @@ import { debounceTime, switchMap } from 'rxjs/operators';
     selector: 'app-station-list',
     templateUrl: './station-list.component.html',
 })
-export class StationListComponent implements OnInit {
+export class StationListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     stationData: IStation[] = [];
     loading = true;
     stationToAdd: string;
@@ -27,9 +29,16 @@ export class StationListComponent implements OnInit {
     constructor(
         private stationService: StationsService,
         private titleService: Title,
-        private ingameIdsService: IngameIdsService
+        private ingameIdsService: IngameIdsService,
+        private themeService: ThemeService
     ) {
         this.titleService.setTitle('Station Search - Elite BGS');
+    }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
     }
 
     showStation(stations: EBGSStationsWOHistory) {
