@@ -3,12 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemChart, EBGSUser } from '../../typings';
+import { IngameIdsService } from '../../services/ingameIds.service';
+import { EBGSSystemChart, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-
 @Component({
     selector: 'app-system-view',
     templateUrl: './system-view.component.html'
@@ -26,15 +25,18 @@ export class SystemViewComponent implements OnInit {
     daysGap = 0;
     chartLoading = false;
     user: EBGSUser;
+    FDevIDs: IngameIdsSchema;
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) { }
 
     async ngOnInit() {
         this.getAuthentication();
+        this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.chartLoading = true;
         this.updateSystem((await this.getSystemData())[0]);
         this.chartLoading = false;
@@ -58,24 +60,24 @@ export class SystemViewComponent implements OnInit {
     updateSystem(system: EBGSSystemChart) {
         this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
         this.systemData = system;
-        this.systemData.government = FDevIDs.government[this.systemData.government].name;
-        this.systemData.allegiance = FDevIDs.superpower[this.systemData.allegiance].name;
-        this.systemData.primary_economy = FDevIDs.economy[this.systemData.primary_economy].name;
-        this.systemData.secondary_economy = this.systemData.secondary_economy ? FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
-        this.systemData.state = FDevIDs.state[this.systemData.state].name;
-        this.systemData.security = FDevIDs.security[this.systemData.security].name;
+        this.systemData.government = this.FDevIDs.government[this.systemData.government].name;
+        this.systemData.allegiance = this.FDevIDs.superpower[this.systemData.allegiance].name;
+        this.systemData.primary_economy = this.FDevIDs.economy[this.systemData.primary_economy].name;
+        this.systemData.secondary_economy = this.systemData.secondary_economy ? this.FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
+        this.systemData.state = this.FDevIDs.state[this.systemData.state].name;
+        this.systemData.security = this.FDevIDs.security[this.systemData.security].name;
         this.systemData.factions.forEach(faction => {
-            faction.state = FDevIDs.state[faction.state].name;
-            faction.happiness = faction.happiness ? FDevIDs.happiness[faction.happiness].name : '';
+            faction.state = this.FDevIDs.state[faction.state].name;
+            faction.happiness = faction.happiness ? this.FDevIDs.happiness[faction.happiness].name : '';
             faction.active_states = faction.active_states ? faction.active_states : [];
             faction.active_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
             faction.pending_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
             faction.recovering_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
             if (faction.name_lower === this.systemData.controlling_minor_faction) {
                 this.systemData.controlling_faction = faction;

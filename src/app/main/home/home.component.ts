@@ -3,8 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSFactionSchema, EBGSSystemChart } from '../../typings';
+import { IngameIdsService } from '../../services/ingameIds.service';
+import { EBGSUser, EBGSFactionSchema, EBGSSystemChart, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -21,11 +21,13 @@ export class HomeComponent implements OnInit {
     systems: EBGSSystemChart[] = [];
     factionModal: boolean;
     systemModal: boolean;
+    FDevIDs: IngameIdsSchema;
     constructor(
         private authenticationService: AuthenticationService,
         private factionsService: FactionsService,
         private systemsService: SystemsService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) {
         this.titleService.setTitle('Elite BGS');
     }
@@ -60,6 +62,7 @@ export class HomeComponent implements OnInit {
     }
 
     async getFactions() {
+        const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const factionList = this.user.factions.map(faction => {
             return faction.name;
         });
@@ -85,6 +88,7 @@ export class HomeComponent implements OnInit {
     }
 
     async getSystems() {
+        const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const systemList = this.user.systems.map(system => {
             return system.name;
         });

@@ -3,7 +3,6 @@ import { EBGSStationSchema } from '../typings';
 import { Options, PieChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
-import { FDevIDs } from '../utilities/fdevids';
 
 @Component({
     selector: 'app-station-economies-chart',

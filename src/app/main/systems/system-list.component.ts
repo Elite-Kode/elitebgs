@@ -3,9 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { SystemsService } from '../../services/systems.service';
+import { IngameIdsService } from '../../services/ingameIds.service';
 import { ISystem } from './system.interface';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSSystemsWOHistory } from '../../typings';
+import { EBGSSystemsWOHistory, IngameIdsSchema } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -23,9 +23,11 @@ export class SystemListComponent implements OnInit {
     systemForm = new FormGroup({
         systemName: new FormControl()
     });
+    FDevIDs: IngameIdsSchema;
     constructor(
         private systemService: SystemsService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) {
         this.titleService.setTitle('System Search - Elite BGS');
     }
@@ -35,11 +37,11 @@ export class SystemListComponent implements OnInit {
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;
             const name = responseSystem.name;
-            const government = FDevIDs.government[responseSystem.government].name;
-            const allegiance = FDevIDs.superpower[responseSystem.allegiance].name;
-            const primary_economy = FDevIDs.economy[responseSystem.primary_economy].name;
-            const secondary_economy = responseSystem.secondary_economy ? FDevIDs.economy[responseSystem.secondary_economy].name : '';
-            const state = FDevIDs.state[responseSystem.state].name;
+            const government = this.FDevIDs.government[responseSystem.government].name;
+            const allegiance = this.FDevIDs.superpower[responseSystem.allegiance].name;
+            const primary_economy = this.FDevIDs.economy[responseSystem.primary_economy].name;
+            const secondary_economy = responseSystem.secondary_economy ? this.FDevIDs.economy[responseSystem.secondary_economy].name : '';
+            const state = this.FDevIDs.state[responseSystem.state].name;
             return <ISystem>{
                 id: id,
                 name: name,
@@ -68,7 +70,8 @@ export class SystemListComponent implements OnInit {
         this.loading = false;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.systemForm.valueChanges
             .pipe(debounceTime(300))
             .pipe(switchMap(value => {

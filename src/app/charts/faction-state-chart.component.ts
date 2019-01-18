@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSFactionSchema } from '../typings';
-import { FDevIDs } from '../utilities/fdevids';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
+import { IngameIdsService } from '../services/ingameIds.service';
 
 // declare module 'highcharts' {
 //     interface XRangeChart extends SeriesChart {
@@ -31,13 +31,16 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
     // options: Options;
     options: any;
     chart: Chart;
-    constructor(private themeService: ThemeService) { }
+    constructor(
+        private themeService: ThemeService,
+        private ingameIdsService: IngameIdsService
+    ) { }
 
     ngOnInit(): void {
         this.createChart()
     }
 
-    createChart(): void {
+    async createChart() {
         // Copied over to server\routes\chart_generator.js
         const allSystems: string[] = [];
         this.factionData.history.forEach(record => {
@@ -56,6 +59,7 @@ export class FactionStateChartComponent implements OnInit, OnChanges {
         });
         // const series: XRangeChartSeriesOptions[] = [];
         const series: any[] = [];
+        const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const states: [string, string][] = Object.keys(FDevIDs.state).filter(state => {
             return state !== 'null';
         }).map(state => {

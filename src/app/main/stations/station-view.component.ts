@@ -2,9 +2,9 @@ import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSUser, EBGSStationSchema } from '../../typings';
+import { EBGSUser, EBGSStationSchema, IngameIdsSchema } from '../../typings';
 import { StationsService } from '../../services/stations.service';
+import { IngameIdsService } from '../../services/ingameIds.service';
 
 @Component({
     selector: 'app-station-view',
@@ -21,11 +21,13 @@ export class StationViewComponent implements OnInit {
         private stationService: StationsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) { }
 
     async ngOnInit() {
         this.getAuthentication();
+        const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const station = await this.stationService
             .parseStationDataId([this.route.snapshot.paramMap.get('stationid')]);
         this.stationData = station[0];

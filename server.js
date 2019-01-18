@@ -52,6 +52,7 @@ const authLogout = require('./server/routes/auth/logout');
 const authUser = require('./server/routes/auth/auth_user');
 const frontEnd = require('./server/routes/front_end');
 const chartGenerator = require('./server/routes/chart_generator');
+const ingameIds = require('./server/routes/ingame_ids');
 
 require('./server/modules/eddn');
 require('./server/modules/discord');
@@ -108,6 +109,7 @@ app.use('/auth/logout', authLogout);
 app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
 app.use('/chartgenerator', chartGenerator);
+app.use('/ingameids', ingameIds);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {

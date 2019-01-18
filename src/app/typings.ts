@@ -317,6 +317,16 @@ export interface TickDisplaySchema {
     updated_at: string;
 }
 
+export interface IngameIdsSchema {
+    state: any;
+    superpower: any;
+    economy: any;
+    government: any;
+    security: any;
+    station: any;
+    happiness: any;
+}
+
 export type EBGSFactions = PaginateResult<EBGSFactionSchema>;
 export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
 export type EBGSFactionsWOHistory = PaginateResult<EBGSFactionSchemaWOHistory>;

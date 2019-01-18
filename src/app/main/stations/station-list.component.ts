@@ -3,9 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridStateInterface } from '@clr/angular';
 import { Title } from '@angular/platform-browser';
 import { StationsService } from '../../services/stations.service';
+import { IngameIdsService } from '../../services/ingameIds.service';
 import { IStation } from './station.interface';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSStationsWOHistory } from '../../typings';
+import { EBGSStationsWOHistory, IngameIdsSchema } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -23,9 +23,11 @@ export class StationListComponent implements OnInit {
     stationForm = new FormGroup({
         stationName: new FormControl()
     });
+    FDevIDs: IngameIdsSchema;
     constructor(
         private stationService: StationsService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) {
         this.titleService.setTitle('Station Search - Elite BGS');
     }
@@ -35,11 +37,11 @@ export class StationListComponent implements OnInit {
         this.stationData = stations.docs.map(responseStation => {
             const id = responseStation._id;
             const name = responseStation.name;
-            const type = FDevIDs.station[responseStation.type].name;
-            const government = FDevIDs.government[responseStation.government].name;
-            const allegiance = FDevIDs.superpower[responseStation.allegiance].name;
-            const economy = FDevIDs.economy[responseStation.economy].name;
-            const state = FDevIDs.state[responseStation.state].name;
+            const type = this.FDevIDs.station[responseStation.type].name;
+            const government = this.FDevIDs.government[responseStation.government].name;
+            const allegiance = this.FDevIDs.superpower[responseStation.allegiance].name;
+            const economy = this.FDevIDs.economy[responseStation.economy].name;
+            const state = this.FDevIDs.state[responseStation.state].name;
             return <IStation>{
                 id: id,
                 name: name,
@@ -68,7 +70,8 @@ export class StationListComponent implements OnInit {
         this.loading = false;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.stationForm.valueChanges
             .pipe(debounceTime(300))
             .pipe(switchMap(value => {

@@ -34,6 +34,7 @@ import { ServerService } from './services/server.service';
 import { TryAPIService } from './services/tryapi.service';
 import { ThemeService } from './services/theme.service';
 import { TickService } from './services/tick.service';
+import { IngameIdsService } from './services/ingameIds.service';
 
 import { environment } from '../environments/environment';
 
@@ -96,6 +97,7 @@ export function errorHandlerFactory() {
         ThemeService,
         TryAPIService,
         TickService,
+        IngameIdsService,
         { provide: ErrorHandler, useFactory: errorHandlerFactory }
     ],
     bootstrap: [AppComponent]

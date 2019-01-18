@@ -3,9 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { IngameIdsService } from '../../services/ingameIds.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
-import { FDevIDs } from '../../utilities/fdevids';
-import { EBGSFactionSchema, EBGSUser } from '../../typings';
+import { EBGSFactionSchema, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -29,15 +29,18 @@ export class FactionViewComponent implements OnInit {
     daysGap = 0;
     chartLoading = false;
     user: EBGSUser;
+    FDevIDs: IngameIdsSchema;
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
-        private titleService: Title
+        private titleService: Title,
+        private ingameIdsService: IngameIdsService
     ) { }
 
     async ngOnInit() {
         this.getAuthentication();
+        this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.chartLoading = true;
         this.updateFaction((await this.getFactionData())[0]);
         this.chartLoading = false;
@@ -64,17 +67,17 @@ export class FactionViewComponent implements OnInit {
         this.factionData.government = StringHandlers.titlify(this.factionData.government);
         this.factionData.allegiance = StringHandlers.titlify(this.factionData.allegiance);
         this.factionData.faction_presence.forEach(system => {
-            system.state = FDevIDs.state[system.state].name;
-            system.happiness = system.happiness ? FDevIDs.happiness[system.happiness].name : '';
+            system.state = this.FDevIDs.state[system.state].name;
+            system.happiness = system.happiness ? this.FDevIDs.happiness[system.happiness].name : '';
             system.active_states = system.active_states ? system.active_states : [];
             system.active_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
             system.pending_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
             system.recovering_states.forEach(state => {
-                state.state = FDevIDs.state[state.state].name;
+                state.state = this.FDevIDs.state[state.state].name;
             });
         });
         this.systemsPresence = this.factionData.faction_presence.length;
