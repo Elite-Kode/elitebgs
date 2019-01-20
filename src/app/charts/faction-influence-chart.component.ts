@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSFactionSchema } from '../typings';
-import { Options, LineChartSeriesOptions } from 'highcharts';
+// import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
 
@@ -11,7 +11,7 @@ import { ThemeService } from '../services/theme.service';
 
 export class FactionInfluenceChartComponent implements OnInit, OnChanges {
     @Input() factionData: EBGSFactionSchema;
-    options: Options;
+    options: any;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
@@ -28,7 +28,7 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
                 allSystems.push(element.system);
             }
         });
-        const series: LineChartSeriesOptions[] = [];
+        const series: any[] = [];
         history.sort((a, b) => {
             if (a.updated_at < b.updated_at) {
                 return -1;

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSSystemChart } from '../typings';
-import { Options, LineChartSeriesOptions } from 'highcharts';
+// import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
 
@@ -11,7 +11,7 @@ import { ThemeService } from '../services/theme.service';
 
 export class SystemInfluenceChartComponent implements OnInit, OnChanges {
     @Input() systemData: EBGSSystemChart;
-    options: Options;
+    options: any;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
@@ -36,7 +36,7 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
                 return 0;
             }
         });
-        const series: LineChartSeriesOptions[] = [];
+        const series: any[] = [];
         allTimeFactions.forEach(faction => {
             const data: [number, number][] = [];
             this.systemData.faction_history.forEach(record => {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Tick } from '../typings';
-import { Options, LineChartSeriesOptions } from 'highcharts';
+// import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
 import * as moment from 'moment';
@@ -11,7 +11,7 @@ import * as moment from 'moment';
 })
 export class TickChartComponent implements OnInit, OnChanges {
     @Input() tickData: Tick;
-    options: Options;
+    options: any;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
@@ -22,7 +22,7 @@ export class TickChartComponent implements OnInit, OnChanges {
     createChart(): void {
         // Copied over to server\routes\chart_generator.js
         const data: [number, number][] = [];
-        const series: LineChartSeriesOptions[] = [];
+        const series: any[] = [];
         const firstTick = this.tickData[this.tickData.length - 1];
         this.tickData.forEach(tick => {
             const tickMoment = moment(tick.time);

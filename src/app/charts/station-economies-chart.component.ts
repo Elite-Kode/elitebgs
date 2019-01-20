@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EBGSStationSchema } from '../typings';
-import { Options, PieChartSeriesOptions } from 'highcharts';
+// import { Options, PieChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
 
@@ -11,7 +11,7 @@ import { ThemeService } from '../services/theme.service';
 
 export class StationEconomiesChartComponent implements OnInit, OnChanges {
     @Input() stationData: EBGSStationSchema;
-    options: Options;
+    options: any;
     chart: Chart;
     constructor(private themeService: ThemeService) { }
 
@@ -29,7 +29,7 @@ export class StationEconomiesChartComponent implements OnInit, OnChanges {
                 y: element.proportion
             })
         });
-        let series: PieChartSeriesOptions[] = [];
+        let series: any[] = [];
         series = [{
             name: 'Economies',
             data: data
