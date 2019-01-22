@@ -39,12 +39,14 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
         const series: any[] = [];
         allTimeFactions.forEach(faction => {
             const data: [number, number][] = [];
+            let lastRecord: EBGSSystemChart['faction_history'][0];
             this.systemData.faction_history.forEach(record => {
                 if (record.faction === faction) {
                     data.push([
                         Date.parse(record.updated_at),
                         Number.parseFloat((record.influence * 100).toFixed(2))
                     ]);
+                    lastRecord = record;
                 } else {
                     const indexInSystem = this.systemData.history.findIndex(element => {
                         return element.updated_at === record.updated_at;
@@ -56,6 +58,13 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
                     }
                 }
             });
+            const latestUpdate = this.systemData.factions.find(findFaction => {
+                return findFaction.name === faction;
+            })
+            data.push([
+                Date.parse(latestUpdate.updated_at),
+                Number.parseFloat((lastRecord.influence * 100).toFixed(2))
+            ]);
             series.push({
                 name: faction,
                 data: data

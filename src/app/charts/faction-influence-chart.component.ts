@@ -40,12 +40,14 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
         });
         allSystems.forEach(system => {
             const data: [number, number][] = [];
+            let lastElement: EBGSFactionSchema['history'][0];
             history.forEach(element => {
                 if (element.system === system) {
                     data.push([
                         Date.parse(element.updated_at),
                         Number.parseFloat((element.influence * 100).toFixed(2))
                     ]);
+                    lastElement = element;
                 } else {
                     if (element.systems.findIndex(systemElement => {
                         return systemElement.name === system;
@@ -54,6 +56,13 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
                     }
                 }
             });
+            const latestUpdate = this.factionData.faction_presence.find(findSystem => {
+                return findSystem.system_name === system;
+            });
+            data.push([
+                Date.parse(latestUpdate.updated_at),
+                Number.parseFloat((lastElement.influence * 100).toFixed(2))
+            ]);
             series.push({
                 name: system,
                 data: data

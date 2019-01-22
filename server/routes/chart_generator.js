@@ -70,12 +70,14 @@ router.get('/factions/influence', async (req, res, next) => {
         });
         allSystems.forEach(system => {
             const data = [];
+            let lastElement;
             history.forEach(element => {
                 if (element.system === system) {
                     data.push([
                         Date.parse(element.updated_at),
                         Number.parseFloat((element.influence * 100).toFixed(2))
                     ]);
+                    lastElement = element;
                 } else {
                     if (element.systems.findIndex(systemElement => {
                         return systemElement.name === system;
@@ -84,6 +86,13 @@ router.get('/factions/influence', async (req, res, next) => {
                     }
                 }
             });
+            const latestUpdate = this.factionData.faction_presence.find(findSystem => {
+                return findSystem.system_name === system;
+            });
+            data.push([
+                Date.parse(latestUpdate.updated_at),
+                Number.parseFloat((lastElement.influence * 100).toFixed(2))
+            ]);
             series.push({
                 name: system,
                 data: data
@@ -763,12 +772,14 @@ router.get('/systems/influence', async (req, res, next) => {
         const series = [];
         allTimeFactions.forEach(faction => {
             const data = [];
+            let lastRecord;
             factionHistory.forEach(record => {
                 if (record.faction === faction) {
                     data.push([
                         Date.parse(record.updated_at),
                         Number.parseFloat((record.influence * 100).toFixed(2))
                     ]);
+                    lastRecord = record;
                 } else {
                     const indexInSystem = history.findIndex(element => {
                         return element.updated_at === record.updated_at;
@@ -780,6 +791,13 @@ router.get('/systems/influence', async (req, res, next) => {
                     }
                 }
             });
+            const latestUpdate = this.systemData.factions.find(findFaction => {
+                return findFaction.name === faction;
+            })
+            data.push([
+                Date.parse(latestUpdate.updated_at),
+                Number.parseFloat((lastRecord.influence * 100).toFixed(2))
+            ]);
             series.push({
                 name: faction,
                 data: data
