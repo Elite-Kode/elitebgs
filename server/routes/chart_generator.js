@@ -86,7 +86,7 @@ router.get('/factions/influence', async (req, res, next) => {
                     }
                 }
             });
-            const latestUpdate = this.factionData.faction_presence.find(findSystem => {
+            const latestUpdate = responseObject.docs[0].faction_presence.find(findSystem => {
                 return findSystem.system_name === system;
             });
             data.push([
@@ -791,7 +791,7 @@ router.get('/systems/influence', async (req, res, next) => {
                     }
                 }
             });
-            const latestUpdate = this.systemData.factions.find(findFaction => {
+            const latestUpdate = responseObject.docs[0].factions.find(findFaction => {
                 return findFaction.name === faction;
             })
             data.push([
