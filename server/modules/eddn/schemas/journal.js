@@ -745,10 +745,10 @@ function Journal() {
                                 }
                                 if (system.government !== message.SystemGovernment.toLowerCase() ||
                                     system.allegiance !== message.SystemAllegiance.toLowerCase() ||
-                                    system.state !== message.FactionState.toLowerCase() ||
+                                    system.state !== message.SystemFaction.FactionState.toLowerCase() ||
                                     system.security !== message.SystemSecurity.toLowerCase() ||
                                     system.population !== message.Population ||
-                                    system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
+                                    system.controlling_minor_faction !== message.SystemFaction.Name.toLowerCase() ||
                                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
 
                                     let historyModel = await ebgsHistorySystemV4Model;
@@ -763,10 +763,10 @@ function Journal() {
                                     if (this.checkSystemWHistory(message, systemHistory, factionArray)) {
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
-                                        systemObject.state = message.FactionState;
+                                        systemObject.state = message.SystemFaction.FactionState;
                                         systemObject.security = message.SystemSecurity;
                                         systemObject.population = message.Population;
-                                        systemObject.controlling_minor_faction = message.SystemFaction;
+                                        systemObject.controlling_minor_faction = message.SystemFaction.Name;
                                         systemObject.factions = factionArray;
                                         systemObject.updated_at = message.timestamp;
 
@@ -774,10 +774,10 @@ function Journal() {
                                         historyObject.updated_by = "EDDN";
                                         historyObject.government = message.SystemGovernment;
                                         historyObject.allegiance = message.SystemAllegiance;
-                                        historyObject.state = message.FactionState;
+                                        historyObject.state = message.SystemFaction.FactionState;
                                         historyObject.security = message.SystemSecurity;
                                         historyObject.population = message.Population;
-                                        historyObject.controlling_minor_faction = message.SystemFaction;
+                                        historyObject.controlling_minor_faction = message.SystemFaction.Name;
                                         historyObject.factions = factionArray;
                                     } else {
                                         systemObject = {};
@@ -801,12 +801,12 @@ function Journal() {
                                 z: this.correctCoordinates(message.StarPos[2]),
                                 government: message.SystemGovernment,
                                 allegiance: message.SystemAllegiance,
-                                state: message.FactionState,
+                                state: message.SystemFaction.FactionState,
                                 security: message.SystemSecurity,
                                 population: message.Population,
                                 primary_economy: message.SystemEconomy,
                                 secondary_economy: message.SystemSecondEconomy,
-                                controlling_minor_faction: message.SystemFaction,
+                                controlling_minor_faction: message.SystemFaction.Name,
                                 factions: factionArray,
                                 updated_at: message.timestamp
                             };
@@ -816,10 +816,10 @@ function Journal() {
                                 updated_by: "EDDN",
                                 government: message.SystemGovernment,
                                 allegiance: message.SystemAllegiance,
-                                state: message.FactionState,
+                                state: message.SystemFaction.FactionState,
                                 security: message.SystemSecurity,
                                 population: message.Population,
-                                controlling_minor_faction: message.SystemFaction,
+                                controlling_minor_faction: message.SystemFaction.Name,
                                 factions: factionArray
                             };
                         }
@@ -1513,8 +1513,8 @@ function Journal() {
                             }
                             if (station.government !== message.StationGovernment.toLowerCase() ||
                                 station.allegiance !== message.StationAllegiance.toLowerCase() ||
-                                station.state !== message.FactionState.toLowerCase() ||
-                                station.controlling_minor_faction !== message.StationFaction.toLowerCase() ||
+                                station.state !== message.StationFaction.FactionState.toLowerCase() ||
+                                station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
                                 !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
                                 let historyModel = await ebgsHistoryStationV4Model;
@@ -1529,8 +1529,8 @@ function Journal() {
                                 if (this.checkStationWHistory(message, stationHistory, serviceArray)) {
                                     stationObject.government = message.StationGovernment;
                                     stationObject.allegiance = message.StationAllegiance;
-                                    stationObject.state = message.FactionState;
-                                    stationObject.controlling_minor_faction = message.StationFaction;
+                                    stationObject.state = message.StationFaction.FactionState;
+                                    stationObject.controlling_minor_faction = message.StationFaction.Name;
                                     stationObject.services = serviceArray;
                                     stationObject.updated_at = message.timestamp;
 
@@ -1538,8 +1538,8 @@ function Journal() {
                                     historyObject.updated_by = "EDDN";
                                     historyObject.government = message.StationGovernment;
                                     historyObject.allegiance = message.StationAllegiance;
-                                    historyObject.state = message.FactionState;
-                                    historyObject.controlling_minor_faction = message.StationFaction;
+                                    historyObject.state = message.StationFaction.FactionState;
+                                    historyObject.controlling_minor_faction = message.StationFaction.Name;
                                     historyObject.services = serviceArray;
                                 } else {
                                     stationObject = {};
@@ -1575,9 +1575,9 @@ function Journal() {
                                 }
                             }),
                             allegiance: message.StationAllegiance,
-                            state: message.FactionState,
+                            state: message.StationFaction.FactionState,
                             distance_from_star: message.DistFromStarLS,
-                            controlling_minor_faction: message.StationFaction,
+                            controlling_minor_faction: message.StationFaction.Name,
                             services: serviceArray,
                             updated_at: message.timestamp,
                         };
@@ -1587,8 +1587,8 @@ function Journal() {
                             updated_by: "EDDN",
                             government: message.StationGovernment,
                             allegiance: message.StationAllegiance,
-                            state: message.FactionState,
-                            controlling_minor_faction: message.StationFaction,
+                            state: message.StationFaction.FactionState,
+                            controlling_minor_faction: message.StationFaction.Name,
                             services: serviceArray
                         };
                     }
@@ -1737,6 +1737,7 @@ function Journal() {
         if (
             message.StarSystem &&
             message.SystemFaction &&
+            typeof message.SystemFaction !== 'string' && !(message.SystemFaction instanceof String) &&
             message.SystemAddress &&
             message.timestamp &&
             message.SystemSecurity &&
@@ -1747,8 +1748,8 @@ function Journal() {
             message.event &&
             message.SystemGovernment
         ) {
-            if (!message.FactionState) {
-                message.FactionState = "None";
+            if (!message.SystemFaction.FactionState) {
+                message.SystemFaction.FactionState = "None";
             }
             if (!message.Population) {
                 message.Population = 0;
@@ -1798,13 +1799,14 @@ function Journal() {
             message.StationEconomy &&
             message.StationEconomies &&
             message.StationFaction &&
+            typeof message.StationFaction !== 'string' && !(message.StationFaction instanceof String) &&
             message.StationGovernment &&
             message.StationName &&
             message.StationServices &&
             message.StationType
         ) {
-            if (!message.FactionState) {
-                message.FactionState = "None";
+            if (!message.StationFaction.FactionState) {
+                message.StationFaction.FactionState = "None";
             }
             if (!message.StationAllegiance) {
                 message.StationAllegiance = "Independent";
@@ -1847,10 +1849,10 @@ function Journal() {
         for (let item of history) {
             if (item.government === message.SystemGovernment.toLowerCase() &&
                 item.allegiance === message.SystemAllegiance.toLowerCase() &&
-                item.state === message.FactionState.toLowerCase() &&
+                item.state === message.SystemFaction.FactionState.toLowerCase() &&
                 item.security === message.SystemSecurity.toLowerCase() &&
                 item.population === message.Population &&
-                item.controlling_minor_faction === message.SystemFaction.toLowerCase() &&
+                item.controlling_minor_faction === message.SystemFaction.Name.toLowerCase() &&
                 _.isEqual(_.sortBy(item.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
                 return false;
             }
@@ -1879,8 +1881,8 @@ function Journal() {
         for (let item of history) {
             if (item.government === message.StationGovernment.toLowerCase() &&
                 item.allegiance === message.StationAllegiance.toLowerCase() &&
-                item.state === message.FactionState.toLowerCase() &&
-                item.controlling_minor_faction === message.StationFaction.toLowerCase() &&
+                item.state === message.StationFaction.FactionState.toLowerCase() &&
+                item.controlling_minor_faction === message.StationFaction.Name.toLowerCase() &&
                 _.isEqual(_.sortBy(item.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
                 return false;
             }
