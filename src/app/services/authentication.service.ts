@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EBGSUser } from '../typings';
+import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class AuthenticationService {
@@ -30,13 +31,13 @@ export class AuthenticationService {
 
     removeFaction(faction: string): Observable<boolean> {
         return this.http.delete<boolean>('/auth/user/edit', {
-            params: new HttpParams().set('faction', faction)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('faction', faction)
         });
     }
 
     removeSystem(system: string): Observable<boolean> {
         return this.http.delete<boolean>('/auth/user/edit', {
-            params: new HttpParams().set('system', system)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('system', system)
         });
     }
 
