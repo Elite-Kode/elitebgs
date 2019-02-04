@@ -59,10 +59,12 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
             const latestUpdate = this.factionData.faction_presence.find(findSystem => {
                 return findSystem.system_name === system;
             });
-            data.push([
-                Date.parse(latestUpdate.updated_at),
-                Number.parseFloat((lastElement.influence * 100).toFixed(2))
-            ]);
+            if (latestUpdate) {
+                data.push([
+                    Date.parse(latestUpdate.updated_at),
+                    Number.parseFloat((lastElement.influence * 100).toFixed(2))
+                ]);
+            }
             series.push({
                 name: system,
                 data: data
