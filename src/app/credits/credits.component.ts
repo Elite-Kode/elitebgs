@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ServerService } from '../services/server.service';
 import { EBGSCredits } from '../typings';
+import { UsersService } from 'app/services/users.service';
 
 @Component({
     templateUrl: './credits.component.html',
@@ -12,7 +12,7 @@ export class CreditsComponent implements OnInit {
     contributers: EBGSCredits[];
     patrons: EBGSCredits[];
     constructor(
-        private serverService: ServerService,
+        private usersService: UsersService,
         private titleService: Title
     ) {
         this.titleService.setTitle('Credits - Elite BGS');
@@ -21,7 +21,7 @@ export class CreditsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.serverService.getCredits().subscribe(credits => {
+        this.usersService.getCredits().subscribe(credits => {
             credits.forEach(credit => {
                 if (credit.os_contribution > 0) {
                     this.contributers.push(credit);

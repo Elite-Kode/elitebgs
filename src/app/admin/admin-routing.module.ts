@@ -4,7 +4,8 @@ import { AdminComponent } from './admin.component';
 import { AdminOverviewComponent } from './overview/admin-overview.component';
 import { AdminUsersListComponent } from './users/admin-users-list.component';
 import { AdminUsersViewComponent } from './users/admin-users-view.component';
-import { AdminSystemsComponent } from './systems/admin-systems.component';
+import { AdminSystemsListComponent } from './systems/admin-systems-list.component';
+import { AdminSystemsViewComponent } from './systems/admin-systems-view.component';
 import { AdminFactionsComponent } from './factions/admin-factions.component';
 import { AdminStationsComponent } from './stations/admin-stations.component';
 
@@ -18,23 +19,27 @@ const adminRoutes: Routes = [
                 component: AdminOverviewComponent
             },
             {
-                path: 'users',
+                path: 'user',
                 component: AdminUsersListComponent
             },
             {
-                path: 'users/:userid',
+                path: 'user/:userid',
                 component: AdminUsersViewComponent
             },
             {
-                path: 'systems',
-                component: AdminSystemsComponent
+                path: 'system',
+                component: AdminSystemsListComponent
             },
             {
-                path: 'factions',
+                path: 'system/:userid',
+                component: AdminSystemsViewComponent
+            },
+            {
+                path: 'faction',
                 component: AdminFactionsComponent
             },
             {
-                path: 'stations',
+                path: 'station',
                 component: AdminStationsComponent
             }
         ]

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { EBGSUser } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
@@ -14,7 +15,14 @@ export class AuthenticationService {
     }
 
     getUser(): Observable<EBGSUser> {
-        return this.http.get<EBGSUser>('/auth/user');
+        return this.http.get<EBGSUser>('/auth/user')
+            .pipe(map((user: EBGSUser): EBGSUser => {
+                user.patronage.since = new Date(user.patronage.since);
+                user.donation.forEach((donation, i) => {
+                    user.donation[i].date = new Date(donation.date);
+                });
+                return user;
+            }));
     }
 
     addFactions(factions: string[]): Observable<boolean> {

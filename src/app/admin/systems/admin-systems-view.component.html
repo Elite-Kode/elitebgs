@@ -1,0 +1,112 @@
+<div class="content-area">
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Updated System
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                System could not be updated due to some error.
+            </span>
+        </div>
+    </clr-alert>
+    <h1>{{systemUnderEdit?.name}}</h1>
+    <form clrForm>
+        <h4>System Data</h4>
+        <div class="clr-row">
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Government</label>
+                <!-- <input class="clr-col-12 clr-col-md-8" clrInput id="government" name="government" type="text"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.government"> -->
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="government" name="government" [(ngModel)]="systemUnderEdit && systemUnderEdit.government">
+                    <option *ngFor="let government of governments" [value]="government.key">{{government.value}}</option>
+                </select>
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Allegiance</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="allegiance" name="allegiance" type="text"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.allegiance">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Primary Economy</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="primary_economy" name="primary_economy" type="text"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.primary_economy">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Secondary Economy</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="secondary_economy" name="secondary_economy" type="text"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.secondary_economy">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">State</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="state" name="state" type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.state">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Security</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="security" name="security" type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.security">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Population</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="population" name="population" type="text"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.population">
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Controlling Faction</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="controlling_minor_faction" name="controlling_minor_faction"
+                    type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.controlling_minor_faction">
+            </clr-select-container>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Factions in Systems</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Faction Name</th>
+                            <th>Faction Name Lower</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let faction of systemUnderEdit?.factions">
+                            <td><a routerLink="/admin/factions/{{faction.faction_id}}">{{faction.name}}</a></td>
+                            <td>{{faction.name_lower}}</td>
+                            <td>
+                                <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="factions" name="factions" placeholder="Add a faction" type="text"
+                                    [(ngModel)]="factionAdd">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="factions" name="factions" placeholder="Add a faction" type="text"
+                                    [(ngModel)]="factionAdd">
+                            </td>
+                            <td>
+                                <button (click)="addFaction()" class="btn btn-success">Add</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+    <button class="btn btn-success" (click)="save()">Save</button>
+    <button class="btn btn-warning-outline" (click)="reset()">Reset</button>
+    <button class="btn btn-warning" (click)="delete()">Delete</button>
+    <clr-modal [(clrModalOpen)]="warningModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">{{warningTitle}}</h3>
+        <div class="modal-body">
+            <p>{{warningText}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeWarningModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="warningConfirmed()">{{warningProceed}}</button>
+        </div>
+    </clr-modal>
+</div>

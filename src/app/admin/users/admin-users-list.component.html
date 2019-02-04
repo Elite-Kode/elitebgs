@@ -16,7 +16,7 @@
         <clr-dg-placeholder>Unable to find any users!</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let user of userData">
-            <clr-dg-cell><a routerLink="/admin/users/{{user.id}}">{{user.username}}</a></clr-dg-cell>
+            <clr-dg-cell><a routerLink="/admin/user/{{user.id}}">{{user.username}}</a></clr-dg-cell>
             <clr-dg-cell>{{user.discriminator}}</clr-dg-cell>
             <clr-dg-cell>{{user.access}}</clr-dg-cell>
             <clr-dg-cell>{{user.discordId}}</clr-dg-cell>

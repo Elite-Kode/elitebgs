@@ -17,25 +17,27 @@
     <img [src]="'https://cdn.discordapp.com/avatars/' + userUnderEdit?.id + '/' + userUnderEdit?.avatar + '.png'" class="profile-icon">
     <form clrForm>
         <h4>Restricted Data</h4>
-        <clr-input-container>
-            <label>Record id</label>
-            <input clrInput id="id" name="id" type="text" [(ngModel)]="userUnderEdit && userUnderEdit._id" disabled>
-        </clr-input-container>
-        <clr-input-container>
-            <label>Discord id</label>
-            <input clrInput id="discordid" name="discordid" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.id"
-                disabled>
-        </clr-input-container>
-        <clr-input-container>
-            <label>Discord Username</label>
-            <input clrInput id="username" name="username" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.username"
-                disabled>
-        </clr-input-container>
-        <clr-input-container>
-            <label>Discord Discriminator</label>
-            <input clrInput id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator"
-                disabled>
-        </clr-input-container>
+        <div class="clr-row">
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Record id</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="id" name="id" type="text" [(ngModel)]="userUnderEdit && userUnderEdit._id" disabled>
+            </clr-input-container>
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Discord id</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="discordid" name="discordid" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.id"
+                    disabled>
+            </clr-input-container>
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Discord Username</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="username" name="username" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.username"
+                    disabled>
+            </clr-input-container>
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Discord Discriminator</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="discriminator" name="discriminator" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.discriminator"
+                    disabled>
+            </clr-input-container>
+        </div>
         <h4>Personalised Data</h4>
         <clr-input-container>
             <label>Access Level</label>
@@ -58,17 +60,17 @@
                                 <button (click)="removeFaction(faction.name_lower)" class="btn btn-danger">Remove</button>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="factions" name="factions" placeholder="Add a faction" type="text"
+                                    [(ngModel)]="factionAdd">
+                            </td>
+                            <td>
+                                <button (click)="addFaction()" class="btn btn-success">Add</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-                <div class="clr-form-control clr-row">
-                    <label class="clr-control-label">Add a Monitored Faction</label>
-                    <div class="clr-control-container clr-col-12 clr-col-md-10">
-                        <div class="clr-input-wrapper">
-                            <input class="clr-input" id="factions" name="factions" type="text" [(ngModel)]="factionAdd">
-                            <button (click)="addFaction()" class="btn btn-success">Add</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="clr-form-control clr-row">
@@ -88,17 +90,17 @@
                                 <button (click)="removeSystem(system.name_lower)" class="btn btn-danger">Remove</button>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="systems" name="systems" placeholder="Add a system" type="text"
+                                    [(ngModel)]="systemAdd">
+                            </td>
+                            <td>
+                                <button (click)="addSystem()" class="btn btn-success">Add</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-                <div class="clr-form-control clr-row">
-                    <label class="clr-control-label">Add a Monitored System</label>
-                    <div class="clr-control-container clr-col-12 clr-col-md-10">
-                        <div class="clr-input-wrapper">
-                            <input class="clr-input" id="systems" name="systems" type="text" [(ngModel)]="systemAdd">
-                            <button (click)="addSystem()" class="btn btn-success">Add</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <h4>Contribution Data</h4>
@@ -107,10 +109,13 @@
             <input clrInput id="commits" name="commits" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.os_contribution">
         </clr-input-container>
         <clr-input-container>
-            <label>Patronage</label>
+            <label>Patronage Tier</label>
             <input clrInput id="level" name="level" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.level">
-            <input clrInput id="since" name="since" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since">
         </clr-input-container>
+        <clr-date-container>
+            <label>Patron Since</label>
+            <input type="date" [(clrDate)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since">
+        </clr-date-container>
         <div class="clr-form-control clr-row">
             <label class="clr-control-label">Donations</label>
             <div class="clr-control-container clr-col-12 clr-col-md-10">
@@ -132,18 +137,23 @@
                                 <button (click)="removeDonation(donation._id)" class="btn btn-danger">Remove</button>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Test</td>
+                            <td>
+                                <input class="clr-input" id="donation" name="donation" placeholder="Amount in USD" type="number"
+                                    [(ngModel)]="donationAmount">
+                            </td>
+                            <td>
+                                <clr-date-container style="margin-top:0">
+                                    <input type="date" [(clrDate)]="donationDate" style="margin-top: 0">
+                                </clr-date-container>
+                            </td>
+                            <td>
+                                <button (click)="addDonation()" class="btn btn-success">Add</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-                <div class="clr-form-control clr-row">
-                    <label class="clr-control-label">Add a Donation</label>
-                    <div class="clr-control-container clr-col-12 clr-col-md-10">
-                        <div class="clr-input-wrapper">
-                            <input class="clr-input" id="donation" name="donation" placeholder="Amount in USD" type="number" [(ngModel)]="donationAmount">
-                            <input class="clr-input" id="date" name="date" placeholder="Date" type="text" [(ngModel)]="donationDate">
-                            <button (click)="addDonation()" class="btn btn-success">Add</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </form>

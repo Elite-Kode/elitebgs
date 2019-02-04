@@ -79,9 +79,8 @@
             <label>Patronage</label>
             <input clrInput id="level" name="level" type="number" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.level"
                 disabled>
-            <input clrInput id="since" name="since" type="text" [(ngModel)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since"
-                disabled>
         </clr-input-container>
+        <input type="date" [(clrDate)]="userUnderEdit && userUnderEdit.patronage && userUnderEdit.patronage.since" disabled>
         <button class="btn btn-warning" (click)="deletePatronage()">Delete Patronage</button>
         <div class="clr-form-control clr-row">
             <label class="clr-control-label">Donations</label>

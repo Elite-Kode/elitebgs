@@ -61,7 +61,7 @@ export interface EBGSFactionSchema {
     }[];
 }
 
-interface EBGSSystemSchema {
+export interface EBGSSystemSchema {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -132,7 +132,7 @@ interface EBGSFactionSchemaWOHistory {
     }[];
 }
 
-interface EBGSSystemSchemaWOHistory {
+export interface EBGSSystemSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -141,6 +141,7 @@ interface EBGSSystemSchemaWOHistory {
     x: number;
     y: number;
     z: number;
+    system_address: string,
     population: number;
     government: string;
     allegiance: string;
@@ -231,12 +232,12 @@ interface EBGSUserSchema {
     os_contribution: number;
     patronage: {
         level: number;
-        since: string;
+        since: Date;
     };
     donation: {
         _id: string;
         amount: number;
-        date: string;
+        date: Date;
     }[];
     factions: {
         name: string;
@@ -285,14 +286,14 @@ interface EBGSDonorSchema {
     _id: string;
     username: string;
     amount: number;
-    date: string;
+    date: Date;
 }
 
 interface EBGSPatronSchema {
     _id: string;
     username: string;
     level: number;
-    since: string;
+    since: Date;
 }
 
 interface EBGSCreditsSchema {

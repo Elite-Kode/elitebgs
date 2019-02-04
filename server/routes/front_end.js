@@ -322,21 +322,6 @@ router.get('/systems', async (req, res, next) => {
         if (req.query.name) {
             query.name_lower = req.query.name.toLowerCase();
         }
-        if (req.query.allegiance) {
-            query.allegiance = req.query.allegiance.toLowerCase();
-        }
-        if (req.query.government) {
-            query.government = req.query.government.toLowerCase();
-        }
-        if (req.query.state) {
-            query.state = req.query.state.toLowerCase();
-        }
-        if (req.query.primaryeconomy) {
-            query.primary_economy = req.query.primaryeconomy.toLowerCase();
-        }
-        if (req.query.security) {
-            query.security = req.query.security.toLowerCase();
-        }
         if (req.query.beginsWith) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
@@ -542,6 +527,33 @@ router.get('/stations', async (req, res, next) => {
         }
     } catch (err) {
         next(err);
+    }
+});
+
+router.get('/systemhistoryadmin', async (req, res, next) => {
+    try {
+        if (req.user.access === 0) {
+            let paginateOptions = {
+                lean: true,
+                leanWithId: false,
+                page: req.query.page,
+                limit: 10,
+                sort: {
+                    updated_at: -1
+                }
+            }
+            let query = new Object;
+            if (req.query.system_name_lower) {
+                query.system_name_lower = req.query.system_name_lower;
+            }
+            let historyModel = await require('../models/ebgs_history_system_v4');
+            let historyResult = await historyModel.paginate(query, paginateOptions);
+            res.send(historyResult);
+        } else {
+            res.send(false);
+        }
+    } catch (error) {
+        next(error);
     }
 });
 

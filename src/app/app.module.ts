@@ -29,6 +29,7 @@ import { TickComponent } from './tick/tick.component';
 import { SystemsService } from './services/systems.service';
 import { FactionsService } from './services/factions.service';
 import { StationsService } from './services/stations.service';
+import { UsersService } from './services/users.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ServerService } from './services/server.service';
 import { TryAPIService } from './services/tryapi.service';
@@ -92,6 +93,7 @@ export function errorHandlerFactory() {
         SystemsService,
         FactionsService,
         StationsService,
+        UsersService,
         AuthenticationService,
         ServerService,
         ThemeService,
