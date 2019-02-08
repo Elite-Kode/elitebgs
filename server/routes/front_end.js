@@ -543,8 +543,8 @@ router.get('/systemhistoryadmin', async (req, res, next) => {
                 }
             }
             let query = new Object;
-            if (req.query.system_name_lower) {
-                query.system_name_lower = req.query.system_name_lower;
+            if (req.query.id) {
+                query.system_id = req.query.id;
             }
             let historyModel = await require('../models/ebgs_history_system_v4');
             let historyResult = await historyModel.paginate(query, paginateOptions);

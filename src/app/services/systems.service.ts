@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSSystemsWOHistory, EBGSSystemChart, EBGSSystemChartPaginate, EBGSSystemSchemaWOHistory, EBGSSystemSchema } from '../typings';
+import { EBGSSystemsWOHistory, EBGSSystemChart, EBGSSystemChartPaginate, EBGSSystemSchemaWOHistory, EBGSSystemSchema, EBGSSystemHistory } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
@@ -41,9 +41,9 @@ export class SystemsService {
         });
     }
 
-    getSystemHistoryAdmin(id: string): Observable<EBGSSystemSchema['history']> {
-        return this.http.get<EBGSSystemSchema['history']>('/frontend/systemhistoryadmin', {
-            params: new HttpParams().set('id', id)
+    getHistoryAdmin(page: string, id: string): Observable<EBGSSystemHistory> {
+        return this.http.get<EBGSSystemHistory>('/frontend/systemhistoryadmin', {
+            params: new HttpParams().set('id', id).set('page', page)
         });
     }
 

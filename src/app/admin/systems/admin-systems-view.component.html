@@ -14,50 +14,127 @@
         </div>
     </clr-alert>
     <h1>{{systemUnderEdit?.name}}</h1>
+    <h3>({{systemUnderEdit?.name_lower}})</h3>
     <form clrForm>
         <h4>System Data</h4>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Coordinates</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>Z</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="x" name="x" type="number" [(ngModel)]="systemUnderEdit && systemUnderEdit.x">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="y" name="y" type="number" [(ngModel)]="systemUnderEdit && systemUnderEdit.y">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="z" name="z" type="number" [(ngModel)]="systemUnderEdit && systemUnderEdit.z">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Ids</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>System Address</th>
+                            <th>EDDB ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="id" name="id" type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit._id">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="system_address" name="system_address" type="number"
+                                    [(ngModel)]="systemUnderEdit && systemUnderEdit.system_address">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="eddb" name="eddb" type="number" [(ngModel)]="systemUnderEdit && systemUnderEdit.eddb_id">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div class="clr-row">
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Government</label>
-                <!-- <input class="clr-col-12 clr-col-md-8" clrInput id="government" name="government" type="text"
-                    [(ngModel)]="systemUnderEdit && systemUnderEdit.government"> -->
                 <select class="clr-col-12 clr-col-md-8" clrSelect id="government" name="government" [(ngModel)]="systemUnderEdit && systemUnderEdit.government">
                     <option *ngFor="let government of governments" [value]="government.key">{{government.value}}</option>
                 </select>
             </clr-select-container>
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Allegiance</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="allegiance" name="allegiance" type="text"
-                    [(ngModel)]="systemUnderEdit && systemUnderEdit.allegiance">
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="allegiance" name="allegiance" [(ngModel)]="systemUnderEdit && systemUnderEdit.allegiance">
+                    <option *ngFor="let allegiance of allegiances" [value]="allegiance.key">{{allegiance.value}}</option>
+                </select>
             </clr-select-container>
+        </div>
+        <div class="clr-row">
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Primary Economy</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="primary_economy" name="primary_economy" type="text"
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="primary_economy" name="primary_economy"
                     [(ngModel)]="systemUnderEdit && systemUnderEdit.primary_economy">
+                    <option *ngFor="let economy of economies" [value]="economy.key">{{economy.value}}</option>
+                </select>
             </clr-select-container>
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Secondary Economy</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="secondary_economy" name="secondary_economy" type="text"
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="secondary_economy" name="secondary_economy"
                     [(ngModel)]="systemUnderEdit && systemUnderEdit.secondary_economy">
+                    <option *ngFor="let economy of economies" [value]="economy.key">{{economy.value}}</option>
+                </select>
             </clr-select-container>
+        </div>
+        <div class="clr-row">
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">State</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="state" name="state" type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.state">
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="state" name="state" [(ngModel)]="systemUnderEdit && systemUnderEdit.state">
+                    <option *ngFor="let state of states" [value]="state.key">{{state.value}}</option>
+                </select>
             </clr-select-container>
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Security</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="security" name="security" type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.security">
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="security" name="security" [(ngModel)]="systemUnderEdit && systemUnderEdit.security">
+                    <option *ngFor="let security of securities" [value]="security.key">{{security.value}}</option>
+                </select>
             </clr-select-container>
-            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+        </div>
+        <div class="clr-row">
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Population</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="population" name="population" type="text"
+                <input class="clr-col-12 clr-col-md-8" clrInput id="population" name="population" type="number"
                     [(ngModel)]="systemUnderEdit && systemUnderEdit.population">
-            </clr-select-container>
+            </clr-input-container>
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Controlling Faction</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="controlling_minor_faction" name="controlling_minor_faction"
-                    type="text" [(ngModel)]="systemUnderEdit && systemUnderEdit.controlling_minor_faction">
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="controlling_minor_faction" name="controlling_minor_faction"
+                    [(ngModel)]="systemUnderEdit && systemUnderEdit.controlling_minor_faction">
+                    <option *ngFor="let minorFaction of minorFactions" [value]="minorFaction.key">{{minorFaction.value}}</option>
+                </select>
             </clr-select-container>
+        </div>
+        <div class="clr-row">
+            <clr-date-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Updated At</label>
+                <input class="clr-col-12 clr-col-md-8" id="updated_at" name="updated_at" type="date" [(clrDate)]="updated_at">
+            </clr-date-container>
         </div>
         <div class="clr-form-control clr-row">
             <label class="clr-control-label">Factions in Systems</label>
@@ -83,10 +160,7 @@
                                 <input class="clr-input" id="factions" name="factions" placeholder="Add a faction" type="text"
                                     [(ngModel)]="factionAdd">
                             </td>
-                            <td>
-                                <input class="clr-input" id="factions" name="factions" placeholder="Add a faction" type="text"
-                                    [(ngModel)]="factionAdd">
-                            </td>
+                            <td>{{factionAdd.toLowerCase()}}</td>
                             <td>
                                 <button (click)="addFaction()" class="btn btn-success">Add</button>
                             </td>
@@ -109,4 +183,35 @@
             <button type="button" class="btn btn-primary" (click)="warningConfirmed()">{{warningProceed}}</button>
         </div>
     </clr-modal>
+    <h4>History</h4>
+    <clr-datagrid (clrDgRefresh)="refreshHistory($event)" [clrDgLoading]="historyLoading">
+        <clr-dg-column>ID</clr-dg-column>
+        <clr-dg-column>Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>Security</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
+        <clr-dg-column>Population</clr-dg-column>
+        <clr-dg-column>Updated At</clr-dg-column>
+        <clr-dg-column>Updated By</clr-dg-column>
+        <clr-dg-column>Controlling Faction</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any records!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let record of systemHistoryData">
+            <clr-dg-cell>{{record._id}}</clr-dg-cell>
+            <clr-dg-cell>{{record.government}}</clr-dg-cell>
+            <clr-dg-cell>{{record.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{record.security}}</clr-dg-cell>
+            <clr-dg-cell>{{record.state}}</clr-dg-cell>
+            <clr-dg-cell>{{record.population}}</clr-dg-cell>
+            <clr-dg-cell>{{record.updated_at}}</clr-dg-cell>
+            <clr-dg-cell>{{record.updated_by}}</clr-dg-cell>
+            <clr-dg-cell>{{record.controlling_minor_faction}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{historyTotalRecords}} systems
+            <clr-dg-pagination #pagination [clrDgTotalItems]="historyTotalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
 </div>

@@ -1,9 +1,10 @@
 import { Component, HostBinding, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ClrDatagridStateInterface } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from '../admin.interface';
 import { AuthenticationService } from '../../services/authentication.service';
-import { EBGSSystemSchemaWOHistory, IngameIdsSchema } from '../../typings';
+import { EBGSSystemSchemaWOHistory, IngameIdsSchema, EBGSSystemSchema } from '../../typings';
 import { SystemsService } from '../../services/systems.service';
 import * as moment from 'moment';
 import { IngameIdsService } from '../../services/ingameIds.service';
@@ -17,6 +18,8 @@ export class AdminSystemsViewComponent implements OnInit {
     @HostBinding('class.content-container') contentContainer = true;
     systemData: EBGSSystemSchemaWOHistory;
     systemUnderEdit: EBGSSystemSchemaWOHistory;
+    systemHistoryData: EBGSSystemSchema['history'][];
+    systemHistoryUnderEdit: EBGSSystemSchema['history'];
     successAlertState = false;
     failureAlertState = false;
     actionMethods: IActionMethodsSchema;
@@ -26,6 +29,10 @@ export class AdminSystemsViewComponent implements OnInit {
     warningModal: boolean;
     selectedActionMethod: string;
     FDevIDs: IngameIdsSchema;
+    factionAdd = '';
+    historyPageNumber = 1;
+    historyTotalRecords = 0;
+    historyLoading = true;
 
     government: string;
     allegiance: string;
@@ -33,13 +40,14 @@ export class AdminSystemsViewComponent implements OnInit {
     secondary_economy: string;
     state: string;
     security: string;
+    updated_at: Date;
 
     governments = [];
-    allegiances = null;
-    economies = null;
-    states = null;
-    securities = null;
-    minorFactions = null;
+    allegiances = [];
+    economies = [];
+    states = [];
+    securities = [];
+    minorFactions = [];
 
     constructor(
         private systemsService: SystemsService,
@@ -81,6 +89,19 @@ export class AdminSystemsViewComponent implements OnInit {
 
     async ngOnInit() {
         this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
+        this.populateSelects();
+        this.getSystems();
+        this.getSystemHistory();
+    }
+
+    refreshHistory(tableState: ClrDatagridStateInterface) {
+        this.historyLoading = true;
+        this.historyPageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
+
+        this.getSystemHistory();
+    }
+
+    populateSelects() {
         for (const key in this.FDevIDs.government) {
             if (this.FDevIDs.government.hasOwnProperty(key)) {
                 this.governments.push({
@@ -89,7 +110,38 @@ export class AdminSystemsViewComponent implements OnInit {
                 });
             }
         }
-        this.getSystems();
+        for (const key in this.FDevIDs.superpower) {
+            if (this.FDevIDs.superpower.hasOwnProperty(key)) {
+                this.allegiances.push({
+                    key: key,
+                    value: this.FDevIDs.superpower[key].name
+                });
+            }
+        }
+        for (const key in this.FDevIDs.economy) {
+            if (this.FDevIDs.economy.hasOwnProperty(key)) {
+                this.economies.push({
+                    key: key,
+                    value: this.FDevIDs.economy[key].name
+                });
+            }
+        }
+        for (const key in this.FDevIDs.state) {
+            if (this.FDevIDs.state.hasOwnProperty(key)) {
+                this.states.push({
+                    key: key,
+                    value: this.FDevIDs.state[key].name
+                });
+            }
+        }
+        for (const key in this.FDevIDs.security) {
+            if (this.FDevIDs.security.hasOwnProperty(key)) {
+                this.securities.push({
+                    key: key,
+                    value: this.FDevIDs.security[key].name
+                });
+            }
+        }
     }
 
     getSystems() {
@@ -103,7 +155,26 @@ export class AdminSystemsViewComponent implements OnInit {
                 this.secondary_economy = this.systemData.secondary_economy ? this.FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
                 this.state = this.FDevIDs.state[this.systemData.state].name;
                 this.security = this.FDevIDs.security[this.systemData.security].name;
+                this.updated_at = new Date(this.systemData.updated_at);
                 this.systemUnderEdit = cloneDeep(this.systemData);
+
+                for (const faction of this.systemUnderEdit.factions) {
+                    this.minorFactions.push({
+                        key: faction.name_lower,
+                        value: faction.name
+                    });
+                }
+            });
+    }
+
+    getSystemHistory() {
+        this.systemsService
+            .getHistoryAdmin(this.historyPageNumber.toString(), this.route.snapshot.paramMap.get('userid'))
+            .subscribe(history => {
+                this.historyTotalRecords = history.total;
+                this.historyLoading = false;
+                this.systemHistoryData = history.docs;
+                // this.systemHistoryUnderEdit = cloneDeep(this.systemHistoryData);
             });
     }
 

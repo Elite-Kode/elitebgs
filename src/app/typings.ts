@@ -347,3 +347,4 @@ export type EBGSCredits = EBGSCreditsSchema;
 
 export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
+export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history']>;
