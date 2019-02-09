@@ -37,14 +37,6 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     historyLoading = true;
     historySelected = [];
 
-    // government: string;
-    // allegiance: string;
-    // primary_economy: string;
-    // secondary_economy: string;
-    // state: string;
-    // security: string;
-    // updated_at: Date;
-
     governments = [];
     allegiances = [];
     economies = [];
@@ -159,13 +151,6 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
             .getSystemsById(this.route.snapshot.paramMap.get('userid'))
             .subscribe(systems => {
                 this.systemData = systems.docs[0];
-                // this.government = this.FDevIDs.government[this.systemData.government].name;
-                // this.allegiance = this.FDevIDs.superpower[this.systemData.allegiance].name;
-                // this.primary_economy = this.FDevIDs.economy[this.systemData.primary_economy].name;
-                // this.secondary_economy = this.systemData.secondary_economy ? this.FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
-                // this.state = this.FDevIDs.state[this.systemData.state].name;
-                // this.security = this.FDevIDs.security[this.systemData.security].name;
-                // this.updated_at = new Date(this.systemData.updated_at);
                 this.systemUnderEdit = cloneDeep(this.systemData);
 
                 for (const faction of this.systemUnderEdit.factions) {
@@ -184,7 +169,6 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
                 this.historyTotalRecords = history.total;
                 this.historyLoading = false;
                 this.systemHistoryData = history.docs;
-                // this.systemHistoryUnderEdit = cloneDeep(this.systemHistoryData);
             });
     }
 
@@ -196,40 +180,40 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
         }
     }
 
-    save() {
-        this.selectedActionMethod = 'save';
-        this.warningTitle = 'Confirm Save'
-        this.warningText = `Would you like to save the changes?`;
-        this.warningProceed = 'Save';
-        this.warningModal = true;
-    }
+    // save() {
+    //     this.selectedActionMethod = 'save';
+    //     this.warningTitle = 'Confirm Save'
+    //     this.warningText = `Would you like to save the changes?`;
+    //     this.warningProceed = 'Save';
+    //     this.warningModal = true;
+    // }
 
-    reset() {
-        this.selectedActionMethod = 'reset';
-        this.warningTitle = 'Confirm Reset'
-        this.warningText = `Would you like to reset all changes?`;
-        this.warningProceed = 'Reset';
-        this.warningModal = true;
-    }
+    // reset() {
+    //     this.selectedActionMethod = 'reset';
+    //     this.warningTitle = 'Confirm Reset'
+    //     this.warningText = `Would you like to reset all changes?`;
+    //     this.warningProceed = 'Reset';
+    //     this.warningModal = true;
+    // }
 
-    delete() {
-        this.selectedActionMethod = 'delete';
-        this.warningTitle = 'Confirm Delete'
-        this.warningText = `Would you like to delete the user?`;
-        this.warningProceed = 'Delete';
-        this.warningModal = true;
-    }
+    // delete() {
+    //     this.selectedActionMethod = 'delete';
+    //     this.warningTitle = 'Confirm Delete'
+    //     this.warningText = `Would you like to delete the user?`;
+    //     this.warningProceed = 'Delete';
+    //     this.warningModal = true;
+    // }
 
-    closeWarningModal() {
-        this.warningModal = false;
-    }
+    // closeWarningModal() {
+    //     this.warningModal = false;
+    // }
 
-    warningConfirmed() {
-        this.actionMethods[this.selectedActionMethod]();
-        this.warningModal = false;
-        this.warningText = null;
-        this.warningTitle = null;
-        this.warningProceed = null;
-        this.selectedActionMethod = null;
-    }
+    // warningConfirmed() {
+    //     this.actionMethods[this.selectedActionMethod]();
+    //     this.warningModal = false;
+    //     this.warningText = null;
+    //     this.warningTitle = null;
+    //     this.warningProceed = null;
+    //     this.selectedActionMethod = null;
+    // }
 }

@@ -205,13 +205,13 @@
     <clr-datagrid (clrDgRefresh)="refreshHistory($event)" [clrDgLoading]="historyLoading"
         [(clrDgSelected)]="historySelected">
         <clr-dg-action-bar>
-            <button type="button" class="btn btn-sm btn-success-outline" (click)="onAdd()">
+            <button type="button" class="btn btn-sm btn-success-outline" (click)="addHistoryRecord()">
                 <clr-icon shape="plus"></clr-icon> Add Record
             </button>
-            <button type="button" class="btn btn-sm btn-success" (click)="onAdd()">
+            <button type="button" class="btn btn-sm btn-success" (click)="saveSelectedHistoryRecords()">
                 <clr-icon shape="check"></clr-icon> Save Selected
             </button>
-            <button type="button" class="btn btn-sm btn-danger" (click)="onAdd()">
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteSelectedHistoryRecords()">
                 <clr-icon shape="trash"></clr-icon> Delete Selected
             </button>
         </clr-dg-action-bar>
@@ -255,7 +255,7 @@
                                     <td><a routerLink="/admin/factions/{{faction.faction_id}}">{{faction.name}}</a></td>
                                     <td>{{faction.name_lower}}</td>
                                     <td>
-                                        <button (click)="removeFaction(faction.name_lower)"
+                                        <button (click)="removeFactionHistory(record._id, faction.name_lower)"
                                             class="btn btn-danger btn-sm">Remove</button>
                                     </td>
                                 </tr>
@@ -267,17 +267,17 @@
                                     </td>
                                     <td>{{factionAdd.toLowerCase()}}</td>
                                     <td>
-                                        <button (click)="addFaction()" class="btn btn-success btn-sm">Add</button>
+                                        <button (click)="addFactionHistory(record._id)" class="btn btn-success btn-sm">Add</button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="clr-col-12">
-                        <button class="btn btn-success-outline" (click)="edit()">Edit</button>
-                        <button class="btn btn-success" (click)="save()">Save</button>
-                        <button class="btn btn-warning-outline" (click)="reset()">Reset</button>
-                        <button class="btn btn-warning" (click)="delete()">Delete</button>
+                        <button class="btn btn-success-outline" (click)="editHistoryRecord(record._id)">Edit</button>
+                        <button class="btn btn-success" (click)="saveHistoryRecord(record._id)">Save</button>
+                        <button class="btn btn-warning-outline" (click)="resetHistoryRecord(record._id)">Reset</button>
+                        <button class="btn btn-warning" (click)="deleteHistoryRecord(record._id)">Delete</button>
                     </div>
                 </div>
             </clr-dg-row-detail>
