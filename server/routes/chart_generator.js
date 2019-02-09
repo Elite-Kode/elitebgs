@@ -89,10 +89,12 @@ router.get('/factions/influence', async (req, res, next) => {
             const latestUpdate = responseObject.docs[0].faction_presence.find(findSystem => {
                 return findSystem.system_name === system;
             });
-            data.push([
-                Date.parse(latestUpdate.updated_at),
-                Number.parseFloat((lastElement.influence * 100).toFixed(2))
-            ]);
+            if (latestUpdate) {
+                data.push([
+                    Date.parse(latestUpdate.updated_at),
+                    Number.parseFloat((lastElement.influence * 100).toFixed(2))
+                ]);
+            }
             series.push({
                 name: system,
                 data: data
@@ -794,10 +796,12 @@ router.get('/systems/influence', async (req, res, next) => {
             const latestUpdate = responseObject.docs[0].factions.find(findFaction => {
                 return findFaction.name === faction;
             })
-            data.push([
-                Date.parse(latestUpdate.updated_at),
-                Number.parseFloat((lastRecord.influence * 100).toFixed(2))
-            ]);
+            if (latestUpdate) {
+                data.push([
+                    Date.parse(latestUpdate.updated_at),
+                    Number.parseFloat((lastRecord.influence * 100).toFixed(2))
+                ]);
+            }
             series.push({
                 name: faction,
                 data: data
