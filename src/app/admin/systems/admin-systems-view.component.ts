@@ -1,24 +1,26 @@
-import { Component, HostBinding, OnInit, Inject } from '@angular/core';
+import { Component, HostBinding, OnInit, Inject, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClrDatagridStateInterface } from '@clr/angular';
+import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from '../admin.interface';
 import { AuthenticationService } from '../../services/authentication.service';
-import { EBGSSystemSchemaWOHistory, IngameIdsSchema, EBGSSystemSchema } from '../../typings';
 import { SystemsService } from '../../services/systems.service';
-import * as moment from 'moment';
 import { IngameIdsService } from '../../services/ingameIds.service';
+import { ThemeService } from '../../services/theme.service';
+import { EBGSSystemSchemaWOHistory, IngameIdsSchema, EBGSSystemSchema } from '../../typings';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-admin-systems-view',
     templateUrl: './admin-systems-view.component.html',
     styleUrls: ['./admin-systems-view.component.scss']
 })
-export class AdminSystemsViewComponent implements OnInit {
+export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     systemData: EBGSSystemSchemaWOHistory;
     systemUnderEdit: EBGSSystemSchemaWOHistory;
-    systemHistoryData: EBGSSystemSchema['history'][];
+    systemHistoryData: EBGSSystemSchema['history'];
     systemHistoryUnderEdit: EBGSSystemSchema['history'];
     successAlertState = false;
     failureAlertState = false;
@@ -33,14 +35,15 @@ export class AdminSystemsViewComponent implements OnInit {
     historyPageNumber = 1;
     historyTotalRecords = 0;
     historyLoading = true;
+    historySelected = [];
 
-    government: string;
-    allegiance: string;
-    primary_economy: string;
-    secondary_economy: string;
-    state: string;
-    security: string;
-    updated_at: Date;
+    // government: string;
+    // allegiance: string;
+    // primary_economy: string;
+    // secondary_economy: string;
+    // state: string;
+    // security: string;
+    // updated_at: Date;
 
     governments = [];
     allegiances = [];
@@ -53,6 +56,7 @@ export class AdminSystemsViewComponent implements OnInit {
         private systemsService: SystemsService,
         private authenticationService: AuthenticationService,
         private ingameIdsService: IngameIdsService,
+        private themeService: ThemeService,
         private route: ActivatedRoute,
         private router: Router
     ) {
@@ -85,6 +89,12 @@ export class AdminSystemsViewComponent implements OnInit {
                     });
             }
         }
+    }
+
+    ngAfterViewInit() {
+        this.themeService.theme$.subscribe(() => {
+            this.datagrid.resize();
+        });
     }
 
     async ngOnInit() {
@@ -149,13 +159,13 @@ export class AdminSystemsViewComponent implements OnInit {
             .getSystemsById(this.route.snapshot.paramMap.get('userid'))
             .subscribe(systems => {
                 this.systemData = systems.docs[0];
-                this.government = this.FDevIDs.government[this.systemData.government].name;
-                this.allegiance = this.FDevIDs.superpower[this.systemData.allegiance].name;
-                this.primary_economy = this.FDevIDs.economy[this.systemData.primary_economy].name;
-                this.secondary_economy = this.systemData.secondary_economy ? this.FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
-                this.state = this.FDevIDs.state[this.systemData.state].name;
-                this.security = this.FDevIDs.security[this.systemData.security].name;
-                this.updated_at = new Date(this.systemData.updated_at);
+                // this.government = this.FDevIDs.government[this.systemData.government].name;
+                // this.allegiance = this.FDevIDs.superpower[this.systemData.allegiance].name;
+                // this.primary_economy = this.FDevIDs.economy[this.systemData.primary_economy].name;
+                // this.secondary_economy = this.systemData.secondary_economy ? this.FDevIDs.economy[this.systemData.secondary_economy].name : this.systemData.secondary_economy;
+                // this.state = this.FDevIDs.state[this.systemData.state].name;
+                // this.security = this.FDevIDs.security[this.systemData.security].name;
+                // this.updated_at = new Date(this.systemData.updated_at);
                 this.systemUnderEdit = cloneDeep(this.systemData);
 
                 for (const faction of this.systemUnderEdit.factions) {
