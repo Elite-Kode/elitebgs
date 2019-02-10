@@ -6,7 +6,8 @@ import { AdminUsersListComponent } from './users/admin-users-list.component';
 import { AdminUsersViewComponent } from './users/admin-users-view.component';
 import { AdminSystemsListComponent } from './systems/admin-systems-list.component';
 import { AdminSystemsViewComponent } from './systems/admin-systems-view.component';
-import { AdminFactionsComponent } from './factions/admin-factions.component';
+import { AdminFactionsListComponent } from './factions/admin-factions-list.component';
+import { AdminFactionsViewComponent } from './factions/admin-factions-view.component';
 import { AdminStationsComponent } from './stations/admin-stations.component';
 
 const adminRoutes: Routes = [
@@ -31,12 +32,16 @@ const adminRoutes: Routes = [
                 component: AdminSystemsListComponent
             },
             {
-                path: 'system/:userid',
+                path: 'system/:systemid',
                 component: AdminSystemsViewComponent
             },
             {
                 path: 'faction',
-                component: AdminFactionsComponent
+                component: AdminFactionsListComponent
+            },
+            {
+                path: 'faction/:factionid',
+                component: AdminFactionsViewComponent
             },
             {
                 path: 'station',

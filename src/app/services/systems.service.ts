@@ -7,9 +7,7 @@ import { CustomEncoder } from './custom.encoder';
 @Injectable()
 export class SystemsService {
 
-    constructor(
-        private http: HttpClient
-    ) { }
+    constructor(private http: HttpClient) { }
 
     getSystemsBegins(page: string, name: string): Observable<EBGSSystemsWOHistory> {
         return this.http.get<EBGSSystemsWOHistory>('/frontend/systems', {

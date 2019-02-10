@@ -4,24 +4,24 @@ import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
 import cloneDeep from 'lodash-es/cloneDeep'
 import { IActionMethodsSchema } from '../admin.interface';
 import { AuthenticationService } from '../../services/authentication.service';
-import { SystemsService } from '../../services/systems.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
-import { EBGSSystemSchemaWOHistory, IngameIdsSchema, EBGSSystemSchema } from '../../typings';
+import { IngameIdsSchema, EBGSFactionSchema, EBGSFactionSchemaWOHistory } from '../../typings';
 import * as moment from 'moment';
+import { FactionsService } from '../../services/factions.service';
 
 @Component({
-    selector: 'app-admin-systems-view',
-    templateUrl: './admin-systems-view.component.html',
-    styleUrls: ['./admin-systems-view.component.scss']
+    selector: 'app-admin-factions-view',
+    templateUrl: './admin-factions-view.component.html',
+    styleUrls: ['./admin-factions-view.component.scss']
 })
-export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
+export class AdminFactionsViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
     @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
-    systemData: EBGSSystemSchemaWOHistory;
-    systemUnderEdit: EBGSSystemSchemaWOHistory;
-    systemHistoryData: EBGSSystemSchema['history'];
-    systemHistoryUnderEdit: EBGSSystemSchema['history'];
+    factionData: EBGSFactionSchemaWOHistory;
+    factionUnderEdit: EBGSFactionSchemaWOHistory;
+    factionHistoryData: EBGSFactionSchema['history'];
+    factionHistoryUnderEdit: EBGSFactionSchema['history'];
     successAlertState = false;
     failureAlertState = false;
     actionMethods: IActionMethodsSchema;
@@ -31,7 +31,7 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     warningModal: boolean;
     selectedActionMethod: string;
     FDevIDs: IngameIdsSchema;
-    factionAdd = '';
+    systemAdd: EBGSFactionSchemaWOHistory['faction_presence'][0];
     historyPageNumber = 1;
     historyTotalRecords = 0;
     historyLoading = true;
@@ -39,13 +39,11 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
 
     governments = [];
     allegiances = [];
-    economies = [];
+    happinesses = [];
     states = [];
-    securities = [];
-    minorFactions = [];
 
     constructor(
-        private systemsService: SystemsService,
+        private factionsService: FactionsService,
         private authenticationService: AuthenticationService,
         private ingameIdsService: IngameIdsService,
         private themeService: ThemeService,
@@ -54,14 +52,14 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     ) {
         this.actionMethods = {
             save: () => {
-                this.systemsService.putSystemAdmin(this.systemUnderEdit)
+                this.factionsService.putFactionAdmin(this.factionUnderEdit)
                     .subscribe(status => {
                         if (status === true) {
                             this.successAlertState = true;
                             setTimeout(() => {
                                 this.successAlertState = false;
                             }, 3000);
-                            this.getSystems();
+                            this.getFactions();
                         } else {
                             this.failureAlertState = true;
                             setTimeout(() => {
@@ -71,16 +69,28 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
                     });
             },
             reset: () => {
-                this.systemUnderEdit = cloneDeep(this.systemData);
+                this.factionUnderEdit = cloneDeep(this.factionData);
             },
             delete: () => {
                 this.authenticationService
-                    .removeUser(this.systemData._id)
+                    .removeUser(this.factionData._id)
                     .subscribe(status => {
-                        this.router.navigateByUrl('/admin/system');
+                        this.router.navigateByUrl('/admin/faction');
                     });
             }
         }
+        this.systemAdd = {
+            system_name: '',
+            system_name_lower: '',
+            happiness: '',
+            influence: 0,
+            system_id: '',
+            state: '',
+            active_states: [],
+            pending_states: [],
+            recovering_states: [],
+            updated_at: ''
+        };
     }
 
     ngAfterViewInit() {
@@ -92,22 +102,22 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     async ngOnInit() {
         this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.populateSelects();
-        this.getSystems();
-        this.getSystemHistory();
+        this.getFactions();
+        this.getFactionHistory();
     }
 
     refreshHistory(tableState: ClrDatagridStateInterface) {
         this.historyLoading = true;
         this.historyPageNumber = Math.ceil((tableState.page.to + 1) / tableState.page.size);
 
-        this.getSystemHistory();
+        this.getFactionHistory();
     }
 
     populateSelects() {
         for (const key in this.FDevIDs.government) {
             if (this.FDevIDs.government.hasOwnProperty(key)) {
                 this.governments.push({
-                    key: key,
+                    key: this.FDevIDs.government[key].name.toLowerCase(),
                     value: this.FDevIDs.government[key].name
                 });
             }
@@ -115,16 +125,8 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
         for (const key in this.FDevIDs.superpower) {
             if (this.FDevIDs.superpower.hasOwnProperty(key)) {
                 this.allegiances.push({
-                    key: key,
+                    key: this.FDevIDs.superpower[key].name.toLowerCase(),
                     value: this.FDevIDs.superpower[key].name
-                });
-            }
-        }
-        for (const key in this.FDevIDs.economy) {
-            if (this.FDevIDs.economy.hasOwnProperty(key)) {
-                this.economies.push({
-                    key: key,
-                    value: this.FDevIDs.economy[key].name
                 });
             }
         }
@@ -136,39 +138,33 @@ export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
                 });
             }
         }
-        for (const key in this.FDevIDs.security) {
-            if (this.FDevIDs.security.hasOwnProperty(key)) {
-                this.securities.push({
+        for (const key in this.FDevIDs.happiness) {
+            if (this.FDevIDs.happiness.hasOwnProperty(key)) {
+                this.happinesses.push({
                     key: key,
-                    value: this.FDevIDs.security[key].name
+                    value: this.FDevIDs.happiness[key].name
                 });
             }
         }
     }
 
-    getSystems() {
-        this.systemsService
-            .getSystemsById(this.route.snapshot.paramMap.get('systemid'))
-            .subscribe(systems => {
-                this.systemData = systems.docs[0];
-                this.systemUnderEdit = cloneDeep(this.systemData);
-
-                for (const faction of this.systemUnderEdit.factions) {
-                    this.minorFactions.push({
-                        key: faction.name_lower,
-                        value: faction.name
-                    });
-                }
+    getFactions() {
+        this.factionsService
+            .getFactionsById(this.route.snapshot.paramMap.get('factionid'))
+            .subscribe(factions => {
+                this.factionData = factions.docs[0];
+                this.factionUnderEdit = cloneDeep(this.factionData);
+                // this.factionUnderEdit.faction_presence[0].
             });
     }
 
-    getSystemHistory() {
-        this.systemsService
-            .getHistoryAdmin(this.historyPageNumber.toString(), this.route.snapshot.paramMap.get('systemid'))
+    getFactionHistory() {
+        this.factionsService
+            .getHistoryAdmin(this.historyPageNumber.toString(), this.route.snapshot.paramMap.get('factionid'))
             .subscribe(history => {
                 this.historyTotalRecords = history.total;
                 this.historyLoading = false;
-                this.systemHistoryData = history.docs;
+                this.factionHistoryData = history.docs;
             });
     }
 

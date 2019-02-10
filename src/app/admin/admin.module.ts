@@ -9,7 +9,8 @@ import { AdminUsersListComponent } from './users/admin-users-list.component';
 import { AdminUsersViewComponent } from './users/admin-users-view.component';
 import { AdminSystemsListComponent } from './systems/admin-systems-list.component';
 import { AdminSystemsViewComponent } from './systems/admin-systems-view.component';
-import { AdminFactionsComponent } from './factions/admin-factions.component';
+import { AdminFactionsListComponent } from './factions/admin-factions-list.component';
+import { AdminFactionsViewComponent } from './factions/admin-factions-view.component';
 import { AdminStationsComponent } from './stations/admin-stations.component';
 import { AdminRoutingModule } from './admin-routing.module';
 @NgModule({
@@ -20,7 +21,8 @@ import { AdminRoutingModule } from './admin-routing.module';
         AdminUsersViewComponent,
         AdminSystemsListComponent,
         AdminSystemsViewComponent,
-        AdminFactionsComponent,
+        AdminFactionsListComponent,
+        AdminFactionsViewComponent,
         AdminStationsComponent
     ],
     imports: [

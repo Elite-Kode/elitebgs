@@ -104,7 +104,7 @@ export interface EBGSSystemSchema {
     }[];
 }
 
-interface EBGSFactionSchemaWOHistory {
+export interface EBGSFactionSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -120,7 +120,11 @@ interface EBGSFactionSchemaWOHistory {
         system_name: string;
         system_name_lower: string;
         state: string;
+        happiness: string;
         influence: number;
+        active_states: {
+            state: string;
+        }[];
         pending_states: {
             state: string;
             trend: number;
@@ -129,6 +133,7 @@ interface EBGSFactionSchemaWOHistory {
             state: string;
             trend: number;
         }[];
+        updated_at: string;
     }[];
 }
 
@@ -348,3 +353,4 @@ export type EBGSCredits = EBGSCreditsSchema;
 export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
 export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history'][0]>;
+export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
