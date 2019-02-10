@@ -154,7 +154,6 @@ export class AdminFactionsViewComponent implements OnInit, AfterViewInit {
             .subscribe(factions => {
                 this.factionData = factions.docs[0];
                 this.factionUnderEdit = cloneDeep(this.factionData);
-                // this.factionUnderEdit.faction_presence[0].
             });
     }
 
