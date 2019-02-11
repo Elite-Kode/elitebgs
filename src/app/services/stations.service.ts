@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSStationsWOHistory, EBGSStations, EBGSStationSchema } from '../typings';
-// import { FactionsService } from './factions.service';
+import { EBGSStationsWOHistory, EBGSStations, EBGSStationSchema, EBGSStationHistory, EBGSStationSchemaWOHistory } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class StationsService {
 
-    constructor(
-        private http: HttpClient,
-        // private factionsService: FactionsService
-    ) { }
+    constructor(private http: HttpClient) { }
 
     getStationsBegins(page: string, name: string): Observable<EBGSStationsWOHistory> {
         return this.http.get<EBGSStationsWOHistory>('/frontend/stations', {
@@ -25,6 +21,12 @@ export class StationsService {
         });
     }
 
+    getStationsById(id: string): Observable<EBGSStationsWOHistory> {
+        return this.http.get<EBGSStationsWOHistory>('/frontend/stations', {
+            params: new HttpParams().set('id', id)
+        });
+    }
+
     getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSStations> {
         return this.http.get<EBGSStations>('/frontend/stations', {
             params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
@@ -35,6 +37,20 @@ export class StationsService {
         return this.http.get<EBGSStations>('/frontend/stations', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         });
+    }
+
+    getHistoryAdmin(page: string, id: string): Observable<EBGSStationHistory> {
+        return this.http.get<EBGSStationHistory>('/frontend/stationhistoryadmin', {
+            params: new HttpParams().set('id', id).set('page', page)
+        });
+    }
+
+    putStationAdmin(station: EBGSStationSchemaWOHistory): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/stationadmin', station);
+    }
+
+    putStationHistoryAdmin(record: EBGSStationSchema['history']): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/stationhistoryadmin', record);
     }
 
     parseStationDataName(systemsList: string[]): Promise<EBGSStationSchema[]> {

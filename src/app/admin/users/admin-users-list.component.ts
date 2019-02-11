@@ -1,11 +1,11 @@
 import { Component, HostBinding, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridStateInterface, ClrDatagrid } from '@clr/angular';
-import { IAdminUsers } from './admin-users.interface';
-import { ServerService } from '../../services/server.service';
+import { IAdminUsers } from '../admin.interface';
 import { ThemeService } from '../../services/theme.service';
 import { EBGSUsers } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import { UsersService } from '../../services/users.service';
 
 @Component({
     selector: 'app-admin-users-list',
@@ -23,7 +23,7 @@ export class AdminUsersListComponent implements OnInit, AfterViewInit {
         user: new FormControl()
     });
     constructor(
-        private serverService: ServerService,
+        private usersService: UsersService,
         private themeService: ThemeService
     ) { }
 
@@ -61,7 +61,7 @@ export class AdminUsersListComponent implements OnInit, AfterViewInit {
             beginsWith = '';
         }
 
-        this.serverService
+        this.usersService
             .getUsersBegins(this.pageNumber.toString(), beginsWith)
             .subscribe(users => this.showUser(users));
         this.loading = false;
@@ -76,7 +76,7 @@ export class AdminUsersListComponent implements OnInit, AfterViewInit {
                 if (!value.user) {
                     value.user = '';
                 }
-                return this.serverService
+                return this.usersService
                     .getUsersBegins(this.pageNumber.toString(), value.user)
             }))
             .subscribe(users => {

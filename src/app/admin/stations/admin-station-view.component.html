@@ -1,0 +1,273 @@
+<div class="content-area">
+    <clr-alert [clrAlertType]="'alert-success'" [clrAlertClosable]="false" [clrAlertClosed]="!successAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Updated Station
+            </span>
+        </div>
+    </clr-alert>
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false" [clrAlertClosed]="!failureAlertState">
+        <div clr-alert-item class="alert-item">
+            <span class="alert-text">
+                Station could not be updated due to some error.
+            </span>
+        </div>
+    </clr-alert>
+    <h1>{{stationUnderEdit?.name}}</h1>
+    <h3>({{stationUnderEdit?.name_lower}})</h3>
+    <form clrForm>
+        <h4>Station Data</h4>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Ids</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Station Address</th>
+                            <th>EDDB ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="id" name="id" type="text"
+                                    [(ngModel)]="stationUnderEdit && stationUnderEdit._id">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="station_address" name="station_address" type="number"
+                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.market_id">
+                            </td>
+                            <td>
+                                <input class="clr-input" id="eddb" name="eddb" type="number"
+                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.eddb_id">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clr-row">
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Government</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="government" name="government"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.government">
+                    <option *ngFor="let government of governments" [value]="government.key">{{government.value}}
+                    </option>
+                </select>
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Allegiance</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="allegiance" name="allegiance"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.allegiance">
+                    <option *ngFor="let allegiance of allegiances" [value]="allegiance.key">{{allegiance.value}}
+                    </option>
+                </select>
+            </clr-select-container>
+        </div>
+        <div class="clr-row">
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Economy</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="economy" name="economy"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.economy">
+                    <option *ngFor="let economy of economies" [value]="economy.key">{{economy.value}}</option>
+                </select>
+            </clr-select-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">State</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="state" name="state"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.state">
+                    <option *ngFor="let state of states" [value]="state.key">{{state.value}}</option>
+                </select>
+            </clr-select-container>
+        </div>
+        <div class="clr-row">
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Distance from star</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="distance_from_star" name="distance_from_star"
+                    type="number" [(ngModel)]="stationUnderEdit && stationUnderEdit.distance_from_star">
+            </clr-input-container>
+            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Type</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="type" name="type"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.type">
+                    <option *ngFor="let type of stations" [value]="type.key">{{type.value}}</option>
+                </select>
+            </clr-select-container>
+        </div>
+        <div class="clr-row">
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Controlling Faction</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="controlling_minor_faction"
+                    name="controlling_minor_faction"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.controlling_minor_faction">
+            </clr-input-container>
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Updated At</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="updated_at" name="updated_at" type="string"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.updated_at">
+            </clr-input-container>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Services in Station</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table table-compact">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Service Name Lower</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let service of stationUnderEdit?.services">
+                            <td>{{service.name}}</td>
+                            <td>{{service.name_lower}}</td>
+                            <td>
+                                <button (click)="removeService(service.name_lower)"
+                                    class="btn btn-sm btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="services" name="services" placeholder="Add a service"
+                                    type="text" [(ngModel)]="serviceAdd">
+                            </td>
+                            <td>{{serviceAdd.toLowerCase()}}</td>
+                            <td>
+                                <button (click)="addService()" class="btn btn-sm btn-success">Add</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Economies in Station</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table table-compact">
+                    <thead>
+                        <tr>
+                            <th>Economy Name</th>
+                            <th>Economy Proportion</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let economy of stationUnderEdit?.all_economies">
+                            <td>{{economy.name}}</td>
+                            <td>{{economy.proportion}}</td>
+                            <td>
+                                <button (click)="removeEconomy(economy.name)"
+                                    class="btn btn-sm btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="all_economies" name="all_economies"
+                                    placeholder="Add an economy" type="text" [(ngModel)]="economyAdd">
+                            </td>
+                            <td>{{economyAdd.proportion}}</td>
+                            <td>
+                                <button (click)="addEconomy()" class="btn btn-sm btn-success">Add</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+    <button class="btn btn-success" (click)="save()">Save</button>
+    <button class="btn btn-warning-outline" (click)="reset()">Reset</button>
+    <button class="btn btn-warning" (click)="delete()">Delete</button>
+    <clr-modal [(clrModalOpen)]="warningModal" [clrModalStaticBackdrop]="'true'">
+        <h3 class="modal-title">{{warningTitle}}</h3>
+        <div class="modal-body">
+            <p>{{warningText}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeWarningModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="warningConfirmed()">{{warningProceed}}</button>
+        </div>
+    </clr-modal>
+    <h4>History</h4>
+    <clr-datagrid (clrDgRefresh)="refreshHistory($event)" [clrDgLoading]="historyLoading"
+        [(clrDgSelected)]="historySelected">
+        <clr-dg-action-bar>
+            <button type="button" class="btn btn-sm btn-success-outline" (click)="addHistoryRecord()">
+                <clr-icon shape="plus"></clr-icon> Add Record
+            </button>
+            <button type="button" class="btn btn-sm btn-success" (click)="saveSelectedHistoryRecords()">
+                <clr-icon shape="check"></clr-icon> Save Selected
+            </button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="deleteSelectedHistoryRecords()">
+                <clr-icon shape="trash"></clr-icon> Delete Selected
+            </button>
+        </clr-dg-action-bar>
+        <clr-dg-column>ID</clr-dg-column>
+        <clr-dg-column>Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
+        <clr-dg-column>Updated At</clr-dg-column>
+        <clr-dg-column>Updated By</clr-dg-column>
+        <clr-dg-column>Controlling Faction</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any records!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let record of stationHistoryData" [clrDgItem]="record">
+            <clr-dg-cell>{{record._id}}</clr-dg-cell>
+            <clr-dg-cell>{{record.government}}</clr-dg-cell>
+            <clr-dg-cell>{{record.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{record.state}}</clr-dg-cell>
+            <clr-dg-cell>{{record.updated_at}}</clr-dg-cell>
+            <clr-dg-cell>{{record.updated_by}}</clr-dg-cell>
+            <clr-dg-cell>{{record.controlling_minor_faction}}</clr-dg-cell>
+            <clr-dg-row-detail *clrIfExpanded>
+                <div class="row full-width">
+                    <div class="clr-col-12">
+                        <table class="table table-compact">
+                            <thead>
+                                <tr>
+                                    <th>Service Name</th>
+                                    <th>Service Name Lower</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let service of record?.services">
+                                    <td>{{service.name}}</td>
+                                    <td>{{service.name_lower}}</td>
+                                    <td>
+                                        <button (click)="removeServiceHistory(record._id, service.name_lower)"
+                                            class="btn btn-sm btn-danger">Remove</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="clr-input" id="services" name="services"
+                                            placeholder="Add a service" type="text" [(ngModel)]="serviceAdd">
+                                    </td>
+                                    <td>{{serviceAdd.toLowerCase()}}</td>
+                                    <td>
+                                        <button (click)="addService()" class="btn btn-sm btn-success">Add</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="clr-col-12">
+                        <button class="btn btn-success-outline" (click)="editHistoryRecord(record._id)">Edit</button>
+                        <button class="btn btn-success" (click)="saveHistoryRecord(record._id)">Save</button>
+                        <button class="btn btn-warning-outline" (click)="resetHistoryRecord(record._id)">Reset</button>
+                        <button class="btn btn-warning" (click)="deleteHistoryRecord(record._id)">Delete</button>
+                    </div>
+                </div>
+            </clr-dg-row-detail>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{historyTotalRecords}} stations
+            <clr-dg-pagination #pagination [clrDgTotalItems]="historyTotalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+</div>

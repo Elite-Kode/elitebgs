@@ -16,6 +16,8 @@
 
 "use strict";
 
+let mongoosePaginate = require('mongoose-paginate');
+
 module.exports = (async () => {
     let db = require('../db');
     let connection = db.elite_bgs;
@@ -38,6 +40,8 @@ module.exports = (async () => {
             name_lower: { type: String, lowercase: true }
         }]
     }, { runSettersOnQuery: true });
+
+    ebgsHistoryStation.plugin(mongoosePaginate);
 
     let model = connection.model('ebgsHistoryStationV4', ebgsHistoryStation);
 

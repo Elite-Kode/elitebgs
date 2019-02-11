@@ -61,7 +61,7 @@ export interface EBGSFactionSchema {
     }[];
 }
 
-interface EBGSSystemSchema {
+export interface EBGSSystemSchema {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -104,7 +104,7 @@ interface EBGSSystemSchema {
     }[];
 }
 
-interface EBGSFactionSchemaWOHistory {
+export interface EBGSFactionSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -120,7 +120,11 @@ interface EBGSFactionSchemaWOHistory {
         system_name: string;
         system_name_lower: string;
         state: string;
+        happiness: string;
         influence: number;
+        active_states: {
+            state: string;
+        }[];
         pending_states: {
             state: string;
             trend: number;
@@ -129,10 +133,11 @@ interface EBGSFactionSchemaWOHistory {
             state: string;
             trend: number;
         }[];
+        updated_at: string;
     }[];
 }
 
-interface EBGSSystemSchemaWOHistory {
+export interface EBGSSystemSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -141,6 +146,7 @@ interface EBGSSystemSchemaWOHistory {
     x: number;
     y: number;
     z: number;
+    system_address: string,
     population: number;
     government: string;
     allegiance: string;
@@ -198,7 +204,7 @@ export interface EBGSStationSchema {
     }[];
 }
 
-interface EBGSStationSchemaWOHistory {
+export interface EBGSStationSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -231,12 +237,12 @@ interface EBGSUserSchema {
     os_contribution: number;
     patronage: {
         level: number;
-        since: string;
+        since: Date;
     };
     donation: {
         _id: string;
         amount: number;
-        date: string;
+        date: Date;
     }[];
     factions: {
         name: string;
@@ -285,14 +291,14 @@ interface EBGSDonorSchema {
     _id: string;
     username: string;
     amount: number;
-    date: string;
+    date: Date;
 }
 
 interface EBGSPatronSchema {
     _id: string;
     username: string;
     level: number;
-    since: string;
+    since: Date;
 }
 
 interface EBGSCreditsSchema {
@@ -346,3 +352,6 @@ export type EBGSCredits = EBGSCreditsSchema;
 
 export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
+export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history'][0]>;
+export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
+export type EBGSStationHistory = PaginateResult<EBGSStationSchema['history'][0]>;

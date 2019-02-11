@@ -1,10 +1,10 @@
 import { Component, HostBinding, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import cloneDeep from 'lodash-es/cloneDeep'
-import { IActionMethodsSchema } from './admin-users.interface';
-import { ServerService } from '../../services/server.service';
+import { IActionMethodsSchema } from '../admin.interface';
 import { AuthenticationService } from '../../services/authentication.service';
 import { EBGSUser } from '../../typings';
+import { UsersService } from 'app/services/users.service';
 
 @Component({
     selector: 'app-admin-users-view',
@@ -16,7 +16,7 @@ export class AdminUsersViewComponent implements OnInit {
     factionAdd: string;
     systemAdd: string;
     donationAmount: number;
-    donationDate: string;
+    donationDate: Date;
     userData: EBGSUser;
     userUnderEdit: EBGSUser;
     successAlertState = false;
@@ -28,7 +28,7 @@ export class AdminUsersViewComponent implements OnInit {
     warningModal: boolean;
     selectedActionMethod: string;
     constructor(
-        private serverService: ServerService,
+        private usersService: UsersService,
         private authenticationService: AuthenticationService,
         private route: ActivatedRoute,
         private router: Router
@@ -36,7 +36,6 @@ export class AdminUsersViewComponent implements OnInit {
         this.factionAdd = '';
         this.systemAdd = '';
         this.donationAmount = 0;
-        this.donationDate = '';
         this.actionMethods = {
             save: () => {
                 if (this.userUnderEdit.donation) {
@@ -46,7 +45,7 @@ export class AdminUsersViewComponent implements OnInit {
                         }
                     });
                 }
-                this.serverService.putUser(this.userUnderEdit)
+                this.usersService.putUser(this.userUnderEdit)
                     .subscribe(status => {
                         if (status === true) {
                             this.successAlertState = true;
@@ -69,7 +68,7 @@ export class AdminUsersViewComponent implements OnInit {
                 this.authenticationService
                     .removeUser(this.userData._id)
                     .subscribe(status => {
-                        this.router.navigateByUrl('/admin/users');
+                        this.router.navigateByUrl('/admin/user');
                     });
             }
         }
@@ -80,8 +79,8 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     getUsers() {
-        this.serverService
-            .getUsers(this.route.snapshot.paramMap.get('userid'))
+        this.usersService
+            .getUser(this.route.snapshot.paramMap.get('userid'))
             .subscribe(user => {
                 this.userData = user.docs[0];
                 this.userUnderEdit = cloneDeep(this.userData);
@@ -95,6 +94,9 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     addFaction() {
+        if (!this.userUnderEdit.factions) {
+            this.userUnderEdit.factions = [];
+        }
         this.userUnderEdit.factions.push({
             name: this.factionAdd,
             name_lower: this.factionAdd.toLowerCase()
@@ -109,6 +111,9 @@ export class AdminUsersViewComponent implements OnInit {
     }
 
     addSystem() {
+        if (!this.userUnderEdit.systems) {
+            this.userUnderEdit.systems = [];
+        }
         this.userUnderEdit.systems.push({
             name: this.systemAdd,
             name_lower: this.systemAdd.toLowerCase()
@@ -132,7 +137,7 @@ export class AdminUsersViewComponent implements OnInit {
             date: this.donationDate
         });
         this.donationAmount = 0;
-        this.donationDate = '';
+        this.donationDate = undefined;
     }
 
     save() {

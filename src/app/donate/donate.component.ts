@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ServerService } from '../services/server.service';
 import { EBGSDonor, EBGSPatron } from '../typings';
+import { UsersService } from 'app/services/users.service';
 
 @Component({
     templateUrl: './donate.component.html',
@@ -12,7 +12,7 @@ export class DonateComponent implements OnInit {
     donors: EBGSDonor[];
     patrons: EBGSPatron[];
     constructor(
-        private serverService: ServerService,
+        private usersService: UsersService,
         private titleService: Title
     ) {
         this.titleService.setTitle('Donate - Elite BGS');
@@ -21,10 +21,10 @@ export class DonateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.serverService.getDonors().subscribe(donors => {
+        this.usersService.getDonors().subscribe(donors => {
             this.donors = donors;
         });
-        this.serverService.getPatrons().subscribe(patrons => {
+        this.usersService.getPatrons().subscribe(patrons => {
             this.patrons = patrons;
         });
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSFactions, EBGSFactionsWOHistory, EBGSFactionSchema } from '../typings';
+import { EBGSFactions, EBGSFactionsWOHistory, EBGSFactionSchema, EBGSFactionSchemaWOHistory, EBGSFactionHistoryPaginate } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
@@ -21,6 +21,12 @@ export class FactionsService {
         });
     }
 
+    getFactionsById(id: string): Observable<EBGSFactionsWOHistory> {
+        return this.http.get<EBGSFactionsWOHistory>('/frontend/factions', {
+            params: new HttpParams().set('id', id)
+        });
+    }
+
     getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSFactions> {
         return this.http.get<EBGSFactions>('/frontend/factions', {
             params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
@@ -31,6 +37,20 @@ export class FactionsService {
         return this.http.get<EBGSFactions>('/frontend/factions', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
         })
+    }
+
+    getHistoryAdmin(page: string, id: string): Observable<EBGSFactionHistoryPaginate> {
+        return this.http.get<EBGSFactionHistoryPaginate>('/frontend/factionhistoryadmin', {
+            params: new HttpParams().set('id', id).set('page', page)
+        });
+    }
+
+    putFactionAdmin(faction: EBGSFactionSchemaWOHistory): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/factionadmin', faction);
+    }
+
+    putFactionHistoryAdmin(record: EBGSFactionSchema['history']): Observable<boolean> {
+        return this.http.put<boolean>('/frontend/factionhistoryadmin', record);
     }
 
     parseFactionDataName(factionsList: string[]): Promise<EBGSFactionSchema[]> {
