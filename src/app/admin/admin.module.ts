@@ -11,7 +11,8 @@ import { AdminSystemsListComponent } from './systems/admin-systems-list.componen
 import { AdminSystemsViewComponent } from './systems/admin-systems-view.component';
 import { AdminFactionsListComponent } from './factions/admin-factions-list.component';
 import { AdminFactionsViewComponent } from './factions/admin-factions-view.component';
-import { AdminStationsComponent } from './stations/admin-stations.component';
+import { AdminStationListComponent } from './stations/admin-station-list.component';
+import { AdminStationViewComponent } from './stations/admin-station-view.component';
 import { AdminRoutingModule } from './admin-routing.module';
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { AdminRoutingModule } from './admin-routing.module';
         AdminSystemsViewComponent,
         AdminFactionsListComponent,
         AdminFactionsViewComponent,
-        AdminStationsComponent
+        AdminStationListComponent,
+        AdminStationViewComponent
     ],
     imports: [
         CommonModule,

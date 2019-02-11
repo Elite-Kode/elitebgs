@@ -204,7 +204,7 @@ export interface EBGSStationSchema {
     }[];
 }
 
-interface EBGSStationSchemaWOHistory {
+export interface EBGSStationSchemaWOHistory {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -354,3 +354,4 @@ export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
 export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history'][0]>;
 export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
+export type EBGSStationHistory = PaginateResult<EBGSStationSchema['history'][0]>;

@@ -12,8 +12,7 @@ import * as moment from 'moment';
 
 @Component({
     selector: 'app-admin-systems-view',
-    templateUrl: './admin-systems-view.component.html',
-    styleUrls: ['./admin-systems-view.component.scss']
+    templateUrl: './admin-systems-view.component.html'
 })
 export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;

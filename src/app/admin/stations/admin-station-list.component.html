@@ -1,0 +1,34 @@
+<div class="content-area">
+    <h1>Stations</h1>
+    <form clrForm [formGroup]="stationForm" novalidate>
+        <h4>Filter Station</h4>
+        <clr-input-container>
+            <label for="stationName">Station Name</label>
+            <input clrInput type="text" id="stationName" placeholder="Qa'wakana" formControlName="stationName">
+        </clr-input-container>
+    </form>
+    <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
+        <clr-dg-column>Station Name</clr-dg-column>
+        <clr-dg-column>Station Government</clr-dg-column>
+        <clr-dg-column>Allegiance</clr-dg-column>
+        <clr-dg-column>Primary Economy</clr-dg-column>
+        <clr-dg-column>Secondary Economy</clr-dg-column>
+        <clr-dg-column>State</clr-dg-column>
+
+        <clr-dg-placeholder>Unable to find any stations!</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let station of stationData">
+            <clr-dg-cell><a routerLink="/admin/station/{{station.id}}">{{station.name}}</a></clr-dg-cell>
+            <clr-dg-cell>{{station.government}}</clr-dg-cell>
+            <clr-dg-cell>{{station.allegiance}}</clr-dg-cell>
+            <clr-dg-cell>{{station.primary_economy}}</clr-dg-cell>
+            <clr-dg-cell>{{station.secondary_economy}}</clr-dg-cell>
+            <clr-dg-cell>{{station.state}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>
+            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{totalRecords}} stations
+            <clr-dg-pagination #pagination [clrDgTotalItems]="totalRecords"></clr-dg-pagination>
+        </clr-dg-footer>
+    </clr-datagrid>
+</div>
