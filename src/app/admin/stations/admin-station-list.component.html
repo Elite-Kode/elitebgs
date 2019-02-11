@@ -10,19 +10,19 @@
     <clr-datagrid (clrDgRefresh)="refresh($event)" [clrDgLoading]="loading">
         <clr-dg-column>Station Name</clr-dg-column>
         <clr-dg-column>Station Government</clr-dg-column>
+        <clr-dg-column>Type</clr-dg-column>
         <clr-dg-column>Allegiance</clr-dg-column>
-        <clr-dg-column>Primary Economy</clr-dg-column>
-        <clr-dg-column>Secondary Economy</clr-dg-column>
+        <clr-dg-column>Economy</clr-dg-column>
         <clr-dg-column>State</clr-dg-column>
 
         <clr-dg-placeholder>Unable to find any stations!</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let station of stationData">
             <clr-dg-cell><a routerLink="/admin/station/{{station.id}}">{{station.name}}</a></clr-dg-cell>
+            <clr-dg-cell>{{station.type}}</clr-dg-cell>
             <clr-dg-cell>{{station.government}}</clr-dg-cell>
             <clr-dg-cell>{{station.allegiance}}</clr-dg-cell>
-            <clr-dg-cell>{{station.primary_economy}}</clr-dg-cell>
-            <clr-dg-cell>{{station.secondary_economy}}</clr-dg-cell>
+            <clr-dg-cell>{{station.economy}}</clr-dg-cell>
             <clr-dg-cell>{{station.state}}</clr-dg-cell>
         </clr-dg-row>
 

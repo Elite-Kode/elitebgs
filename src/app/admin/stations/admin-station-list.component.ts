@@ -43,24 +43,24 @@ export class AdminStationListComponent implements OnInit, AfterViewInit {
 
     showStation(stations: EBGSStationsWOHistory) {
         this.totalRecords = stations.total;
-        // this.stationData = stations.docs.map(responseStation => {
-        //     const id = responseStation._id;
-        //     const name = responseStation.name;
-        //     const government = this.FDevIDs.government[responseStation.government].name;
-        //     const allegiance = this.FDevIDs.superpower[responseStation.allegiance].name;
-            // const primary_economy = this.FDevIDs.economy[responseStation.primary_economy].name;
-            // const secondary_economy = responseStation.secondary_economy ? this.FDevIDs.economy[responseStation.secondary_economy].name : '';
-            // const state = this.FDevIDs.state[responseStation.state].name;
-            // return <IStation>{
-            //     id: id,
-            //     name: name,
-            //     government: government,
-            //     allegiance: allegiance,
-            //     primary_economy: primary_economy,
-            //     secondary_economy: secondary_economy,
-            //     state: state
-            // };
-        // });
+        this.stationData = stations.docs.map(responseStation => {
+            const id = responseStation._id;
+            const name = responseStation.name;
+            const type = this.FDevIDs.station[responseStation.type].name;
+            const government = this.FDevIDs.government[responseStation.government].name;
+            const allegiance = this.FDevIDs.superpower[responseStation.allegiance].name;
+            const economy = this.FDevIDs.economy[responseStation.economy].name;
+            const state = this.FDevIDs.state[responseStation.state].name;
+            return <IStation>{
+                id: id,
+                name: name,
+                type: type,
+                government: government,
+                allegiance: allegiance,
+                economy: economy,
+                state: state
+            };
+        });
     }
 
     refresh(tableState: ClrDatagridStateInterface) {

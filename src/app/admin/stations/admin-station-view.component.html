@@ -18,36 +18,6 @@
     <form clrForm>
         <h4>Station Data</h4>
         <div class="clr-form-control clr-row">
-            <label class="clr-control-label">Coordinates</label>
-            <div class="clr-control-container clr-col-12 clr-col-md-10">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>X</th>
-                            <th>Y</th>
-                            <th>Z</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input class="clr-input" id="x" name="x" type="number"
-                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.x">
-                            </td>
-                            <td>
-                                <input class="clr-input" id="y" name="y" type="number"
-                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.y">
-                            </td>
-                            <td>
-                                <input class="clr-input" id="z" name="z" type="number"
-                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.z">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="clr-form-control clr-row">
             <label class="clr-control-label">Ids</label>
             <div class="clr-control-container clr-col-12 clr-col-md-10">
                 <table class="table">
@@ -66,7 +36,7 @@
                             </td>
                             <td>
                                 <input class="clr-input" id="station_address" name="station_address" type="number"
-                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.station_address">
+                                    [(ngModel)]="stationUnderEdit && stationUnderEdit.market_id">
                             </td>
                             <td>
                                 <input class="clr-input" id="eddb" name="eddb" type="number"
@@ -97,21 +67,12 @@
         </div>
         <div class="clr-row">
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
-                <label class="clr-col-12 clr-col-md-4">Primary Economy</label>
-                <select class="clr-col-12 clr-col-md-8" clrSelect id="primary_economy" name="primary_economy"
-                    [(ngModel)]="stationUnderEdit && stationUnderEdit.primary_economy">
+                <label class="clr-col-12 clr-col-md-4">Economy</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="economy" name="economy"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.economy">
                     <option *ngFor="let economy of economies" [value]="economy.key">{{economy.value}}</option>
                 </select>
             </clr-select-container>
-            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
-                <label class="clr-col-12 clr-col-md-4">Secondary Economy</label>
-                <select class="clr-col-12 clr-col-md-8" clrSelect id="secondary_economy" name="secondary_economy"
-                    [(ngModel)]="stationUnderEdit && stationUnderEdit.secondary_economy">
-                    <option *ngFor="let economy of economies" [value]="economy.key">{{economy.value}}</option>
-                </select>
-            </clr-select-container>
-        </div>
-        <div class="clr-row">
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">State</label>
                 <select class="clr-col-12 clr-col-md-8" clrSelect id="state" name="state"
@@ -119,31 +80,28 @@
                     <option *ngFor="let state of states" [value]="state.key">{{state.value}}</option>
                 </select>
             </clr-select-container>
+        </div>
+        <div class="clr-row">
+            <clr-input-container class="clr-col-sm-12 clr-col-md-6">
+                <label class="clr-col-12 clr-col-md-4">Distance from star</label>
+                <input class="clr-col-12 clr-col-md-8" clrInput id="distance_from_star" name="distance_from_star"
+                    type="number" [(ngModel)]="stationUnderEdit && stationUnderEdit.distance_from_star">
+            </clr-input-container>
             <clr-select-container class="clr-col-sm-12 clr-col-md-6">
-                <label class="clr-col-12 clr-col-md-4">Security</label>
-                <select class="clr-col-12 clr-col-md-8" clrSelect id="security" name="security"
-                    [(ngModel)]="stationUnderEdit && stationUnderEdit.security">
-                    <option *ngFor="let security of securities" [value]="security.key">{{security.value}}</option>
+                <label class="clr-col-12 clr-col-md-4">Type</label>
+                <select class="clr-col-12 clr-col-md-8" clrSelect id="type" name="type"
+                    [(ngModel)]="stationUnderEdit && stationUnderEdit.type">
+                    <option *ngFor="let type of stations" [value]="type.key">{{type.value}}</option>
                 </select>
             </clr-select-container>
         </div>
         <div class="clr-row">
             <clr-input-container class="clr-col-sm-12 clr-col-md-6">
-                <label class="clr-col-12 clr-col-md-4">Population</label>
-                <input class="clr-col-12 clr-col-md-8" clrInput id="population" name="population" type="number"
-                    [(ngModel)]="stationUnderEdit && stationUnderEdit.population">
-            </clr-input-container>
-            <clr-select-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Controlling Faction</label>
-                <select class="clr-col-12 clr-col-md-8" clrSelect id="controlling_minor_faction"
+                <input class="clr-col-12 clr-col-md-8" clrInput id="controlling_minor_faction"
                     name="controlling_minor_faction"
                     [(ngModel)]="stationUnderEdit && stationUnderEdit.controlling_minor_faction">
-                    <option *ngFor="let minorFaction of minorFactions" [value]="minorFaction.key">{{minorFaction.value}}
-                    </option>
-                </select>
-            </clr-select-container>
-        </div>
-        <div class="clr-row">
+            </clr-input-container>
             <clr-input-container class="clr-col-sm-12 clr-col-md-6">
                 <label class="clr-col-12 clr-col-md-4">Updated At</label>
                 <input class="clr-col-12 clr-col-md-8" clrInput id="updated_at" name="updated_at" type="string"
@@ -151,36 +109,67 @@
             </clr-input-container>
         </div>
         <div class="clr-form-control clr-row">
-            <label class="clr-control-label">Factions in Stations</label>
+            <label class="clr-control-label">Services in Station</label>
             <div class="clr-control-container clr-col-12 clr-col-md-10">
                 <table class="table table-compact">
                     <thead>
                         <tr>
-                            <th>Faction ID</th>
-                            <th>Faction Name</th>
-                            <th>Faction Name Lower</th>
+                            <th>Service Name</th>
+                            <th>Service Name Lower</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let faction of stationUnderEdit?.factions">
-                            <td>{{faction.faction_id}}</td>
-                            <td><a routerLink="/admin/faction/{{faction.faction_id}}">{{faction.name}}</a></td>
-                            <td>{{faction.name_lower}}</td>
+                        <tr *ngFor="let service of stationUnderEdit?.services">
+                            <td>{{service.name}}</td>
+                            <td>{{service.name_lower}}</td>
                             <td>
-                                <button (click)="removeFaction(faction.name_lower)"
+                                <button (click)="removeService(service.name_lower)"
                                     class="btn btn-sm btn-danger">Remove</button>
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
                             <td>
-                                <input class="clr-input" id="factions" name="factions" placeholder="Add a faction"
-                                    type="text" [(ngModel)]="factionAdd">
+                                <input class="clr-input" id="services" name="services" placeholder="Add a service"
+                                    type="text" [(ngModel)]="serviceAdd">
                             </td>
-                            <td>{{factionAdd.toLowerCase()}}</td>
+                            <td>{{serviceAdd.toLowerCase()}}</td>
                             <td>
-                                <button (click)="addFaction()" class="btn btn-sm btn-success">Add</button>
+                                <button (click)="addService()" class="btn btn-sm btn-success">Add</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clr-form-control clr-row">
+            <label class="clr-control-label">Economies in Station</label>
+            <div class="clr-control-container clr-col-12 clr-col-md-10">
+                <table class="table table-compact">
+                    <thead>
+                        <tr>
+                            <th>Economy Name</th>
+                            <th>Economy Proportion</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let economy of stationUnderEdit?.all_economies">
+                            <td>{{economy.name}}</td>
+                            <td>{{economy.proportion}}</td>
+                            <td>
+                                <button (click)="removeEconomy(economy.name)"
+                                    class="btn btn-sm btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="clr-input" id="all_economies" name="all_economies"
+                                    placeholder="Add an economy" type="text" [(ngModel)]="economyAdd">
+                            </td>
+                            <td>{{economyAdd.proportion}}</td>
+                            <td>
+                                <button (click)="addEconomy()" class="btn btn-sm btn-success">Add</button>
                             </td>
                         </tr>
                     </tbody>
@@ -218,9 +207,7 @@
         <clr-dg-column>ID</clr-dg-column>
         <clr-dg-column>Government</clr-dg-column>
         <clr-dg-column>Allegiance</clr-dg-column>
-        <clr-dg-column>Security</clr-dg-column>
         <clr-dg-column>State</clr-dg-column>
-        <clr-dg-column>Population</clr-dg-column>
         <clr-dg-column>Updated At</clr-dg-column>
         <clr-dg-column>Updated By</clr-dg-column>
         <clr-dg-column>Controlling Faction</clr-dg-column>
@@ -231,9 +218,7 @@
             <clr-dg-cell>{{record._id}}</clr-dg-cell>
             <clr-dg-cell>{{record.government}}</clr-dg-cell>
             <clr-dg-cell>{{record.allegiance}}</clr-dg-cell>
-            <clr-dg-cell>{{record.security}}</clr-dg-cell>
             <clr-dg-cell>{{record.state}}</clr-dg-cell>
-            <clr-dg-cell>{{record.population}}</clr-dg-cell>
             <clr-dg-cell>{{record.updated_at}}</clr-dg-cell>
             <clr-dg-cell>{{record.updated_by}}</clr-dg-cell>
             <clr-dg-cell>{{record.controlling_minor_faction}}</clr-dg-cell>
@@ -243,31 +228,28 @@
                         <table class="table table-compact">
                             <thead>
                                 <tr>
-                                    <th>Faction ID</th>
-                                    <th>Faction Name</th>
-                                    <th>Faction Name Lower</th>
+                                    <th>Service Name</th>
+                                    <th>Service Name Lower</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let faction of record?.factions">
-                                    <td>{{faction.faction_id}}</td>
-                                    <td><a routerLink="/admin/faction/{{faction.faction_id}}">{{faction.name}}</a></td>
-                                    <td>{{faction.name_lower}}</td>
+                                <tr *ngFor="let service of record?.services">
+                                    <td>{{service.name}}</td>
+                                    <td>{{service.name_lower}}</td>
                                     <td>
-                                        <button (click)="removeFactionHistory(record._id, faction.name_lower)"
-                                            class="btn btn-danger btn-sm">Remove</button>
+                                        <button (click)="removeServiceHistory(record._id, service.name_lower)"
+                                            class="btn btn-sm btn-danger">Remove</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td></td>
                                     <td>
-                                        <input class="clr-input" id="factions" name="factions"
-                                            placeholder="Add a faction" type="text" [(ngModel)]="factionAdd">
+                                        <input class="clr-input" id="services" name="services"
+                                            placeholder="Add a service" type="text" [(ngModel)]="serviceAdd">
                                     </td>
-                                    <td>{{factionAdd.toLowerCase()}}</td>
+                                    <td>{{serviceAdd.toLowerCase()}}</td>
                                     <td>
-                                        <button (click)="addFactionHistory(record._id)" class="btn btn-success btn-sm">Add</button>
+                                        <button (click)="addService()" class="btn btn-sm btn-success">Add</button>
                                     </td>
                                 </tr>
                             </tbody>

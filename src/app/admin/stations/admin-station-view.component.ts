@@ -30,7 +30,8 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
     warningModal: boolean;
     selectedActionMethod: string;
     FDevIDs: IngameIdsSchema;
-    factionAdd = '';
+    serviceAdd = '';
+    economyAdd = '';
     historyPageNumber = 1;
     historyTotalRecords = 0;
     historyLoading = true;
@@ -40,8 +41,7 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
     allegiances = [];
     economies = [];
     states = [];
-    securities = [];
-    minorFactions = [];
+    stations = [];
 
     constructor(
         private stationsService: StationsService,
@@ -135,11 +135,11 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
                 });
             }
         }
-        for (const key in this.FDevIDs.security) {
-            if (this.FDevIDs.security.hasOwnProperty(key)) {
-                this.securities.push({
+        for (const key in this.FDevIDs.station) {
+            if (this.FDevIDs.station.hasOwnProperty(key)) {
+                this.stations.push({
                     key: key,
-                    value: this.FDevIDs.security[key].name
+                    value: this.FDevIDs.station[key].name
                 });
             }
         }
@@ -151,13 +151,6 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
             .subscribe(stations => {
                 this.stationData = stations.docs[0];
                 this.stationUnderEdit = cloneDeep(this.stationData);
-
-                // for (const faction of this.stationUnderEdit.factions) {
-                //     this.minorFactions.push({
-                //         key: faction.name_lower,
-                //         value: faction.name
-                //     });
-                // }
             });
     }
 
