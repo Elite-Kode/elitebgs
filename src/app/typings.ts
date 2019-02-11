@@ -183,6 +183,7 @@ export interface EBGSStationSchema {
     }[];
     allegiance: string;
     state: string;
+    market_id: string;
     distance_from_star: number;
     controlling_minor_faction: string;
     services: {
@@ -216,8 +217,13 @@ export interface EBGSStationSchemaWOHistory {
     updated_at: string;
     government: string;
     economy: string;
+    all_economies: {
+        name: string,
+        proportion: number
+    }[];
     allegiance: string;
     state: string;
+    market_id: string;
     distance_from_star: number;
     controlling_minor_faction: string;
     services: {

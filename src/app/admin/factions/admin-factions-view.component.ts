@@ -174,6 +174,24 @@ export class AdminFactionsViewComponent implements OnInit, AfterViewInit {
         }
     }
 
+    addSystem() {}
+
+    save() {}
+
+    reset() {}
+
+    delete() {}
+
+    closeWarningModal() {}
+
+    warningConfirmed() {}
+
+    addHistoryRecord() {}
+
+    saveSelectedHistoryRecords() {}
+
+    deleteSelectedHistoryRecords() {}
+
     // save() {
     //     this.selectedActionMethod = 'save';
     //     this.warningTitle = 'Confirm Save'

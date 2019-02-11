@@ -131,9 +131,9 @@
                         <tr>
                             <td>
                                 <input class="clr-input" id="services" name="services" placeholder="Add a service"
-                                    type="text" [(ngModel)]="serviceAdd">
+                                    type="text" [(ngModel)]="serviceAdd.name">
                             </td>
-                            <td>{{serviceAdd.toLowerCase()}}</td>
+                            <td>{{serviceAdd.name.toLowerCase()}}</td>
                             <td>
                                 <button (click)="addService()" class="btn btn-sm btn-success">Add</button>
                             </td>
@@ -165,7 +165,7 @@
                         <tr>
                             <td>
                                 <input class="clr-input" id="all_economies" name="all_economies"
-                                    placeholder="Add an economy" type="text" [(ngModel)]="economyAdd">
+                                    placeholder="Add an economy" type="text" [(ngModel)]="economyAdd.name">
                             </td>
                             <td>{{economyAdd.proportion}}</td>
                             <td>

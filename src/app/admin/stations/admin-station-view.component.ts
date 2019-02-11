@@ -30,8 +30,8 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
     warningModal: boolean;
     selectedActionMethod: string;
     FDevIDs: IngameIdsSchema;
-    serviceAdd = '';
-    economyAdd = '';
+    serviceAdd: EBGSStationSchemaWOHistory['services'][0];
+    economyAdd: EBGSStationSchemaWOHistory['all_economies'][0];
     historyPageNumber = 1;
     historyTotalRecords = 0;
     historyLoading = true;
@@ -171,6 +171,26 @@ export class AdminStationViewComponent implements OnInit, AfterViewInit {
             ageFlag: moment(Date.now()).diff(moment(updatedAt), 'days', true) - 1
         }
     }
+
+    addService() {}
+
+    addEconomy() {}
+
+    save() {}
+
+    reset() {}
+
+    delete() {}
+
+    closeWarningModal() {}
+
+    warningConfirmed() {}
+
+    addHistoryRecord() {}
+
+    saveSelectedHistoryRecords() {}
+
+    deleteSelectedHistoryRecords() {}
 
     // save() {
     //     this.selectedActionMethod = 'save';
