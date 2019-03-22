@@ -1511,6 +1511,10 @@ function Journal() {
                                 stationObject.eddb_id = station.eddb_id;
                                 hasEddbId = true;
                             }
+                            // Temporary fix
+                            if (!station.distance_from_star) {
+                                stationObject.distance_from_star = message.DistFromStarLS;
+                            }
                             if (station.government !== message.StationGovernment.toLowerCase() ||
                                 station.allegiance !== message.StationAllegiance.toLowerCase() ||
                                 station.state !== message.StationFaction.FactionState.toLowerCase() ||
@@ -1794,7 +1798,7 @@ function Journal() {
             message.timestamp &&
             message.StarPos &&
             message.event &&
-            message.DistFromStarLS &&
+            // message.DistFromStarLS && Temporarily disabling check
             message.StationAllegiance &&
             message.StationEconomy &&
             message.StationEconomies &&
