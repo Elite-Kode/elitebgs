@@ -1799,7 +1799,6 @@ function Journal() {
             message.StarPos &&
             message.event &&
             // message.DistFromStarLS && Temporarily disabling check
-            message.StationAllegiance &&
             message.StationEconomy &&
             message.StationEconomies &&
             message.StationFaction &&
