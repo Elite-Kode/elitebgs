@@ -703,7 +703,7 @@ function Journal() {
     }
 
     this.trackSystemV4 = async (message, header) => {
-        if (message.event === "FSDJump" || (message.event === "Location" && !message.Docked)) {
+        if (message.event === "FSDJump" || (message.event === "Location")) {
             try {
                 await this.checkMessage1(message, header);
                 let notNeededFactionIndex = message.Factions.findIndex(faction => {
@@ -1705,6 +1705,8 @@ function Journal() {
             }
         }
     }
+
+
 
     // Used in V3
     this.checkMessage = message => {
