@@ -37,6 +37,8 @@ const ebgsHistoryStationV4Model = require('../../../models/ebgs_history_station_
 
 const configModel = require('../../../models/configs');
 
+const nonBGSFactions = require('../nonBGSFactions');
+
 module.exports = Journal;
 
 function Journal() {
@@ -706,12 +708,9 @@ function Journal() {
         if (message.event === "FSDJump" || (message.event === "Location")) {
             try {
                 await this.checkMessage1(message, header);
-                let notNeededFactionIndex = message.Factions.findIndex(faction => {
-                    return faction.Name === "Pilots Federation Local Branch"; // Todo: Add engineers
-                });
-                if (notNeededFactionIndex !== -1) {
-                    message.Factions.splice(notNeededFactionIndex, 1);
-                }
+                message.Factions = message.Factions.filter(faction => {
+                    return nonBGSFactions.indexOf(faction.Name) === -1;
+                })
                 let factionArray = [];
                 message.Factions.forEach(faction => {
                     let factionObject = {
@@ -1705,8 +1704,6 @@ function Journal() {
             }
         }
     }
-
-
 
     // Used in V3
     this.checkMessage = message => {
