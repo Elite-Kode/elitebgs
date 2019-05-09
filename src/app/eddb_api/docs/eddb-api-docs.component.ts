@@ -26,6 +26,11 @@ export class EddbApiDocsComponent {
                 versionName: 'V3',
                 specLocation: 'https://eddbapi.kodeblox.com/api/v3/api-docs.json',
                 swaggerLocation: 'https://eddbapi.kodeblox.com/api/v3/docs'
+            },
+            {
+                versionName: 'V4',
+                specLocation: 'https://eddbapi.kodeblox.com/api/v4/api-docs.json',
+                swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
             }
         ]
     }
