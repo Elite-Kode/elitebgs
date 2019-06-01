@@ -70,6 +70,10 @@ let router = express.Router();
    *         description: Maximum time for the system history in miliseconds.
    *         in: query
    *         type: string
+   *       - name: count
+   *         description: Number of history records. Disables timemin and timemax
+   *         in: query
+   *         type: string
    *       - name: page
    *         description: Page no of response.
    *         in: query
@@ -89,6 +93,7 @@ router.get('/', cors(), async (req, res, next) => {
         let history = false;
         let greaterThanTime;
         let lesserThanTime;
+        let count;
 
         if (req.query.id) {
             query._id = req.query.id;
@@ -134,8 +139,12 @@ router.get('/', cors(), async (req, res, next) => {
             greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
             lesserThanTime = new Date(Number(req.query.timemax));
         }
+        if (req.query.count) {
+            history = true
+            count = +req.query.count
+        }
         if (history) {
-            let result = await getSystems(query, { greater: greaterThanTime, lesser: lesserThanTime }, page);
+            let result = await getSystems(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
             res.status(200).json(result);
         } else {
             let result = await getSystems(query, {}, page);
@@ -164,13 +173,22 @@ async function getSystems(query, history, page) {
         let historyPromises = [];
         systemResult.docs.forEach(system => {
             historyPromises.push((async () => {
-                let record = await historyModel.find({
-                    system_id: system._id,
-                    updated_at: {
-                        $lte: history.lesser,
-                        $gte: history.greater
-                    }
-                }).lean();
+                let record;
+                if (history.count) {
+                    record = await historyModel.find({
+                        system_id: system._id
+                    }).sort({
+                        updated_at: -1
+                    }).limit(history.count).lean();
+                } else {
+                    record = await historyModel.find({
+                        system_id: system._id,
+                        updated_at: {
+                            $lte: history.lesser,
+                            $gte: history.greater
+                        }
+                    }).lean();
+                }
                 record.forEach(history => {
                     delete history.system_id;
                     delete history.system_name_lower;
