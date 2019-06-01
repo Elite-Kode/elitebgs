@@ -59,7 +59,7 @@ let router = express.Router();
    *         in: query
    *         type: string
    *       - name: count
-   *         description: Number of history records. Disables timemin and timemax
+   *         description: Number of history records per system presence. Disables timemin and timemax
    *         in: query
    *         type: string
    *       - name: page
@@ -152,13 +152,25 @@ async function getFactions(query, history, page) {
         let historyPromises = [];
         factionResult.docs.forEach(faction => {
             historyPromises.push((async () => {
-                let record;
+                let record = [];
                 if (history.count) {
-                    record = await historyModel.find({
-                        faction_id: faction._id
-                    }).sort({
-                        updated_at: -1
-                    }).limit(history.count).lean();
+                    let systemPromises = [];
+                    faction.faction_presence.forEach(system => {
+                        systemPromises.push((() => {
+                            return historyModel.find({
+                                faction_id: faction._id,
+                                system_lower: system.system_name_lower
+                            }).sort({
+                                updated_at: -1
+                            }).limit(history.count).lean();
+                        })());
+                    });
+                    let systems = await Promise.all(systemPromises);
+                    systems.forEach(system => {
+                        system.forEach(each => {
+                            record.push(each);
+                        });
+                    });
                 } else {
                     record = await historyModel.find({
                         faction_id: faction._id,
