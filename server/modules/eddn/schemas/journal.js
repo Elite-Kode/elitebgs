@@ -1922,7 +1922,7 @@ function Journal() {
                 item.population === message.Population &&
                 item.controlling_minor_faction === message.SystemFaction.Name.toLowerCase() &&
                 item.conflicts &&
-                _.isEqual(_.sortBy(item.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
+                _.isEqual(_.sortBy(item.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) &&
                 _.isEqual(_.sortBy(item.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
                 return false;
             }
