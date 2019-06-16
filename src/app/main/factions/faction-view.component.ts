@@ -90,10 +90,12 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
             system.recovering_states.forEach(state => {
                 state.state = this.FDevIDs.state[state.state].name;
             });
-            system.conflicts.forEach(conflict => {
-                conflict.system_id = system.system_id;
-                conflict.system_name = system.system_name;
-            });
+            if (system.conflicts) {
+                system.conflicts.forEach(conflict => {
+                    conflict.system_id = system.system_id;
+                    conflict.system_name = system.system_name;
+                });
+            }
         });
         this.conflicts = this.factionData.faction_presence.reduce((acc, system) => {
             return acc.concat(system.conflicts);
