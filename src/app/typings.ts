@@ -30,6 +30,17 @@ export interface EBGSFactionSchema {
             state: string;
             trend: number;
         }[];
+        conflicts: {
+            type: string;
+            status: string;
+            system_id: string;
+            system_name: string;
+            opponent_name: string;
+            opponent_name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        }[];
         updated_at: string;
         controlling: boolean;
     }[];
@@ -58,6 +69,15 @@ export interface EBGSFactionSchema {
             name: string;
             name_lower: string;
         }[];
+        conflicts: {
+            type: string;
+            status: string;
+            opponent_name: string;
+            opponent_name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        }[];
     }[];
 }
 
@@ -85,6 +105,24 @@ export interface EBGSSystemSchema {
         name: string;
         name_lower: string;
     }[];
+    conflicts: {
+        type: string;
+        status: string;
+        faction1: {
+            name: string;
+            name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
+        faction2: {
+            name: string;
+            name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
+    }[];
     updated_at: string;
     history: {
         _id: string;
@@ -100,6 +138,24 @@ export interface EBGSSystemSchema {
             faction_id: string;
             name: string;
             name_lower: string;
+        }[];
+        conflicts: {
+            type: string;
+            status: string;
+            faction1: {
+                name: string;
+                name_lower: string;
+                stake: string;
+                stake_lower: string;
+                days_won: number;
+            };
+            faction2: {
+                name: string;
+                name_lower: string;
+                stake: string;
+                stake_lower: string;
+                days_won: number;
+            };
         }[];
     }[];
 }
@@ -133,6 +189,15 @@ export interface EBGSFactionSchemaWOHistory {
             state: string;
             trend: number;
         }[];
+        conflicts: {
+            type: string;
+            status: string;
+            opponent_name: string;
+            opponent_name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        }[];
         updated_at: string;
     }[];
 }
@@ -161,6 +226,24 @@ export interface EBGSSystemSchemaWOHistory {
         faction_id: string;
         name: string;
         name_lower: string;
+    }[];
+    conflicts: {
+        type: string;
+        status: string;
+        faction1: {
+            name: string;
+            name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
+        faction2: {
+            name: string;
+            name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
     }[];
     updated_at: string;
 }

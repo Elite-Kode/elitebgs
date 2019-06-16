@@ -23,6 +23,7 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
     factionData: EBGSFactionSchema;
     systemsPresence: number;
     systemsControlled: number;
+    conflicts: EBGSFactionSchema['faction_presence'][0]['conflicts'][] = [];
     successAlertState = false;
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
@@ -89,7 +90,14 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
             system.recovering_states.forEach(state => {
                 state.state = this.FDevIDs.state[state.state].name;
             });
+            system.conflicts.forEach(conflict => {
+                conflict.system_id = system.system_id;
+                conflict.system_name = system.system_name;
+            });
         });
+        this.conflicts = this.factionData.faction_presence.reduce((acc, system) => {
+            return acc.concat(system.conflicts);
+        }, [] as EBGSFactionSchema['faction_presence'][0]['conflicts'][]);
         this.systemsPresence = this.factionData.faction_presence.length;
         this.systemsControlled = this.factionData.faction_presence.reduce((count, system) => {
             if (system.controlling) {

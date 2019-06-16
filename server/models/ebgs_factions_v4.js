@@ -55,6 +55,7 @@ module.exports = (async () => {
                 trend: Number
             }],
             conflicts: [{
+                _id: false,
                 type: { type: String, lowercase: true },
                 status: { type: String, lowercase: true },
                 opponent_name: String,

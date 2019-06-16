@@ -88,6 +88,7 @@ export class AdminFactionsViewComponent implements OnInit, AfterViewInit {
             active_states: [],
             pending_states: [],
             recovering_states: [],
+            conflicts: [],
             updated_at: ''
         };
     }

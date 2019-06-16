@@ -22,9 +22,11 @@
     <ng-template #accessTemplate>
         <ng-container *ngIf="user">
             <div class="btn-group btn-primary">
-                <button (click)="monitor()" class="btn btn-primary" [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor
+                <button (click)="monitor()" class="btn btn-primary"
+                    [disabled]="!isAuthenticated || isAuthenticated === undefined">Monitor
                     Faction</button>
-                <a class="btn btn-primary" href="https://eddb.io/faction/{{factionData?.eddb_id}}" target="_blank">EDDB</a>
+                <a class="btn btn-primary" href="https://eddb.io/faction/{{factionData?.eddb_id}}"
+                    target="_blank">EDDB</a>
             </div>
         </ng-container>
     </ng-template>
@@ -68,18 +70,52 @@
                 <span class="label label-info" *ngFor="let active of presence.active_states">{{active.state}}</span>
             </clr-dg-cell>
             <clr-dg-cell>
-                <span class="label" *ngFor="let pending of presence.pending_states" [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
+                <span class="label" *ngFor="let pending of presence.pending_states"
+                    [ngClass]="{'label-info': pending.trend === 0,'label-success': pending.trend > 0,'label-danger':pending.trend < 0}">{{pending.state}}</span>
             </clr-dg-cell>
             <clr-dg-cell>
-                <span class="label" *ngFor="let recovering of presence.recovering_states" [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
+                <span class="label" *ngFor="let recovering of presence.recovering_states"
+                    [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
             </clr-dg-cell>
             <clr-dg-cell>{{presence.population | number}}</clr-dg-cell>
             <clr-dg-cell>
                 {{getUpdatedAtFormatted(presence.updated_at).time}}
-                <span class="label" [ngClass]="{'label-info': getUpdatedAtFormatted(presence.updated_at).ageFlag === 0,'label-success': getUpdatedAtFormatted(presence.updated_at).ageFlag < 0,'label-danger':getUpdatedAtFormatted(presence.updated_at).ageFlag > 0}">{{getUpdatedAtFormatted(presence.updated_at).fromNow}}</span>
+                <span class="label"
+                    [ngClass]="{'label-info': getUpdatedAtFormatted(presence.updated_at).ageFlag === 0,'label-success': getUpdatedAtFormatted(presence.updated_at).ageFlag < 0,'label-danger':getUpdatedAtFormatted(presence.updated_at).ageFlag > 0}">{{getUpdatedAtFormatted(presence.updated_at).fromNow}}</span>
             </clr-dg-cell>
         </clr-dg-row>
     </clr-datagrid>
+
+    <h3>Conflicts</h3>
+    <ng-container
+        *ngIf="conflicts.length > 0; then conflictsPresentTemplate; else conflictsAbsentTemplate">
+    </ng-container>
+    <ng-template #conflictsPresentTemplate>
+        <clr-datagrid>
+            <clr-dg-column [clrDgField]="'system_name'">System</clr-dg-column>
+            <clr-dg-column [clrDgSortBy]="'type'">Conflict Type</clr-dg-column>
+            <clr-dg-column [clrDgField]="'status'">Conflict Status</clr-dg-column>
+            <clr-dg-column [clrDgField]="'opponent_name'">Opponent Name</clr-dg-column>
+            <clr-dg-column [clrDgField]="'stake'">Stake</clr-dg-column>
+            <clr-dg-column [clrDgSortBy]="'days_won'">Days Won</clr-dg-column>
+
+            <clr-dg-placeholder>Unable to fetch data for faction</clr-dg-placeholder>
+
+            <clr-dg-row *clrDgItems="let conflict of conflicts">
+                <clr-dg-cell><a routerLink="/system/{{conflict.system_id}}">{{conflict.system_name}}</a>
+                </clr-dg-cell>
+                <clr-dg-cell>{{conflict.type}}</clr-dg-cell>
+                <clr-dg-cell>{{conflict.status}}</clr-dg-cell>
+                <clr-dg-cell>{{conflict.opponent_name}}</clr-dg-cell>
+                <clr-dg-cell>{{conflict.stake}}</clr-dg-cell>
+                <clr-dg-cell>{{conflict.days_won}}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+    </ng-template>
+    <ng-template #conflictsAbsentTemplate>
+        Faction not in conflict anywhere
+    </ng-template>
+
     <div class="date-filter">
         <h3>Date Filter</h3>
         <label>From</label>
@@ -110,19 +146,22 @@
                 </div>
             </div>
             <div class="card-text flex-relative" *ngIf="factionData !== undefined">
-                <app-faction-a-p-r-state-chart [factionData]="factionData" type="active"></app-faction-a-p-r-state-chart>
+                <app-faction-a-p-r-state-chart [factionData]="factionData" type="active">
+                </app-faction-a-p-r-state-chart>
                 <div class="chart-spinner" *ngIf="chartLoading">
                     <div class="spinner"></div>
                 </div>
             </div>
             <div class="card-text flex-relative" *ngIf="factionData !== undefined">
-                <app-faction-a-p-r-state-chart [factionData]="factionData" type="pending"></app-faction-a-p-r-state-chart>
+                <app-faction-a-p-r-state-chart [factionData]="factionData" type="pending">
+                </app-faction-a-p-r-state-chart>
                 <div class="chart-spinner" *ngIf="chartLoading">
                     <div class="spinner"></div>
                 </div>
             </div>
             <div class="card-text flex-relative" *ngIf="factionData !== undefined">
-                <app-faction-a-p-r-state-chart [factionData]="factionData" type="recovering"></app-faction-a-p-r-state-chart>
+                <app-faction-a-p-r-state-chart [factionData]="factionData" type="recovering">
+                </app-faction-a-p-r-state-chart>
                 <div class="chart-spinner" *ngIf="chartLoading">
                     <div class="spinner"></div>
                 </div>
