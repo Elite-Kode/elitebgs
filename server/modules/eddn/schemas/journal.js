@@ -2078,7 +2078,7 @@ function Journal() {
     // Used in V3 and V4
     this.getSystemEDDBId = async name => {
         let requestOptions = {
-            url: "https://eddbapi.kodeblox.com/api/v3/populatedsystems",
+            url: "https://eddbapi.kodeblox.com/api/v4/populatedsystems",
             qs: {
                 name: name.toLowerCase()
             },
@@ -2101,7 +2101,7 @@ function Journal() {
     // Used in V3 and V4
     this.getFactionEDDBId = async name => {
         let requestOptions = {
-            url: "https://eddbapi.kodeblox.com/api/v3/factions",
+            url: "https://eddbapi.kodeblox.com/api/v4/factions",
             qs: {
                 name: name.toLowerCase()
             },
@@ -2124,7 +2124,7 @@ function Journal() {
     // Used in V4
     this.getStationEDDBId = async name => {
         let requestOptions = {
-            url: "https://eddbapi.kodeblox.com/api/v3/stations",
+            url: "https://eddbapi.kodeblox.com/api/v4/stations",
             qs: {
                 name: name.toLowerCase()
             },
