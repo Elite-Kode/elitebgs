@@ -50,6 +50,15 @@ module.exports = (async () => {
             state: { type: String, lowercase: true },
             trend: Number
         }],
+        conflicts: [{
+            type: { type: String, lowercase: true },
+            status: { type: String, lowercase: true },
+            opponent_name: String,
+            opponent_name_lower: { type: String, lowercase: true },
+            stake: String,
+            stake_lower: { type: String, lowercase: true },
+            days_won: Number
+        }],
         systems: [{
             _id: false,
             name: String,

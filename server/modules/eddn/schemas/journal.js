@@ -710,7 +710,7 @@ function Journal() {
                 await this.checkMessage1(message, header);
                 message.Factions = message.Factions.filter(faction => {
                     return nonBGSFactions.indexOf(faction.Name) === -1;
-                })
+                });
                 let factionArray = [];
                 message.Factions.forEach(faction => {
                     let factionObject = {
@@ -718,6 +718,28 @@ function Journal() {
                         name_lower: faction.Name.toLowerCase()
                     };
                     factionArray.push(factionObject);
+                });
+                let conflictsArray = [];
+                message.Conflicts.forEach(conflict => {
+                    let conflictObject = {
+                        type: conflict.WarType,
+                        status: conflict.Status,
+                        faction1: {
+                            name: conflict.Faction1.Name,
+                            name_lower: conflict.Faction1.Name.toLowerCase(),
+                            stake: conflict.Faction1.Stake,
+                            stake_lower: conflict.Faction1.Stake.toLowerCase(),
+                            days_won: conflict.Faction1.WonDays
+                        },
+                        faction2: {
+                            name: conflict.Faction2.Name,
+                            name_lower: conflict.Faction2.Name.toLowerCase(),
+                            stake: conflict.Faction2.Stake,
+                            stake_lower: conflict.Faction2.Stake.toLowerCase(),
+                            days_won: conflict.Faction2.WonDays
+                        }
+                    };
+                    conflictsArray.push(conflictObject);
                 });
                 (async () => {
                     try {
@@ -748,6 +770,8 @@ function Journal() {
                                     system.security !== message.SystemSecurity.toLowerCase() ||
                                     system.population !== message.Population ||
                                     system.controlling_minor_faction !== message.SystemFaction.Name.toLowerCase() ||
+                                    !system.conflicts ||
+                                    !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
                                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
 
                                     let historyModel = await ebgsHistorySystemV4Model;
@@ -759,7 +783,7 @@ function Journal() {
                                             $gte: new Date(timeNow - 172800000)
                                         }
                                     }).sort({ updated_at: -1 }).lean();
-                                    if (this.checkSystemWHistory(message, systemHistory, factionArray)) {
+                                    if (this.checkSystemWHistory(message, systemHistory, factionArray, conflictsArray)) {
                                         systemObject.government = message.SystemGovernment;
                                         systemObject.allegiance = message.SystemAllegiance;
                                         systemObject.state = message.SystemFaction.FactionState;
@@ -767,6 +791,7 @@ function Journal() {
                                         systemObject.population = message.Population;
                                         systemObject.controlling_minor_faction = message.SystemFaction.Name;
                                         systemObject.factions = factionArray;
+                                        systemObject.conflicts = conflictsArray;
                                         systemObject.updated_at = message.timestamp;
 
                                         historyObject.updated_at = message.timestamp;
@@ -778,6 +803,7 @@ function Journal() {
                                         historyObject.population = message.Population;
                                         historyObject.controlling_minor_faction = message.SystemFaction.Name;
                                         historyObject.factions = factionArray;
+                                        historyObject.conflicts = conflictsArray;
                                     } else {
                                         systemObject = {};
                                     }
@@ -807,6 +833,7 @@ function Journal() {
                                 secondary_economy: message.SystemSecondEconomy,
                                 controlling_minor_faction: message.SystemFaction.Name,
                                 factions: factionArray,
+                                conflicts: conflictsArray,
                                 updated_at: message.timestamp
                             };
 
@@ -819,7 +846,8 @@ function Journal() {
                                 security: message.SystemSecurity,
                                 population: message.Population,
                                 controlling_minor_faction: message.SystemFaction.Name,
-                                factions: factionArray
+                                factions: factionArray,
+                                conflicts: conflictsArray
                             };
                         }
                         if (!_.isEmpty(systemObject)) {
@@ -1088,6 +1116,34 @@ function Journal() {
                                                 recoveringStates.push(recoveringStateObject);
                                             });
                                         };
+                                        let conflictsArray = [];
+                                        for (let conflict of message.Conflicts) {
+                                            if (conflict.Faction1.Name.toLowerCase() === factionNameLower ||
+                                                conflict.Faction2.Name.toLowerCase() === factionNameLower) {
+                                                let opponent;
+                                                let stake;
+                                                let daysWon;
+                                                if (conflict.Faction1.Name.toLowerCase() === factionNameLower) {
+                                                    opponent = conflict.Faction2.Name;
+                                                    stake = conflict.Faction1.Stake;
+                                                    daysWon = +conflict.Faction1.WonDays;
+                                                } else {
+                                                    opponent = conflict.Faction1.Name;
+                                                    stake = conflict.Faction2.Stake;
+                                                    daysWon = +conflict.Faction2.WonDays;
+                                                }
+                                                let conflictObject = {
+                                                    type: conflict.WarType,
+                                                    status: conflict.Status,
+                                                    opponent_name: opponent,
+                                                    opponent_name_lower: opponent.toLowerCase(),
+                                                    stake: stake,
+                                                    stake_lower: stake.toLowerCase(),
+                                                    days_won: daysWon
+                                                };
+                                                conflictsArray.push(conflictObject);
+                                            }
+                                        }
 
                                         let factionObject = {
                                             name: messageFaction.Name,
@@ -1104,6 +1160,7 @@ function Journal() {
                                                 active_states: activeStates,
                                                 pending_states: pendingStates,
                                                 recovering_states: recoveringStates,
+                                                conflicts: conflictsArray,
                                                 updated_at: message.timestamp
                                             }]
                                         };
@@ -1118,6 +1175,7 @@ function Journal() {
                                             active_states: activeStates,
                                             pending_states: pendingStates,
                                             recovering_states: recoveringStates,
+                                            conflicts: conflictsArray,
                                             systems: [{
                                                 name: message.StarSystem,
                                                 name_lower: message.StarSystem.toLowerCase()
@@ -1196,6 +1254,7 @@ function Journal() {
                                         let activeStates = getDoFactionUpdate.activeStates;
                                         let pendingStates = getDoFactionUpdate.pendingStates;
                                         let recoveringStates = getDoFactionUpdate.recoveringStates;
+                                        let conflicts = getDoFactionUpdate.conflicts;
                                         let doUpdate = getDoFactionUpdate.doUpdate;
                                         let dontUpdateTime = getDoFactionUpdate.dontUpdateTime;
                                         if (doUpdate) {
@@ -1213,6 +1272,7 @@ function Journal() {
                                                         active_states: activeStates,
                                                         pending_states: pendingStates,
                                                         recovering_states: recoveringStates,
+                                                        conflicts: conflicts,
                                                         updated_at: message.timestamp
                                                     };
                                                     factionPresenceArray[index] = factionPresentSystemObject;
@@ -1231,6 +1291,7 @@ function Journal() {
                                                     active_states: activeStates,
                                                     pending_states: pendingStates,
                                                     recovering_states: recoveringStates,
+                                                    conflicts: conflicts,
                                                     updated_at: message.timestamp
                                                 });
                                             }
@@ -1263,6 +1324,7 @@ function Journal() {
                                                 active_states: activeStates,
                                                 pending_states: pendingStates,
                                                 recovering_states: recoveringStates,
+                                                conflicts: conflicts,
                                                 systems: systemHistory
                                             }
                                             if (!dbFaction.eddb_id) {
@@ -1363,6 +1425,7 @@ function Journal() {
                                                         active_states: activeStates,
                                                         pending_states: pendingStates,
                                                         recovering_states: recoveringStates,
+                                                        conflicts: conflicts,
                                                         updated_at: message.timestamp
                                                     };
                                                     factionPresenceArray[index] = factionPresentSystemObject;
@@ -1757,6 +1820,9 @@ function Journal() {
             if (!message.Population) {
                 message.Population = 0;
             }
+            if (!message.Conflicts) {
+                message.Conflicts = [];
+            }
             let configCheckModel = await configModel;
             let configRecord = await configCheckModel.findOne({}).lean();
             if (configRecord.blacklisted_software.findIndex(software => {
@@ -1797,7 +1863,7 @@ function Journal() {
             message.timestamp &&
             message.StarPos &&
             message.event &&
-            // message.DistFromStarLS && Temporarily disabling check
+            message.DistFromStarLS &&
             message.StationEconomy &&
             message.StationEconomies &&
             message.StationFaction &&
@@ -1847,7 +1913,7 @@ function Journal() {
     }
 
     // Used in V4
-    this.checkSystemWHistory = (message, history, factionArray) => {
+    this.checkSystemWHistory = (message, history, factionArray, conflictsArray) => {
         for (let item of history) {
             if (item.government === message.SystemGovernment.toLowerCase() &&
                 item.allegiance === message.SystemAllegiance.toLowerCase() &&
@@ -1855,6 +1921,8 @@ function Journal() {
                 item.security === message.SystemSecurity.toLowerCase() &&
                 item.population === message.Population &&
                 item.controlling_minor_faction === message.SystemFaction.Name.toLowerCase() &&
+                item.conflicts &&
+                _.isEqual(_.sortBy(item.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
                 _.isEqual(_.sortBy(item.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
                 return false;
             }
@@ -1863,12 +1931,14 @@ function Journal() {
     }
 
     // Used in doFactionUpdate
-    this.checkFactionWHistory = (message, messageFaction, history, activeStates, pendingStates, recoveringStates) => {
+    this.checkFactionWHistory = (message, messageFaction, history, activeStates, pendingStates, recoveringStates, conflicts) => {
         for (let item of history) {
             if (item.system_lower === message.StarSystem.toLowerCase() &&
                 item.state === messageFaction.FactionState.toLowerCase() &&
                 item.influence === messageFaction.Influence &&
                 item.happiness === messageFaction.Happiness.toLowerCase() &&
+                item.conflicts &&
+                _.isEqual(_.sortBy(item.conflicts, ['opponent_name_lower']), _.sortBy(conflicts, ['opponent_name_lower'])) &&
                 _.isEqual(_.sortBy(item.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                 _.isEqual(_.sortBy(item.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
@@ -1926,6 +1996,38 @@ function Journal() {
                 recoveringStates.push(recoveringStateObject);
             });
         };
+        let factionName = dbFaction.name_lower;
+        let conflicts = [];
+        if (message.Conflicts) {
+            message.Conflicts.forEach(conflict => {
+                if (conflict.Faction1.Name.toLowerCase() === factionName ||
+                    conflict.Faction2.Name.toLowerCase() === factionName) {
+                    let opponent;
+                    let stake;
+                    let daysWon;
+                    if (conflict.Faction1.Name.toLowerCase() === factionName) {
+                        opponent = conflict.Faction2.Name;
+                        stake = conflict.Faction1.Stake;
+                        daysWon = +conflict.Faction1.WonDays;
+                    } else {
+                        opponent = conflict.Faction1.Name;
+                        stake = conflict.Faction2.Stake;
+                        daysWon = +conflict.Faction2.WonDays;
+                    }
+                    let conflictObject = {
+                        type: conflict.WarType,
+                        status: conflict.Status,
+                        opponent_name: opponent,
+                        opponent_name_lower: opponent.toLowerCase(),
+                        stake: stake,
+                        stake_lower: stake.toLowerCase(),
+                        days_won: daysWon
+                    };
+                    conflicts.push(conflictObject);
+                }
+            });
+        }
+
 
         // Check if the incoming message has any different faction detail
         let doUpdate = true;
@@ -1938,6 +2040,8 @@ function Journal() {
                 if (faction.state === messageFaction.FactionState.toLowerCase() &&
                     faction.influence === messageFaction.Influence &&
                     faction.happiness === messageFaction.Happiness.toLowerCase() &&
+                    faction.conflicts &&
+                    _.isEqual(_.sortBy(faction.conflicts, ['opponent_name_lower']), _.sortBy(conflicts, ['opponent_name_lower'])) &&
                     _.isEqual(_.sortBy(faction.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
                     _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
@@ -1953,7 +2057,7 @@ function Journal() {
                             $gte: new Date(timeNow - 172800000)
                         }
                     }).sort({ updated_at: -1 }).lean();
-                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates)) {
+                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates, conflicts)) {
                         doUpdate = false;
                         dontUpdateTime = true;
                     }
@@ -1961,7 +2065,7 @@ function Journal() {
             }
         }
 
-        return { activeStates, pendingStates, recoveringStates, doUpdate, dontUpdateTime }
+        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, dontUpdateTime }
     }
 
     // Used in V3 and V4

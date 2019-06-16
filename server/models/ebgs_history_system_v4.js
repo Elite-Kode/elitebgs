@@ -40,6 +40,25 @@ module.exports = (async () => {
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
+        }],
+        conflicts: [{
+            _id: false,
+            type: { type: String, lowercase: true },
+            status: { type: String, lowercase: true },
+            faction1: {
+                name: String,
+                name_lower: { type: String, lowercase: true },
+                stake: String,
+                stake_lower: { type: String, lowercase: true },
+                days_won: Number
+            },
+            faction2: {
+                name: String,
+                name_lower: { type: String, lowercase: true },
+                stake: String,
+                stake_lower: { type: String, lowercase: true },
+                days_won: Number
+            }
         }]
     }, { runSettersOnQuery: true });
 
