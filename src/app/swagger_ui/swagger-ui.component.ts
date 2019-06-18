@@ -162,7 +162,7 @@ export class SwaggerUIComponent implements OnInit {
                 if (index > 0) {
                     this.tryAPIURL += '&';
                 }
-                this.tryAPIURL += this.parametersSelected[index][0].name + '=' + this.parametersSelected[index][1]
+                this.tryAPIURL += this.parametersSelected[index][0].name + '=' + this.parametersSelected[index][1].replace("&", "%26");
             }
         }
     }
