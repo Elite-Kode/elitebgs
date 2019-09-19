@@ -46,7 +46,7 @@
         "fs-extra": "^7.0.1",
         "highcharts": "^7.0.2",
         "lodash": "^4.17.10",
-        "lodash-es": "^4.17.10",
+        "lodash-es": "^4.17.14",
         "moment": "^2.23.0",
         "mongoose": "^5.4.5",
         "mongoose-aggregate-paginate": "^1.1.2",
