@@ -45,7 +45,7 @@
         "express-session": "^1.15.5",
         "fs-extra": "^7.0.1",
         "highcharts": "^7.0.2",
-        "lodash": "^4.17.10",
+        "lodash": "^4.17.13",
         "lodash-es": "^4.17.10",
         "moment": "^2.23.0",
         "mongoose": "^5.4.5",
