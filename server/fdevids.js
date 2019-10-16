@@ -49,6 +49,9 @@ module.exports = {
         },
         'war': {
             'name': 'War'
+        },
+        'drought': {
+            'name': 'Blight'
         }
     },
     superpower : {
