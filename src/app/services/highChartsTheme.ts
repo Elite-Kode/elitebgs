@@ -2,7 +2,8 @@
 
 export const HighchartsDarkTheme = {
     colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
-        '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff', '#dd5e98', '#3e5641', '#cf8e80'
+        '#eeaaee', '#55BF3B', '#DF5353', '#ac80a0', '#be6e46', '#4bc6b9', '#fefeff', '#dd5e98', '#3e5641', '#cf8e80', '#adeee3',
+        '#86deb7', '#63b995', '#50723c', '#423e28'
     ],
     chart: {
         backgroundColor: '#22343c',
@@ -205,7 +206,12 @@ export const HighchartsLightTheme = {
         '#ee6352',
         '#6c3a5c',
         '#957186',
-        '#243010'
+        '#243010',
+        '#7a306c',
+        '#8e8dbe',
+        '#a9e4ef',
+        '#81f495',
+        '#96f550'
     ],
     symbols: [
         'circle',

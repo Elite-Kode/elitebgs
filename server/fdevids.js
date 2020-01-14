@@ -50,8 +50,23 @@ module.exports = {
         'war': {
             'name': 'War'
         },
-        'drought': {
+        'blight': {
             'name': 'Blight'
+        },
+        'drought': {
+            'name': 'Drought'
+        },
+        'infrastructurefailure': {
+            'name': 'Infrastructure Failure'
+        },
+        'naturaldisaster': {
+            'name': 'Natural Disaster'
+        },
+        'publicholiday': {
+            'name': 'Public Holiday'
+        },
+        'terrorism': {
+            'name': 'Terrorist Attack'
         }
     },
     superpower : {
