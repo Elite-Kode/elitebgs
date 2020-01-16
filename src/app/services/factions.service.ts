@@ -11,7 +11,7 @@ export class FactionsService {
 
     getFactionsBegins(page: string, name: string): Observable<EBGSFactionsWOHistory> {
         return this.http.get<EBGSFactionsWOHistory>('/frontend/factions', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', name)
         });
     }
 
@@ -41,7 +41,7 @@ export class FactionsService {
 
     getHistoryAdmin(page: string, id: string): Observable<EBGSFactionHistoryPaginate> {
         return this.http.get<EBGSFactionHistoryPaginate>('/frontend/factionhistoryadmin', {
-            params: new HttpParams().set('id', id).set('page', page)
+            params: new HttpParams().set('id', id).set('page', page + 1)
         });
     }
 

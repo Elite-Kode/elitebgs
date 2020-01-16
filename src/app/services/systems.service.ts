@@ -11,7 +11,7 @@ export class SystemsService {
 
     getSystemsBegins(page: string, name: string): Observable<EBGSSystemsWOHistory> {
         return this.http.get<EBGSSystemsWOHistory>('/frontend/systems', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', name)
         });
     }
 
@@ -41,7 +41,7 @@ export class SystemsService {
 
     getHistoryAdmin(page: string, id: string): Observable<EBGSSystemHistory> {
         return this.http.get<EBGSSystemHistory>('/frontend/systemhistoryadmin', {
-            params: new HttpParams().set('id', id).set('page', page)
+            params: new HttpParams().set('id', id).set('page', page + 1)
         });
     }
 

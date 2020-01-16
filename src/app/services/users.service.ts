@@ -36,7 +36,7 @@ export class UsersService {
 
     getUsersBegins(page: string, user: string): Observable<EBGSUsers> {
         return this.http.get<EBGSUsers>('/frontend/users', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', user)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', user)
         }).pipe(map((users: EBGSUsers): EBGSUsers => {
             users.docs.forEach((singleUser, i, allUsers) => {
                 allUsers[i].patronage.since = new Date(singleUser.patronage.since);

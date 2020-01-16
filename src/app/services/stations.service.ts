@@ -11,7 +11,7 @@ export class StationsService {
 
     getStationsBegins(page: string, name: string): Observable<EBGSStationsWOHistory> {
         return this.http.get<EBGSStationsWOHistory>('/frontend/stations', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page).set('beginsWith', name)
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', name)
         });
     }
 
@@ -41,7 +41,7 @@ export class StationsService {
 
     getHistoryAdmin(page: string, id: string): Observable<EBGSStationHistory> {
         return this.http.get<EBGSStationHistory>('/frontend/stationhistoryadmin', {
-            params: new HttpParams().set('id', id).set('page', page)
+            params: new HttpParams().set('id', id).set('page', page + 1)
         });
     }
 
