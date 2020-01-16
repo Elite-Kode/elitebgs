@@ -16,7 +16,7 @@ import { FactionsService } from '../../services/factions.service';
 })
 export class AdminFactionsViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
-    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     factionData: EBGSFactionSchemaWOHistory;
     factionUnderEdit: EBGSFactionSchemaWOHistory;
     factionHistoryData: EBGSFactionSchema['history'];

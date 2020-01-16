@@ -16,7 +16,7 @@ import * as moment from 'moment';
 })
 export class AdminSystemsViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
-    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     systemData: EBGSSystemSchemaWOHistory;
     systemUnderEdit: EBGSSystemSchemaWOHistory;
     systemHistoryData: EBGSSystemSchema['history'];

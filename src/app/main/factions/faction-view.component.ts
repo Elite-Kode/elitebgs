@@ -18,7 +18,7 @@ import { ClrDatagrid } from '@clr/angular';
 })
 export class FactionViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
-    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     factionData: EBGSFactionSchema;
     systemsPresence: number;

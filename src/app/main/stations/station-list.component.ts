@@ -15,7 +15,7 @@ import { debounceTime, switchMap } from 'rxjs/operators';
 })
 export class StationListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
-    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     stationData: IStation[] = [];
     loading = true;
     stationToAdd: string;

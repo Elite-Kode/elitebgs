@@ -17,7 +17,7 @@
 "use strict";
 
 const zlib = require('zlib');
-const zmq = require('zmq');
+const zmq = require('zeromq');
 const request = require('request-promise-native');
 
 const sleep = require('util').promisify(setTimeout)
@@ -57,7 +57,7 @@ sock.on('message', topic => {
         case journal.schemaId[1]:
             // journal.trackSystem(message.message);
             // journal.trackSystemV3(message.message);
-            journal.trackSystemV4(message.message, message.header);
+            // journal.trackSystemV4(message.message, message.header);
             // journal.display();
             break;
         // case Outfitting.schemaId:

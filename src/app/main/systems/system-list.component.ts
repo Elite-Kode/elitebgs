@@ -15,7 +15,7 @@ import { debounceTime, switchMap } from 'rxjs/operators';
 })
 export class SystemListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
-    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     systemData: ISystem[] = [];
     loading = true;
     systemToAdd: string;

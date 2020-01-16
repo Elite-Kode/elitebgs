@@ -18,7 +18,6 @@
 
 const express = require('express');
 const passport = require('passport');
-const client = require('../../modules/discord/client');
 
 let router = express.Router();
 
