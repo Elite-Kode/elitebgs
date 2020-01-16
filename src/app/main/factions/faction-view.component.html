@@ -116,12 +116,20 @@
         Faction not in conflict anywhere
     </ng-template>
 
-    <div class="date-filter">
-        <h3>Date Filter</h3>
-        <label>From</label>
-        <input type="date" [clrDate]="fromDateFilter" (clrDateChange)="fromDateChange($event)">
-        <label>To</label>
-        <input type="date" [clrDate]="toDateFilter" (clrDateChange)="toDateChange($event)">
+    <h3>Date Filter</h3>
+    <div class="clr-row">
+        <form clrForm clrLayout="row">
+            <clr-date-container>
+                <label>From</label>
+                <input type="date" [clrDate]="fromDateFilter" (clrDateChange)="fromDateChange($event)">
+            </clr-date-container>
+        </form>
+        <form clrForm clrLayout="row">
+            <clr-date-container>
+                <label>To</label>
+                <input type="date" [clrDate]="toDateFilter" (clrDateChange)="toDateChange($event)">
+            </clr-date-container>
+        </form>
     </div>
     <div class="card">
         <div class="card-block">

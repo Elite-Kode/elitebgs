@@ -28,9 +28,18 @@
         transform: unset !important;
         margin-left: 24px !important;
     }
+
     .nav-text {
         position: relative;
     }
+}
+
+.tick-link {
+    padding: 0.75rem 0 0 0!important;
+}
+
+.tick-time {
+    padding: 0 1rem;
 }
 
 .theme-selector {
@@ -42,10 +51,12 @@
         clr-icon {
             margin-left: 16px !important;
         }
+
         .nav-text {
             padding: 0 16px;
         }
     }
+
     .theme-selector {
         width: 1.5rem !important;
     }
@@ -62,10 +73,16 @@
         background-color: rgba(255, 255, 255, 0.6);
         z-index: 590;
     }
+
     .flex {
         display: flex;
     }
+
     .full-width {
         width: 100%;
+    }
+
+    clr-date-container.clr-form-control {
+        padding-left: 0.25rem;
     }
 }
