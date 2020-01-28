@@ -25,7 +25,7 @@ module.exports = (async () => {
     let Schema = mongoose.Schema;
 
     let ebgsStation = new Schema({
-        eddb_id: Number,
+        eddb_id: { type: Number, index: true },
         name: String,
         name_lower: { type: String, lowercase: true, index: true },
         market_id: { type: String, index: true },

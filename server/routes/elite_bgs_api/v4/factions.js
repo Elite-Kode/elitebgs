@@ -34,6 +34,10 @@ let router = express.Router();
    *         description: ID of the document.
    *         in: query
    *         type: string
+   *       - name: eddbId
+   *         description: EDDB ID of the faction.
+   *         in: query
+   *         type: string
    *       - name: name
    *         description: Faction name.
    *         in: query
@@ -85,6 +89,9 @@ router.get('/', cors(), async (req, res, next) => {
 
         if (req.query.id) {
             query._id = req.query.id;
+        }
+        if (req.query.eddbId) {
+            query.eddb_id = req.query.eddbId;
         }
         if (req.query.name) {
             query.name_lower = req.query.name.toLowerCase();
