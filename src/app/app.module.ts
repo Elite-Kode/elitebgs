@@ -16,6 +16,10 @@ import { CustomChartModule } from './charts/custom-chart.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { ProfileReportComponent } from './profile/profile-report.component';
+import { OwnerInfoComponent } from './about/owner-info.component';
+import { TandCTextComponent } from './about/tandc-text.component';
+import { DisclaimerTextComponent } from './about/disclaimer-text.component';
+import { PrivacyPolicyTextComponent } from './about/privacy-policy-text.component';
 import { AboutComponent } from './about/about.component';
 import { TandCComponent } from './about/tandc.component';
 import { DisclaimerComponent } from './about/disclaimer.component';
@@ -60,6 +64,10 @@ export function errorHandlerFactory() {
         AppComponent,
         ProfileComponent,
         ProfileReportComponent,
+        OwnerInfoComponent,
+        TandCTextComponent,
+        DisclaimerTextComponent,
+        PrivacyPolicyTextComponent,
         AboutComponent,
         TandCComponent,
         DisclaimerComponent,
