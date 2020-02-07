@@ -24,7 +24,7 @@
                 <clr-icon shape="moon" *ngIf="getThemeName() === 'light'"></clr-icon>
             </a>
             <a *ngIf="!breakpointTriggered" routerLink="/donate" routerLinkActive="active" class="nav-link"><span class="nav-text">Support
-                    Us</span></a>
+                    Elite BGS</span></a>
             <clr-dropdown>
                 <button class="nav-icon" clrDropdownTrigger>
                     <clr-icon shape="cog" *ngIf="!isAuthenticated && isAuthenticated !== undefined"></clr-icon>
@@ -39,7 +39,7 @@
                         out</a>
                     <a routerLink="/guide" clrDropdownItem>Guide</a>
                     <a routerLink="/credits" clrDropdownItem>Credits</a>
-                    <a *ngIf="breakpointTriggered" routerLink="/donate" clrDropdownItem>Support Us</a>
+                    <a *ngIf="breakpointTriggered" routerLink="/donate" clrDropdownItem>Support Elite BGS</a>
                     <a routerLink="/about" clrDropdownItem>About</a>
                 </clr-dropdown-menu>
             </clr-dropdown>
