@@ -23,7 +23,7 @@ const request = require('request-promise-native');
 const sleep = require('util').promisify(setTimeout)
 
 const schemas = require('./schemas');
-const bugsnagClient = require('../../bugsnag');
+const bugsnagCaller = require('../../bugsnag').bugsnagCaller;
 
 const sock = zmq.socket('sub');
 
@@ -83,7 +83,7 @@ setInterval(async () => {
             if (response.statusCode === 200) {
                 let responseObject = JSON.parse(response.body);
                 if (responseObject.status === 2) {
-                    bugsnagClient.notify(new Error('No message recieved from EDDN for more than 5 minutes'));
+                    bugsnagCaller(new Error('No message received from EDDN for more than 5 minutes'));
                     connectToEDDN();
                 }
             }

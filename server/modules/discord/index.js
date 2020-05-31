@@ -17,7 +17,7 @@
 "use strict";
 
 const client = require('./client');
-const bugsnagClient = require('../../bugsnag');
+const bugsnagCaller = require('../../bugsnag').bugsnagCaller;
 const secrets = require('../../../secrets');
 
 client.login(secrets.discord_token);
@@ -41,12 +41,10 @@ client.on("guildMemberAdd", async member => {
             client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("Unregistered user " + member.id + " has joined");
         }
     } catch (err) {
-        bugsnagClient.notify(err);
-        console.log(err);
+        bugsnagCaller(err);
     }
 });
 
 client.on("error", err => {
-    bugsnagClient.notify(err);
-    console.log(err);
+    bugsnagCaller(err);
 })

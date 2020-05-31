@@ -20,7 +20,7 @@ const _ = require('lodash');
 const request = require('request-promise-native');
 const semver = require('semver');
 
-const bugsnagClient = require('../../../bugsnag');
+const bugsnagCaller = require('../../../bugsnag').bugsnagCaller;
 
 const ebgsFactionsModel = require('../../../models/ebgs_factions');
 const ebgsSystemsModel = require('../../../models/ebgs_systems');
@@ -756,6 +756,7 @@ function Journal() {
                         let systemObject = {};
                         let historyObject = {};
                         let eddbIdPromise;
+                        // Populate the systemObject and historyObject
                         if (system) {   // System exists in db
                             if (system.updated_at < new Date(message.timestamp)) {
                                 if (!system.eddb_id) {
@@ -850,6 +851,7 @@ function Journal() {
                                 conflicts: conflictsArray
                             };
                         }
+                        // Do the actual db calls
                         if (!_.isEmpty(systemObject)) {
                             if (hasEddbId) {
                                 try {
@@ -872,13 +874,12 @@ function Journal() {
                                         this.setSystemHistory(historyObject);
                                     }
                                 } catch (err) {
-                                    bugsnagClient.notify(err, {
+                                    bugsnagCaller(err, {
                                         metaData: {
                                             message: message,
                                             systemObject: systemObject
                                         }
                                     });
-                                    console.log(err);
                                 }
                             } else {
                                 try {
@@ -904,13 +905,12 @@ function Journal() {
                                             this.setSystemHistory(historyObject);
                                         }
                                     } catch (err) {
-                                        bugsnagClient.notify(err, {
+                                        bugsnagCaller(err, {
                                             metaData: {
                                                 message: message,
                                                 systemObject: systemObject
                                             }
                                         });
-                                        console.log(err);
                                     }
                                 } catch (err) {       // If eddb id cannot be fetched, create the record without it.
                                     try {
@@ -933,25 +933,23 @@ function Journal() {
                                             this.setSystemHistory(historyObject);
                                         }
                                     } catch (err) {
-                                        bugsnagClient.notify(err, {
+                                        bugsnagCaller(err, {
                                             metaData: {
                                                 message: message,
                                                 systemObject: systemObject
                                             }
                                         });
-                                        console.log(err);
                                     }
                                 }
                             }
                         }
                     } catch (err) {
-                        bugsnagClient.notify(err, {
+                        bugsnagCaller(err, {
                             metaData: {
                                 message: message,
                                 systemModel: ebgsSystemsV4Model
                             }
                         });
-                        console.log(err);
                     }
                 })();
                 (async () => {
@@ -979,7 +977,7 @@ function Journal() {
                         ).lean();
 
                         try {
-                            let values = await Promise.all([allFactionsPresentInSystem, allFactionsPresentInMessage])
+                            let values = await Promise.all([allFactionsPresentInSystem, allFactionsPresentInMessage]);
                             let factionsPresentInSystemDB = values[0];
                             let factionsAllDetails = values[1];
 
@@ -1027,13 +1025,12 @@ function Journal() {
                                                         })
                                                         .exec();
                                                 } catch (err) {
-                                                    bugsnagClient.notify(err, {
+                                                    bugsnagCaller(err, {
                                                         metaData: {
                                                             message: message,
                                                             factionObject: factionObject
                                                         }
                                                     });
-                                                    console.log(err);
                                                 }
                                             } catch (err) {
                                                 try {
@@ -1048,13 +1045,12 @@ function Journal() {
                                                         })
                                                         .exec();
                                                 } catch (err) {
-                                                    bugsnagClient.notify(err, {
+                                                    bugsnagCaller(err, {
                                                         metaData: {
                                                             message: message,
                                                             factionObject: factionObject
                                                         }
                                                     });
-                                                    console.log(err);
                                                 }
                                             }
                                         } else {
@@ -1070,13 +1066,12 @@ function Journal() {
                                                     })
                                                     .exec();
                                             } catch (err) {
-                                                bugsnagClient.notify(err, {
+                                                bugsnagCaller(err, {
                                                     metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
                                                 });
-                                                console.log(err);
                                             }
                                         }
                                     }
@@ -1200,13 +1195,12 @@ function Journal() {
                                                 historyObject.faction_name_lower = factionReturn.name_lower;
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
-                                                bugsnagClient.notify(err, {
+                                                bugsnagCaller(err, {
                                                     metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
                                                 });
-                                                console.log(err);
                                             }
                                         } catch (err) {
                                             try {
@@ -1225,13 +1219,12 @@ function Journal() {
                                                 historyObject.faction_name_lower = factionReturn.name_lower;
                                                 this.setFactionHistory(historyObject);
                                             } catch (err) {
-                                                bugsnagClient.notify(err, {
+                                                bugsnagCaller(err, {
                                                     metaData: {
                                                         message: message,
                                                         factionObject: factionObject
                                                     }
                                                 });
-                                                console.log(err);
                                             }
                                         }
                                     }
@@ -1347,14 +1340,13 @@ function Journal() {
                                                         historyObject.faction_name_lower = factionReturn.name_lower;
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
-                                                        bugsnagClient.notify(err, {
+                                                        bugsnagCaller(err, {
                                                             metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
                                                             }
                                                         });
-                                                        console.log(err);
                                                     }
                                                 } catch (err) {
                                                     try {
@@ -1373,14 +1365,13 @@ function Journal() {
                                                         historyObject.faction_name_lower = factionReturn.name_lower;
                                                         this.setFactionHistory(historyObject);
                                                     } catch (err) {
-                                                        bugsnagClient.notify(err, {
+                                                        bugsnagCaller(err, {
                                                             metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
                                                             }
                                                         });
-                                                        console.log(err);
                                                     }
                                                 }
                                             } else {
@@ -1400,14 +1391,13 @@ function Journal() {
                                                     historyObject.faction_name_lower = factionReturn.name_lower;
                                                     this.setFactionHistory(historyObject);
                                                 } catch (err) {
-                                                    bugsnagClient.notify(err, {
+                                                    bugsnagCaller(err, {
                                                         metaData: {
                                                             message: message,
                                                             messageFaction: messageFaction,
                                                             factionObject: factionObject
                                                         }
                                                     });
-                                                    console.log(err);
                                                 }
                                             }
                                         } else if (!dontUpdateTime) {
@@ -1452,14 +1442,13 @@ function Journal() {
                                                             })
                                                             .exec()
                                                     } catch (err) {
-                                                        bugsnagClient.notify(err, {
+                                                        bugsnagCaller(err, {
                                                             metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
                                                             }
                                                         });
-                                                        console.log(err);
                                                     }
                                                 } catch (err) {
                                                     try {
@@ -1475,14 +1464,13 @@ function Journal() {
                                                             })
                                                             .exec();
                                                     } catch (err) {
-                                                        bugsnagClient.notify(err, {
+                                                        bugsnagCaller(err, {
                                                             metaData: {
                                                                 message: message,
                                                                 messageFaction: messageFaction,
                                                                 factionObject: factionObject
                                                             }
                                                         });
-                                                        console.log(err);
                                                     }
                                                 }
                                             } else {
@@ -1499,14 +1487,13 @@ function Journal() {
                                                         })
                                                         .exec();
                                                 } catch (err) {
-                                                    bugsnagClient.notify(err, {
+                                                    bugsnagCaller(err, {
                                                         metaData: {
                                                             message: message,
                                                             messageFaction: messageFaction,
                                                             factionObject: factionObject
                                                         }
                                                     });
-                                                    console.log(err);
                                                 }
                                             }
                                         }
@@ -1514,31 +1501,28 @@ function Journal() {
                                 }
                             }
                         } catch (err) {
-                            bugsnagClient.notify(err, {
+                            bugsnagCaller(err, {
                                 metaData: {
                                     message: message
                                 }
                             });
-                            console.log(err);
                         }
                     } catch (err) {
-                        bugsnagClient.notify(err, {
+                        bugsnagCaller(err, {
                             metaData: {
                                 message: message,
                                 factionModel: ebgsFactionsV4Model
                             }
                         });
-                        console.log(err);
                     }
                 })();
             } catch (err) {
                 if (err.message !== 'Message is not valid') {
-                    bugsnagClient.notify(err, {
+                    bugsnagCaller(err, {
                         metaData: {
                             message: message
                         }
                     });
-                    console.log(err);
                 }
             }
         }
@@ -1678,13 +1662,12 @@ function Journal() {
                                     this.setStationHistory(historyObject);
                                 }
                             } catch (err) {
-                                bugsnagClient.notify(err, {
+                                bugsnagCaller(err, {
                                     metaData: {
                                         message: message,
                                         stationObject: stationObject
                                     }
                                 });
-                                console.log(err);
                             }
                         } else {
                             try {
@@ -1708,13 +1691,12 @@ function Journal() {
                                         this.setStationHistory(historyObject);
                                     }
                                 } catch (err) {
-                                    bugsnagClient.notify(err, {
+                                    bugsnagCaller(err, {
                                         metaData: {
                                             message: message,
                                             stationObject: stationObject
                                         }
                                     });
-                                    console.log(err);
                                 }
                             } catch (err) {
                                 try {
@@ -1735,34 +1717,31 @@ function Journal() {
                                         this.setStationHistory(historyObject);
                                     }
                                 } catch (err) {
-                                    bugsnagClient.notify(err, {
+                                    bugsnagCaller(err, {
                                         metaData: {
                                             message: message,
                                             stationObject: stationObject
                                         }
                                     });
-                                    console.log(err);
                                 }
                             }
                         }
                     }
                 } catch (err) {
-                    bugsnagClient.notify(err, {
+                    bugsnagCaller(err, {
                         metaData: {
                             message: message,
                             stationModel: ebgsStationsV4Model
                         }
                     });
-                    console.log(err);
                 }
             } catch (err) {
                 if (err.message !== 'Message is not valid') {
-                    bugsnagClient.notify(err, {
+                    bugsnagCaller(err, {
                         metaData: {
                             message: message
                         }
                     });
-                    console.log(err);
                 }
             }
         }

@@ -19,7 +19,7 @@
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const bugsnagClient = require('./bugsnag');
+const bugsnagCaller = require('./bugsnag').bugsnagCaller;
 let elite_bgs_url = require('../secrets').elite_bgs_db_url;
 
 let elite_bgs_connection;
@@ -35,7 +35,7 @@ elite_bgs_connection.on('connected', () => {
 });
 
 elite_bgs_connection.on('error', err => {
-    bugsnagClient.notify(err);
+    bugsnagCaller(err);
     console.log(`Mongoose error ${err}`);
 });
 

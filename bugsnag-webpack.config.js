@@ -4,7 +4,7 @@ const processVars = require('./processVars');
 
 let plugins = [];
 
-if (secrets.bugsnag_sourcemap_send) {
+if (secrets.bugsnag_sourcemap_send && secrets.bugsnag_use) {
     plugins = [
         new BugsnagSourceMapUploaderPlugin({
             apiKey: secrets.bugsnag_token_angular,

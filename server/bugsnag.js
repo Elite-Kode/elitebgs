@@ -20,12 +20,31 @@ const bugsnag = require('@bugsnag/js');
 const bugsnagExpress = require('@bugsnag/plugin-express');
 
 const processVars = require('../processVars');
+const useBugsnag = require('../secrets').bugsnag_use;
 
-let bugsnagClient = bugsnag({
-    apiKey: require('../secrets').bugsnag_token,
-    notifyReleaseStages: ['development', 'production'],
-    appVersion: processVars.version
-});
-bugsnagClient.use(bugsnagExpress);
+let bugsnagClient = {}
 
-module.exports = bugsnagClient;
+if (useBugsnag) {
+    bugsnagClient = bugsnag({
+        apiKey: require('../secrets').bugsnag_token,
+        notifyReleaseStages: ['development', 'production'],
+        appVersion: processVars.version
+    });
+    bugsnagClient.use(bugsnagExpress);
+}
+
+function bugsnagCaller(err, metaData, logToConsole = true) {
+    if (useBugsnag) {
+        bugsnagClient.notify(err, {metaData});
+    }
+    if (logToConsole) {
+        console.log(err);
+    }
+}
+
+let bugsnagWrapper = {
+    bugsnagCaller,
+    bugsnagClient
+}
+
+module.exports = bugsnagWrapper;

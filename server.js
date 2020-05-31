@@ -27,9 +27,7 @@ const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const secrets = require('./secrets');
 const processVars = require('./processVars');
-
-const bugsnagClient = require('./server/bugsnag');
-const bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
+const bugsnagCaller = require('./server/bugsnag').bugsnagCaller;
 const swagger = require('./server/swagger');
 
 const ebgsFactionsV1 = require('./server/routes/elite_bgs_api/v1/factions');
@@ -55,20 +53,30 @@ const chartGenerator = require('./server/routes/chart_generator');
 const ingameIds = require('./server/routes/ingame_ids');
 
 require('./server/modules/eddn');
-require('./server/modules/discord');
+
+if (secrets.discord_use) {
+    require('./server/modules/discord');
+}
+
 require('./server/modules/tick/listener');
 
 const app = express();
 
-app.use(bugsnagClientMiddleware.requestHandler);
+let bugsnagClientMiddleware = {}
+
+if (secrets.bugsnag_use) {
+    const bugsnagClient = require('./server/bugsnag').bugsnagClient;
+    bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
+    app.use(bugsnagClientMiddleware.requestHandler);
+}
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(session({
     name: "EliteBGS",
     secret: secrets.session_secret,
-    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
-    store: new mongoStore({ mongooseConnection: require('./server/db').elite_bgs })
+    cookie: {maxAge: 7 * 24 * 60 * 60 * 1000},
+    store: new mongoStore({mongooseConnection: require('./server/db').elite_bgs})
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -118,7 +126,9 @@ app.all('*', (req, res) => {
 });
 
 // error handlers
-app.use(bugsnagClientMiddleware.errorHandler);
+if (secrets.bugsnag_use) {
+    app.use(bugsnagClientMiddleware.errorHandler);
+}
 
 // development error handler
 // will print stacktrace
@@ -153,19 +163,22 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async (id, done) => {
     try {
         let model = await require('./server/models/ebgs_users');
-        let user = await model.findOne({ id: id })
+        let user = await model.findOne({id: id})
         done(null, user);
     } catch (err) {
-        bugsnagClient.notify(err);
+        bugsnagCaller(err);
         done(err);
     }
 });
 
 let onAuthentication = async (accessToken, refreshToken, profile, done, type) => {
-    const client = require('./server/modules/discord/client');
+    let client = {};
+    if (secrets.discord_use) {
+        client = require('./server/modules/discord/client');
+    }
     try {
         let model = await require('./server/models/ebgs_users');
-        let user = await model.findOne({ id: profile.id });
+        let user = await model.findOne({id: profile.id});
         if (user) {
             let updatedUser = {
                 id: profile.id,
@@ -177,7 +190,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
             }
             try {
                 await model.findOneAndUpdate(
-                    { id: profile.id },
+                    {id: profile.id},
                     updatedUser,
                     {
                         upsert: false,
@@ -185,7 +198,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                     });
                 done(null, user);
             } catch (err) {
-                bugsnagClient.notify(err);
+                bugsnagCaller(err);
                 done(err);
             }
         } else {
@@ -204,17 +217,19 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 }
             };
             await model.findOneAndUpdate(
-                { id: profile.id },
+                {id: profile.id},
                 user,
                 {
                     upsert: true,
                     runValidators: true
                 })
-            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+            if (secrets.discord_use) {
+                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+            }
             done(null, user);
         }
     } catch (err) {
-        bugsnagClient.notify(err);
+        bugsnagCaller(err);
         done(err);
     }
 }
