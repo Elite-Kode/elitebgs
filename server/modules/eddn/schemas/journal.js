@@ -110,7 +110,7 @@ function Journal() {
                                 };
                                 historySubObject.recovering_states.push(recoveringStateObject);
                             });
-                        };
+                        }
 
                         let factionObject = {
                             name: faction.Name,
@@ -136,7 +136,7 @@ function Journal() {
                                 runValidators: true
                             })
                             .exec();
-                    };
+                    }
                     systemObject.minor_faction_presences = factionArray;
                     let model = await ebgsSystemsModel;
                     model.findOneAndUpdate(
@@ -445,7 +445,7 @@ function Journal() {
                                                 };
                                                 pendingStates.push(pendingStateObject);
                                             });
-                                        };
+                                        }
                                         let recoveringStates = [];
                                         if (messageFaction.RecoveringStates) {
                                             messageFaction.RecoveringStates.forEach(recoveringState => {
@@ -455,7 +455,7 @@ function Journal() {
                                                 };
                                                 recoveringStates.push(recoveringStateObject);
                                             });
-                                        };
+                                        }
 
                                         let factionObject = {
                                             name: messageFaction.Name,
@@ -537,7 +537,7 @@ function Journal() {
                                                 };
                                                 pendingStates.push(pendingStateObject);
                                             });
-                                        };
+                                        }
                                         let recoveringStates = [];
                                         if (messageFaction.RecoveringStates) {
                                             messageFaction.RecoveringStates.forEach(recoveringState => {
@@ -547,7 +547,7 @@ function Journal() {
                                                 };
                                                 recoveringStates.push(recoveringStateObject);
                                             });
-                                        };
+                                        }
 
                                         // Check if the incoming message has any different faction detail
                                         let doUpdate = true;
@@ -705,7 +705,7 @@ function Journal() {
     }
 
     this.trackSystemV4 = async (message, header) => {
-        if (message.event === "FSDJump" || (message.event === "Location")) {
+        if (message.event === "FSDJump" || message.event === "Location" || message.event === "CarrierJump") {
             try {
                 await this.checkMessage1(message, header);
                 message.Factions = message.Factions.filter(faction => {
@@ -1090,7 +1090,7 @@ function Journal() {
                                                 };
                                                 activeStates.push(activeStateObject);
                                             });
-                                        };
+                                        }
                                         let pendingStates = [];
                                         if (messageFaction.PendingStates) {
                                             messageFaction.PendingStates.forEach(pendingState => {
@@ -1100,7 +1100,7 @@ function Journal() {
                                                 };
                                                 pendingStates.push(pendingStateObject);
                                             });
-                                        };
+                                        }
                                         let recoveringStates = [];
                                         if (messageFaction.RecoveringStates) {
                                             messageFaction.RecoveringStates.forEach(recoveringState => {
@@ -1110,7 +1110,7 @@ function Journal() {
                                                 };
                                                 recoveringStates.push(recoveringStateObject);
                                             });
-                                        };
+                                        }
                                         let conflictsArray = [];
                                         for (let conflict of message.Conflicts) {
                                             if (conflict.Faction1.Name.toLowerCase() === factionNameLower ||
@@ -1852,6 +1852,9 @@ function Journal() {
             message.StationServices &&
             message.StationType
         ) {
+            if (message.StationType === "FleetCarrier") {
+                throw new Error("Message from Fleet Carrier");
+            }
             if (!message.StationFaction.FactionState) {
                 message.StationFaction.FactionState = "None";
             }
@@ -1954,7 +1957,7 @@ function Journal() {
                 };
                 activeStates.push(activeStateObject);
             });
-        };
+        }
         let pendingStates = [];
         if (messageFaction.PendingStates) {
             messageFaction.PendingStates.forEach(pendingState => {
@@ -1964,7 +1967,7 @@ function Journal() {
                 };
                 pendingStates.push(pendingStateObject);
             });
-        };
+        }
         let recoveringStates = [];
         if (messageFaction.RecoveringStates) {
             messageFaction.RecoveringStates.forEach(recoveringState => {
@@ -1974,7 +1977,7 @@ function Journal() {
                 };
                 recoveringStates.push(recoveringStateObject);
             });
-        };
+        }
         let factionName = dbFaction.name_lower;
         let conflicts = [];
         if (message.Conflicts) {
