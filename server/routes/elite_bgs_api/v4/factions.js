@@ -61,6 +61,22 @@ let recordsPerPage = 10
  *         description: Filter by system.
  *         in: query
  *         type: string
+ *       - name: filterSystemInHistory
+ *         description: Apply the system filter in the history too.
+ *         in: query
+ *         type: boolean
+ *       - name: activeState
+ *         description: Name of the active state of the faction.
+ *         in: query
+ *         type: string
+ *       - name: pendingState
+ *         description: Name of the pending state of the faction.
+ *         in: query
+ *         type: string
+ *       - name: recoveringState
+ *         description: Name of the recovering state of the faction.
+ *         in: query
+ *         type: string
  *       - name: timemin
  *         description: Minimum time for the faction history in miliseconds.
  *         in: query
@@ -115,7 +131,40 @@ router.get('/', cors(), async (req, res, next) => {
             }
         }
         if (req.query.system) {
-
+            query["faction_presence.system_name_lower"] = arrayOrNot(req.query.system, _.toLower)
+        }
+        if (req.query.activeState) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    active_states: {
+                        $elemMatch: {
+                            state: arrayOrNot(req.query.activeState, _.toLower)
+                        }
+                    }
+                }
+            }
+        }
+        if (req.query.pendingState) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    pending_states: {
+                        $elemMatch: {
+                            state: arrayOrNot(req.query.pendingState, _.toLower)
+                        }
+                    }
+                }
+            }
+        }
+        if (req.query.recoveringState) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    recovering_states: {
+                        $elemMatch: {
+                            state: arrayOrNot(req.query.recoveringState, _.toLower)
+                        }
+                    }
+                }
+            }
         }
         if (req.query.page) {
             page = req.query.page;
@@ -144,10 +193,10 @@ router.get('/', cors(), async (req, res, next) => {
                 greater: greaterThanTime,
                 lesser: lesserThanTime,
                 count: count
-            }, page);
+            }, page, req);
             res.status(200).json(result);
         } else {
-            let result = await getFactions(query, {}, page);
+            let result = await getFactions(query, {}, page, req);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -169,7 +218,7 @@ function paramOperation(operation, value) {
     return operation(value);
 }
 
-async function getFactions(query, history, page) {
+async function getFactions(query, history, page, request) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
@@ -177,7 +226,17 @@ async function getFactions(query, history, page) {
     let aggregate = factionModel.aggregate()
     aggregate.match(query)
     if (!_.isEmpty(history)) {
+        let lookupMatchAndArray = [{
+            $eq: ["$faction_id", "$$id"]
+        }];
         if (history.count) {
+            if (request.query.system && request.query.filterSystemInHistory) {
+                lookupMatchAndArray.push(query.faction_presence.system_name_lower);
+            } else {
+                lookupMatchAndArray.push({
+                    $in: ["$system_lower", "$$system_name"]
+                });
+            }
             aggregate.addFields({
                 system_names_lower: {
                     $map: {
@@ -194,14 +253,7 @@ async function getFactions(query, history, page) {
                     {
                         $match: {
                             $expr: {
-                                $and: [
-                                    {
-                                        $eq: ["$faction_id", "$$id"]
-                                    },
-                                    {
-                                        $in: ["$system_lower", "$$system_name"]
-                                    }
-                                ]
+                                $and: lookupMatchAndArray
                             }
                         }
                     },
@@ -220,6 +272,17 @@ async function getFactions(query, history, page) {
                 system_names_lower: 0
             });
         } else {
+            lookupMatchAndArray.push(
+                {
+                    $gte: ["$updated_at", new Date(history.greater)]
+                },
+                {
+                    $lte: ["$updated_at", new Date(history.lesser)]
+                }
+            );
+            if (request.query.system && request.query.filterSystemInHistory) {
+                lookupMatchAndArray.push(query.faction_presence.system_name_lower);
+            }
             aggregate.lookup({
                 from: "ebgshistoryfactionv4",
                 as: "history",
@@ -228,17 +291,7 @@ async function getFactions(query, history, page) {
                     {
                         $match: {
                             $expr: {
-                                $and: [
-                                    {
-                                        $eq: ["$faction_id", "$$id"]
-                                    },
-                                    {
-                                        $gte: ["$updated_at", new Date(history.greater)]
-                                    },
-                                    {
-                                        $lte: ["$updated_at", new Date(history.lesser)]
-                                    }
-                                ]
+                                $and: lookupMatchAndArray
                             }
                         }
                     },
