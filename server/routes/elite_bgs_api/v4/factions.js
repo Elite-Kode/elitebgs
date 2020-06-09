@@ -77,6 +77,10 @@ let recordsPerPage = 10
  *         description: Name of the recovering state of the faction.
  *         in: query
  *         type: string
+ *       - name: minimal
+ *         description: Get minimal data of the faction.
+ *         in: query
+ *         type: boolean
  *       - name: timemin
  *         description: Minimum time for the faction history in miliseconds.
  *         in: query
@@ -106,6 +110,7 @@ router.get('/', cors(), async (req, res, next) => {
         let query = new Object;
         let page = 1;
         let history = false;
+        let minimal = false;
         let greaterThanTime;
         let lesserThanTime;
         let count;
@@ -166,6 +171,9 @@ router.get('/', cors(), async (req, res, next) => {
                 }
             }
         }
+        if (req.query.minimal) {
+            minimal = true
+        }
         if (req.query.page) {
             page = req.query.page;
         }
@@ -193,10 +201,10 @@ router.get('/', cors(), async (req, res, next) => {
                 greater: greaterThanTime,
                 lesser: lesserThanTime,
                 count: count
-            }, page, req);
+            }, minimal, page, req);
             res.status(200).json(result);
         } else {
-            let result = await getFactions(query, {}, page, req);
+            let result = await getFactions(query, {}, minimal, page, req);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -218,7 +226,7 @@ function paramOperation(operation, value) {
     return operation(value);
 }
 
-async function getFactions(query, history, page, request) {
+async function getFactions(query, history, minimal, page, request) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
@@ -226,6 +234,9 @@ async function getFactions(query, history, page, request) {
     let aggregate = factionModel.aggregate()
     aggregate.match(query)
     if (!_.isEmpty(history)) {
+        if (minimal) {
+            throw new Error("Minimal cannot work with History");
+        }
         let lookupMatchAndArray = [{
             $eq: ["$faction_id", "$$id"]
         }];
@@ -305,6 +316,12 @@ async function getFactions(query, history, page, request) {
                 ]
             });
         }
+    }
+
+    if (minimal) {
+        aggregate.project({
+            faction_presence: 0
+        });
     }
 
     return factionModel.aggregatePaginate(aggregate, {
