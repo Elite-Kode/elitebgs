@@ -17,116 +17,129 @@
 "use strict";
 
 const express = require('express');
-var cors = require('cors')
+const mongoose = require('mongoose');
+const cors = require('cors');
 const _ = require('lodash');
 
+const utilities = require('../../../modules/utilities');
+
 let router = express.Router();
+let ObjectId = mongoose.Types.ObjectId;
+let recordsPerPage = 10;
 
 /**
-   * @swagger
-   * /systems:
-   *   get:
-   *     description: Get the Systems
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - name: id
-   *         description: ID of the document.
-   *         in: query
-   *         type: string
-   *       - name: eddbId
-   *         description: EDDB ID of the system.
-   *         in: query
-   *         type: string
-   *       - name: name
-   *         description: System name.
-   *         in: query
-   *         type: string
-   *       - name: allegiance
-   *         description: Name of the allegiance.
-   *         in: query
-   *         type: string
-   *       - name: government
-   *         description: Name of the government type.
-   *         in: query
-   *         type: string
-   *       - name: state
-   *         description: State the system is in.
-   *         in: query
-   *         type: string
-   *       - name: primaryeconomy
-   *         description: The primary economy of the system.
-   *         in: query
-   *         type: string
-   *       - name: security
-   *         description: The name of the security status in the system.
-   *         in: query
-   *         type: string
-   *       - name: beginswith
-   *         description: Starting characters of the system.
-   *         in: query
-   *         type: string
-   *       - name: timemin
-   *         description: Minimum time for the system history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: timemax
-   *         description: Maximum time for the system history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: count
-   *         description: Number of history records. Disables timemin and timemax
-   *         in: query
-   *         type: string
-   *       - name: page
-   *         description: Page no of response.
-   *         in: query
-   *         type: integer
-   *     responses:
-   *       200:
-   *         description: An array of systems with historical data
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/EBGSSystemsPageV4'
-   */
+ * @swagger
+ * /systems:
+ *   get:
+ *     description: Get the Systems
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: ID of the document.
+ *         in: query
+ *         type: string
+ *       - name: eddbId
+ *         description: EDDB ID of the system.
+ *         in: query
+ *         type: string
+ *       - name: name
+ *         description: System name.
+ *         in: query
+ *         type: string
+ *       - name: allegiance
+ *         description: Name of the allegiance.
+ *         in: query
+ *         type: string
+ *       - name: government
+ *         description: Name of the government type.
+ *         in: query
+ *         type: string
+ *       - name: state
+ *         description: State the system is in.
+ *         in: query
+ *         type: string
+ *       - name: primaryeconomy
+ *         description: The primary economy of the system.
+ *         in: query
+ *         type: string
+ *       - name: security
+ *         description: The name of the security status in the system.
+ *         in: query
+ *         type: string
+ *       - name: beginswith
+ *         description: Starting characters of the system.
+ *         in: query
+ *         type: string
+ *       - name: minimal
+ *         description: Get minimal data of the system.
+ *         in: query
+ *         type: boolean
+ *       - name: timemin
+ *         description: Minimum time for the system history in miliseconds.
+ *         in: query
+ *         type: string
+ *       - name: timemax
+ *         description: Maximum time for the system history in miliseconds.
+ *         in: query
+ *         type: string
+ *       - name: count
+ *         description: Number of history records. Disables timemin and timemax
+ *         in: query
+ *         type: string
+ *       - name: page
+ *         description: Page no of response.
+ *         in: query
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: An array of systems with historical data
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/EBGSSystemsPageV4'
+ */
 router.get('/', cors(), async (req, res, next) => {
     try {
         let query = new Object;
         let page = 1;
         let history = false;
+        let minimal = false;
         let greaterThanTime;
         let lesserThanTime;
         let count;
 
         if (req.query.id) {
-            query._id = req.query.id;
+            query._id = utilities.arrayOrNot(req.query.id, ObjectId);
         }
         if (req.query.eddbId) {
-            query.eddb_id = req.query.eddbId;
+            query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
         }
         if (req.query.name) {
-            query.name_lower = req.query.name.toLowerCase();
+            query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
         }
         if (req.query.allegiance) {
-            query.allegiance = req.query.allegiance.toLowerCase();
+            query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
         }
         if (req.query.government) {
-            query.government = req.query.government.toLowerCase();
+            query.government = utilities.arrayOrNot(req.query.government, _.toLower);
         }
         if (req.query.state) {
-            query.state = req.query.state.toLowerCase();
+            query.state = utilities.arrayOrNot(req.query.state, _.toLower);
         }
         if (req.query.primaryeconomy) {
-            query.primary_economy = req.query.primaryeconomy.toLowerCase();
+            query.primary_economy = utilities.arrayOrNot(req.query.primaryeconomy.toLowerCase(), _.toLower);
         }
         if (req.query.security) {
-            query.security = req.query.security.toLowerCase();
+            query.security = utilities.arrayOrNot(req.query.security.toLowerCase(), _.toLower);
         }
         if (req.query.beginsWith) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-            }
+            };
+        }
+        if (req.query.minimal) {
+            minimal = true;
         }
         if (req.query.page) {
             page = req.query.page;
@@ -151,10 +164,14 @@ router.get('/', cors(), async (req, res, next) => {
             count = +req.query.count
         }
         if (history) {
-            let result = await getSystems(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
+            let result = await getSystems(query, {
+                greater: greaterThanTime,
+                lesser: lesserThanTime,
+                count: count
+            }, minimal, page, req);
             res.status(200).json(result);
         } else {
-            let result = await getSystems(query, {}, page);
+            let result = await getSystems(query, {}, minimal, page, req);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -162,51 +179,92 @@ router.get('/', cors(), async (req, res, next) => {
     }
 });
 
-async function getSystems(query, history, page) {
-    let paginateOptions = {
-        select: { history: 0 },
-        lean: true,
-        leanWithId: false,
-        page: page,
-        limit: 10
-    };
+async function getSystems(query, history, minimal, page, request) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
     let systemModel = await require('../../../models/ebgs_systems_v4');
-    let systemResult = await systemModel.paginate(query, paginateOptions);
+    let aggregate = systemModel.aggregate();
+    aggregate.match(query);
     if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_system_v4');
-        let historyPromises = [];
-        systemResult.docs.forEach(system => {
-            historyPromises.push((async () => {
-                let record;
-                if (history.count) {
-                    record = await historyModel.find({
-                        system_id: system._id
-                    }).sort({
-                        updated_at: -1
-                    }).limit(history.count).lean();
-                } else {
-                    record = await historyModel.find({
-                        system_id: system._id,
-                        updated_at: {
-                            $lte: history.lesser,
-                            $gte: history.greater
+        if (minimal) {
+            throw new Error("Minimal cannot work with History");
+        }
+        let lookupMatchAndArray = [{
+            $eq: ["system_id", "$$id"]
+        }];
+        if (history.count) {
+            aggregate.lookup({
+                from: "ebgshistorysystemv4",
+                as: "history",
+                let: { "id": "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: lookupMatchAndArray
+                            }
                         }
-                    }).lean();
+                    },
+                    {
+                        $project: {
+                            system_id: 0,
+                            system_name_lower: 0
+                        }
+                    },
+                    {
+                        $limit: history.count
+                    }
+                ]
+            });
+        } else {
+            lookupMatchAndArray.push(
+                {
+                    $gte: ["$updated_at", new Date(history.greater)]
+                },
+                {
+                    $lte: ["$updated_at", new Date(history.lesser)]
                 }
-                record.forEach(history => {
-                    delete history.system_id;
-                    delete history.system_name_lower;
-                });
-                system.history = record;
-                return record;
-            })());
-        });
-        await Promise.all(historyPromises);
+            );
+
+            aggregate.lookup({
+                from: "ebgshistorysystemv4",
+                as: "history",
+                let: { "id": "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: lookupMatchAndArray
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            system_id: 0,
+                            system_name_lower: 0
+                        }
+                    }
+                ]
+            });
+        }
     }
-    return systemResult;
+
+    if (minimal) {
+        aggregate.project({
+            factions: 0,
+            conflicts: 0
+        });
+    }
+
+    return systemModel.aggregatePaginate(aggregate, {
+        page,
+        limit: recordsPerPage,
+        customLabels: {
+            totalDocs: "total",
+            totalPages: "pages"
+        }
+    });
 }
 
 module.exports = router;

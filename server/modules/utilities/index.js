@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2017 Sayak Mukhopadhyay
+ * KodeBlox Copyright 2020 Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,3 +15,19 @@
  */
 
 "use strict";
+
+module.exports = {
+    arrayOrNot(expressQueryParam, operation) {
+        if (_.isArray(expressQueryParam)) {
+            return {
+                $in: _.map(expressQueryParam, _.curry(paramOperation)(operation))
+            }
+        } else {
+            return operation(expressQueryParam);
+        }
+    },
+
+    paramOperation(operation, value) {
+        return operation(value);
+    }
+}

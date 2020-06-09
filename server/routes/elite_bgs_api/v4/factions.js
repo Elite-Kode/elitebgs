@@ -17,13 +17,15 @@
 "use strict";
 
 const express = require('express');
-const mongoose = require('mongoose')
-var cors = require('cors')
+const mongoose = require('mongoose');
+const cors = require('cors')
 const _ = require('lodash');
 
+const utilities = require('../../../modules/utilities');
+
 let router = express.Router();
-let ObjectId = mongoose.Types.ObjectId
-let recordsPerPage = 10
+let ObjectId = mongoose.Types.ObjectId;
+let recordsPerPage = 10;
 
 /**
  * @swagger
@@ -116,63 +118,63 @@ router.get('/', cors(), async (req, res, next) => {
         let count;
 
         if (req.query.id) {
-            query._id = arrayOrNot(req.query.id, ObjectId);
+            query._id = utilities.arrayOrNot(req.query.id, ObjectId);
         }
         if (req.query.eddbId) {
-            query.eddb_id = arrayOrNot(req.query.eddbId, parseInt);
+            query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
         }
         if (req.query.name) {
-            query.name_lower = arrayOrNot(req.query.name, _.toLower);
+            query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
         }
         if (req.query.allegiance) {
-            query.allegiance = arrayOrNot(req.query.allegiance, _.toLower);
+            query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
         }
         if (req.query.government) {
-            query.government = arrayOrNot(req.query.government, _.toLower);
+            query.government = utilities.arrayOrNot(req.query.government, _.toLower);
         }
         if (req.query.beginsWith) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-            }
+            };
         }
         if (req.query.system) {
-            query["faction_presence.system_name_lower"] = arrayOrNot(req.query.system, _.toLower)
+            query["faction_presence.system_name_lower"] = utilities.arrayOrNot(req.query.system, _.toLower);
         }
         if (req.query.activeState) {
             query["faction_presence"] = {
                 $elemMatch: {
                     active_states: {
                         $elemMatch: {
-                            state: arrayOrNot(req.query.activeState, _.toLower)
+                            state: utilities.arrayOrNot(req.query.activeState, _.toLower)
                         }
                     }
                 }
-            }
+            };
         }
         if (req.query.pendingState) {
             query["faction_presence"] = {
                 $elemMatch: {
                     pending_states: {
                         $elemMatch: {
-                            state: arrayOrNot(req.query.pendingState, _.toLower)
+                            state: utilities.arrayOrNot(req.query.pendingState, _.toLower)
                         }
                     }
                 }
-            }
+            };
         }
         if (req.query.recoveringState) {
             query["faction_presence"] = {
                 $elemMatch: {
                     recovering_states: {
                         $elemMatch: {
-                            state: arrayOrNot(req.query.recoveringState, _.toLower)
+                            state: utilities.arrayOrNot(req.query.recoveringState, _.toLower)
                         }
                     }
                 }
-            }
+            };
         }
         if (req.query.minimal) {
-            minimal = true
+            minimal = true;
         }
         if (req.query.page) {
             page = req.query.page;
@@ -212,26 +214,12 @@ router.get('/', cors(), async (req, res, next) => {
     }
 });
 
-function arrayOrNot(expressQueryParam, operation) {
-    if (_.isArray(expressQueryParam)) {
-        return {
-            $in: _.map(expressQueryParam, _.curry(paramOperation)(operation))
-        }
-    } else {
-        return operation(expressQueryParam);
-    }
-}
-
-function paramOperation(operation, value) {
-    return operation(value);
-}
-
 async function getFactions(query, history, minimal, page, request) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
     let factionModel = await require('../../../models/ebgs_factions_v4');
-    let aggregate = factionModel.aggregate()
+    let aggregate = factionModel.aggregate();
     aggregate.match(query)
     if (!_.isEmpty(history)) {
         if (minimal) {
