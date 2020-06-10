@@ -26,6 +26,9 @@ const utilities = require('../../../modules/utilities');
 let router = express.Router();
 let ObjectId = mongoose.Types.ObjectId;
 let recordsPerPage = 10;
+let aggregateOptions = {
+    maxTimeMS: 60000
+}
 
 /**
  * @swagger
@@ -223,7 +226,7 @@ async function getFactions(query, history, minimal, page, request) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
     let factionModel = await require('../../../models/ebgs_factions_v4');
-    let aggregate = factionModel.aggregate();
+    let aggregate = factionModel.aggregate().option(aggregateOptions);
     aggregate.match(query).addFields({
         system_names_lower: {
             $map: {
