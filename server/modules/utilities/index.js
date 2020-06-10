@@ -16,11 +16,13 @@
 
 "use strict";
 
+const _ = require('lodash');
+
 module.exports = {
     arrayOrNot(expressQueryParam, operation) {
         if (_.isArray(expressQueryParam)) {
             return {
-                $in: _.map(expressQueryParam, _.curry(paramOperation)(operation))
+                $in: _.map(expressQueryParam, _.curry(this.paramOperation)(operation))
             }
         } else {
             return operation(expressQueryParam);

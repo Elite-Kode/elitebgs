@@ -83,6 +83,10 @@ let recordsPerPage = 10;
  *         description: Get minimal data of the faction.
  *         in: query
  *         type: boolean
+ *       - name: systemDetails
+ *         description: Get the detailed system data the faction currently is in.
+ *         in: query
+ *         type: boolean
  *       - name: timemin
  *         description: Minimum time for the faction history in miliseconds.
  *         in: query
@@ -220,7 +224,19 @@ async function getFactions(query, history, minimal, page, request) {
     }
     let factionModel = await require('../../../models/ebgs_factions_v4');
     let aggregate = factionModel.aggregate();
-    aggregate.match(query)
+    aggregate.match(query).addFields({
+        system_names_lower: {
+            $map: {
+                input: "$faction_presence",
+                as: "system_info",
+                in: "$$system_info.system_name_lower"
+            }
+        }
+    });
+
+    let countAggregate = factionModel.aggregate();
+    countAggregate.match(query);
+
     if (!_.isEmpty(history)) {
         if (minimal) {
             throw new Error("Minimal cannot work with History");
@@ -236,15 +252,7 @@ async function getFactions(query, history, minimal, page, request) {
                     $in: ["$system_lower", "$$system_name"]
                 });
             }
-            aggregate.addFields({
-                system_names_lower: {
-                    $map: {
-                        input: "$faction_presence",
-                        as: "system_info",
-                        in: "$$system_info.system_name_lower"
-                    }
-                }
-            }).lookup({
+            aggregate.lookup({
                 from: "ebgshistoryfactionv4",
                 as: "history",
                 let: { "id": "$_id", "system_name": "$system_names_lower" },
@@ -267,8 +275,6 @@ async function getFactions(query, history, minimal, page, request) {
                         $limit: history.count
                     }
                 ]
-            }).project({
-                system_names_lower: 0
             });
         } else {
             lookupMatchAndArray.push(
@@ -306,14 +312,90 @@ async function getFactions(query, history, minimal, page, request) {
         }
     }
 
+    aggregate.lookup({
+        from: "ebgssystemv4",
+        as: "system_details",
+        let: { "system_names": "$system_names_lower" },
+        pipeline: [
+            {
+                $match: {
+                    $expr: {
+                        $in: ["$name_lower", "$$system_names"]
+                    }
+                }
+            }
+        ]
+    });
+
+    let objectToMerge = {
+        system_id: {
+            $arrayElemAt: [
+                {
+                    $map: {
+                        input: {
+                            $filter: {
+                                input: "$system_details",
+                                as: "system",
+                                cond: {
+                                    "$eq": ["$$system.name_lower", "$$system_info.system_name_lower"]
+                                }
+                            }
+                        },
+                        as: "system_object",
+                        in: "$$system_object._id"
+                    }
+                },
+                0
+            ]
+        }
+    };
+
+    if (request.query.systemDetails) {
+        objectToMerge["system_details"] = {
+            "$arrayElemAt": [
+                {
+                    "$filter": {
+                        input: "$system_details",
+                        as: "system",
+                        cond: {
+                            "$eq": ["$$system.name_lower", "$$system_info.system_name_lower"]
+                        }
+                    }
+                },
+                0
+            ]
+        };
+    }
+
+    aggregate.addFields({
+        faction_presence: {
+            $map: {
+                input: "$faction_presence",
+                as: "system_info",
+                in: {
+                    $mergeObjects: [
+                        "$$system_info",
+                        objectToMerge
+                    ]
+                }
+            }
+        }
+    });
+
     if (minimal) {
         aggregate.project({
             faction_presence: 0
         });
     }
 
+    aggregate.project({
+        system_names_lower: 0,
+        system_details: 0
+    });
+
     return factionModel.aggregatePaginate(aggregate, {
         page,
+        countQuery: countAggregate,
         limit: recordsPerPage,
         customLabels: {
             totalDocs: "total",
