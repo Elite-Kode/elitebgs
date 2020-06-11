@@ -63,10 +63,34 @@ let recordsPerPage = 10;
  *         description: The primary economy of the system.
  *         in: query
  *         type: string
+ *       - name: secondaryeconomy
+ *         description: The secondary economy of the system.
+ *         in: query
+ *         type: string
+ *       - name: faction
+ *         description: The faction present in the system.
+ *         in: query
+ *         type: string
+ *       - name: factionControl
+ *         description: The faction is in control present in the system.
+ *         in: query
+ *         type: boolean
  *       - name: security
  *         description: The name of the security status in the system.
  *         in: query
  *         type: string
+ *       - name: referenceSystem
+ *         description: The system centred around which the search should be made.
+ *         in: query
+ *         type: string
+ *       - name: referenceDistance
+ *         description: The distance from the system centred around which the search should be made.
+ *         in: query
+ *         type: string
+ *       - name: sphere
+ *         description: Search by sphere instead of cube.
+ *         in: query
+ *         type: boolean
  *       - name: beginswith
  *         description: Starting characters of the system.
  *         in: query
@@ -130,6 +154,19 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.primaryeconomy) {
             query.primary_economy = utilities.arrayOrNot(req.query.primaryeconomy.toLowerCase(), _.toLower);
         }
+        if (req.query.secondaryeconomy) {
+            query.secondary_economy = utilities.arrayOrNot(req.query.secondaryeconomy.toLowerCase(), _.toLower);
+        }
+        if (req.query.faction) {
+            query["factions"] = {
+                $elemMatch: {
+                    name_lower: utilities.arrayOrNot(req.query.faction, _.toLower)
+                }
+            };
+        }
+        if (req.query.factionControl === 'true') {
+            query.controlling_minor_faction = utilities.arrayOrNot(req.query.faction, _.toLower);
+        }
         if (req.query.security) {
             query.security = utilities.arrayOrNot(req.query.security.toLowerCase(), _.toLower);
         }
@@ -138,7 +175,7 @@ router.get('/', cors(), async (req, res, next) => {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             };
         }
-        if (req.query.minimal) {
+        if (req.query.minimal === 'true') {
             minimal = true;
         }
         if (req.query.page) {
@@ -180,18 +217,97 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getSystems(query, history, minimal, page, request) {
+    let referenceDistance = 30;
+    let systemModel = await require('../../../models/ebgs_systems_v4');
+    let aggregate = systemModel.aggregate();
+    if (request.query.referenceSystem) {
+        if (request.query.referenceDistance) {
+            referenceDistance = request.query.referenceDistance;
+        }
+
+        aggregate.lookup({
+            from: "ebgssystemv4",
+            as: "referenceSystem",
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ["$name_lower", request.query.referenceSystem.toLowerCase()]
+                        }
+                    }
+                }
+            ]
+        }).addFields({
+            referenceSystem: {
+                $arrayElemAt: ["$referenceSystem", 0]
+            }
+        });
+
+        query["$expr"] = {
+            $and: [
+                {
+                    $gt: [
+                        "$x",
+                        {
+                            $subtract: ["$referenceSystem.x", +referenceDistance]
+                        }
+                    ]
+                },
+                {
+                    $lt: [
+                        "$x",
+                        {
+                            $add: ["$referenceSystem.x", +referenceDistance]
+                        }
+                    ]
+                },
+                {
+                    $gt: [
+                        "$y",
+                        {
+                            $subtract: ["$referenceSystem.y", +referenceDistance]
+                        }
+                    ]
+                },
+                {
+                    $lt: [
+                        "$y",
+                        {
+                            $add: ["$referenceSystem.y", +referenceDistance]
+                        }
+                    ]
+                },
+                {
+                    $gt: [
+                        "$z",
+                        {
+                            $subtract: ["$referenceSystem.z", +referenceDistance]
+                        }
+                    ]
+                },
+                {
+                    $lt: [
+                        "$z",
+                        {
+                            $add: ["$referenceSystem.z", +referenceDistance]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let systemModel = await require('../../../models/ebgs_systems_v4');
-    let aggregate = systemModel.aggregate();
+
     aggregate.match(query);
     if (!_.isEmpty(history)) {
-        if (minimal) {
+        if (minimal === 'true') {
             throw new Error("Minimal cannot work with History");
         }
         let lookupMatchAndArray = [{
-            $eq: ["system_id", "$$id"]
+            $eq: ["$system_id", "$$id"]
         }];
         if (history.count) {
             aggregate.lookup({
@@ -250,10 +366,59 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
-    if (minimal) {
+    if (minimal === 'true') {
         aggregate.project({
             factions: 0,
             conflicts: 0
+        });
+    }
+
+    if (request.query.referenceSystem) {
+        aggregate.addFields({
+            distanceFromReferenceSystem: {
+                $sqrt: {
+                    $add: [
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$x", "$referenceSystem.x"]
+                                },
+                                2
+                            ],
+                        },
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$y", "$referenceSystem.y"]
+                                },
+                                2
+                            ],
+                        },
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$z", "$referenceSystem.z"]
+                                },
+                                2
+                            ]
+                        }
+                    ]
+                }
+            }
+        });
+
+        if (request.query.sphere === 'true') {
+            aggregate.match({
+                distanceFromReferenceSystem: {
+                    $lte: referenceDistance
+                }
+            })
+        }
+
+        aggregate.project({
+            referenceSystem: 0
+        }).sort({
+            distanceFromReferenceSystem: 1
         });
     }
 

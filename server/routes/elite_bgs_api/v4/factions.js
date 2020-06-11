@@ -180,7 +180,7 @@ router.get('/', cors(), async (req, res, next) => {
                 }
             };
         }
-        if (req.query.minimal) {
+        if (req.query.minimal === 'true') {
             minimal = true;
         }
         if (req.query.page) {
@@ -241,14 +241,14 @@ async function getFactions(query, history, minimal, page, request) {
     countAggregate.match(query);
 
     if (!_.isEmpty(history)) {
-        if (minimal) {
+        if (minimal === 'true') {
             throw new Error("Minimal cannot work with History");
         }
         let lookupMatchAndArray = [{
             $eq: ["$faction_id", "$$id"]
         }];
         if (history.count) {
-            if (request.query.system && request.query.filterSystemInHistory) {
+            if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
             } else {
                 lookupMatchAndArray.push({
@@ -288,7 +288,7 @@ async function getFactions(query, history, minimal, page, request) {
                     $lte: ["$updated_at", new Date(history.lesser)]
                 }
             );
-            if (request.query.system && request.query.filterSystemInHistory) {
+            if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
             }
             aggregate.lookup({
@@ -353,7 +353,7 @@ async function getFactions(query, history, minimal, page, request) {
         }
     };
 
-    if (request.query.systemDetails) {
+    if (request.query.systemDetails === 'true') {
         objectToMerge["system_details"] = {
             "$arrayElemAt": [
                 {
@@ -385,7 +385,7 @@ async function getFactions(query, history, minimal, page, request) {
         }
     });
 
-    if (minimal) {
+    if (minimal === 'true') {
         aggregate.project({
             faction_presence: 0
         });
