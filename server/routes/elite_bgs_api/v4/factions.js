@@ -340,7 +340,7 @@ async function getFactions(query, history, minimal, page, request) {
                                 input: "$system_details",
                                 as: "system",
                                 cond: {
-                                    "$eq": ["$$system.name_lower", "$$system_info.system_name_lower"]
+                                    $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
                                 }
                             }
                         },
@@ -355,13 +355,13 @@ async function getFactions(query, history, minimal, page, request) {
 
     if (request.query.systemDetails === 'true') {
         objectToMerge["system_details"] = {
-            "$arrayElemAt": [
+            $arrayElemAt: [
                 {
-                    "$filter": {
+                    $filter: {
                         input: "$system_details",
                         as: "system",
                         cond: {
-                            "$eq": ["$$system.name_lower", "$$system_info.system_name_lower"]
+                            $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
                         }
                     }
                 },

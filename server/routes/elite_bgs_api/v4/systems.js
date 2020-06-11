@@ -99,6 +99,10 @@ let recordsPerPage = 10;
  *         description: Get minimal data of the system.
  *         in: query
  *         type: boolean
+ *       - name: factionDetails
+ *         description: Get the detailed faction data of the factions in the system.
+ *         in: query
+ *         type: boolean
  *       - name: timemin
  *         description: Minimum time for the system history in miliseconds.
  *         in: query
@@ -220,12 +224,13 @@ async function getSystems(query, history, minimal, page, request) {
     let referenceDistance = 30;
     let systemModel = await require('../../../models/ebgs_systems_v4');
     let aggregate = systemModel.aggregate();
+    let countAggregate = systemModel.aggregate();
     if (request.query.referenceSystem) {
         if (request.query.referenceDistance) {
             referenceDistance = request.query.referenceDistance;
         }
 
-        aggregate.lookup({
+        let lookupPipeline = {
             from: "ebgssystemv4",
             as: "referenceSystem",
             pipeline: [
@@ -237,11 +242,16 @@ async function getSystems(query, history, minimal, page, request) {
                     }
                 }
             ]
-        }).addFields({
+        };
+
+        let addFieldsPipeline = {
             referenceSystem: {
                 $arrayElemAt: ["$referenceSystem", 0]
             }
-        });
+        };
+
+        aggregate.lookup(lookupPipeline).addFields(addFieldsPipeline);
+        countAggregate.lookup(lookupPipeline).addFields(addFieldsPipeline);
 
         query["$expr"] = {
             $and: [
@@ -302,6 +312,8 @@ async function getSystems(query, history, minimal, page, request) {
     }
 
     aggregate.match(query);
+    countAggregate.match(query);
+
     if (!_.isEmpty(history)) {
         if (minimal === 'true') {
             throw new Error("Minimal cannot work with History");
@@ -374,7 +386,7 @@ async function getSystems(query, history, minimal, page, request) {
     }
 
     if (request.query.referenceSystem) {
-        aggregate.addFields({
+        let addFieldsPipeline = {
             distanceFromReferenceSystem: {
                 $sqrt: {
                     $add: [
@@ -405,14 +417,18 @@ async function getSystems(query, history, minimal, page, request) {
                     ]
                 }
             }
-        });
+        };
+        aggregate.addFields(addFieldsPipeline);
+        countAggregate.addFields(addFieldsPipeline);
 
         if (request.query.sphere === 'true') {
-            aggregate.match({
+            let spherePipeline = {
                 distanceFromReferenceSystem: {
-                    $lte: referenceDistance
+                    $lte: +referenceDistance
                 }
-            })
+            };
+            aggregate.match(spherePipeline);
+            countAggregate.match(spherePipeline);
         }
 
         aggregate.project({
@@ -422,8 +438,125 @@ async function getSystems(query, history, minimal, page, request) {
         });
     }
 
+    aggregate.lookup({
+        from: "ebgsfactionv4",
+        as: "faction_details",
+        let: {
+            faction_names: {
+                $map: {
+                    input: "$factions",
+                    in: "$$this.name_lower"
+                }
+            }
+        },
+        pipeline: [
+            {
+                $match: {
+                    $expr: {
+                        $in: ["$name_lower", "$$faction_names"]
+                    }
+                }
+            }
+        ]
+    });
+
+    let objectToMerge = {
+        faction_id: {
+            $arrayElemAt: [
+                {
+                    $map: {
+                        input: {
+                            $filter: {
+                                input: "$faction_details",
+                                as: "faction",
+                                cond: {
+                                    $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                                }
+                            }
+                        },
+                        as: "faction_object",
+                        in: "$$faction_object._id"
+                    }
+                },
+                0
+            ]
+        }
+    };
+
+    if (request.query.factionDetails === 'true') {
+        objectToMerge["faction_details"] = {
+            $mergeObjects: [
+                {
+                    $arrayElemAt: [
+                        {
+                            $filter: {
+                                input: "$faction_details",
+                                as: "faction",
+                                cond: {
+                                    $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                                }
+                            }
+                        },
+                        0
+                    ]
+                },
+                {
+                    faction_presence: {
+                        $arrayElemAt: [
+                            {
+                                $filter: {
+                                    input: {
+                                        $arrayElemAt: [
+                                            {
+                                                $map: {
+                                                    input: {
+                                                        $filter: {
+                                                            input: "$faction_details",
+                                                            as: "faction",
+                                                            cond: {
+                                                                $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                                                            }
+                                                        }
+                                                    },
+                                                    as: "faction_details",
+                                                    in: "$$faction_details.faction_presence"
+                                                }
+                                            },
+                                            0
+                                        ]
+                                    },
+                                    as: "faction_item",
+                                    cond: {
+                                        $eq: ["$$faction_item.system_name_lower", "$name_lower"]
+                                    }
+                                }
+                            },
+                            0
+                        ]
+                    }
+                }
+            ]
+        };
+    }
+
+    aggregate.addFields({
+        factions: {
+            $map: {
+                input: "$factions",
+                as: "faction_list",
+                in: {
+                    $mergeObjects: [
+                        "$$faction_list",
+                        objectToMerge
+                    ]
+                }
+            }
+        }
+    });
+
     return systemModel.aggregatePaginate(aggregate, {
         page,
+        countQuery: countAggregate,
         limit: recordsPerPage,
         customLabels: {
             totalDocs: "total",
