@@ -378,13 +378,6 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
-    if (minimal === 'true') {
-        aggregate.project({
-            factions: 0,
-            conflicts: 0
-        });
-    }
-
     if (request.query.referenceSystem) {
         let addFieldsPipeline = {
             distanceFromReferenceSystem: {
@@ -552,6 +545,17 @@ async function getSystems(query, history, minimal, page, request) {
                 }
             }
         }
+    });
+
+    if (minimal === 'true') {
+        aggregate.project({
+            factions: 0,
+            conflicts: 0
+        });
+    }
+
+    aggregate.project({
+        faction_details: 0
     });
 
     return systemModel.aggregatePaginate(aggregate, {
