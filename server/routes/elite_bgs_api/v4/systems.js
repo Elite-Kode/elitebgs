@@ -26,6 +26,9 @@ const utilities = require('../../../modules/utilities');
 let router = express.Router();
 let ObjectId = mongoose.Types.ObjectId;
 let recordsPerPage = 10;
+let aggregateOptions = {
+    maxTimeMS: 60000
+}
 
 /**
  * @swagger
@@ -79,6 +82,18 @@ let recordsPerPage = 10;
  *         description: The name of the security status in the system.
  *         in: query
  *         type: string
+ *       - name: activeState
+ *         description: Name of the active state of any faction in the system.
+ *         in: query
+ *         type: string
+ *       - name: pendingState
+ *         description: Name of the pending state of any faction in the system.
+ *         in: query
+ *         type: string
+ *       - name: recoveringState
+ *         description: Name of the recovering state of any faction in the system.
+ *         in: query
+ *         type: string
  *       - name: referenceSystem
  *         description: The system centred around which the search should be made.
  *         in: query
@@ -95,6 +110,10 @@ let recordsPerPage = 10;
  *         description: Starting characters of the system.
  *         in: query
  *         type: string
+ *       - name: factionIds
+ *         description: Get the faction ids in the factions list.
+ *         in: query
+ *         type: boolean
  *       - name: minimal
  *         description: Get minimal data of the system.
  *         in: query
@@ -221,10 +240,10 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getSystems(query, history, minimal, page, request) {
-    let referenceDistance = 30;
+    let referenceDistance = 20;
     let systemModel = await require('../../../models/ebgs_systems_v4');
-    let aggregate = systemModel.aggregate();
-    let countAggregate = systemModel.aggregate();
+    let aggregate = systemModel.aggregate().option(aggregateOptions);
+    let countAggregate = systemModel.aggregate().option(aggregateOptions);
     if (request.query.referenceSystem) {
         if (request.query.referenceDistance) {
             referenceDistance = request.query.referenceDistance;
@@ -307,10 +326,6 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
-    if (_.isEmpty(query)) {
-        throw new Error("Add at least 1 query parameter to limit traffic");
-    }
-
     aggregate.match(query);
     countAggregate.match(query);
 
@@ -378,6 +393,8 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
+    let spherePipeline = {};
+
     if (request.query.referenceSystem) {
         let addFieldsPipeline = {
             distanceFromReferenceSystem: {
@@ -389,7 +406,7 @@ async function getSystems(query, history, minimal, page, request) {
                                     $subtract: ["$x", "$referenceSystem.x"]
                                 },
                                 2
-                            ],
+                            ]
                         },
                         {
                             $pow: [
@@ -397,7 +414,7 @@ async function getSystems(query, history, minimal, page, request) {
                                     $subtract: ["$y", "$referenceSystem.y"]
                                 },
                                 2
-                            ],
+                            ]
                         },
                         {
                             $pow: [
@@ -415,7 +432,7 @@ async function getSystems(query, history, minimal, page, request) {
         countAggregate.addFields(addFieldsPipeline);
 
         if (request.query.sphere === 'true') {
-            let spherePipeline = {
+            spherePipeline = {
                 distanceFromReferenceSystem: {
                     $lte: +referenceDistance
                 }
@@ -431,103 +448,201 @@ async function getSystems(query, history, minimal, page, request) {
         });
     }
 
-    aggregate.lookup({
-        from: "ebgsfactionv4",
-        as: "faction_details",
-        let: {
-            faction_names: {
-                $map: {
-                    input: "$factions",
-                    in: "$$this.name_lower"
-                }
-            }
-        },
-        pipeline: [
-            {
-                $match: {
-                    $expr: {
-                        $in: ["$name_lower", "$$faction_names"]
-                    }
-                }
-            }
-        ]
-    });
+    let detailsLookup = {};
+    let detailsAddFields = {};
 
-    let objectToMerge = {
-        faction_id: {
-            $arrayElemAt: [
-                {
+    if (request.query.activeState || request.query.pendingState || request.query.recoveringState || request.query.factionIds === 'true' || request.query.factionDetails === 'true') {
+        detailsLookup = {
+            from: "ebgsfactionv4",
+            as: "faction_details",
+            let: {
+                faction_names: {
                     $map: {
-                        input: {
-                            $filter: {
-                                input: "$faction_details",
-                                as: "faction",
-                                cond: {
-                                    $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
-                                }
-                            }
-                        },
-                        as: "faction_object",
-                        in: "$$faction_object._id"
+                        input: "$factions",
+                        in: "$$this.name_lower"
                     }
-                },
-                0
-            ]
-        }
-    };
-
-    if (request.query.factionDetails === 'true') {
-        objectToMerge["faction_details"] = {
-            $mergeObjects: [
+                }
+            },
+            pipeline: [
                 {
-                    $arrayElemAt: [
-                        {
-                            $filter: {
-                                input: "$faction_details",
-                                as: "faction",
-                                cond: {
-                                    $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                    $match: {
+                        $expr: {
+                            $in: ["$name_lower", "$$faction_names"]
+                        }
+                    }
+                }
+            ]
+        };
+
+        detailsAddFields = {
+            faction_details: {
+                $map: {
+                    input: "$faction_details",
+                    as: "faction_info",
+                    in: {
+                        $mergeObjects: [
+                            "$$faction_info",
+                            {
+                                faction_presence: {
+                                    $arrayElemAt: [
+                                        {
+                                            $filter: {
+                                                input: "$$faction_info.faction_presence",
+                                                as: "faction",
+                                                cond: {
+                                                    $eq: ["$$faction.system_name_lower", "$name_lower"]
+                                                }
+                                            }
+                                        },
+                                        0
+                                    ]
                                 }
                             }
-                        },
-                        0
-                    ]
-                },
-                {
-                    faction_presence: {
-                        $arrayElemAt: [
-                            {
-                                $filter: {
-                                    input: {
-                                        $arrayElemAt: [
-                                            {
-                                                $map: {
-                                                    input: {
-                                                        $filter: {
-                                                            input: "$faction_details",
-                                                            as: "faction",
-                                                            cond: {
-                                                                $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
-                                                            }
-                                                        }
-                                                    },
-                                                    as: "faction_details",
-                                                    in: "$$faction_details.faction_presence"
-                                                }
-                                            },
-                                            0
-                                        ]
-                                    },
-                                    as: "faction_item",
-                                    cond: {
-                                        $eq: ["$$faction_item.system_name_lower", "$name_lower"]
-                                    }
-                                }
-                            },
-                            0
                         ]
                     }
                 }
+            }
+        };
+
+        aggregate.lookup(detailsLookup).addFields(detailsAddFields);
+    }
+
+    let stateQuery = {};
+
+    if (request.query.activeState || request.query.pendingState || request.query.recoveringState) {
+        let stateAddFieldsPipeline = {
+            active_states: {
+                $reduce: {
+                    input: {
+                        $map: {
+                            input: "$faction_details",
+                            as: "faction_info",
+                            in: {
+                                $map: {
+                                    input: "$$faction_info.faction_presence.active_states",
+                                    as: "state_object",
+                                    in: "$$state_object.state"
+                                }
+                            }
+                        }
+                    },
+                    initialValue: [],
+                    in: {
+                        $concatArrays: ["$$value", "$$this"]
+                    }
+                }
+            },
+            pending_states: {
+                $reduce: {
+                    input: {
+                        $map: {
+                            input: "$faction_details",
+                            as: "faction_info",
+                            in: {
+                                $map: {
+                                    input: "$$faction_info.faction_presence.pending_states",
+                                    as: "state_object",
+                                    in: "$$state_object.state"
+                                }
+                            }
+                        }
+                    },
+                    initialValue: [],
+                    in: {
+                        $concatArrays: ["$$value", "$$this"]
+                    }
+                }
+            },
+            recovering_states: {
+                $reduce: {
+                    input: {
+                        $map: {
+                            input: "$faction_details",
+                            as: "faction_info",
+                            in: {
+                                $map: {
+                                    input: "$$faction_info.faction_presence.recovering_states",
+                                    as: "state_object",
+                                    in: "$$state_object.state"
+                                }
+                            }
+                        }
+                    },
+                    initialValue: [],
+                    in: {
+                        $concatArrays: ["$$value", "$$this"]
+                    }
+                }
+            }
+        };
+        aggregate.addFields(stateAddFieldsPipeline);
+        countAggregate.lookup(detailsLookup).addFields(detailsAddFields).addFields(stateAddFieldsPipeline);
+
+        if (request.query.activeState) {
+            stateQuery["active_states"] = {
+                $elemMatch: utilities.arrayOrNot(request.query.activeState.toLowerCase(), _.toLower, true)
+            };
+        }
+        if (request.query.pendingState) {
+            stateQuery["pending_states"] = {
+                $elemMatch: utilities.arrayOrNot(request.query.pendingState.toLowerCase(), _.toLower, true)
+            };
+        }
+        if (request.query.recoveringState) {
+            stateQuery["recovering_states"] = {
+                $elemMatch: utilities.arrayOrNot(request.query.recoveringState.toLowerCase(), _.toLower, true)
+            };
+        }
+        aggregate.match(stateQuery);
+        countAggregate.match(stateQuery);
+
+        aggregate.project({
+            active_states: 0,
+            pending_states: 0,
+            recovering_states: 0
+        });
+    }
+
+    let objectToMerge = {};
+
+    if (request.query.factionIds === 'true' || request.query.factionDetails === 'true') {
+        objectToMerge = {
+            faction_id: {
+                $arrayElemAt: [
+                    {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: "$faction_details",
+                                    as: "faction",
+                                    cond: {
+                                        $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                                    }
+                                }
+                            },
+                            as: "faction_object",
+                            in: "$$faction_object._id"
+                        }
+                    },
+                    0
+                ]
+            }
+        };
+    }
+
+    if (request.query.factionDetails === 'true') {
+        objectToMerge["faction_details"] = {
+            $arrayElemAt: [
+                {
+                    $filter: {
+                        input: "$faction_details",
+                        as: "faction",
+                        cond: {
+                            $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                        }
+                    }
+                },
+                0
             ]
         };
     }
@@ -557,6 +672,10 @@ async function getSystems(query, history, minimal, page, request) {
     aggregate.project({
         faction_details: 0
     });
+
+    if (_.isEmpty(query) && _.isEmpty(spherePipeline) && _.isEmpty(stateQuery)) {
+        throw new Error("Add at least 1 query parameter to limit traffic");
+    }
 
     return systemModel.aggregatePaginate(aggregate, {
         page,

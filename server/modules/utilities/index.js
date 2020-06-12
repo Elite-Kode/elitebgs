@@ -19,12 +19,17 @@
 const _ = require('lodash');
 
 module.exports = {
-    arrayOrNot(expressQueryParam, operation) {
+    arrayOrNot(expressQueryParam, operation, equals = false) {
         if (_.isArray(expressQueryParam)) {
             return {
                 $in: _.map(expressQueryParam, _.curry(this.paramOperation)(operation))
             }
         } else {
+            if (equals) {
+                return {
+                    $eq: operation(expressQueryParam)
+                }
+            }
             return operation(expressQueryParam);
         }
     },

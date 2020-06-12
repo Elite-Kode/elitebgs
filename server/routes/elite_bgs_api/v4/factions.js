@@ -86,6 +86,10 @@ let aggregateOptions = {
  *         description: Get minimal data of the faction.
  *         in: query
  *         type: boolean
+ *       - name: systemIds
+ *         description: Get the system ids in the systems list.
+ *         in: query
+ *         type: boolean
  *       - name: systemDetails
  *         description: Get the detailed system data the faction currently is in.
  *         in: query
@@ -222,9 +226,6 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getFactions(query, history, minimal, page, request) {
-    if (_.isEmpty(query)) {
-        throw new Error("Add at least 1 query parameter to limit traffic");
-    }
     let factionModel = await require('../../../models/ebgs_factions_v4');
     let aggregate = factionModel.aggregate().option(aggregateOptions);
     aggregate.match(query).addFields({
@@ -237,7 +238,7 @@ async function getFactions(query, history, minimal, page, request) {
         }
     });
 
-    let countAggregate = factionModel.aggregate();
+    let countAggregate = factionModel.aggregate().option(aggregateOptions);
     countAggregate.match(query);
 
     if (!_.isEmpty(history)) {
@@ -315,43 +316,47 @@ async function getFactions(query, history, minimal, page, request) {
         }
     }
 
-    aggregate.lookup({
-        from: "ebgssystemv4",
-        as: "system_details",
-        let: { "system_names": "$system_names_lower" },
-        pipeline: [
-            {
-                $match: {
-                    $expr: {
-                        $in: ["$name_lower", "$$system_names"]
+    let objectToMerge = {};
+
+    if (request.query.systemIds === 'true' || request.query.systemDetails === 'true') {
+        aggregate.lookup({
+            from: "ebgssystemv4",
+            as: "system_details",
+            let: { "system_names": "$system_names_lower" },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $in: ["$name_lower", "$$system_names"]
+                        }
                     }
                 }
-            }
-        ]
-    });
-
-    let objectToMerge = {
-        system_id: {
-            $arrayElemAt: [
-                {
-                    $map: {
-                        input: {
-                            $filter: {
-                                input: "$system_details",
-                                as: "system",
-                                cond: {
-                                    $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
-                                }
-                            }
-                        },
-                        as: "system_object",
-                        in: "$$system_object._id"
-                    }
-                },
-                0
             ]
-        }
-    };
+        });
+
+        objectToMerge = {
+            system_id: {
+                $arrayElemAt: [
+                    {
+                        $map: {
+                            input: {
+                                $filter: {
+                                    input: "$system_details",
+                                    as: "system",
+                                    cond: {
+                                        $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
+                                    }
+                                }
+                            },
+                            as: "system_object",
+                            in: "$$system_object._id"
+                        }
+                    },
+                    0
+                ]
+            }
+        };
+    }
 
     if (request.query.systemDetails === 'true') {
         objectToMerge["system_details"] = {
@@ -395,6 +400,10 @@ async function getFactions(query, history, minimal, page, request) {
         system_names_lower: 0,
         system_details: 0
     });
+
+    if (_.isEmpty(query)) {
+        throw new Error("Add at least 1 query parameter to limit traffic");
+    }
 
     return factionModel.aggregatePaginate(aggregate, {
         page,
