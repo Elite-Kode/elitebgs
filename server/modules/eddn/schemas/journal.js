@@ -136,7 +136,7 @@ function Journal() {
                                 name: conflict.Faction1.Name,
                                 name_lower: conflict.Faction1.Name.toLowerCase(),
                                 station_id: _.get(stations.find(dbStation => {
-                                    return dbStation.system_id === system._id && dbStation.name_lower === conflict.Faction1.Stake.toLowerCase();
+                                    return dbStation.system_id.equals(system._id) && dbStation.name_lower === conflict.Faction1.Stake.toLowerCase();
                                 }), '_id', null),    // Get the station id of the station if it exists in db else null
                                 stake: conflict.Faction1.Stake,
                                 stake_lower: conflict.Faction1.Stake.toLowerCase(),
@@ -149,7 +149,7 @@ function Journal() {
                                 name: conflict.Faction2.Name,
                                 name_lower: conflict.Faction2.Name.toLowerCase(),
                                 station_id: _.get(stations.find(dbStation => {
-                                    return dbStation.system_id === system._id && dbStation.name_lower === conflict.Faction2.Stake.toLowerCase();
+                                    return dbStation.system_id.equals(system._id) && dbStation.name_lower === conflict.Faction2.Stake.toLowerCase();
                                 }), '_id', null),
                                 stake: conflict.Faction2.Stake,
                                 stake_lower: conflict.Faction2.Stake.toLowerCase(),
@@ -157,7 +157,11 @@ function Journal() {
                             }
                         };
                     });
-                    system = await this.formAndSetSystemRecord(message, system, factionArray, conflictsArray);
+                    let returnedSystem = await this.formAndSetSystemRecord(message, system, factionArray, conflictsArray);
+                    // The above function returns undefined when an update operation hasn't happened.
+                    if (returnedSystem) {
+                        system = returnedSystem;
+                    }
                     await this.formAndSetFactionRecord(message, factions, stations, system);
                 });
             } catch (err) {
@@ -246,7 +250,7 @@ function Journal() {
         if (message && system && factionArray.length > 0 && conflictsArray) {
             // Get the faction id of the controlling faction
             let controllingFactionId = _.get(factionArray.find(currentFaction => {
-                return currentFaction.name_lower = message.SystemFaction.Name.toLowerCase();
+                return currentFaction.name_lower === message.SystemFaction.Name.toLowerCase();
             }), 'faction_id', null);
 
             // Sets the system_address and secondary economy for systems that don't have them yet
@@ -259,23 +263,23 @@ function Journal() {
             if (!system.updated_at || system.updated_at < new Date(message.timestamp)) {
                 // First handle aliasing of system name changes
                 // Set an empty array for the system aliases if none exists
-                if (!system.alias) {
-                    system.alias = [];
+                if (!system.name_aliases) {
+                    system.name_aliases = [];
                 }
 
-                if (system.system_address === message.SystemAddress &&
+                if (system.system_address === message.SystemAddress.toString() &&
                     system.x === this.correctCoordinates(message.StarPos[0]) &&
                     system.y === this.correctCoordinates(message.StarPos[1]) &&
                     system.z === this.correctCoordinates(message.StarPos[2]) &&
                     system.name !== message.StarSystem) {
                     // If the incoming system has the same address and location but the name is different
                     // push the current name into the aliases list
-                    if (!system.alias.find(alias => alias.name === system.name && alias.name_lower === system.name_lower)) {
+                    if (!system.name_aliases.find(alias => alias.name === system.name && alias.name_lower === system.name_lower)) {
                         // Check if the alias already exists
                         // Solves an edge case where cached data of the name before renaming comes in
                         // Also can handle if a system is renamed back to its original name
                         // Essentially it keeps the array unique
-                        system.alias.push({
+                        system.name_aliases.push({
                             name: system.name,
                             name_lower: system.name_lower
                         });
@@ -413,9 +417,9 @@ function Journal() {
                     factionObject.faction_presence = [];
                 }
                 // Get the last updated time of this presence record
-                let factionPresenceUpdatedAt = factionObject.faction_presence.find(presence => {
-                    return presence.system_id === system._id;
-                }).updated_at;
+                let factionPresenceUpdatedAt = _.get(factionObject.faction_presence.find(presence => {
+                    return presence.system_id.equals(system._id);
+                }), 'updated_at', null);
 
                 let messageFaction = message.Factions.find(faction => {
                     return faction.Name.toLowerCase() === factionObject.name_lower;
@@ -425,7 +429,7 @@ function Journal() {
                 if (!factionPresenceUpdatedAt) {
                     factionPresenceUpdatedAt = factionObject.updated_at;
                 }
-                if (!factionPresenceUpdatedAt || onfactionPresenceUpdatedAt < new Date(message.timestamp)) {
+                if (!factionPresenceUpdatedAt || factionPresenceUpdatedAt < new Date(message.timestamp)) {
                     // Ignore old records but accept if the updated at is null since it might be so for a basic record
                     // Decide whether to update the faction record or not
                     // Also decide whether to update the main time or not
@@ -435,11 +439,12 @@ function Journal() {
                     let recoveringStates = getDoFactionUpdate.recoveringStates;
                     let conflicts = getDoFactionUpdate.conflicts;
                     let doUpdate = getDoFactionUpdate.doUpdate;
-                    let dontUpdateTime = getDoFactionUpdate.dontUpdateTime;
-                    if (doUpdate || !dontUpdateTime) {
-                        // If dontUpdateTime is set to false set the updated at time
+                    let doUpdateTime = getDoFactionUpdate.doUpdateTime;
+                    let factionPresence = [];
+                    if (doUpdate || doUpdateTime) {
+                        // If doUpdateTime is set to false set the updated at time
                         let factionPresentSystemObject = {};
-                        let factionPresence = factionObject.faction_presence;
+                        factionPresence = factionObject.faction_presence;
 
                         // Faction presence can be null when a basic record is created
                         if (!factionPresence) {
@@ -501,7 +506,7 @@ function Journal() {
                         await this.setFactionRecord(factionObject.name_lower, factionObject);
                     }
                     if (doUpdate) {
-                        // Create the faction history element for stroring current systems
+                        // Create the faction history element for storing current systems
                         let systemHistory = factionPresence.map(faction => {
                             return {
                                 system_id: system._id,
@@ -559,8 +564,8 @@ function Journal() {
             if (!station.updated_at || station.updated_at < new Date(message.timestamp)) {
                 // First handle aliasing of system name changes
                 // Set an empty array for the system aliases if none exists
-                if (!station.alias) {
-                    station.alias = [];
+                if (!station.name_aliases) {
+                    station.name_aliases = [];
                 }
 
                 if (station.market_id === message.MarketID &&
@@ -568,12 +573,12 @@ function Journal() {
                     station.name !== message.StationName) {
                     // If the incoming station has the same market id and system but the name is different
                     // push the current name into the aliases list
-                    if (!station.alias.find(alias => alias.name === station.name && alias.name_lower === station.name_lower)) {
+                    if (!station.name_aliases.find(alias => alias.name === station.name && alias.name_lower === station.name_lower)) {
                         // Check if the alias already exists
                         // Solves an edge case where cached data of the name before renaming comes in
                         // Also can handle if a station is renamed back to its original name
                         // Essentially it keeps the array unique
-                        station.alias.push({
+                        station.name_aliases.push({
                             name: station.name,
                             name_lower: station.name_lower
                         });
@@ -909,12 +914,12 @@ function Journal() {
 
         // Check if the incoming message has any different faction detail
         let doUpdate = true;
-        let dontUpdateTime = false;
+        let doUpdateTime = true;
         // If the faction record itself has a newer time (and it exists - so not a basic record)
         // that means this record was updates by a newer message from some other system
         // So make sure not to update the main record time
         if (dbFaction.updated_at && dbFaction.updated_at > new Date(message.timestamp)) {
-            dontUpdateTime = true;
+            doUpdateTime = false;
         }
 
         // Get the faction presence element that needs to be updated
@@ -922,7 +927,8 @@ function Journal() {
             return presence.system_name_lower === message.StarSystem.toLowerCase();
         });
 
-        if (factionPresenceElement.state === messageFaction.FactionState.toLowerCase() &&
+        if (factionPresenceElement &&
+            factionPresenceElement.state === messageFaction.FactionState.toLowerCase() &&
             factionPresenceElement.influence === messageFaction.Influence &&
             factionPresenceElement.happiness === messageFaction.Happiness.toLowerCase() &&
             factionPresenceElement.conflicts &&
@@ -947,11 +953,13 @@ function Journal() {
             // This prevents caching issues
             if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates, conflicts)) {
                 doUpdate = false;
-                dontUpdateTime = true;
+                doUpdateTime = false;
             }
         }
 
-        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, dontUpdateTime }
+        // doUpdate indicate if the new record should be added into the history and the master record data updated
+        // doUpdateTime indicate if the master record's update time should be updated
+        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, doUpdateTime }
     }
 
     // Used in V3 and V4
