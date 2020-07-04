@@ -57,7 +57,8 @@ sock.on('message', topic => {
         case journal.schemaId[1]:
             // journal.trackSystem(message.message);
             // journal.trackSystemV3(message.message);
-            journal.trackSystemV4(message.message, message.header);
+            // journal.trackSystemV4(message.message, message.header);
+            journal.trackSystemV5(message.message, message.header);
             // journal.display();
             break;
         // case Outfitting.schemaId:
