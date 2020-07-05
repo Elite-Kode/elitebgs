@@ -452,7 +452,7 @@ function Journal() {
                         }
 
                         factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
-                            if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                            if (factionPresenceObject.system_id.equals(system._id)) {
                                 // Iterates over all existing faction presences to create a new faction presence object for the current faction
                                 // This new object is then reapplied over the existing array element to update it
                                 factionPresentSystemObject = {
