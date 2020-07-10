@@ -17,7 +17,6 @@
 "use strict";
 
 let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
 module.exports = (async () => {
     let db = require('../db');
@@ -71,7 +70,6 @@ module.exports = (async () => {
     }, { runSettersOnQuery: true });
 
     ebgsSystem.plugin(mongoosePaginate);
-    ebgsSystem.plugin(mongooseAggregatePaginate);
 
     let model = connection.model('ebgsSystemV4', ebgsSystem);
 

@@ -17,3 +17,4 @@
 "use strict";
 
 module.exports.journal = require('./journal');
+module.exports.journalV5 = require('./journalv5')

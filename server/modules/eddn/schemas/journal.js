@@ -19,18 +19,21 @@
 const _ = require('lodash');
 const request = require('request-promise-native');
 const semver = require('semver');
-const mongoose = require('mongoose');
 
-let db = require('../../../db');
-let elitebgsConnection = db.elite_bgs;
 const bugsnagCaller = require('../../../bugsnag').bugsnagCaller;
 
-const ebgsFactionsV5Model = require('../../../models/ebgs_factions_v5');
-const ebgsSystemsV5Model = require('../../../models/ebgs_systems_v5');
-const ebgsStationsV5Model = require('../../../models/ebgs_stations_v5');
-const ebgsHistoryFactionV5Model = require('../../../models/ebgs_history_faction_v5');
-const ebgsHistorySystemV5Model = require('../../../models/ebgs_history_system_v5');
-const ebgsHistoryStationV5Model = require('../../../models/ebgs_history_station_v5');
+const ebgsFactionsModel = require('../../../models/ebgs_factions');
+const ebgsSystemsModel = require('../../../models/ebgs_systems');
+
+const ebgsFactionsV3Model = require('../../../models/ebgs_factions_v3');
+const ebgsSystemsV3Model = require('../../../models/ebgs_systems_v3');
+
+const ebgsFactionsV4Model = require('../../../models/ebgs_factions_v4');
+const ebgsSystemsV4Model = require('../../../models/ebgs_systems_v4');
+const ebgsStationsV4Model = require('../../../models/ebgs_stations_v4');
+const ebgsHistoryFactionV4Model = require('../../../models/ebgs_history_faction_v4');
+const ebgsHistorySystemV4Model = require('../../../models/ebgs_history_system_v4');
+const ebgsHistoryStationV4Model = require('../../../models/ebgs_history_station_v4');
 
 const configModel = require('../../../models/configs');
 
@@ -45,125 +48,1474 @@ function Journal() {
         // "https://eddn.edcd.io/schemas/journal/1/test"
     ];
 
-    this.trackSystemV5 = async (message, header) => {
-        let mongoSession = await elitebgsConnection.startSession();
+    this.trackSystem = async message => {
+        try {
+            if (message.event === "FSDJump" || message.event === "Location") {
+                if (message.Factions) {
+                    let systemObject = {
+                        name: message.StarSystem,
+                        name_lower: message.StarSystem.toLowerCase(),
+                        x: message.StarPos[0],
+                        y: message.StarPos[1],
+                        z: message.StarPos[2],
+                        government: message.SystemGovernment,
+                        allegiance: message.SystemAllegiance,
+                        state: message.FactionState,
+                        security: message.SystemSecurity,
+                        primary_economy: message.SystemEconomy,
+                        updated_at: message.timestamp,
+                        controlling_minor_faction: message.SystemFaction
+                    };
+
+                    if (message.Powers) {
+                        systemObject.power = [];
+                        message.Powers.forEach((power) => {
+                            systemObject.power.push(power.toLowerCase());
+                        });
+                        systemObject.power_state = message.PowerplayState;
+                    }
+
+                    let factionArray = [];
+
+                    for (let faction of message.Factions) {
+                        factionArray.push({
+                            name: faction.Name,
+                            name_lower: faction.Name.toLowerCase()
+                        });
+
+                        let historySubObject = {
+                            updated_at: message.timestamp,
+                            system: message.StarSystem,
+                            system_lower: message.StarSystem.toLowerCase(),
+                            state: faction.FactionState,
+                            influence: faction.Influence
+                        }
+
+                        historySubObject.pending_states = [];
+                        if (faction.PendingStates) {
+                            faction.PendingStates.forEach(pendingState => {
+                                let pendingStateObject = {
+                                    state: pendingState.State,
+                                    trend: pendingState.Trend
+                                };
+                                historySubObject.pending_states.push(pendingStateObject);
+                            });
+                        }
+                        historySubObject.recovering_states = [];
+                        if (faction.RecoveringStates) {
+                            faction.RecoveringStates.forEach(recoveringState => {
+                                let recoveringStateObject = {
+                                    state: recoveringState.State,
+                                    trend: recoveringState.Trend
+                                };
+                                historySubObject.recovering_states.push(recoveringStateObject);
+                            });
+                        }
+
+                        let factionObject = {
+                            name: faction.Name,
+                            name_lower: faction.Name.toLowerCase(),
+                            updated_at: message.timestamp,
+                            government: faction.Government,
+                            allegiance: faction.Allegiance,
+                            $addToSet: {
+                                faction_presence: {
+                                    system_name: message.StarSystem,
+                                    system_name_lower: message.StarSystem.toLowerCase()
+                                },
+                                history: historySubObject
+                            }
+                        };
+
+                        let model = await ebgsFactionsModel;
+                        model.findOneAndUpdate(
+                            { name: faction.Name },
+                            factionObject,
+                            {
+                                upsert: true,
+                                runValidators: true
+                            })
+                            .exec();
+                    }
+                    systemObject.minor_faction_presences = factionArray;
+                    let model = await ebgsSystemsModel;
+                    model.findOneAndUpdate(
+                        { name: systemObject.name },
+                        systemObject,
+                        {
+                            upsert: true,
+                            runValidators: true
+                        })
+                        .exec();
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    this.trackSystemV3 = async message => {
+        try {
+            if (message.event === "FSDJump" || message.event === "Location") {
+                if (message.Factions && this.checkMessage(message)) {
+                    let notNeededFactionIndex = message.Factions.findIndex(faction => {
+                        return faction.Name === "Pilots Federation Local Branch";
+                    });
+                    if (notNeededFactionIndex !== -1) {
+                        message.Factions.splice(notNeededFactionIndex, 1);
+                    }
+                    let factionArray = [];
+                    message.Factions.forEach(faction => {
+                        let factionObject = {
+                            name: faction.Name,
+                            name_lower: faction.Name.toLowerCase()
+                        };
+                        factionArray.push(factionObject);
+                    });
+                    (async () => {
+                        try {
+                            let model = await ebgsSystemsV3Model;
+                            let system = await model.findOne(
+                                {
+                                    name_lower: message.StarSystem.toLowerCase(),
+                                    x: this.correctCoordinates(message.StarPos[0]),
+                                    y: this.correctCoordinates(message.StarPos[1]),
+                                    z: this.correctCoordinates(message.StarPos[2])
+                                },
+                                { history: 0 }
+                            ).lean();
+                            let hasEddbId = false;
+                            let systemObject = {};
+                            let historySubObject = {};
+                            let eddbIdPromise;
+                            if (system) {   // System exists in db
+                                if (system.updated_at < new Date(message.timestamp)) {
+                                    if (!system.eddb_id) {
+                                        eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
+                                    } else {
+                                        systemObject.eddb_id = system.eddb_id;
+                                        hasEddbId = true;
+                                    }
+                                    if (system.government !== message.SystemGovernment.toLowerCase() ||
+                                        system.allegiance !== message.SystemAllegiance.toLowerCase() ||
+                                        system.state !== message.FactionState.toLowerCase() ||
+                                        system.security !== message.SystemSecurity.toLowerCase() ||
+                                        system.population !== message.Population ||
+                                        system.controlling_minor_faction !== message.SystemFaction.toLowerCase() ||
+                                        !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
+
+                                        systemObject.government = message.SystemGovernment;
+                                        systemObject.allegiance = message.SystemAllegiance;
+                                        systemObject.state = message.FactionState;
+                                        systemObject.security = message.SystemSecurity;
+                                        systemObject.population = message.Population;
+                                        systemObject.controlling_minor_faction = message.SystemFaction;
+                                        systemObject.factions = factionArray;
+                                        systemObject.updated_at = message.timestamp;
+
+                                        historySubObject.updated_at = message.timestamp;
+                                        historySubObject.updated_by = "EDDN";
+                                        historySubObject.government = message.SystemGovernment;
+                                        historySubObject.allegiance = message.SystemAllegiance;
+                                        historySubObject.state = message.FactionState;
+                                        historySubObject.security = message.SystemSecurity;
+                                        historySubObject.population = message.Population;
+                                        historySubObject.controlling_minor_faction = message.SystemFaction;
+                                        historySubObject.factions = factionArray;
+                                    } else {
+                                        systemObject.updated_at = message.timestamp;
+                                    }
+                                }
+                            } else {
+                                eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
+                                systemObject = {
+                                    name: message.StarSystem,
+                                    name_lower: message.StarSystem.toLowerCase(),
+                                    x: this.correctCoordinates(message.StarPos[0]),
+                                    y: this.correctCoordinates(message.StarPos[1]),
+                                    z: this.correctCoordinates(message.StarPos[2]),
+                                    government: message.SystemGovernment,
+                                    allegiance: message.SystemAllegiance,
+                                    state: message.FactionState,
+                                    security: message.SystemSecurity,
+                                    population: message.Population,
+                                    primary_economy: message.SystemEconomy,
+                                    controlling_minor_faction: message.SystemFaction,
+                                    factions: factionArray,
+                                    updated_at: message.timestamp
+                                };
+
+                                historySubObject = {
+                                    updated_at: message.timestamp,
+                                    updated_by: "EDDN",
+                                    government: message.SystemGovernment,
+                                    allegiance: message.SystemAllegiance,
+                                    state: message.FactionState,
+                                    security: message.SystemSecurity,
+                                    population: message.Population,
+                                    controlling_minor_faction: message.SystemFaction,
+                                    factions: factionArray
+                                };
+                            }
+                            if (!_.isEmpty(systemObject)) {
+                                if (!_.isEmpty(historySubObject)) {
+                                    systemObject["$addToSet"] = {
+                                        history: historySubObject
+                                    }
+                                }
+                                if (hasEddbId) {
+                                    model.findOneAndUpdate(
+                                        {
+                                            name_lower: message.StarSystem.toLowerCase(),
+                                            x: this.correctCoordinates(message.StarPos[0]),
+                                            y: this.correctCoordinates(message.StarPos[1]),
+                                            z: this.correctCoordinates(message.StarPos[2])
+                                        },
+                                        systemObject,
+                                        {
+                                            upsert: true,
+                                            runValidators: true
+                                        })
+                                        .exec();
+                                } else {
+                                    try {
+                                        let id = await eddbIdPromise;
+                                        systemObject.eddb_id = id;
+                                        try {
+                                            await model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StarSystem.toLowerCase(),
+                                                    x: this.correctCoordinates(message.StarPos[0]),
+                                                    y: this.correctCoordinates(message.StarPos[1]),
+                                                    z: this.correctCoordinates(message.StarPos[2])
+                                                },
+                                                systemObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true
+                                                })
+                                                .exec();
+                                        } catch (err) {
+                                            console.log(err);
+                                        }
+                                    } catch (err) {   // If eddb id cannot be fetched, create the record without it.
+                                        try {
+                                            await model.findOneAndUpdate(
+                                                {
+                                                    name_lower: message.StarSystem.toLowerCase(),
+                                                    x: this.correctCoordinates(message.StarPos[0]),
+                                                    y: this.correctCoordinates(message.StarPos[1]),
+                                                    z: this.correctCoordinates(message.StarPos[2])
+                                                },
+                                                systemObject,
+                                                {
+                                                    upsert: true,
+                                                    runValidators: true
+                                                })
+                                                .exec();
+                                        } catch (err) {
+                                            console.log(err);
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    })();
+                    (async () => {
+                        try {
+                            let model = await ebgsFactionsV3Model;
+                            let messageFactionsLower = [];
+                            message.Factions.forEach(faction => {
+                                messageFactionsLower.push(faction.Name.toLowerCase());
+                            });
+
+                            let allFactionsPresentInSystem = model.find(
+                                {
+                                    faction_presence: {
+                                        $elemMatch: { system_name_lower: message.StarSystem.toLowerCase() }
+                                    }
+                                },
+                                { history: 0 }
+                            ).lean();
+
+                            let allFactionsPresentInMessage = model.find(
+                                {
+                                    name_lower: {
+                                        $in: messageFactionsLower
+                                    }
+                                },
+                                { history: 0 }
+                            ).lean();
+
+                            let values = await Promise.all([allFactionsPresentInSystem, allFactionsPresentInMessage]);
+                            let factionsPresentInSystemDB = values[0];
+                            let factionsAllDetails = values[1];
+
+                            let factionsNotInSystem = [];
+
+                            factionsPresentInSystemDB.forEach(faction => {
+                                factionsNotInSystem.push(faction.name_lower);
+                            });
+
+                            let toRemove = _.difference(factionsNotInSystem, messageFactionsLower);
+
+                            let dbFactionsLower = [];
+
+                            factionsAllDetails.forEach(faction => {
+                                dbFactionsLower.push(faction.name_lower);
+                            });
+                            let notInDb = _.difference(messageFactionsLower, dbFactionsLower);
+                            // To remove are those factions which are not present in this system anymore
+                            // Such factions need to be updated too
+                            for (let factionNameLower of toRemove) {
+                                for (let faction of factionsPresentInSystemDB) {
+                                    if (factionNameLower === faction.name_lower && faction.updated_at < new Date(message.timestamp)) {
+                                        let factionPresence = [];
+                                        faction.faction_presence.forEach(system => {
+                                            if (system.system_name_lower !== message.StarSystem.toLowerCase()) {
+                                                factionPresence.push(system);
+                                            }
+                                        });
+                                        faction.faction_presence = factionPresence;
+                                        faction.updated_at = message.timestamp;
+                                        (async () => {
+                                            if (!faction.eddb_id) {
+                                                try {
+                                                    let id = await this.getFactionEDDBId(faction.name);
+                                                    faction.eddb_id = id;
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: faction.name
+                                                            },
+                                                            faction,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .exec();
+                                                    } catch (err) {
+                                                        console.log(err);
+                                                    }
+                                                } catch (err) {
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: faction.name
+                                                            },
+                                                            faction,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .exec();
+                                                    } catch (err) {
+                                                        console.log(err);
+                                                    }
+                                                }
+                                            } else {
+                                                model.findOneAndUpdate(
+                                                    {
+                                                        name: faction.name
+                                                    },
+                                                    faction,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true
+                                                    })
+                                                    .exec();
+                                            }
+                                        })()
+                                    }
+                                }
+                            }
+                            // Not In DB means that the message contains a faction which is not present in the db yet
+                            // So one must create a new record
+                            for (let factionNameLower of notInDb) {
+                                for (let messageFaction of message.Factions) {
+                                    if (messageFaction.Name.toLowerCase() === factionNameLower) {
+                                        let pendingStates = [];
+                                        if (messageFaction.PendingStates) {
+                                            messageFaction.PendingStates.forEach(pendingState => {
+                                                let pendingStateObject = {
+                                                    state: pendingState.State.toLowerCase(),
+                                                    trend: pendingState.Trend
+                                                };
+                                                pendingStates.push(pendingStateObject);
+                                            });
+                                        }
+                                        let recoveringStates = [];
+                                        if (messageFaction.RecoveringStates) {
+                                            messageFaction.RecoveringStates.forEach(recoveringState => {
+                                                let recoveringStateObject = {
+                                                    state: recoveringState.State.toLowerCase(),
+                                                    trend: recoveringState.Trend
+                                                };
+                                                recoveringStates.push(recoveringStateObject);
+                                            });
+                                        }
+
+                                        let factionObject = {
+                                            name: messageFaction.Name,
+                                            name_lower: messageFaction.Name.toLowerCase(),
+                                            updated_at: message.timestamp,
+                                            government: messageFaction.Government,
+                                            allegiance: messageFaction.Allegiance,
+                                            faction_presence: [{
+                                                system_name: message.StarSystem,
+                                                system_name_lower: message.StarSystem.toLowerCase(),
+                                                state: messageFaction.FactionState,
+                                                influence: messageFaction.Influence,
+                                                pending_states: pendingStates,
+                                                recovering_states: recoveringStates
+                                            }],
+                                            history: [{
+                                                updated_at: message.timestamp,
+                                                updated_by: "EDDN",
+                                                system: message.StarSystem,
+                                                system_lower: message.StarSystem.toLowerCase(),
+                                                state: messageFaction.FactionState,
+                                                influence: messageFaction.Influence,
+                                                pending_states: pendingStates,
+                                                recovering_states: recoveringStates,
+                                                systems: [{
+                                                    name: message.StarSystem,
+                                                    name_lower: message.StarSystem.toLowerCase()
+                                                }]
+                                            }]
+                                        };
+                                        (async () => {
+                                            try {
+                                                let id = await this.getFactionEDDBId(messageFaction.Name);
+                                                try {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: factionObject.name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec();
+                                                } catch (err) {
+                                                    console.log(err);
+                                                }
+                                            } catch (err) {
+                                                try {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: factionObject.name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec();
+                                                } catch (err) {
+                                                    console.log(err);
+                                                }
+                                            }
+                                        })();
+                                    }
+                                }
+                            }
+                            // dbFactionsLower are the factions present in the db. So next we need to update them
+                            // factionsAllDetails has all the factions details
+                            for (let dbFaction of factionsAllDetails) {
+                                for (let messageFaction of message.Factions) {
+                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && dbFaction.updated_at < new Date(message.timestamp)) {
+                                        let pendingStates = [];
+                                        if (messageFaction.PendingStates) {
+                                            messageFaction.PendingStates.forEach(pendingState => {
+                                                let pendingStateObject = {
+                                                    state: pendingState.State.toLowerCase(),
+                                                    trend: pendingState.Trend
+                                                };
+                                                pendingStates.push(pendingStateObject);
+                                            });
+                                        }
+                                        let recoveringStates = [];
+                                        if (messageFaction.RecoveringStates) {
+                                            messageFaction.RecoveringStates.forEach(recoveringState => {
+                                                let recoveringStateObject = {
+                                                    state: recoveringState.State.toLowerCase(),
+                                                    trend: recoveringState.Trend
+                                                };
+                                                recoveringStates.push(recoveringStateObject);
+                                            });
+                                        }
+
+                                        // Check if the incoming message has any different faction detail
+                                        let doUpdate = true;
+                                        dbFaction.faction_presence.forEach(faction => {
+                                            if (faction.system_name_lower === message.StarSystem.toLowerCase() &&
+                                                faction.state === messageFaction.FactionState.toLowerCase() &&
+                                                faction.influence === messageFaction.Influence &&
+                                                _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
+                                                _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                                                doUpdate = false;
+                                            }
+                                        })
+                                        if (doUpdate) {
+                                            let factionPresentSystemObject = {};
+                                            let factionPresence = dbFaction.faction_presence;
+
+                                            factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                    factionPresentSystemObject = {
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates
+                                                    };
+                                                    factionPresenceArray[index] = factionPresentSystemObject;
+                                                }
+                                            });
+
+                                            if (_.isEmpty(factionPresentSystemObject)) {
+                                                // This system is not present as a presence system in db.
+                                                // Make a new array element
+                                                factionPresence.push({
+                                                    system_name: message.StarSystem,
+                                                    system_name_lower: message.StarSystem.toLowerCase(),
+                                                    state: messageFaction.FactionState,
+                                                    influence: messageFaction.Influence,
+                                                    pending_states: pendingStates,
+                                                    recovering_states: recoveringStates
+                                                });
+                                            }
+
+                                            let systemHistory = [];
+
+                                            factionPresence.forEach((faction) => {
+                                                systemHistory.push({
+                                                    name: faction.system_name,
+                                                    name_lower: faction.system_name_lower
+                                                });
+                                            });
+
+                                            let factionObject = {
+                                                name: messageFaction.Name,
+                                                name_lower: messageFaction.Name.toLowerCase(),
+                                                updated_at: message.timestamp,
+                                                government: messageFaction.Government,
+                                                allegiance: messageFaction.Allegiance,
+                                                faction_presence: factionPresence,
+                                                $addToSet: {
+                                                    history: {
+                                                        updated_at: message.timestamp,
+                                                        updated_by: "EDDN",
+                                                        system: message.StarSystem,
+                                                        system_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        systems: systemHistory
+                                                    }
+                                                }
+                                            };
+                                            (async () => {
+                                                if (!dbFaction.eddb_id) {
+                                                    try {
+                                                        let id = await this.getFactionEDDBId(messageFaction.Name)
+                                                        factionObject.eddb_id = id;
+                                                        try {
+                                                            model.findOneAndUpdate(
+                                                                {
+                                                                    name: messageFaction.Name
+                                                                },
+                                                                factionObject,
+                                                                {
+                                                                    upsert: true,
+                                                                    runValidators: true
+                                                                })
+                                                                .exec();
+                                                        } catch (err) {
+                                                            console.log(err);
+                                                        }
+                                                    } catch (err) {
+                                                        try {
+                                                            model.findOneAndUpdate(
+                                                                {
+                                                                    name: messageFaction.Name
+                                                                },
+                                                                factionObject,
+                                                                {
+                                                                    upsert: true,
+                                                                    runValidators: true
+                                                                })
+                                                                .exec()
+                                                        } catch (err) {
+                                                            console.log(err);
+                                                        }
+                                                    }
+                                                    let id = await this.getFactionEDDBId(messageFaction.Name)
+                                                    factionObject.eddb_id = id;
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .exec();
+                                                    } catch (err) {
+                                                        console.log(err);
+                                                    }
+                                                } else {
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true
+                                                            })
+                                                            .exec()
+                                                    } catch (err) {
+                                                        console.log(err);
+                                                    }
+                                                }
+                                            })();
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    })();
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    this.trackSystemV4 = async (message, header) => {
         if (message.event === "FSDJump" || message.event === "Location" || message.event === "CarrierJump") {
             try {
-                // Check if the message is well formed
-                await this.checkMessageJump(message, header);
-
-                // Filter out factions that don't contribute to the BGS
+                await this.checkMessage1(message, header);
                 message.Factions = message.Factions.filter(faction => {
                     return nonBGSFactions.indexOf(faction.Name) === -1;
                 });
-                await mongoSession.withTransaction(async () => {
-                    let systemModel = await ebgsSystemsV5Model;
-                    let factionModel = await ebgsFactionsV5Model;
-                    let stationModel = await ebgsStationsV5Model;
-                    // First get the system from the db which matches the system address
-                    let system = await systemModel.findOne({
-                        system_address: message.SystemAddress
-                    }).lean();
-                    if (!system) {
-                        // If no system with the system address is found, create a basic system
-                        system = await this.setSystemRecord(message.SystemAddress, {
-                            name: message.StarSystem,
-                            name_lower: message.StarSystem.toLowerCase(),
-                            system_address: message.SystemAddress,
-                            x: this.correctCoordinates(message.StarPos[0]),
-                            y: this.correctCoordinates(message.StarPos[1]),
-                            z: this.correctCoordinates(message.StarPos[2]),
-                            primary_economy: message.SystemEconomy,
-                            secondary_economy: message.SystemSecondEconomy
+                let factionArray = [];
+                message.Factions.forEach(faction => {
+                    let factionObject = {
+                        name: faction.Name,
+                        name_lower: faction.Name.toLowerCase()
+                    };
+                    factionArray.push(factionObject);
+                });
+                let conflictsArray = [];
+                message.Conflicts.forEach(conflict => {
+                    let conflictObject = {
+                        type: conflict.WarType,
+                        status: conflict.Status,
+                        faction1: {
+                            name: conflict.Faction1.Name,
+                            name_lower: conflict.Faction1.Name.toLowerCase(),
+                            stake: conflict.Faction1.Stake,
+                            stake_lower: conflict.Faction1.Stake.toLowerCase(),
+                            days_won: conflict.Faction1.WonDays
+                        },
+                        faction2: {
+                            name: conflict.Faction2.Name,
+                            name_lower: conflict.Faction2.Name.toLowerCase(),
+                            stake: conflict.Faction2.Stake,
+                            stake_lower: conflict.Faction2.Stake.toLowerCase(),
+                            days_won: conflict.Faction2.WonDays
+                        }
+                    };
+                    conflictsArray.push(conflictObject);
+                });
+                (async () => {
+                    try {
+                        let model = await ebgsSystemsV4Model;
+                        let system = await model.findOne(
+                            {
+                                name_lower: message.StarSystem.toLowerCase(),
+                                x: this.correctCoordinates(message.StarPos[0]),
+                                y: this.correctCoordinates(message.StarPos[1]),
+                                z: this.correctCoordinates(message.StarPos[2])
+                            }
+                        ).lean();
+                        let hasEddbId = false;
+                        let systemObject = {};
+                        let historyObject = {};
+                        let eddbIdPromise;
+                        // Populate the systemObject and historyObject
+                        if (system) {   // System exists in db
+                            if (system.updated_at < new Date(message.timestamp)) {
+                                if (!system.eddb_id) {
+                                    eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
+                                } else {
+                                    systemObject.eddb_id = system.eddb_id;
+                                    hasEddbId = true;
+                                }
+                                if (system.government !== message.SystemGovernment.toLowerCase() ||
+                                    system.allegiance !== message.SystemAllegiance.toLowerCase() ||
+                                    system.state !== message.SystemFaction.FactionState.toLowerCase() ||
+                                    system.security !== message.SystemSecurity.toLowerCase() ||
+                                    system.population !== message.Population ||
+                                    system.controlling_minor_faction !== message.SystemFaction.Name.toLowerCase() ||
+                                    !system.conflicts ||
+                                    !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
+                                    !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
+
+                                    let historyModel = await ebgsHistorySystemV4Model;
+                                    let timeNow = Date.now();
+                                    let systemHistory = await historyModel.find({
+                                        system_id: system._id,
+                                        updated_at: {
+                                            $lte: new Date(timeNow),
+                                            $gte: new Date(timeNow - 172800000)
+                                        }
+                                    }).sort({ updated_at: -1 }).lean();
+                                    if (this.checkSystemWHistory(message, systemHistory, factionArray, conflictsArray)) {
+                                        systemObject.government = message.SystemGovernment;
+                                        systemObject.allegiance = message.SystemAllegiance;
+                                        systemObject.state = message.SystemFaction.FactionState;
+                                        systemObject.security = message.SystemSecurity;
+                                        systemObject.population = message.Population;
+                                        systemObject.controlling_minor_faction = message.SystemFaction.Name;
+                                        systemObject.factions = factionArray;
+                                        systemObject.conflicts = conflictsArray;
+                                        systemObject.updated_at = message.timestamp;
+
+                                        historyObject.updated_at = message.timestamp;
+                                        historyObject.updated_by = "EDDN";
+                                        historyObject.government = message.SystemGovernment;
+                                        historyObject.allegiance = message.SystemAllegiance;
+                                        historyObject.state = message.SystemFaction.FactionState;
+                                        historyObject.security = message.SystemSecurity;
+                                        historyObject.population = message.Population;
+                                        historyObject.controlling_minor_faction = message.SystemFaction.Name;
+                                        historyObject.factions = factionArray;
+                                        historyObject.conflicts = conflictsArray;
+                                    } else {
+                                        systemObject = {};
+                                    }
+                                } else {
+                                    systemObject.updated_at = message.timestamp;
+                                }
+                            }
+                            if (!system.system_address || !system.secondary_economy) {
+                                systemObject.system_address = message.SystemAddress;
+                                systemObject.secondary_economy = message.SystemSecondEconomy;
+                            }
+                        } else {
+                            eddbIdPromise = this.getSystemEDDBId(message.StarSystem);
+                            systemObject = {
+                                name: message.StarSystem,
+                                name_lower: message.StarSystem.toLowerCase(),
+                                system_address: message.SystemAddress,
+                                x: this.correctCoordinates(message.StarPos[0]),
+                                y: this.correctCoordinates(message.StarPos[1]),
+                                z: this.correctCoordinates(message.StarPos[2]),
+                                government: message.SystemGovernment,
+                                allegiance: message.SystemAllegiance,
+                                state: message.SystemFaction.FactionState,
+                                security: message.SystemSecurity,
+                                population: message.Population,
+                                primary_economy: message.SystemEconomy,
+                                secondary_economy: message.SystemSecondEconomy,
+                                controlling_minor_faction: message.SystemFaction.Name,
+                                factions: factionArray,
+                                conflicts: conflictsArray,
+                                updated_at: message.timestamp
+                            };
+
+                            historyObject = {
+                                updated_at: message.timestamp,
+                                updated_by: "EDDN",
+                                government: message.SystemGovernment,
+                                allegiance: message.SystemAllegiance,
+                                state: message.SystemFaction.FactionState,
+                                security: message.SystemSecurity,
+                                population: message.Population,
+                                controlling_minor_faction: message.SystemFaction.Name,
+                                factions: factionArray,
+                                conflicts: conflictsArray
+                            };
+                        }
+                        // Do the actual db calls
+                        if (!_.isEmpty(systemObject)) {
+                            if (hasEddbId) {
+                                try {
+                                    let systemReturn = await model.findOneAndUpdate(
+                                        {
+                                            name_lower: message.StarSystem.toLowerCase(),
+                                            x: this.correctCoordinates(message.StarPos[0]),
+                                            y: this.correctCoordinates(message.StarPos[1]),
+                                            z: this.correctCoordinates(message.StarPos[2])
+                                        },
+                                        systemObject,
+                                        {
+                                            upsert: true,
+                                            runValidators: true,
+                                            new: true
+                                        })
+                                    if (!_.isEmpty(historyObject)) {
+                                        historyObject.system_id = systemReturn._id;
+                                        historyObject.system_name_lower = systemReturn.name_lower;
+                                        this.setSystemHistory(historyObject);
+                                    }
+                                } catch (err) {
+                                    bugsnagCaller(err, {
+                                        metaData: {
+                                            message: message,
+                                            systemObject: systemObject
+                                        }
+                                    });
+                                }
+                            } else {
+                                try {
+                                    let id = await eddbIdPromise;
+                                    systemObject.eddb_id = id;
+                                    try {
+                                        let systemReturn = await model.findOneAndUpdate(
+                                            {
+                                                name_lower: message.StarSystem.toLowerCase(),
+                                                x: this.correctCoordinates(message.StarPos[0]),
+                                                y: this.correctCoordinates(message.StarPos[1]),
+                                                z: this.correctCoordinates(message.StarPos[2])
+                                            },
+                                            systemObject,
+                                            {
+                                                upsert: true,
+                                                runValidators: true,
+                                                new: true
+                                            });
+                                        if (!_.isEmpty(historyObject)) {
+                                            historyObject.system_id = systemReturn._id;
+                                            historyObject.system_name_lower = systemReturn.name_lower;
+                                            this.setSystemHistory(historyObject);
+                                        }
+                                    } catch (err) {
+                                        bugsnagCaller(err, {
+                                            metaData: {
+                                                message: message,
+                                                systemObject: systemObject
+                                            }
+                                        });
+                                    }
+                                } catch (err) {       // If eddb id cannot be fetched, create the record without it.
+                                    try {
+                                        let systemReturn = await model.findOneAndUpdate(
+                                            {
+                                                name_lower: message.StarSystem.toLowerCase(),
+                                                x: this.correctCoordinates(message.StarPos[0]),
+                                                y: this.correctCoordinates(message.StarPos[1]),
+                                                z: this.correctCoordinates(message.StarPos[2])
+                                            },
+                                            systemObject,
+                                            {
+                                                upsert: true,
+                                                runValidators: true,
+                                                new: true
+                                            });
+                                        if (!_.isEmpty(historyObject)) {
+                                            historyObject.system_id = systemReturn._id;
+                                            historyObject.system_name_lower = systemReturn.name_lower;
+                                            this.setSystemHistory(historyObject);
+                                        }
+                                    } catch (err) {
+                                        bugsnagCaller(err, {
+                                            metaData: {
+                                                message: message,
+                                                systemObject: systemObject
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        bugsnagCaller(err, {
+                            metaData: {
+                                message: message,
+                                systemModel: ebgsSystemsV4Model
+                            }
                         });
                     }
+                })();
+                (async () => {
+                    try {
+                        let model = await ebgsFactionsV4Model;
+                        let messageFactionsLower = [];
+                        message.Factions.forEach(faction => {
+                            messageFactionsLower.push(faction.Name.toLowerCase());
+                        });
 
-                    // Get the faction records next
-                    let factions = await Promise.all(message.Factions.map(async messageFaction => {
-                        // First try to get the faction data
-                        let factionNameLower = messageFaction.Name.toLowerCase();
-                        let faction = await factionModel.findOne({
-                            name_lower: factionNameLower
-                        }).lean();
-                        if (!faction) {
-                            // If no faction with the name is found, create a basic faction
-                            faction = await this.setFactionRecord(factionNameLower, {
-                                name: messageFaction.Name,
-                                name_lower: factionNameLower,
-                                government: messageFaction.Government,
-                                allegiance: messageFaction.Allegiance
+                        let allFactionsPresentInSystem = model.find(
+                            {
+                                faction_presence: {
+                                    $elemMatch: { system_name_lower: message.StarSystem.toLowerCase() }
+                                }
+                            }
+                        ).lean();
+
+                        let allFactionsPresentInMessage = model.find(
+                            {
+                                name_lower: {
+                                    $in: messageFactionsLower
+                                }
+                            }
+                        ).lean();
+
+                        try {
+                            let values = await Promise.all([allFactionsPresentInSystem, allFactionsPresentInMessage]);
+                            let factionsPresentInSystemDB = values[0];
+                            let factionsAllDetails = values[1];
+
+                            let factionsNotInSystem = [];
+
+                            factionsPresentInSystemDB.forEach(faction => {
+                                factionsNotInSystem.push(faction.name_lower);
+                            });
+
+                            let toRemove = _.difference(factionsNotInSystem, messageFactionsLower);
+
+                            let dbFactionsLower = [];
+
+                            factionsAllDetails.forEach(faction => {
+                                dbFactionsLower.push(faction.name_lower);
+                            });
+                            let notInDb = _.difference(messageFactionsLower, dbFactionsLower);
+                            // To remove are those factions which are not present in this system anymore
+                            // Such factions need to be updated too
+                            for (let factionNameLower of toRemove) {
+                                for (let factionObject of factionsPresentInSystemDB) {
+                                    if (factionNameLower === factionObject.name_lower && factionObject.updated_at < new Date(message.timestamp)) {
+                                        let factionPresence = [];
+                                        factionObject.faction_presence.forEach(system => {
+                                            if (system.system_name_lower !== message.StarSystem.toLowerCase()) {
+                                                factionPresence.push(system);
+                                            }
+                                        });
+                                        factionObject.faction_presence = factionPresence;
+                                        factionObject.updated_at = message.timestamp;
+
+                                        if (!factionObject.eddb_id) {
+                                            try {
+                                                let id = await this.getFactionEDDBId(factionObject.name);
+                                                factionObject.eddb_id = id;
+                                                try {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: factionObject.name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec();
+                                                } catch (err) {
+                                                    bugsnagCaller(err, {
+                                                        metaData: {
+                                                            message: message,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
+                                                }
+                                            } catch (err) {
+                                                try {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: factionObject.name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true
+                                                        })
+                                                        .exec();
+                                                } catch (err) {
+                                                    bugsnagCaller(err, {
+                                                        metaData: {
+                                                            message: message,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        } else {
+                                            try {
+                                                model.findOneAndUpdate(
+                                                    {
+                                                        name: factionObject.name
+                                                    },
+                                                    factionObject,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true
+                                                    })
+                                                    .exec();
+                                            } catch (err) {
+                                                bugsnagCaller(err, {
+                                                    metaData: {
+                                                        message: message,
+                                                        factionObject: factionObject
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // Not In DB means that the message contains a faction which is not present in the db yet
+                            // So one must create a new record
+                            for (let factionNameLower of notInDb) {
+                                for (let messageFaction of message.Factions) {
+                                    if (messageFaction.Name.toLowerCase() === factionNameLower) {
+                                        let activeStates = [];
+                                        if (messageFaction.ActiveStates) {
+                                            messageFaction.ActiveStates.forEach(activeState => {
+                                                let activeStateObject = {
+                                                    state: activeState.State.toLowerCase(),
+                                                };
+                                                activeStates.push(activeStateObject);
+                                            });
+                                        }
+                                        let pendingStates = [];
+                                        if (messageFaction.PendingStates) {
+                                            messageFaction.PendingStates.forEach(pendingState => {
+                                                let pendingStateObject = {
+                                                    state: pendingState.State.toLowerCase(),
+                                                    trend: pendingState.Trend
+                                                };
+                                                pendingStates.push(pendingStateObject);
+                                            });
+                                        }
+                                        let recoveringStates = [];
+                                        if (messageFaction.RecoveringStates) {
+                                            messageFaction.RecoveringStates.forEach(recoveringState => {
+                                                let recoveringStateObject = {
+                                                    state: recoveringState.State.toLowerCase(),
+                                                    trend: recoveringState.Trend
+                                                };
+                                                recoveringStates.push(recoveringStateObject);
+                                            });
+                                        }
+                                        let conflictsArray = [];
+                                        for (let conflict of message.Conflicts) {
+                                            if (conflict.Faction1.Name.toLowerCase() === factionNameLower ||
+                                                conflict.Faction2.Name.toLowerCase() === factionNameLower) {
+                                                let opponent;
+                                                let stake;
+                                                let daysWon;
+                                                if (conflict.Faction1.Name.toLowerCase() === factionNameLower) {
+                                                    opponent = conflict.Faction2.Name;
+                                                    stake = conflict.Faction1.Stake;
+                                                    daysWon = +conflict.Faction1.WonDays;
+                                                } else {
+                                                    opponent = conflict.Faction1.Name;
+                                                    stake = conflict.Faction2.Stake;
+                                                    daysWon = +conflict.Faction2.WonDays;
+                                                }
+                                                let conflictObject = {
+                                                    type: conflict.WarType,
+                                                    status: conflict.Status,
+                                                    opponent_name: opponent,
+                                                    opponent_name_lower: opponent.toLowerCase(),
+                                                    stake: stake,
+                                                    stake_lower: stake.toLowerCase(),
+                                                    days_won: daysWon
+                                                };
+                                                conflictsArray.push(conflictObject);
+                                            }
+                                        }
+
+                                        let factionObject = {
+                                            name: messageFaction.Name,
+                                            name_lower: messageFaction.Name.toLowerCase(),
+                                            updated_at: message.timestamp,
+                                            government: messageFaction.Government,
+                                            allegiance: messageFaction.Allegiance,
+                                            faction_presence: [{
+                                                system_name: message.StarSystem,
+                                                system_name_lower: message.StarSystem.toLowerCase(),
+                                                state: messageFaction.FactionState,
+                                                influence: messageFaction.Influence,
+                                                happiness: messageFaction.Happiness.toLowerCase(),
+                                                active_states: activeStates,
+                                                pending_states: pendingStates,
+                                                recovering_states: recoveringStates,
+                                                conflicts: conflictsArray,
+                                                updated_at: message.timestamp
+                                            }]
+                                        };
+                                        let historyObject = {
+                                            updated_at: message.timestamp,
+                                            updated_by: "EDDN",
+                                            system: message.StarSystem,
+                                            system_lower: message.StarSystem.toLowerCase(),
+                                            state: messageFaction.FactionState,
+                                            influence: messageFaction.Influence,
+                                            happiness: messageFaction.Happiness.toLowerCase(),
+                                            active_states: activeStates,
+                                            pending_states: pendingStates,
+                                            recovering_states: recoveringStates,
+                                            conflicts: conflictsArray,
+                                            systems: [{
+                                                name: message.StarSystem,
+                                                name_lower: message.StarSystem.toLowerCase()
+                                            }]
+                                        };
+                                        try {
+                                            let id = await this.getFactionEDDBId(messageFaction.Name);
+                                            factionObject.eddb_id = id;
+                                            try {
+                                                let factionReturn = await model.findOneAndUpdate(
+                                                    {
+                                                        name: factionObject.name
+                                                    },
+                                                    factionObject,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true,
+                                                        new: true
+                                                    });
+                                                historyObject.faction_id = factionReturn._id;
+                                                historyObject.faction_name = factionReturn.name;
+                                                historyObject.faction_name_lower = factionReturn.name_lower;
+                                                this.setFactionHistory(historyObject);
+                                            } catch (err) {
+                                                bugsnagCaller(err, {
+                                                    metaData: {
+                                                        message: message,
+                                                        factionObject: factionObject
+                                                    }
+                                                });
+                                            }
+                                        } catch (err) {
+                                            try {
+                                                let factionReturn = await model.findOneAndUpdate(
+                                                    {
+                                                        name: factionObject.name
+                                                    },
+                                                    factionObject,
+                                                    {
+                                                        upsert: true,
+                                                        runValidators: true,
+                                                        new: true
+                                                    })
+                                                historyObject.faction_id = factionReturn._id;
+                                                historyObject.faction_name = factionReturn.name;
+                                                historyObject.faction_name_lower = factionReturn.name_lower;
+                                                this.setFactionHistory(historyObject);
+                                            } catch (err) {
+                                                bugsnagCaller(err, {
+                                                    metaData: {
+                                                        message: message,
+                                                        factionObject: factionObject
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // dbFactionsLower are the factions present in the db. So next we need to update them
+                            // factionsAllDetails has all the factions details
+                            for (let dbFaction of factionsAllDetails) {
+                                let factionPresence = dbFaction.faction_presence.find(presence => {
+                                    return presence.system_name_lower === message.StarSystem.toLowerCase();
+                                });
+                                for (let messageFaction of message.Factions) {
+                                    if (!factionPresence || !factionPresence.updated_at) {
+                                        factionPresence = {
+                                            updated_at: dbFaction.updated_at
+                                        };
+                                    }
+                                    if (messageFaction.Name.toLowerCase() === dbFaction.name_lower && factionPresence.updated_at < new Date(message.timestamp)) {
+                                        let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, dbFaction, message);
+                                        let activeStates = getDoFactionUpdate.activeStates;
+                                        let pendingStates = getDoFactionUpdate.pendingStates;
+                                        let recoveringStates = getDoFactionUpdate.recoveringStates;
+                                        let conflicts = getDoFactionUpdate.conflicts;
+                                        let doUpdate = getDoFactionUpdate.doUpdate;
+                                        let dontUpdateTime = getDoFactionUpdate.dontUpdateTime;
+                                        if (doUpdate) {
+                                            let factionPresentSystemObject = {};
+                                            let factionPresence = dbFaction.faction_presence;
+
+                                            factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                    factionPresentSystemObject = {
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        happiness: messageFaction.Happiness.toLowerCase(),
+                                                        active_states: activeStates,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        conflicts: conflicts,
+                                                        updated_at: message.timestamp
+                                                    };
+                                                    factionPresenceArray[index] = factionPresentSystemObject;
+                                                }
+                                            });
+
+                                            if (_.isEmpty(factionPresentSystemObject)) {
+                                                // This system is not present as a presence system in db.
+                                                // Make a new array element
+                                                factionPresence.push({
+                                                    system_name: message.StarSystem,
+                                                    system_name_lower: message.StarSystem.toLowerCase(),
+                                                    state: messageFaction.FactionState,
+                                                    influence: messageFaction.Influence,
+                                                    happiness: messageFaction.Happiness.toLowerCase(),
+                                                    active_states: activeStates,
+                                                    pending_states: pendingStates,
+                                                    recovering_states: recoveringStates,
+                                                    conflicts: conflicts,
+                                                    updated_at: message.timestamp
+                                                });
+                                            }
+
+                                            let systemHistory = [];
+
+                                            factionPresence.forEach((faction) => {
+                                                systemHistory.push({
+                                                    name: faction.system_name,
+                                                    name_lower: faction.system_name_lower
+                                                });
+                                            });
+
+                                            let factionObject = {
+                                                name: messageFaction.Name,
+                                                name_lower: messageFaction.Name.toLowerCase(),
+                                                updated_at: message.timestamp,
+                                                government: messageFaction.Government,
+                                                allegiance: messageFaction.Allegiance,
+                                                faction_presence: factionPresence
+                                            };
+                                            let historyObject = {
+                                                updated_at: message.timestamp,
+                                                updated_by: "EDDN",
+                                                system: message.StarSystem,
+                                                system_lower: message.StarSystem.toLowerCase(),
+                                                state: messageFaction.FactionState,
+                                                influence: messageFaction.Influence,
+                                                happiness: messageFaction.Happiness.toLowerCase(),
+                                                active_states: activeStates,
+                                                pending_states: pendingStates,
+                                                recovering_states: recoveringStates,
+                                                conflicts: conflicts,
+                                                systems: systemHistory
+                                            }
+                                            if (!dbFaction.eddb_id) {
+                                                try {
+                                                    let id = await this.getFactionEDDBId(messageFaction.Name);
+                                                    factionObject.eddb_id = id;
+                                                    try {
+                                                        let factionReturn = await model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true,
+                                                                new: true
+                                                            });
+                                                        historyObject.faction_id = factionReturn._id;
+                                                        historyObject.faction_name = factionReturn.name;
+                                                        historyObject.faction_name_lower = factionReturn.name_lower;
+                                                        this.setFactionHistory(historyObject);
+                                                    } catch (err) {
+                                                        bugsnagCaller(err, {
+                                                            metaData: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
+                                                    }
+                                                } catch (err) {
+                                                    try {
+                                                        let factionReturn = await model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true,
+                                                                new: true
+                                                            });
+                                                        historyObject.faction_id = factionReturn._id;
+                                                        historyObject.faction_name = factionReturn.name;
+                                                        historyObject.faction_name_lower = factionReturn.name_lower;
+                                                        this.setFactionHistory(historyObject);
+                                                    } catch (err) {
+                                                        bugsnagCaller(err, {
+                                                            metaData: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            } else {
+                                                try {
+                                                    let factionReturn = await model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                    historyObject.faction_id = factionReturn._id;
+                                                    historyObject.faction_name = factionReturn.name;
+                                                    historyObject.faction_name_lower = factionReturn.name_lower;
+                                                    this.setFactionHistory(historyObject);
+                                                } catch (err) {
+                                                    bugsnagCaller(err, {
+                                                        metaData: {
+                                                            message: message,
+                                                            messageFaction: messageFaction,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        } else if (!dontUpdateTime) {
+                                            let factionPresentSystemObject = {};
+                                            let factionPresence = dbFaction.faction_presence;
+
+                                            factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                                                if (factionPresenceObject.system_name_lower === message.StarSystem.toLowerCase()) {
+                                                    factionPresentSystemObject = {
+                                                        system_name: message.StarSystem,
+                                                        system_name_lower: message.StarSystem.toLowerCase(),
+                                                        state: messageFaction.FactionState,
+                                                        influence: messageFaction.Influence,
+                                                        happiness: messageFaction.Happiness.toLowerCase(),
+                                                        active_states: activeStates,
+                                                        pending_states: pendingStates,
+                                                        recovering_states: recoveringStates,
+                                                        conflicts: conflicts,
+                                                        updated_at: message.timestamp
+                                                    };
+                                                    factionPresenceArray[index] = factionPresentSystemObject;
+                                                }
+                                            });
+                                            let factionObject = {
+                                                updated_at: message.timestamp,
+                                                faction_presence: factionPresence
+                                            };
+                                            if (!dbFaction.eddb_id) {
+                                                try {
+                                                    let id = await this.getFactionEDDBId(messageFaction.Name);
+                                                    factionObject.eddb_id = id;
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true,
+                                                                new: true
+                                                            })
+                                                            .exec()
+                                                    } catch (err) {
+                                                        bugsnagCaller(err, {
+                                                            metaData: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
+                                                    }
+                                                } catch (err) {
+                                                    try {
+                                                        model.findOneAndUpdate(
+                                                            {
+                                                                name: messageFaction.Name
+                                                            },
+                                                            factionObject,
+                                                            {
+                                                                upsert: true,
+                                                                runValidators: true,
+                                                                new: true
+                                                            })
+                                                            .exec();
+                                                    } catch (err) {
+                                                        bugsnagCaller(err, {
+                                                            metaData: {
+                                                                message: message,
+                                                                messageFaction: messageFaction,
+                                                                factionObject: factionObject
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            } else {
+                                                try {
+                                                    model.findOneAndUpdate(
+                                                        {
+                                                            name: messageFaction.Name
+                                                        },
+                                                        factionObject,
+                                                        {
+                                                            upsert: true,
+                                                            runValidators: true,
+                                                            new: true
+                                                        })
+                                                        .exec();
+                                                } catch (err) {
+                                                    bugsnagCaller(err, {
+                                                        metaData: {
+                                                            message: message,
+                                                            messageFaction: messageFaction,
+                                                            factionObject: factionObject
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (err) {
+                            bugsnagCaller(err, {
+                                metaData: {
+                                    message: message
+                                }
                             });
                         }
-                        return faction;
-                    }));
-
-                    // Generate the faction array that needs to be inserted
-                    let factionArray = message.Factions.map(faction => {
-                        return {
-                            name: faction.Name,
-                            name_lower: faction.Name.toLowerCase(),
-                            faction_id: factions.find(dbfaction => {
-                                return dbfaction.name_lower === faction.Name.toLowerCase();
-                            })._id
-                        };
-                    });
-
-                    // Get the list of stations that are at stake in an ongoing conflict
-                    let stationsAtStake = _.flatten(message.Conflicts.map(conflict => {
-                        return [conflict.Faction1.Stake.toLowerCase(), conflict.Faction2.Stake.toLowerCase()];
-                    }));
-                    // Get the station records of the stations that are at stake
-                    let stations = await systemModel.find(
-                        {
-                            name_lower: {
-                                $in: stationsAtStake
-                            },
-                            system_id: {
-                                $in: [system._id]
+                    } catch (err) {
+                        bugsnagCaller(err, {
+                            metaData: {
+                                message: message,
+                                factionModel: ebgsFactionsV4Model
                             }
-                        }
-                    ).lean();
-
-                    // Generate the conflicts array that needs to be inserted
-                    let conflictsArray = message.Conflicts.map(conflict => {
-                        return {
-                            type: conflict.WarType,
-                            status: conflict.Status,
-                            faction1: {
-                                faction_id: factions.find(dbFaction => {
-                                    return dbFaction.name_lower === conflict.Faction1.Name.toLowerCase();
-                                })._id,
-                                name: conflict.Faction1.Name,
-                                name_lower: conflict.Faction1.Name.toLowerCase(),
-                                station_id: _.get(stations.find(dbStation => {
-                                    return dbStation.system_id.equals(system._id) && dbStation.name_lower === conflict.Faction1.Stake.toLowerCase();
-                                }), '_id', null),    // Get the station id of the station if it exists in db else null
-                                stake: conflict.Faction1.Stake,
-                                stake_lower: conflict.Faction1.Stake.toLowerCase(),
-                                days_won: conflict.Faction1.WonDays
-                            },
-                            faction2: {
-                                faction_id: factions.find(dbFaction => {
-                                    return dbFaction.name_lower === conflict.Faction2.Name.toLowerCase();
-                                })._id,
-                                name: conflict.Faction2.Name,
-                                name_lower: conflict.Faction2.Name.toLowerCase(),
-                                station_id: _.get(stations.find(dbStation => {
-                                    return dbStation.system_id.equals(system._id) && dbStation.name_lower === conflict.Faction2.Stake.toLowerCase();
-                                }), '_id', null),
-                                stake: conflict.Faction2.Stake,
-                                stake_lower: conflict.Faction2.Stake.toLowerCase(),
-                                days_won: conflict.Faction2.WonDays
-                            }
-                        };
-                    });
-                    let returnedSystem = await this.formAndSetSystemRecord(message, system, factionArray, conflictsArray);
-                    // The above function returns undefined when an update operation hasn't happened.
-                    if (returnedSystem) {
-                        system = returnedSystem;
+                        });
                     }
-                    await this.formAndSetFactionRecord(message, factions, stations, system);
-                });
+                })();
             } catch (err) {
                 if (err.message !== 'Message is not valid') {
                     bugsnagCaller(err, {
@@ -176,50 +1528,95 @@ function Journal() {
         }
         if (message.event === "Docked" || (message.event === "Location" && message.Docked)) {
             try {
-                // Check if the message is well formed
-                await this.checkMessageDock(message, header)
-
-                // Create the array to store the station services
-                let serviceArray = message.StationServices.map(service => {
-                    return {
+                await this.checkMessage2(message, header)
+                let serviceArray = [];
+                message.StationServices.forEach(service => {
+                    let serviceObject = {
                         name: service,
                         name_lower: service.toLowerCase()
                     };
+                    serviceArray.push(serviceObject);
                 });
-                await mongoSession.withTransaction(async () => {
-                    let systemModel = await ebgsSystemsV5Model;
-                    let factionModel = await ebgsFactionsV5Model;
-                    let stationModel = await ebgsStationsV5Model;
+                try {
+                    let model = await ebgsStationsV4Model;
+                    let station = await model.findOne(
+                        {
+                            name_lower: message.StationName.toLowerCase(),
+                            system_lower: message.StarSystem.toLowerCase()
+                        }
+                    ).lean();
+                    let hasEddbId = false;
+                    let stationObject = {};
+                    let historyObject = {};
+                    let eddbIdPromise;
+                    if (station) {   // Station exists in db
+                        if (station.updated_at < new Date(message.timestamp)) {
+                            if (!station.eddb_id) {
+                                eddbIdPromise = this.getStationEDDBId(message.StationName);
+                            } else {
+                                stationObject.eddb_id = station.eddb_id;
+                                hasEddbId = true;
+                            }
+                            // Temporary fix
+                            if (!station.distance_from_star) {
+                                stationObject.distance_from_star = message.DistFromStarLS;
+                            }
+                            if (station.government !== message.StationGovernment.toLowerCase() ||
+                                station.allegiance !== message.StationAllegiance.toLowerCase() ||
+                                station.state !== message.StationFaction.FactionState.toLowerCase() ||
+                                station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
+                                !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
-                    // First, try to get the system record for this station which matches the system address
-                    let system = await systemModel.findOne({
-                        system_address: message.SystemAddress
-                    }).lean();
-                    // Try to get the faction record for the station owner
-                    let faction = await factionModel.findOne({
-                        name_lower: message.StationFaction.Name.toLowerCase()
-                    }).lean();
+                                let historyModel = await ebgsHistoryStationV4Model;
+                                let timeNow = Date.now();
+                                let stationHistory = await historyModel.find({
+                                    station_id: station._id,
+                                    updated_at: {
+                                        $lte: new Date(timeNow),
+                                        $gte: new Date(timeNow - 172800000)
+                                    }
+                                }).sort({ updated_at: -1 }).lean();
+                                if (this.checkStationWHistory(message, stationHistory, serviceArray)) {
+                                    stationObject.government = message.StationGovernment;
+                                    stationObject.allegiance = message.StationAllegiance;
+                                    stationObject.state = message.StationFaction.FactionState;
+                                    stationObject.controlling_minor_faction = message.StationFaction.Name;
+                                    stationObject.services = serviceArray;
+                                    stationObject.updated_at = message.timestamp;
 
-                    // If the system or faction for this station doesn't exist in the db yet, don't proceed
-                    if (!system || !faction) {
-                        throw new Error("System or faction for station not present: " + JSON.stringify(message));
-                    }
-
-                    // Get the station from the db which matches the market id
-                    let station = await stationModel.findOne({
-                        market_id: message.MarketID
-                    }).lean();
-
-                    if (!station) {
-                        // If no station with the market id us found, create a basic station
-                        station = await this.setStationRecord(message.MarketID, {
+                                    historyObject.updated_at = message.timestamp;
+                                    historyObject.updated_by = "EDDN";
+                                    historyObject.government = message.StationGovernment;
+                                    historyObject.allegiance = message.StationAllegiance;
+                                    historyObject.state = message.StationFaction.FactionState;
+                                    historyObject.controlling_minor_faction = message.StationFaction.Name;
+                                    historyObject.services = serviceArray;
+                                } else {
+                                    stationObject = {};
+                                }
+                            } else {
+                                stationObject.updated_at = message.timestamp;
+                            }
+                        }
+                        if (!station.market_id || !station.all_economies) {
+                            stationObject.market_id = message.MarketID;
+                            stationObject.all_economies = message.StationEconomies.map(economy => {
+                                return {
+                                    name: economy.Name,
+                                    proportion: economy.Proportion
+                                }
+                            });
+                        }
+                    } else {
+                        eddbIdPromise = this.getStationEDDBId(message.StationName);
+                        stationObject = {
                             name: message.StationName,
                             name_lower: message.StationName.toLowerCase(),
                             market_id: message.MarketID,
                             system: message.StarSystem,
                             system_lower: message.StarSystem.toLowerCase(),
-                            system_id: system._id,
                             type: message.StationType,
+                            government: message.StationGovernment,
                             economy: message.StationEconomy,
                             all_economies: message.StationEconomies.map(economy => {
                                 return {
@@ -227,11 +1624,117 @@ function Journal() {
                                     proportion: economy.Proportion
                                 }
                             }),
-                            distance_from_star: message.DistFromStarLS
-                        });
+                            allegiance: message.StationAllegiance,
+                            state: message.StationFaction.FactionState,
+                            distance_from_star: message.DistFromStarLS,
+                            controlling_minor_faction: message.StationFaction.Name,
+                            services: serviceArray,
+                            updated_at: message.timestamp,
+                        };
+
+                        historyObject = {
+                            updated_at: message.timestamp,
+                            updated_by: "EDDN",
+                            government: message.StationGovernment,
+                            allegiance: message.StationAllegiance,
+                            state: message.StationFaction.FactionState,
+                            controlling_minor_faction: message.StationFaction.Name,
+                            services: serviceArray
+                        };
                     }
-                    await this.formAndSetStationRecord(message, station, faction, serviceArray);
-                });
+                    if (!_.isEmpty(stationObject)) {
+                        if (hasEddbId) {
+                            try {
+                                let stationReturn = await model.findOneAndUpdate(
+                                    {
+                                        name_lower: message.StationName.toLowerCase(),
+                                        system_lower: message.StarSystem.toLowerCase()
+                                    },
+                                    stationObject,
+                                    {
+                                        upsert: true,
+                                        runValidators: true,
+                                        new: true
+                                    });
+                                if (!_.isEmpty(historyObject)) {
+                                    historyObject.station_id = stationReturn._id;
+                                    historyObject.station_name_lower = stationReturn.name_lower;
+                                    this.setStationHistory(historyObject);
+                                }
+                            } catch (err) {
+                                bugsnagCaller(err, {
+                                    metaData: {
+                                        message: message,
+                                        stationObject: stationObject
+                                    }
+                                });
+                            }
+                        } else {
+                            try {
+                                let id = await eddbIdPromise;
+                                stationObject.eddb_id = id;
+                                try {
+                                    let stationReturn = await model.findOneAndUpdate(
+                                        {
+                                            name_lower: message.StationName.toLowerCase(),
+                                            system_lower: message.StarSystem.toLowerCase()
+                                        },
+                                        stationObject,
+                                        {
+                                            upsert: true,
+                                            runValidators: true,
+                                            new: true
+                                        });
+                                    if (!_.isEmpty(historyObject)) {
+                                        historyObject.station_id = stationReturn._id;
+                                        historyObject.station_name_lower = stationReturn.name_lower;
+                                        this.setStationHistory(historyObject);
+                                    }
+                                } catch (err) {
+                                    bugsnagCaller(err, {
+                                        metaData: {
+                                            message: message,
+                                            stationObject: stationObject
+                                        }
+                                    });
+                                }
+                            } catch (err) {
+                                try {
+                                    let stationReturn = await model.findOneAndUpdate(
+                                        {
+                                            name_lower: message.StationName.toLowerCase(),
+                                            system_lower: message.StarSystem.toLowerCase()
+                                        },
+                                        stationObject,
+                                        {
+                                            upsert: true,
+                                            runValidators: true,
+                                            new: true
+                                        });
+                                    if (!_.isEmpty(historyObject)) {
+                                        historyObject.station_id = stationReturn._id;
+                                        historyObject.station_name_lower = stationReturn.name_lower;
+                                        this.setStationHistory(historyObject);
+                                    }
+                                } catch (err) {
+                                    bugsnagCaller(err, {
+                                        metaData: {
+                                            message: message,
+                                            stationObject: stationObject
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (err) {
+                    bugsnagCaller(err, {
+                        metaData: {
+                            message: message,
+                            stationModel: ebgsStationsV4Model
+                        }
+                    });
+                }
             } catch (err) {
                 if (err.message !== 'Message is not valid') {
                     bugsnagCaller(err, {
@@ -242,427 +1745,40 @@ function Journal() {
                 }
             }
         }
-        mongoSession.endSession();
     }
 
-    this.formAndSetSystemRecord = async (message, system, factionArray, conflictsArray) => {
-        // Check if all the parameters are valid
-        if (message && system && factionArray.length > 0 && conflictsArray) {
-            // Get the faction id of the controlling faction
-            let controllingFactionId = _.get(factionArray.find(currentFaction => {
-                return currentFaction.name_lower === message.SystemFaction.Name.toLowerCase();
-            }), 'faction_id', null);
-
-            // Sets the system_address and secondary economy for systems that don't have them yet
-            if (!system.system_address || !system.secondary_economy) {
-                system.system_address = message.SystemAddress;
-                system.secondary_economy = message.SystemSecondEconomy;
-            }   // Todo: Remove this once issue #177 is resolved
-
-            // Disregard old messages but accept basic records created without an updated time
-            if (!system.updated_at || system.updated_at < new Date(message.timestamp)) {
-                // First handle aliasing of system name changes
-                // Set an empty array for the system aliases if none exists
-                if (!system.name_aliases) {
-                    system.name_aliases = [];
-                }
-
-                if (system.system_address === message.SystemAddress.toString() &&
-                    system.x === this.correctCoordinates(message.StarPos[0]) &&
-                    system.y === this.correctCoordinates(message.StarPos[1]) &&
-                    system.z === this.correctCoordinates(message.StarPos[2]) &&
-                    system.name !== message.StarSystem) {
-                    // If the incoming system has the same address and location but the name is different
-                    // push the current name into the aliases list
-                    if (!system.name_aliases.find(alias => alias.name === system.name && alias.name_lower === system.name_lower)) {
-                        // Check if the alias already exists
-                        // Solves an edge case where cached data of the name before renaming comes in
-                        // Also can handle if a system is renamed back to its original name
-                        // Essentially it keeps the array unique
-                        system.name_aliases.push({
-                            name: system.name,
-                            name_lower: system.name_lower
-                        });
-                    }
-                    system.name = message.StarSystem;
-                    system.name_lower = message.StarSystem.toLowerCase();
-                }
-
-                let historyObject = {};
-                if (!system.eddb_id) {
-                    // Fetch the EDDB ID if not present already
-                    try {
-                        system.eddb_id = await this.getSystemEDDBIdByAddress(message.SystemAddress);
-                    } catch (err) {
-                        // Set the eddb id to null if any error occurs while fetching
-                        system.eddb_id = null;
-                    }
-                }
-                // Check if the incoming details are the same as existing main record details
-                if (system.government !== message.SystemGovernment.toLowerCase() ||
-                    system.allegiance !== message.SystemAllegiance.toLowerCase() ||
-                    system.state !== message.SystemFaction.FactionState.toLowerCase() ||
-                    system.security !== message.SystemSecurity.toLowerCase() ||
-                    system.population !== message.Population ||
-                    system.controlling_minor_faction !== message.SystemFaction.Name.toLowerCase() ||
-                    !system.conflicts ||
-                    !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
-                    !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
-                    let historyModel = await ebgsHistorySystemV5Model;
-                    let timeNow = Date.now();
-                    // Get all history records which are less than 48 hours old
-                    let systemHistory = await historyModel.find({
-                        system_id: system._id,
-                        updated_at: {
-                            $lte: new Date(timeNow),
-                            $gte: new Date(timeNow - 172800000)
-                        }
-                    }).sort({ updated_at: -1 }).lean();
-                    // Check if the incoming details is the same as any record present in the last 2 days
-                    // This prevents caching issues
-                    if (this.checkSystemWHistory(message, systemHistory, factionArray, conflictsArray)) {
-                        system.government = message.SystemGovernment;
-                        system.allegiance = message.SystemAllegiance;
-                        system.state = message.SystemFaction.FactionState;
-                        system.security = message.SystemSecurity;
-                        system.population = message.Population;
-                        system.controlling_minor_faction = message.SystemFaction.Name;
-                        system.controlling_minor_faction_id = controllingFactionId;
-                        system.factions = factionArray;
-                        system.conflicts = conflictsArray;
-                        system.updated_at = message.timestamp;
-
-                        historyObject = {
-                            updated_at: message.timestamp,
-                            updated_by: "EDDN",
-                            government: message.SystemGovernment,
-                            allegiance: message.SystemAllegiance,
-                            state: message.SystemFaction.FactionState,
-                            security: message.SystemSecurity,
-                            population: message.Population,
-                            controlling_minor_faction: message.SystemFaction.Name,
-                            controlling_minor_faction_id: controllingFactionId,
-                            factions: factionArray,
-                            conflicts: conflictsArray,
-                            system_id: system._id,
-                            system_name_lower: system.name_lower
-                        };
-                    }
-                } else {
-                    // Just update the time if the incoming data is the same as the last recorded data
-                    system.updated_at = message.timestamp;
-                }
-
-                let systemRecord = await this.setSystemRecord(message.SystemAddress, system);
-                if (!_.isEmpty(historyObject)) {
-                    // Update the history only when the object is not empty
-                    await this.setSystemHistory(historyObject);
-                }
-                return systemRecord;
+    // Used in V3
+    this.checkMessage = message => {
+        if (
+            message.StarSystem &&
+            message.SystemFaction &&
+            message.timestamp &&
+            message.SystemSecurity &&
+            message.SystemAllegiance &&
+            message.SystemEconomy &&
+            message.StarPos &&
+            message.Factions &&
+            message.event &&
+            message.SystemGovernment &&
+            message.Population
+        ) {
+            if (!message.FactionState) {
+                message.FactionState = "None";
+            }
+            let messageTimestamp = new Date(message.timestamp);
+            let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
+            if (messageTimestamp < oldestTimestamp) {
+                return false;
+            } else {
+                return true;
             }
         } else {
-            throw new Error("Invalid parameters for formAndSetSystemRecord: " + JSON.stringify({
-                message, system, factionArray, conflictsArray
-            }));
-        }
-    }
-
-    this.formAndSetFactionRecord = async (message, factions, stations, system) => {
-        // Check if all the parameters are valid
-        if (message && system && factions.length > 0 && stations) {
-            let model = await ebgsFactionsV5Model;
-            let messageFactionsLower = message.Factions.map(faction => {
-                return faction.Name.toLowerCase();
-            });
-
-            // Get all factions from the db which has the current system as a presence system
-            let allFactionsPresentInSystemDB = await model.find(
-                {
-                    faction_presence: {
-                        $elemMatch: { system_id: system._id }
-                    }
-                }
-            ).lean();
-
-            // Get the difference between the factions present initially vs in the message
-            // These factions needs to be removed
-            let toRemove = _.differenceWith(allFactionsPresentInSystemDB, factions, (existingInDB, fetchedByMessages) => {
-                return existingInDB.name_lower === fetchedByMessages.name_lower;
-            });
-
-            // To remove are those factions which are not present in this system anymore
-            // Such factions need to be updated too
-            // Todo: This doesnt take into consideration old and cached records
-            for (let factionObject of toRemove) {
-                // Filtering out the current system from the faction presence list of this faction
-                factionObject.faction_presence = factionObject.faction_presence.filter(system => system.system_name_lower !== message.StarSystem.toLowerCase());
-                factionObject.updated_at = message.timestamp;
-
-                if (!factionObject.eddb_id) {
-                    try {
-                        factionObject.eddb_id = await this.getFactionEDDBId(factionObject.name);
-                    } catch (err) {
-                        // Set the eddb id to null if any error occurs while fetching
-                        factionObject.eddb_id = null;
-                    }
-                }
-                // Do the actual db operations
-                await this.setFactionRecord(factionObject.name_lower, factionObject)
-            }
-
-            // All factions are already created, either earlier or in their basic form above so we need to update them
-            for (let factionObject of factions) {
-                // The faction_presence can be null if created as basic
-                if (!factionObject.faction_presence) {
-                    factionObject.faction_presence = [];
-                }
-                // Get the last updated time of this presence record
-                let factionPresenceUpdatedAt = _.get(factionObject.faction_presence.find(presence => {
-                    return presence.system_id.equals(system._id);
-                }), 'updated_at', null);
-
-                let messageFaction = message.Factions.find(faction => {
-                    return faction.Name.toLowerCase() === factionObject.name_lower;
-                });
-
-                // If the faction presence doesn't have the updated_at record, get from the factionObject itself
-                if (!factionPresenceUpdatedAt) {
-                    factionPresenceUpdatedAt = factionObject.updated_at;
-                }
-                if (!factionPresenceUpdatedAt || factionPresenceUpdatedAt < new Date(message.timestamp)) {
-                    // Ignore old records but accept if the updated at is null since it might be so for a basic record
-                    // Decide whether to update the faction record or not
-                    // Also decide whether to update the main time or not
-                    let getDoFactionUpdate = await this.doFactionUpdate(messageFaction, factionObject, message, factions, stations, system);
-                    let activeStates = getDoFactionUpdate.activeStates;
-                    let pendingStates = getDoFactionUpdate.pendingStates;
-                    let recoveringStates = getDoFactionUpdate.recoveringStates;
-                    let conflicts = getDoFactionUpdate.conflicts;
-                    let doUpdate = getDoFactionUpdate.doUpdate;
-                    let doUpdateTime = getDoFactionUpdate.doUpdateTime;
-                    let factionPresence = [];
-                    if (doUpdate || doUpdateTime) {
-                        // If doUpdateTime is set to false set the updated at time
-                        let factionPresentSystemObject = {};
-                        factionPresence = factionObject.faction_presence;
-
-                        // Faction presence can be null when a basic record is created
-                        if (!factionPresence) {
-                            factionPresence = [];
-                        }
-
-                        factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
-                            if (factionPresenceObject.system_id.equals(system._id)) {
-                                // Iterates over all existing faction presences to create a new faction presence object for the current faction
-                                // This new object is then reapplied over the existing array element to update it
-                                factionPresentSystemObject = {
-                                    system_name: message.StarSystem,
-                                    system_name_lower: message.StarSystem.toLowerCase(),
-                                    system_id: system._id,
-                                    state: messageFaction.FactionState,
-                                    influence: messageFaction.Influence,
-                                    happiness: messageFaction.Happiness.toLowerCase(),
-                                    active_states: activeStates,
-                                    pending_states: pendingStates,
-                                    recovering_states: recoveringStates,
-                                    conflicts: conflicts,
-                                    updated_at: message.timestamp
-                                };
-                                factionPresenceArray[index] = factionPresentSystemObject;
-                            }
-                        });
-
-                        // Check if a new faction presence object was initialised or not
-                        if (_.isEmpty(factionPresentSystemObject)) {
-                            // This system is not present as a presence system in db.
-                            // Make a new array element
-                            factionPresence.push({
-                                system_name: message.StarSystem,
-                                system_name_lower: message.StarSystem.toLowerCase(),
-                                system_id: system._id,
-                                state: messageFaction.FactionState,
-                                influence: messageFaction.Influence,
-                                happiness: messageFaction.Happiness.toLowerCase(),
-                                active_states: activeStates,
-                                pending_states: pendingStates,
-                                recovering_states: recoveringStates,
-                                conflicts: conflicts,
-                                updated_at: message.timestamp
-                            });
-                        }
-
-                        // Update the faction presence and time
-                        factionObject.updated_at = message.timestamp;
-                        factionObject.faction_presence = factionPresence;
-                        // Get and set the eddb id if not present
-                        if (!factionObject.eddb_id) {
-                            try {
-                                factionObject.eddb_id = await this.getFactionEDDBId(messageFaction.Name);
-                            } catch (err) {
-                                factionObject.eddb_id = null;
-                            }
-                        }
-                        // Do the actual db operation
-                        await this.setFactionRecord(factionObject.name_lower, factionObject);
-                    }
-                    if (doUpdate) {
-                        // Create the faction history element for storing current systems
-                        let systemHistory = factionPresence.map(faction => {
-                            return {
-                                system_id: system._id,
-                                name: faction.system_name,
-                                name_lower: faction.system_name_lower
-                            };
-                        });
-
-                        let historyObject = {
-                            updated_at: message.timestamp,
-                            updated_by: "EDDN",
-                            system: message.StarSystem,
-                            system_lower: message.StarSystem.toLowerCase(),
-                            system_id: system._id,
-                            faction_id: factionObject._id,
-                            faction_name: factionObject.name,
-                            faction_name_lower: factionObject.name_lower,
-                            state: messageFaction.FactionState,
-                            influence: messageFaction.Influence,
-                            happiness: messageFaction.Happiness.toLowerCase(),
-                            active_states: activeStates,
-                            pending_states: pendingStates,
-                            recovering_states: recoveringStates,
-                            conflicts: conflicts,
-                            systems: systemHistory
-                        }
-
-                        // Do the db operation for history
-                        await this.setFactionHistory(historyObject);
-                    }
-                }
-            }
-        } else {
-            throw new Error("Invalid parameters for formAndSetFactionRecord: " + JSON.stringify({
-                message, factions, stations, system
-            }));
-        }
-    }
-
-    this.formAndSetStationRecord = async (message, station, faction, serviceArray) => {
-        // Check if all the parameters are valid
-        if (message && station && faction && serviceArray) {
-            // Sets the market_id and all_economies for stations that don't have them yet
-            if (!station.market_id || !station.all_economies) {
-                station.market_id = message.MarketID;
-                station.all_economies = message.StationEconomies.map(economy => {
-                    return {
-                        name: economy.Name,
-                        proportion: economy.Proportion
-                    }
-                });
-            }   // Todo: Remove this once issue #177 is resolved
-
-            // Disregard old messages but accept basic records created without an updated time
-            if (!station.updated_at || station.updated_at < new Date(message.timestamp)) {
-                // First handle aliasing of system name changes
-                // Set an empty array for the system aliases if none exists
-                if (!station.name_aliases) {
-                    station.name_aliases = [];
-                }
-
-                if (station.market_id === message.MarketID &&
-                    station.system_lower === message.StarSystem.toLowerCase() &&
-                    station.name !== message.StationName) {
-                    // If the incoming station has the same market id and system but the name is different
-                    // push the current name into the aliases list
-                    if (!station.name_aliases.find(alias => alias.name === station.name && alias.name_lower === station.name_lower)) {
-                        // Check if the alias already exists
-                        // Solves an edge case where cached data of the name before renaming comes in
-                        // Also can handle if a station is renamed back to its original name
-                        // Essentially it keeps the array unique
-                        station.name_aliases.push({
-                            name: station.name,
-                            name_lower: station.name_lower
-                        });
-                    }
-                    station.name = message.StationName;
-                    station.name_lower = message.StationName.toLowerCase();
-                }
-
-                let historyObject = {};
-                if (!station.eddb_id) {
-                    // Fetch the EDDB ID if not present already
-                    try {
-                        station.eddb_id = await this.getStationEDDBIdByMarketId(message.MarketID);
-                    } catch (err) {
-                        // Set the eddb id to null if any error occurs while fetching
-                        station.eddb_id = null;
-                    }
-                }
-
-                // Temporary fix
-                if (!station.distance_from_star) {
-                    station.distance_from_star = message.DistFromStarLS;
-                }
-                // Check if the incoming details are the same as existing main record details
-                if (station.government !== message.StationGovernment.toLowerCase() ||
-                    station.allegiance !== message.StationAllegiance.toLowerCase() ||
-                    station.state !== message.StationFaction.FactionState.toLowerCase() ||
-                    station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
-                    !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
-
-                    let historyModel = await ebgsHistoryStationV5Model;
-                    let timeNow = Date.now();
-                    // Get all history records which are less than 48 hours old
-                    let stationHistory = await historyModel.find({
-                        station_id: station._id,
-                        updated_at: {
-                            $lte: new Date(timeNow),
-                            $gte: new Date(timeNow - 172800000)
-                        }
-                    }).sort({ updated_at: -1 }).lean();
-                    // Check if the incoming details is the same as any record present in the last 2 days
-                    // This prevents caching issues
-                    if (this.checkStationWHistory(message, stationHistory, serviceArray)) {
-                        station.government = message.StationGovernment;
-                        station.allegiance = message.StationAllegiance;
-                        station.state = message.StationFaction.FactionState;
-                        station.controlling_minor_faction = message.StationFaction.Name;
-                        station.controlling_minor_faction_id = faction._id;
-                        station.services = serviceArray;
-                        station.updated_at = message.timestamp;
-
-                        historyObject = {
-                            updated_at: message.timestamp,
-                            updated_by: "EDDN",
-                            government: message.StationGovernment,
-                            allegiance: message.StationAllegiance,
-                            state: message.StationFaction.FactionState,
-                            controlling_minor_faction: message.StationFaction.Name,
-                            controlling_minor_faction_id: faction._id,
-                            services: serviceArray,
-                            station_id: station._id,
-                            station_name_lower: station.name_lower
-                        };
-                    }
-                } else {
-                    // Just update the time if the incoming data is the same as the last recorded data
-                    station.updated_at = message.timestamp;
-                }
-
-                await this.setStationRecord(message.MarketID, station);
-                if (!_.isEmpty(historyObject)) {
-                    // Update the history only when the object is not empty
-                    await this.setStationHistory(historyObject);
-                }
-            }
-        } else {
-            throw new Error("Invalid parameters for formAndSetStationRecord: " + JSON.stringify({
-                message, station, faction, serviceArray
-            }));
+            return false;
         }
     }
 
     // Used in V4 FSDJump
-    this.checkMessageJump = async (message, header) => {
+    this.checkMessage1 = async (message, header) => {
         if (
             message.StarSystem &&
             message.SystemFaction &&
@@ -719,7 +1835,7 @@ function Journal() {
     }
 
     // Used in V4 Docked
-    this.checkMessageDock = async (message, header) => {
+    this.checkMessage2 = async (message, header) => {
         if (
             message.StarSystem &&
             message.MarketID &&
@@ -837,129 +1953,109 @@ function Journal() {
     }
 
     // Used in V4
-    this.doFactionUpdate = async (messageFaction, dbFaction, message, factions, stations, system) => {
-        // Ignore the record if there is no happiness field or if the happiness string is empty
+    this.doFactionUpdate = async (messageFaction, dbFaction, message) => {
         if (!messageFaction.Happiness || messageFaction.Happiness.length === 0) {
             return { pendingStates: [], recoveringStates: [], doUpdate: false, dontUpdateTime: true };
         }
-        // Form the states arrays
         let activeStates = [];
         if (messageFaction.ActiveStates) {
-            activeStates = messageFaction.ActiveStates.map(activeState => {
-                return {
+            messageFaction.ActiveStates.forEach(activeState => {
+                let activeStateObject = {
                     state: activeState.State.toLowerCase()
                 };
+                activeStates.push(activeStateObject);
             });
         }
         let pendingStates = [];
         if (messageFaction.PendingStates) {
-            pendingStates = messageFaction.PendingStates.map(pendingState => {
-                return {
+            messageFaction.PendingStates.forEach(pendingState => {
+                let pendingStateObject = {
                     state: pendingState.State.toLowerCase(),
                     trend: pendingState.Trend
                 };
+                pendingStates.push(pendingStateObject);
             });
         }
         let recoveringStates = [];
         if (messageFaction.RecoveringStates) {
-            recoveringStates = messageFaction.RecoveringStates.map(recoveringState => {
-                return {
+            messageFaction.RecoveringStates.forEach(recoveringState => {
+                let recoveringStateObject = {
                     state: recoveringState.State.toLowerCase(),
                     trend: recoveringState.Trend
                 };
+                recoveringStates.push(recoveringStateObject);
             });
         }
         let factionName = dbFaction.name_lower;
-        // Form the conflicts array
         let conflicts = [];
         if (message.Conflicts) {
-            // First filter out the conflicts in this system that doesn't have this faction as a participant
-            conflicts = message.Conflicts.filter(conflict => {
-                return conflict.Faction1.Name.toLowerCase() === factionName ||
-                    conflict.Faction2.Name.toLowerCase() === factionName
-            }).map(conflict => {
-                let opponent;
-                let stake;
-                let daysWon;
-                if (conflict.Faction1.Name.toLowerCase() === factionName) {
-                    opponent = conflict.Faction2.Name;
-                    stake = conflict.Faction1.Stake;
-                    daysWon = +conflict.Faction1.WonDays;
-                } else {
-                    opponent = conflict.Faction1.Name;
-                    stake = conflict.Faction2.Stake;
-                    daysWon = +conflict.Faction2.WonDays;
+            message.Conflicts.forEach(conflict => {
+                if (conflict.Faction1.Name.toLowerCase() === factionName ||
+                    conflict.Faction2.Name.toLowerCase() === factionName) {
+                    let opponent;
+                    let stake;
+                    let daysWon;
+                    if (conflict.Faction1.Name.toLowerCase() === factionName) {
+                        opponent = conflict.Faction2.Name;
+                        stake = conflict.Faction1.Stake;
+                        daysWon = +conflict.Faction1.WonDays;
+                    } else {
+                        opponent = conflict.Faction1.Name;
+                        stake = conflict.Faction2.Stake;
+                        daysWon = +conflict.Faction2.WonDays;
+                    }
+                    let conflictObject = {
+                        type: conflict.WarType,
+                        status: conflict.Status,
+                        opponent_name: opponent,
+                        opponent_name_lower: opponent.toLowerCase(),
+                        stake: stake,
+                        stake_lower: stake.toLowerCase(),
+                        days_won: daysWon
+                    };
+                    conflicts.push(conflictObject);
                 }
-                let opponentId = factions.find(faction => faction.name_lower === opponent.toLowerCase())._id;
-                let station = stations.find(station => station.name_lower === statek.toLowerCase());
-                let stationId = null;
-                // An explicit check is needed since the station at stake might not be in the database
-                // This could be because nobody has sent sent data yet or it is a non dockable base
-                if (station) {
-                    stationId = station._id;
-                }
-                return {
-                    type: conflict.WarType,
-                    status: conflict.Status,
-                    opponent_name: opponent,
-                    opponent_name_lower: opponent.toLowerCase(),
-                    opponent_faction_id: opponentId,
-                    station_id: stationId,
-                    stake: stake,
-                    stake_lower: stake.toLowerCase(),
-                    days_won: daysWon
-                };
             });
         }
 
+
         // Check if the incoming message has any different faction detail
         let doUpdate = true;
-        let doUpdateTime = true;
-        // If the faction record itself has a newer time (and it exists - so not a basic record)
-        // that means this record was updates by a newer message from some other system
-        // So make sure not to update the main record time
-        if (dbFaction.updated_at && dbFaction.updated_at > new Date(message.timestamp)) {
-            doUpdateTime = false;
+        let dontUpdateTime = false;
+        if (dbFaction.updated_at > new Date(message.timestamp)) {
+            dontUpdateTime = true;
         }
-
-        // Get the faction presence element that needs to be updated
-        let factionPresenceElement = dbFaction.faction_presence.find(presence => {
-            return presence.system_name_lower === message.StarSystem.toLowerCase();
-        });
-
-        if (factionPresenceElement &&
-            factionPresenceElement.state === messageFaction.FactionState.toLowerCase() &&
-            factionPresenceElement.influence === messageFaction.Influence &&
-            factionPresenceElement.happiness === messageFaction.Happiness.toLowerCase() &&
-            factionPresenceElement.conflicts &&
-            _.isEqual(_.sortBy(factionPresenceElement.conflicts, ['opponent_name_lower']), _.sortBy(conflicts, ['opponent_name_lower'])) &&
-            _.isEqual(_.sortBy(factionPresenceElement.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
-            _.isEqual(_.sortBy(factionPresenceElement.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
-            _.isEqual(_.sortBy(factionPresenceElement.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
-            // The presence data in the master record is the same as the incoming message so dont update
-            doUpdate = false;
-        } else {
-            let historyModel = await ebgsHistoryFactionV5Model;
-            let timeNow = Date.now();
-            let factionHistory = await historyModel.find({
-                faction_id: dbFaction._id,
-                system_id: system._id,
-                updated_at: {
-                    $lte: new Date(timeNow),
-                    $gte: new Date(timeNow - 172800000) // Get the faction history for the last 48 hours
+        for (let faction of dbFaction.faction_presence) {
+            if (faction.system_name_lower === message.StarSystem.toLowerCase()) {
+                if (faction.state === messageFaction.FactionState.toLowerCase() &&
+                    faction.influence === messageFaction.Influence &&
+                    faction.happiness === messageFaction.Happiness.toLowerCase() &&
+                    faction.conflicts &&
+                    _.isEqual(_.sortBy(faction.conflicts, ['opponent_name_lower']), _.sortBy(conflicts, ['opponent_name_lower'])) &&
+                    _.isEqual(_.sortBy(faction.active_states, ['state']), _.sortBy(activeStates, ['state'])) &&
+                    _.isEqual(_.sortBy(faction.pending_states, ['state']), _.sortBy(pendingStates, ['state'])) &&
+                    _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
+                    doUpdate = false;
+                } else {
+                    let historyModel = await ebgsHistoryFactionV4Model;
+                    let timeNow = Date.now();
+                    let factionHistory = await historyModel.find({
+                        faction_id: dbFaction._id,
+                        system_lower: faction.system_name_lower,
+                        updated_at: {
+                            $lte: new Date(timeNow),
+                            $gte: new Date(timeNow - 172800000)
+                        }
+                    }).sort({ updated_at: -1 }).lean();
+                    if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates, conflicts)) {
+                        doUpdate = false;
+                        dontUpdateTime = true;
+                    }
                 }
-            }).sort({ updated_at: -1 }).lean();
-            // Check if the incoming details is the same as any record present in the last 2 days
-            // This prevents caching issues
-            if (!this.checkFactionWHistory(message, messageFaction, factionHistory, activeStates, pendingStates, recoveringStates, conflicts)) {
-                doUpdate = false;
-                doUpdateTime = false;
             }
         }
 
-        // doUpdate indicate if the new record should be added into the history and the master record data updated
-        // doUpdateTime indicate if the master record's update time should be updated
-        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, doUpdateTime }
+        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, dontUpdateTime }
     }
 
     // Used in V3 and V4
@@ -969,12 +2065,12 @@ function Journal() {
         return intValue / 32;
     }
 
-    // Used in V5
-    this.getSystemEDDBIdByAddress = async systemAddress => {
+    // Used in V3 and V4
+    this.getSystemEDDBId = async name => {
         let requestOptions = {
             url: "https://eddbapi.kodeblox.com/api/v4/populatedsystems",
             qs: {
-                systemaddress: systemAddress
+                name: name.toLowerCase()
             },
             json: true,
             resolveWithFullResponse: true
@@ -992,7 +2088,7 @@ function Journal() {
         }
     }
 
-    // Used in V3 and V4 and v5
+    // Used in V3 and V4
     this.getFactionEDDBId = async name => {
         let requestOptions = {
             url: "https://eddbapi.kodeblox.com/api/v4/factions",
@@ -1015,12 +2111,12 @@ function Journal() {
         }
     }
 
-    // Used in V5
-    this.getStationEDDBIdByMarketId = async marketId => {
+    // Used in V4
+    this.getStationEDDBId = async name => {
         let requestOptions = {
             url: "https://eddbapi.kodeblox.com/api/v4/stations",
             qs: {
-                marketid: marketId
+                name: name.toLowerCase()
             },
             json: true,
             resolveWithFullResponse: true
@@ -1038,57 +2134,9 @@ function Journal() {
         }
     }
 
-    // Used in V5
-    this.setSystemRecord = async (systemAddress, systemObject) => {
-        let model = await ebgsSystemsV5Model;
-        return await model.findOneAndUpdate(
-            {
-                system_address: systemAddress
-            },
-            systemObject,
-            {
-                upsert: true,
-                runValidators: true,
-                new: true
-            }
-        ).lean();
-    }
-
-    // Used in V5
-    this.setFactionRecord = async (nameLower, factionObject) => {
-        let model = await ebgsFactionsV5Model;
-        return await model.findOneAndUpdate(
-            {
-                name_lower: nameLower
-            },
-            factionObject,
-            {
-                upsert: true,
-                runValidators: true,
-                new: true
-            }
-        ).lean();
-    }
-
-    // Used in V5
-    this.setStationRecord = async (marketId, stationObject) => {
-        let model = await ebgsStationsV5Model;
-        return await model.findOneAndUpdate(
-            {
-                market_id: marketId
-            },
-            stationObject,
-            {
-                upsert: true,
-                runValidators: true,
-                new: true
-            }
-        ).lean();
-    }
-
     // Used in V4
     this.setSystemHistory = async historyObject => {
-        let model = await ebgsHistorySystemV5Model;
+        let model = await ebgsHistorySystemV4Model;
         let document = new model(historyObject);
         await document.save();
         return;
@@ -1096,7 +2144,7 @@ function Journal() {
 
     // Used in V4
     this.setFactionHistory = async historyObject => {
-        let model = await ebgsHistoryFactionV5Model;
+        let model = await ebgsHistoryFactionV4Model;
         let document = new model(historyObject);
         await document.save();
         return;
@@ -1104,7 +2152,7 @@ function Journal() {
 
     // Used in V4
     this.setStationHistory = async historyObject => {
-        let model = await ebgsHistoryStationV5Model;
+        let model = await ebgsHistoryStationV4Model;
         let document = new model(historyObject);
         await document.save();
         return;

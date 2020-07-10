@@ -24,9 +24,9 @@ let router = express.Router();
 
 /**
    * @swagger
-   * /systems:
+   * /stations:
    *   get:
-   *     description: Get the Systems
+   *     description: Get the Stations
    *     produces:
    *       - application/json
    *     parameters:
@@ -35,11 +35,23 @@ let router = express.Router();
    *         in: query
    *         type: string
    *       - name: eddbId
-   *         description: EDDB ID of the system.
+   *         description: EDDB ID of the station.
    *         in: query
    *         type: string
    *       - name: name
-   *         description: System name.
+   *         description: Station name.
+   *         in: query
+   *         type: string
+   *       - name: type
+   *         description: Station type.
+   *         in: query
+   *         type: string
+   *       - name: system
+   *         description: System name the station is in.
+   *         in: query
+   *         type: string
+   *       - name: economy
+   *         description: Station economy.
    *         in: query
    *         type: string
    *       - name: allegiance
@@ -51,27 +63,19 @@ let router = express.Router();
    *         in: query
    *         type: string
    *       - name: state
-   *         description: State the system is in.
-   *         in: query
-   *         type: string
-   *       - name: primaryeconomy
-   *         description: The primary economy of the system.
-   *         in: query
-   *         type: string
-   *       - name: security
-   *         description: The name of the security status in the system.
+   *         description: State the station is in.
    *         in: query
    *         type: string
    *       - name: beginswith
-   *         description: Starting characters of the system.
+   *         description: Starting characters of the station.
    *         in: query
    *         type: string
    *       - name: timemin
-   *         description: Minimum time for the system history in miliseconds.
+   *         description: Minimum time for the station history in miliseconds.
    *         in: query
    *         type: string
    *       - name: timemax
-   *         description: Maximum time for the system history in miliseconds.
+   *         description: Maximum time for the station history in miliseconds.
    *         in: query
    *         type: string
    *       - name: count
@@ -84,11 +88,11 @@ let router = express.Router();
    *         type: integer
    *     responses:
    *       200:
-   *         description: An array of systems with historical data
+   *         description: An array of stations with historical data
    *         schema:
    *           type: array
    *           items:
-   *             $ref: '#/definitions/EBGSSystemsPageV4'
+   *             $ref: '#/definitions/EBGSStationsPageV4'
    */
 router.get('/', cors(), async (req, res, next) => {
     try {
@@ -108,6 +112,15 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.name) {
             query.name_lower = req.query.name.toLowerCase();
         }
+        if (req.query.type) {
+            query.type = req.query.type.toLowerCase();
+        }
+        if (req.query.system) {
+            query.system_lower = req.query.system.toLowerCase();
+        }
+        if (req.query.economy) {
+            query.economy = req.query.economy.toLowerCase();
+        }
         if (req.query.allegiance) {
             query.allegiance = req.query.allegiance.toLowerCase();
         }
@@ -116,12 +129,6 @@ router.get('/', cors(), async (req, res, next) => {
         }
         if (req.query.state) {
             query.state = req.query.state.toLowerCase();
-        }
-        if (req.query.primaryeconomy) {
-            query.primary_economy = req.query.primaryeconomy.toLowerCase();
-        }
-        if (req.query.security) {
-            query.security = req.query.security.toLowerCase();
         }
         if (req.query.beginsWith) {
             query.name_lower = {
@@ -151,10 +158,10 @@ router.get('/', cors(), async (req, res, next) => {
             count = +req.query.count
         }
         if (history) {
-            let result = await getSystems(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
+            let result = await getStations(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
             res.status(200).json(result);
         } else {
-            let result = await getSystems(query, {}, page);
+            let result = await getStations(query, {}, page);
             res.status(200).json(result);
         }
     } catch (err) {
@@ -162,7 +169,7 @@ router.get('/', cors(), async (req, res, next) => {
     }
 });
 
-async function getSystems(query, history, page) {
+async function getStations(query, history, page) {
     let paginateOptions = {
         select: { history: 0 },
         lean: true,
@@ -173,23 +180,23 @@ async function getSystems(query, history, page) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let systemModel = await require('../../../models/ebgs_systems_v4');
-    let systemResult = await systemModel.paginate(query, paginateOptions);
+    let stationModel = await require('../../../models/ebgs_stations_v4');
+    let stationResult = await stationModel.paginate(query, paginateOptions);
     if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_system_v4');
+        let historyModel = await require('../../../models/ebgs_history_station_v4');
         let historyPromises = [];
-        systemResult.docs.forEach(system => {
+        stationResult.docs.forEach(station => {
             historyPromises.push((async () => {
                 let record;
                 if (history.count) {
                     record = await historyModel.find({
-                        system_id: system._id
+                        station_id: station._id
                     }).sort({
                         updated_at: -1
                     }).limit(history.count).lean();
                 } else {
                     record = await historyModel.find({
-                        system_id: system._id,
+                        station_id: station._id,
                         updated_at: {
                             $lte: history.lesser,
                             $gte: history.greater
@@ -197,16 +204,16 @@ async function getSystems(query, history, page) {
                     }).lean();
                 }
                 record.forEach(history => {
-                    delete history.system_id;
-                    delete history.system_name_lower;
+                    delete history.station_id;
+                    delete history.station_name_lower;
                 });
-                system.history = record;
+                station.history = record;
                 return record;
             })());
         });
         await Promise.all(historyPromises);
     }
-    return systemResult;
+    return stationResult;
 }
 
 module.exports = router;
