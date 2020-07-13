@@ -74,6 +74,10 @@ let aggregateOptions = {
  *         description: The faction present in the system.
  *         in: query
  *         type: string
+ *       - name: factionid
+ *         description: The id of the faction present in the system.
+ *         in: query
+ *         type: string
  *       - name: factionControl
  *         description: The faction is in control present in the system.
  *         in: query
@@ -98,6 +102,10 @@ let aggregateOptions = {
  *         description: The system centred around which the search should be made.
  *         in: query
  *         type: string
+ *       - name: referenceSystemId
+ *         description: The system id centred around which the search should be made.
+ *         in: query
+ *         type: string
  *       - name: referenceDistance
  *         description: The distance from the system centred around which the search should be made.
  *         in: query
@@ -110,10 +118,6 @@ let aggregateOptions = {
  *         description: Starting characters of the system.
  *         in: query
  *         type: string
- *       - name: factionIds
- *         description: Get the faction ids in the factions list.
- *         in: query
- *         type: boolean
  *       - name: minimal
  *         description: Get minimal data of the system.
  *         in: query
@@ -187,6 +191,13 @@ router.get('/', cors(), async (req, res, next) => {
                 }
             };
         }
+        if (req.query.factionid) {
+            query["factions"] = {
+                $elemMatch: {
+                    faction_id: utilities.arrayOrNot(req.query.factionid, ObjectId)
+                }
+            };
+        }
         if (req.query.factionControl === 'true') {
             query.controlling_minor_faction = utilities.arrayOrNot(req.query.faction, _.toLower);
         }
@@ -241,27 +252,45 @@ router.get('/', cors(), async (req, res, next) => {
 
 async function getSystems(query, history, minimal, page, request) {
     let referenceDistance = 20;
-    let systemModel = await require('../../../models/ebgs_systems_v4');
+    let systemModel = await require('../../../models/ebgs_systems_v5');
     let aggregate = systemModel.aggregate().option(aggregateOptions);
     let countAggregate = systemModel.aggregate().option(aggregateOptions);
-    if (request.query.referenceSystem) {
+    if (request.query.referenceSystem || request.query.referenceSystemId) {
         if (request.query.referenceDistance) {
             referenceDistance = request.query.referenceDistance;
         }
 
-        let lookupPipeline = {
-            from: "ebgssystemv4",
-            as: "referenceSystem",
-            pipeline: [
-                {
-                    $match: {
-                        $expr: {
-                            $eq: ["$name_lower", request.query.referenceSystem.toLowerCase()]
+        let lookupPipeline = {};
+
+        if (request.query.referenceSystem) {
+            lookupPipeline = {
+                from: "ebgssystemv5",
+                as: "referenceSystem",
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ["$name_lower", request.query.referenceSystem.toLowerCase()]
+                            }
                         }
                     }
-                }
-            ]
-        };
+                ]
+            };
+        } else if (request.query.referenceSystemId) {
+            lookupPipeline = {
+                from: "ebgssystemv5",
+                as: "referenceSystem",
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ["$_id", ObjectId(request.query.referenceSystemId)]
+                            }
+                        }
+                    }
+                ]
+            };
+        }
 
         let addFieldsPipeline = {
             referenceSystem: {
@@ -338,7 +367,7 @@ async function getSystems(query, history, minimal, page, request) {
         }];
         if (history.count) {
             aggregate.lookup({
-                from: "ebgshistorysystemv4",
+                from: "ebgshistorysystemv5",
                 as: "history",
                 let: { "id": "$_id" },
                 pipeline: [
@@ -371,7 +400,7 @@ async function getSystems(query, history, minimal, page, request) {
             );
 
             aggregate.lookup({
-                from: "ebgshistorysystemv4",
+                from: "ebgshistorysystemv5",
                 as: "history",
                 let: { "id": "$_id" },
                 pipeline: [
@@ -451,15 +480,15 @@ async function getSystems(query, history, minimal, page, request) {
     let detailsLookup = {};
     let detailsAddFields = {};
 
-    if (request.query.activeState || request.query.pendingState || request.query.recoveringState || request.query.factionIds === 'true' || request.query.factionDetails === 'true') {
+    if (request.query.activeState || request.query.pendingState || request.query.recoveringState || request.query.factionDetails === 'true') {
         detailsLookup = {
-            from: "ebgsfactionv4",
+            from: "ebgsfactionv5",
             as: "faction_details",
             let: {
-                faction_names: {
+                faction_ids: {
                     $map: {
                         input: "$factions",
-                        in: "$$this.name_lower"
+                        in: "$$this.faction_id"
                     }
                 }
             },
@@ -467,7 +496,7 @@ async function getSystems(query, history, minimal, page, request) {
                 {
                     $match: {
                         $expr: {
-                            $in: ["$name_lower", "$$faction_names"]
+                            $in: ["$_id", "$$faction_ids"]
                         }
                     }
                 }
@@ -490,7 +519,7 @@ async function getSystems(query, history, minimal, page, request) {
                                                 input: "$$faction_info.faction_presence",
                                                 as: "faction",
                                                 cond: {
-                                                    $eq: ["$$faction.system_name_lower", "$name_lower"]
+                                                    $eq: ["$$faction.system_id", "$_id"]
                                                 }
                                             }
                                         },
@@ -605,31 +634,6 @@ async function getSystems(query, history, minimal, page, request) {
 
     let objectToMerge = {};
 
-    if (request.query.factionIds === 'true' || request.query.factionDetails === 'true') {
-        objectToMerge = {
-            faction_id: {
-                $arrayElemAt: [
-                    {
-                        $map: {
-                            input: {
-                                $filter: {
-                                    input: "$faction_details",
-                                    as: "faction",
-                                    cond: {
-                                        $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
-                                    }
-                                }
-                            },
-                            as: "faction_object",
-                            in: "$$faction_object._id"
-                        }
-                    },
-                    0
-                ]
-            }
-        };
-    }
-
     if (request.query.factionDetails === 'true') {
         objectToMerge["faction_details"] = {
             $arrayElemAt: [
@@ -638,7 +642,7 @@ async function getSystems(query, history, minimal, page, request) {
                         input: "$faction_details",
                         as: "faction",
                         cond: {
-                            $eq: ["$$faction.name_lower", "$$faction_list.name_lower"]
+                            $eq: ["$$faction._id", "$$faction_list.faction_id"]
                         }
                     }
                 },

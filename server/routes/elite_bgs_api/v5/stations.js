@@ -180,10 +180,10 @@ async function getStations(query, history, page) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let stationModel = await require('../../../models/ebgs_stations_v4');
+    let stationModel = await require('../../../models/ebgs_stations_v5');
     let stationResult = await stationModel.paginate(query, paginateOptions);
     if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_station_v4');
+        let historyModel = await require('../../../models/ebgs_history_station_v5');
         let historyPromises = [];
         stationResult.docs.forEach(station => {
             historyPromises.push((async () => {

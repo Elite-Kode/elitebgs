@@ -66,6 +66,10 @@ let aggregateOptions = {
  *         description: Filter by system.
  *         in: query
  *         type: string
+ *       - name: systemid
+ *         description: Filter by system id.
+ *         in: query
+ *         type: string
  *       - name: filterSystemInHistory
  *         description: Apply the system filter in the history too.
  *         in: query
@@ -84,10 +88,6 @@ let aggregateOptions = {
  *         type: string
  *       - name: minimal
  *         description: Get minimal data of the faction.
- *         in: query
- *         type: boolean
- *       - name: systemIds
- *         description: Get the system ids in the systems list.
  *         in: query
  *         type: boolean
  *       - name: systemDetails
@@ -150,6 +150,9 @@ router.get('/', cors(), async (req, res, next) => {
         }
         if (req.query.system) {
             query["faction_presence.system_name_lower"] = utilities.arrayOrNot(req.query.system, _.toLower);
+        }
+        if (req.query.systemid) {
+            query["faction_presence.system_id"] = utilities.arrayOrNot(req.query.system, ObjectId);
         }
         if (req.query.activeState) {
             query["faction_presence"] = {
@@ -226,14 +229,14 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getFactions(query, history, minimal, page, request) {
-    let factionModel = await require('../../../models/ebgs_factions_v4');
+    let factionModel = await require('../../../models/ebgs_factions_v5');
     let aggregate = factionModel.aggregate().option(aggregateOptions);
     aggregate.match(query).addFields({
-        system_names_lower: {
+        system_ids: {
             $map: {
                 input: "$faction_presence",
                 as: "system_info",
-                in: "$$system_info.system_name_lower"
+                in: "$$system_info.system_id"
             }
         }
     });
@@ -251,15 +254,17 @@ async function getFactions(query, history, minimal, page, request) {
         if (history.count) {
             if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
+            } else if (request.query.systemid && request.query.filterSystemInHistory === 'true') {
+                lookupMatchAndArray.push(query.faction_presence.system_id);
             } else {
                 lookupMatchAndArray.push({
-                    $in: ["$system_lower", "$$system_name"]
+                    $in: ["$system_id", "$$system_id"]
                 });
             }
             aggregate.lookup({
-                from: "ebgshistoryfactionv4",
+                from: "ebgshistoryfactionv5",
                 as: "history",
-                let: { "id": "$_id", "system_name": "$system_names_lower" },
+                let: { "id": "$_id", "system_id": "$system_ids" },
                 pipeline: [
                     {
                         $match: {
@@ -291,9 +296,11 @@ async function getFactions(query, history, minimal, page, request) {
             );
             if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
+            } else if (request.query.systemid && request.query.filterSystemInHistory === 'true') {
+                lookupMatchAndArray.push(query.faction_presence.system_id);
             }
             aggregate.lookup({
-                from: "ebgshistoryfactionv4",
+                from: "ebgshistoryfactionv5",
                 as: "history",
                 let: { "id": "$_id" },
                 pipeline: [
@@ -318,47 +325,21 @@ async function getFactions(query, history, minimal, page, request) {
 
     let objectToMerge = {};
 
-    if (request.query.systemIds === 'true' || request.query.systemDetails === 'true') {
+    if (request.query.systemDetails === 'true') {
         aggregate.lookup({
-            from: "ebgssystemv4",
+            from: "ebgssystemv5",
             as: "system_details",
-            let: { "system_names": "$system_names_lower" },
+            let: { "system_ids": "$system_ids" },
             pipeline: [
                 {
                     $match: {
                         $expr: {
-                            $in: ["$name_lower", "$$system_names"]
+                            $in: ["$_id", "$$system_ids"]
                         }
                     }
                 }
             ]
         });
-
-        objectToMerge = {
-            system_id: {
-                $arrayElemAt: [
-                    {
-                        $map: {
-                            input: {
-                                $filter: {
-                                    input: "$system_details",
-                                    as: "system",
-                                    cond: {
-                                        $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
-                                    }
-                                }
-                            },
-                            as: "system_object",
-                            in: "$$system_object._id"
-                        }
-                    },
-                    0
-                ]
-            }
-        };
-    }
-
-    if (request.query.systemDetails === 'true') {
         objectToMerge["system_details"] = {
             $arrayElemAt: [
                 {
@@ -366,7 +347,7 @@ async function getFactions(query, history, minimal, page, request) {
                         input: "$system_details",
                         as: "system",
                         cond: {
-                            $eq: ["$$system.name_lower", "$$system_info.system_name_lower"]
+                            $eq: ["$$system._id", "$$system_info.system_id"]
                         }
                     }
                 },
@@ -397,7 +378,7 @@ async function getFactions(query, history, minimal, page, request) {
     }
 
     aggregate.project({
-        system_names_lower: 0,
+        system_ids: 0,
         system_details: 0
     });
 
