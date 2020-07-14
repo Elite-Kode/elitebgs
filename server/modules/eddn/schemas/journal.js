@@ -1855,6 +1855,9 @@ function Journal() {
             if (message.StationType === "FleetCarrier") {
                 throw new Error("Message from Fleet Carrier");
             }
+            if (message.StationType === "MegaShip") {
+                throw new Error("Message from Mega Ship");
+            }
             if (!message.StationFaction.FactionState) {
                 message.StationFaction.FactionState = "None";
             }
