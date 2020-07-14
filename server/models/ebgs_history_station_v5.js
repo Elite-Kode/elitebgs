@@ -27,12 +27,14 @@ module.exports = (async () => {
 
     let ebgsHistoryStation = new Schema({
         station_id: { type: ObjectId, index: true },
+        station_name: String,
         station_name_lower: { type: String, lowercase: true },
         updated_at: { type: Date, index: true },
         updated_by: String,
         government: { type: String, lowercase: true },
         allegiance: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
+        controlling_minor_faction_cased: String,
         controlling_minor_faction: { type: String, lowercase: true },
         controlling_minor_faction_id: { type: ObjectId, index: true },
         services: [{

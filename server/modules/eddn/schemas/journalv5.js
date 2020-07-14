@@ -326,6 +326,7 @@ function Journal() {
                         system.state = message.SystemFaction.FactionState;
                         system.security = message.SystemSecurity;
                         system.population = message.Population;
+                        system.controlling_minor_faction_cased = message.SystemFaction.Name;
                         system.controlling_minor_faction = message.SystemFaction.Name;
                         system.controlling_minor_faction_id = controllingFactionId;
                         system.factions = factionArray;
@@ -340,11 +341,13 @@ function Journal() {
                             state: message.SystemFaction.FactionState,
                             security: message.SystemSecurity,
                             population: message.Population,
+                            controlling_minor_faction_cased: message.SystemFaction.Name,
                             controlling_minor_faction: message.SystemFaction.Name,
                             controlling_minor_faction_id: controllingFactionId,
                             factions: factionArray,
                             conflicts: conflictsArray,
                             system_id: system._id,
+                            system_name: system.name,
                             system_name_lower: system.name_lower
                         };
                     }
@@ -625,6 +628,7 @@ function Journal() {
                         station.government = message.StationGovernment;
                         station.allegiance = message.StationAllegiance;
                         station.state = message.StationFaction.FactionState;
+                        station.controlling_minor_faction_cased = message.StationFaction.Name;
                         station.controlling_minor_faction = message.StationFaction.Name;
                         station.controlling_minor_faction_id = faction._id;
                         station.services = serviceArray;
@@ -636,10 +640,12 @@ function Journal() {
                             government: message.StationGovernment,
                             allegiance: message.StationAllegiance,
                             state: message.StationFaction.FactionState,
+                            controlling_minor_faction_cased: message.StationFaction.Name,
                             controlling_minor_faction: message.StationFaction.Name,
                             controlling_minor_faction_id: faction._id,
                             services: serviceArray,
                             station_id: station._id,
+                            station_name: station.name,
                             station_name_lower: station.name_lower
                         };
                     }

@@ -50,6 +50,7 @@ module.exports = (async () => {
         allegiance: { type: String, lowercase: true, index: true },
         state: { type: String, lowercase: true, index: true },
         distance_from_star: Number,
+        controlling_minor_faction_cased: String,
         controlling_minor_faction: { type: String, lowercase: true, index: true },
         controlling_minor_faction_id: { type: ObjectId, index: true },
         services: [{

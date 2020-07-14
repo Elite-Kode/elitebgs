@@ -27,6 +27,7 @@ module.exports = (async () => {
 
     let ebgsHistorySystem = new Schema({
         system_id: { type: ObjectId, index: true },
+        system_name: String,
         system_name_lower: { type: String, lowercase: true },
         updated_at: { type: Date, index: true },
         updated_by: String,
@@ -35,6 +36,7 @@ module.exports = (async () => {
         allegiance: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
         security: { type: String, lowercase: true },
+        controlling_minor_faction_cased: String,
         controlling_minor_faction: { type: String, lowercase: true },
         controlling_minor_faction_id: { type: ObjectId, index: true },
         factions: [{
