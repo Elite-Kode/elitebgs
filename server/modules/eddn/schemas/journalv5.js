@@ -267,6 +267,8 @@ function Journal() {
                     system.name_aliases = [];
                 }
 
+                let nameIsDifferent = false;
+
                 if (system.system_address === message.SystemAddress.toString() &&
                     system.x === this.correctCoordinates(message.StarPos[0]) &&
                     system.y === this.correctCoordinates(message.StarPos[1]) &&
@@ -286,6 +288,7 @@ function Journal() {
                     }
                     system.name = message.StarSystem;
                     system.name_lower = message.StarSystem.toLowerCase();
+                    nameIsDifferent = true;
                 }
 
                 let historyObject = {};
@@ -306,6 +309,7 @@ function Journal() {
                     system.population !== message.Population ||
                     system.controlling_minor_faction !== message.SystemFaction.Name.toLowerCase() ||
                     !system.conflicts ||
+                    nameIsDifferent ||
                     !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
                     let historyModel = await ebgsHistorySystemV5Model;
@@ -571,6 +575,8 @@ function Journal() {
                     station.name_aliases = [];
                 }
 
+                let nameIsDifferent = false;
+
                 if (station.market_id === message.MarketID &&
                     station.system_lower === message.StarSystem.toLowerCase() &&
                     station.name !== message.StationName) {
@@ -588,6 +594,7 @@ function Journal() {
                     }
                     station.name = message.StationName;
                     station.name_lower = message.StationName.toLowerCase();
+                    nameIsDifferent = true;
                 }
 
                 let historyObject = {};
@@ -610,6 +617,7 @@ function Journal() {
                     station.allegiance !== message.StationAllegiance.toLowerCase() ||
                     station.state !== message.StationFaction.FactionState.toLowerCase() ||
                     station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
+                    nameIsDifferent ||
                     !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
                     let historyModel = await ebgsHistoryStationV5Model;
