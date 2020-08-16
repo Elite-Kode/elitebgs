@@ -5,6 +5,7 @@ module.exports = [
     "Broo Tarquin",
     "Canonn Gnosis Division",
     "Captain Banner",
+    "Chloe Sedesi",
     "Colonel Bris Dekker",
     "Didi Vatermann",
     "Elui Shera",

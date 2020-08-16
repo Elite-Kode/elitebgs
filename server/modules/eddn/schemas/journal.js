@@ -1858,6 +1858,11 @@ function Journal() {
             if (message.StationType === "MegaShip") {
                 throw new Error("Message from Mega Ship");
             }
+            if (nonBGSFactions.find(factionName => {
+                return factionName.toLowerCase() === message.StationFaction.Name.toLowerCase();
+            })) {
+                throw new Error("Station owned by Non BGS Faction");
+            }
             if (!message.StationFaction.FactionState) {
                 message.StationFaction.FactionState = "None";
             }
