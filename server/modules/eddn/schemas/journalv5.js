@@ -753,6 +753,11 @@ function Journal() {
             if (message.StationType === "FleetCarrier") {
                 throw new Error("Message from Fleet Carrier");
             }
+            if (nonBGSFactions.find(factionName => {
+                return factionName.toLowerCase() === message.StationFaction.Name.toLowerCase();
+            })) {
+                throw new Error("Station owned by Non BGS Faction");
+            }
             if (!message.StationFaction.FactionState) {
                 message.StationFaction.FactionState = "None";
             }
