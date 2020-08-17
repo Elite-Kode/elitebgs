@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2017 Sayak Mukhopadhyay
+ * KodeBlox Copyright 2020 Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,3 +15,26 @@
  */
 
 "use strict";
+
+const _ = require('lodash');
+
+module.exports = {
+    arrayOrNot(expressQueryParam, operation, equals = false) {
+        if (_.isArray(expressQueryParam)) {
+            return {
+                $in: _.map(expressQueryParam, _.curry(this.paramOperation)(operation))
+            }
+        } else {
+            if (equals) {
+                return {
+                    $eq: operation(expressQueryParam)
+                }
+            }
+            return operation(expressQueryParam);
+        }
+    },
+
+    paramOperation(operation, value) {
+        return operation(value);
+    }
+}

@@ -329,6 +329,33 @@ router.get('/factions', async (req, res, next) => {
     }
 });
 
+router.get('/systemhistoryadmin', async (req, res, next) => {
+    try {
+        if (req.user.access === 0) {
+            let paginateOptions = {
+                lean: true,
+                leanWithId: false,
+                page: req.query.page,
+                limit: 10,
+                sort: {
+                    updated_at: -1
+                }
+            }
+            let query = new Object;
+            if (req.query.id) {
+                query.system_id = req.query.id;
+            }
+            let historyModel = await require('../models/ebgs_history_system_v4');
+            let historyResult = await historyModel.paginate(query, paginateOptions);
+            res.send(historyResult);
+        } else {
+            res.send(false);
+        }
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.get('/systems', async (req, res, next) => {
     try {
         let query = new Object;
@@ -575,33 +602,6 @@ router.get('/stations', async (req, res, next) => {
         }
     } catch (err) {
         next(err);
-    }
-});
-
-router.get('/systemhistoryadmin', async (req, res, next) => {
-    try {
-        if (req.user.access === 0) {
-            let paginateOptions = {
-                lean: true,
-                leanWithId: false,
-                page: req.query.page,
-                limit: 10,
-                sort: {
-                    updated_at: -1
-                }
-            }
-            let query = new Object;
-            if (req.query.id) {
-                query.system_id = req.query.id;
-            }
-            let historyModel = await require('../models/ebgs_history_system_v4');
-            let historyResult = await historyModel.paginate(query, paginateOptions);
-            res.send(historyResult);
-        } else {
-            res.send(false);
-        }
-    } catch (error) {
-        next(error);
     }
 });
 

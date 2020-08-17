@@ -43,6 +43,7 @@ sock.on('message', topic => {
     timer = Date.now();
     let message = JSON.parse(zlib.inflateSync(topic));
     let journal = new schemas.journal();
+    let journalV5 = new schemas.journalV5();
 
     switch (message['$schemaRef']) {
         // case Blackmarket.schemaId:
@@ -58,6 +59,7 @@ sock.on('message', topic => {
             // journal.trackSystem(message.message);
             // journal.trackSystemV3(message.message);
             journal.trackSystemV4(message.message, message.header);
+            journalV5.trackSystem(message.message, message.header);
             // journal.display();
             break;
         // case Outfitting.schemaId:
