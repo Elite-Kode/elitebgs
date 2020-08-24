@@ -1807,7 +1807,7 @@ function Journal() {
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
-            }) != -1) {
+            }) !== -1) {
                 throw new Error("Message from blacklisted software " + header.softwareName);
             }
             let pass = true;
@@ -1874,7 +1874,7 @@ function Journal() {
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
-            }) != -1) {
+            }) !== -1) {
                 throw new Error("Message from blacklisted software " + header.softwareName);
             }
             let pass = true;

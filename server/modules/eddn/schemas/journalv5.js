@@ -19,7 +19,6 @@
 const _ = require('lodash');
 const request = require('request-promise-native');
 const semver = require('semver');
-const mongoose = require('mongoose');
 
 let db = require('../../../db');
 let elitebgsConnection = db.elite_bgs;
@@ -113,7 +112,7 @@ function Journal() {
                         return [conflict.Faction1.Stake.toLowerCase(), conflict.Faction2.Stake.toLowerCase()];
                     }));
                     // Get the station records of the stations that are at stake
-                    let stations = await systemModel.find(
+                    let stations = await stationModel.find(
                         {
                             name_lower: {
                                 $in: stationsAtStake
@@ -378,9 +377,6 @@ function Journal() {
         // Check if all the parameters are valid
         if (message && system && factions.length > 0 && stations) {
             let model = await ebgsFactionsV5Model;
-            let messageFactionsLower = message.Factions.map(faction => {
-                return faction.Name.toLowerCase();
-            });
 
             // Get all factions from the db which has the current system as a presence system
             let allFactionsPresentInSystemDB = await model.find(
@@ -705,7 +701,7 @@ function Journal() {
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
-            }) != -1) {
+            }) !== -1) {
                 throw new Error("Message from blacklisted software " + header.softwareName);
             }
             let pass = true;
@@ -722,10 +718,8 @@ function Journal() {
             let messageTimestamp = new Date(message.timestamp);
             let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
             let currentTimestamp = new Date(Date.now() + configRecord.time_offset);
-            if (messageTimestamp < oldestTimestamp) {
+            if (messageTimestamp < oldestTimestamp || messageTimestamp > currentTimestamp) {
                 throw new Error("Message timestamp too old or in the future");
-            } else {
-                return;
             }
         } else {
             throw new Error("Message is not valid");
@@ -753,6 +747,9 @@ function Journal() {
             if (message.StationType === "FleetCarrier") {
                 throw new Error("Message from Fleet Carrier");
             }
+            if (message.StationType === "MegaShip") {
+                throw new Error("Message from Mega Ship");
+            }
             if (nonBGSFactions.find(factionName => {
                 return factionName.toLowerCase() === message.StationFaction.Name.toLowerCase();
             })) {
@@ -769,7 +766,7 @@ function Journal() {
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
-            }) != -1) {
+            }) !== -1) {
                 throw new Error("Message from blacklisted software " + header.softwareName);
             }
             let pass = true;
@@ -789,8 +786,6 @@ function Journal() {
             let currentTimestamp = new Date(Date.now() + configRecord.time_offset);
             if (messageTimestamp < oldestTimestamp || messageTimestamp > currentTimestamp) {
                 throw new Error("Message timestamp too old or in the future");
-            } else {
-                return;
             }
         } else {
             throw new Error("Message is not valid");
@@ -902,7 +897,7 @@ function Journal() {
                     daysWon = +conflict.Faction2.WonDays;
                 }
                 let opponentId = factions.find(faction => faction.name_lower === opponent.toLowerCase())._id;
-                let station = stations.find(station => station.name_lower === statek.toLowerCase());
+                let station = stations.find(station => station.name_lower === stake.toLowerCase());
                 let stationId = null;
                 // An explicit check is needed since the station at stake might not be in the database
                 // This could be because nobody has sent sent data yet or it is a non dockable base
@@ -1102,7 +1097,6 @@ function Journal() {
         let model = await ebgsHistorySystemV5Model;
         let document = new model(historyObject);
         await document.save();
-        return;
     }
 
     // Used in V4
@@ -1110,7 +1104,6 @@ function Journal() {
         let model = await ebgsHistoryFactionV5Model;
         let document = new model(historyObject);
         await document.save();
-        return;
     }
 
     // Used in V4
@@ -1118,6 +1111,5 @@ function Journal() {
         let model = await ebgsHistoryStationV5Model;
         let document = new model(historyObject);
         await document.save();
-        return;
     }
 }
