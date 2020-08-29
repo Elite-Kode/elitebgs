@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ClrDatagrid } from '@clr/angular';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -6,7 +6,7 @@ import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
-import { EBGSUser, EBGSFactionSchema, EBGSSystemChart, IngameIdsSchema } from '../../typings';
+import { EBGSFactionSchemaDetailed, EBGSSystemChart, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -20,11 +20,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     @ViewChildren(ClrDatagrid) datagrids: QueryList<ClrDatagrid>;
     isAuthenticated: boolean;
     user: EBGSUser;
-    factions: EBGSFactionSchema[] = [];
+    factions: EBGSFactionSchemaDetailed[] = [];
     systems: EBGSSystemChart[] = [];
     factionModal: boolean;
     systemModal: boolean;
     FDevIDs: IngameIdsSchema;
+
     constructor(
         private authenticationService: AuthenticationService,
         private factionsService: FactionsService,
@@ -77,8 +78,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             return faction.name;
         });
 
-        const factionData = await this.factionsService.parseFactionDataName(factionList);
-        this.factions = factionData;
+        this.factions = await this.factionsService.parseFactionDataName(factionList);
         this.factions.forEach(faction => {
             faction.faction_presence.forEach(system => {
                 system.state = FDevIDs.state[system.state].name;

@@ -114,7 +114,7 @@ let aggregateOptions = {
  *         description: Search by sphere instead of cube.
  *         in: query
  *         type: boolean
- *       - name: beginswith
+ *       - name: beginsWith
  *         description: Starting characters of the system.
  *         in: query
  *         type: string
@@ -204,7 +204,7 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.security) {
             query.security = utilities.arrayOrNot(req.query.security.toLowerCase(), _.toLower);
         }
-        if (req.query.beginsWith) {
+        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             };

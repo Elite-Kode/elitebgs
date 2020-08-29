@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, HostBinding, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
@@ -6,9 +6,9 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
 import { StringHandlers } from '../../utilities/stringHandlers';
-import { EBGSFactionSchema, EBGSUser, IngameIdsSchema } from '../../typings';
+import { EBGSFactionConflict, EBGSFactionSchemaDetailed, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { ClrDatagrid } from '@clr/angular';
 
@@ -20,10 +20,10 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
     @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
-    factionData: EBGSFactionSchema;
+    factionData: EBGSFactionSchemaDetailed;
     systemsPresence: number;
     systemsControlled: number;
-    conflicts: EBGSFactionSchema['faction_presence'][0]['conflicts'][] = [];
+    conflicts: EBGSFactionConflict[] = [];
     successAlertState = false;
     failureAlertState = false;
     fromDateFilter = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
@@ -34,6 +34,7 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
     chartLoading = false;
     user: EBGSUser;
     FDevIDs: IngameIdsSchema;
+
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute,
@@ -41,7 +42,8 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
         private titleService: Title,
         private ingameIdsService: IngameIdsService,
         private themeService: ThemeService
-    ) { }
+    ) {
+    }
 
     ngAfterViewInit() {
         this.themeService.theme$.subscribe(() => {
@@ -67,12 +69,12 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
             });
     }
 
-    async getFactionData(): Promise<EBGSFactionSchema[]> {
+    async getFactionData(): Promise<EBGSFactionSchemaDetailed[]> {
         return await this.factionService
-            .parseFactionDataId([this.route.snapshot.paramMap.get('factionid')], this.fromDateFilter, this.toDateFilter);
+            .parseFactionDataId([this.route.snapshot.paramMap.get('factionId')], this.fromDateFilter, this.toDateFilter);
     }
 
-    updateFaction(faction: EBGSFactionSchema) {
+    updateFaction(faction: EBGSFactionSchemaDetailed) {
         this.daysGap = moment(this.toDateFilter).diff(moment(this.fromDateFilter), 'days');
         this.factionData = faction;
         this.factionData.government = StringHandlers.titlify(this.factionData.government);
@@ -99,8 +101,13 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
         });
         this.conflicts = this.factionData.faction_presence.reduce((acc, system) => {
             return acc.concat(system.conflicts);
-        }, [] as EBGSFactionSchema['faction_presence'][0]['conflicts'][]);
+        }, [] as EBGSFactionConflict[]);
         this.systemsPresence = this.factionData.faction_presence.length;
+        this.factionData.faction_presence.forEach(system => {
+            if (system.system_details.controlling_minor_faction_id === this.factionData._id) {
+                system.controlling = true;
+            }
+        })
         this.systemsControlled = this.factionData.faction_presence.reduce((count, system) => {
             if (system.controlling) {
                 return count + 1;

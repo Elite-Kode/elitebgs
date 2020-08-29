@@ -31,7 +31,7 @@ const mainRoutes: Routes = [
                 component: FactionListComponent
             },
             {
-                path: 'faction/:factionid',
+                path: 'faction/:factionId',
                 component: FactionViewComponent
             },
             {

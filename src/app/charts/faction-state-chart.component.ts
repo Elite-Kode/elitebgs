@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSFactionSchema } from '../typings';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { EBGSFactionSchemaDetailed } from '../typings';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -27,14 +27,16 @@ import { IngameIdsService } from '../services/ingameIds.service';
     templateUrl: './faction-state-chart.component.html'
 })
 export class FactionStateChartComponent implements OnInit, OnChanges {
-    @Input() factionData: EBGSFactionSchema;
+    @Input() factionData: EBGSFactionSchemaDetailed;
     // options: Options;
     options: any;
     chart: Chart;
+
     constructor(
         private themeService: ThemeService,
         private ingameIdsService: IngameIdsService
-    ) { }
+    ) {
+    }
 
     ngOnInit(): void {
         this.createChart()

@@ -1,6 +1,84 @@
 import * as mongoosePaginate from 'mongoose-paginate';
 import { PaginateResult } from 'mongoose';
 
+interface EBGSFactionPresence {
+    system_id: string;
+    system_name: string;
+    system_name_lower: string;
+    state: string;
+    influence: number;
+    happiness: string;
+    active_states: {
+        state: string;
+    }[];
+    pending_states: {
+        state: string;
+        trend: number;
+    }[];
+    recovering_states: {
+        state: string;
+        trend: number;
+    }[];
+    conflicts: EBGSFactionConflict[];
+    updated_at: string;
+}
+
+export interface EBGSFactionConflict {
+    type: string;
+    status: string;
+    system_id: string;
+    system_name: string;
+    opponent_name: string;
+    opponent_name_lower: string;
+    opponent_faction_id: string;
+    station_id: string;
+    stake: string;
+    stake_lower: string;
+    days_won: number;
+}
+
+export interface EBGSFactionSystemDetails extends EBGSFactionPresence {
+    system_details: EBGSSystemSchema;
+    controlling: boolean;
+}
+
+export interface EBGSFactionHistory {
+    _id: string;
+    __v: number;
+    system_id: string;
+    updated_at: string;
+    updated_by: string;
+    system: string;
+    system_lower: string;
+    state: string;
+    influence: number;
+    happiness: string;
+    active_states: {
+        state: string;
+    }[];
+    pending_states: {
+        state: string;
+        trend: number;
+    }[];
+    recovering_states: {
+        state: string;
+        trend: number;
+    }[];
+    systems: {
+        name: string;
+        name_lower: string;
+    }[];
+    conflicts: {
+        type: string;
+        status: string;
+        opponent_name: string;
+        opponent_name_lower: string;
+        stake: string;
+        stake_lower: string;
+        days_won: number;
+    }[];
+}
+
 export interface EBGSFactionSchema {
     _id: string;
     __v: number;
@@ -12,73 +90,13 @@ export interface EBGSFactionSchema {
     allegiance: string;
     home_system_name: string;
     is_player_faction: boolean;
-    faction_presence: {
-        system_id: string;
-        system_name: string;
-        system_name_lower: string;
-        state: string;
-        influence: number;
-        happiness: string;
-        active_states: {
-            state: string;
-        }[];
-        pending_states: {
-            state: string;
-            trend: number;
-        }[];
-        recovering_states: {
-            state: string;
-            trend: number;
-        }[];
-        conflicts: {
-            type: string;
-            status: string;
-            system_id: string;
-            system_name: string;
-            opponent_name: string;
-            opponent_name_lower: string;
-            stake: string;
-            stake_lower: string;
-            days_won: number;
-        }[];
-        updated_at: string;
-        controlling: boolean;
-    }[];
-    history: {
-        _id: string;
-        system_id: string;
-        updated_at: string;
-        updated_by: string;
-        system: string;
-        system_lower: string;
-        state: string;
-        influence: number;
-        happiness: string;
-        active_states: {
-            state: string;
-        }[];
-        pending_states: {
-            state: string;
-            trend: number;
-        }[];
-        recovering_states: {
-            state: string;
-            trend: number;
-        }[];
-        systems: {
-            name: string;
-            name_lower: string;
-        }[];
-        conflicts: {
-            type: string;
-            status: string;
-            opponent_name: string;
-            opponent_name_lower: string;
-            stake: string;
-            stake_lower: string;
-            days_won: number;
-        }[];
-    }[];
+    faction_presence: EBGSFactionPresence[];
+}
+
+export interface EBGSFactionSchemaDetailed extends Omit<EBGSFactionSchema, 'faction_presence'> {
+    faction_presence: EBGSFactionSystemDetails[];
+    history: EBGSFactionHistory[];
+    controlling: boolean;
 }
 
 export interface EBGSSystemSchema {
@@ -90,6 +108,8 @@ export interface EBGSSystemSchema {
     x: number;
     y: number;
     z: number;
+    system_address: string;
+    name_aliases: string;
     population: number;
     government: string;
     allegiance: string;
@@ -100,6 +120,8 @@ export interface EBGSSystemSchema {
     needs_permit: boolean;
     reserve_type: string;
     controlling_minor_faction: string;
+    controlling_minor_faction_cased: string;
+    controlling_minor_faction_id: string;
     factions: {
         faction_id: string;
         name: string;
@@ -109,15 +131,19 @@ export interface EBGSSystemSchema {
         type: string;
         status: string;
         faction1: {
+            faction_id: string;
             name: string;
             name_lower: string;
+            station_id: string;
             stake: string;
             stake_lower: string;
             days_won: number;
         };
         faction2: {
+            faction_id: string;
             name: string;
             name_lower: string;
+            station_id: string;
             stake: string;
             stake_lower: string;
             days_won: number;
@@ -160,7 +186,7 @@ export interface EBGSSystemSchema {
     }[];
 }
 
-export interface EBGSFactionSchemaWOHistory {
+export interface EBGSFactionSchemaMinimal {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -171,35 +197,6 @@ export interface EBGSFactionSchemaWOHistory {
     allegiance: string;
     home_system_name: string;
     is_player_faction: boolean;
-    faction_presence: {
-        system_id: string;
-        system_name: string;
-        system_name_lower: string;
-        state: string;
-        happiness: string;
-        influence: number;
-        active_states: {
-            state: string;
-        }[];
-        pending_states: {
-            state: string;
-            trend: number;
-        }[];
-        recovering_states: {
-            state: string;
-            trend: number;
-        }[];
-        conflicts: {
-            type: string;
-            status: string;
-            opponent_name: string;
-            opponent_name_lower: string;
-            stake: string;
-            stake_lower: string;
-            days_won: number;
-        }[];
-        updated_at: string;
-    }[];
 }
 
 export interface EBGSSystemSchemaWOHistory {
@@ -363,8 +360,6 @@ interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
     updated_at: string;
 }
 
-type EBGSFactionHistory = EBGSFactionSchema['history'][0];
-
 interface EBGSFactionHistoryList extends EBGSFactionHistory {
     faction: string;
     faction_lower: string;
@@ -422,9 +417,10 @@ export interface IngameIdsSchema {
     happiness: any;
 }
 
-export type EBGSFactions = PaginateResult<EBGSFactionSchema>;
+export type EBGSFactions = PaginateResult<EBGSFactionSchemaDetailed>;
+export type EBGSFactionsMinimal = PaginateResult<EBGSFactionSchemaMinimal>;
+
 export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
-export type EBGSFactionsWOHistory = PaginateResult<EBGSFactionSchemaWOHistory>;
 export type EBGSSystemsWOHistory = PaginateResult<EBGSSystemSchemaWOHistory>;
 
 export type EBGSStations = PaginateResult<EBGSStationSchema>;

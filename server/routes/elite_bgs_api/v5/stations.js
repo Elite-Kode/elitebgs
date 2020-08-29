@@ -66,7 +66,7 @@ let router = express.Router();
    *         description: State the station is in.
    *         in: query
    *         type: string
-   *       - name: beginswith
+   *       - name: beginsWith
    *         description: Starting characters of the station.
    *         in: query
    *         type: string
@@ -130,7 +130,7 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.state) {
             query.state = req.query.state.toLowerCase();
         }
-        if (req.query.beginsWith) {
+        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             }

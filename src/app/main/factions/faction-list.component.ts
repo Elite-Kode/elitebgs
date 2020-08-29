@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { IFaction } from './faction.interface';
 import { StringHandlers } from '../../utilities/stringHandlers';
-import { EBGSFactionsWOHistory } from '../../typings';
+import { EBGSFactionsMinimal } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 
@@ -40,7 +40,7 @@ export class FactionListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    showFaction(factions: EBGSFactionsWOHistory) {
+    showFaction(factions: EBGSFactionsMinimal) {
         this.totalRecords = factions.total;
         this.factionData = factions.docs.map(responseFaction => {
             const id = responseFaction._id;
