@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSStationSchema } from '../typings';
+import { EBGSStationSchemaDetailed } from '../typings';
 // import { Options, PieChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -10,7 +10,7 @@ import { ThemeService } from '../services/theme.service';
 })
 
 export class StationEconomiesChartComponent implements OnInit, OnChanges {
-    @Input() stationData: EBGSStationSchema;
+    @Input() stationData: EBGSStationSchemaDetailed;
     options: any;
     chart: Chart;
     constructor(private themeService: ThemeService) { }

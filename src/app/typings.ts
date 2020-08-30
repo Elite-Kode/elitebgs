@@ -79,17 +79,7 @@ export interface EBGSFactionHistory {
     }[];
 }
 
-export interface EBGSFactionSchema {
-    _id: string;
-    __v: number;
-    eddb_id: number;
-    name: string;
-    name_lower: string;
-    updated_at: string;
-    government: string;
-    allegiance: string;
-    home_system_name: string;
-    is_player_faction: boolean;
+export interface EBGSFactionSchema extends EBGSFactionSchemaMinimal {
     faction_presence: EBGSFactionPresence[];
 }
 
@@ -245,6 +235,24 @@ export interface EBGSSystemSchemaWOHistory {
     updated_at: string;
 }
 
+export interface EBGSStationSchemaDetailed extends EBGSStationSchema {
+    history: EBGSStationHistory[];
+}
+
+export interface EBGSStationHistory {
+    _id: string;
+    updated_at: string;
+    updated_by: string;
+    government: string;
+    allegiance: string;
+    state: string;
+    controlling_minor_faction: string;
+    services: {
+        name: string;
+        name_lower: string;
+    }[];
+}
+
 export interface EBGSStationSchema {
     _id: string;
     __v: number;
@@ -266,46 +274,8 @@ export interface EBGSStationSchema {
     market_id: string;
     distance_from_star: number;
     controlling_minor_faction: string;
-    services: {
-        name: string;
-        name_lower: string;
-    }[];
-    history: {
-        _id: string;
-        updated_at: string;
-        updated_by: string;
-        government: string;
-        allegiance: string;
-        state: string;
-        controlling_minor_faction: string;
-        services: {
-            name: string;
-            name_lower: string;
-        }[];
-    }[];
-}
-
-export interface EBGSStationSchemaWOHistory {
-    _id: string;
-    __v: number;
-    eddb_id: number;
-    name: string;
-    name_lower: string;
-    type: string;
-    system: string;
-    system_lower: string;
-    updated_at: string;
-    government: string;
-    economy: string;
-    all_economies: {
-        name: string,
-        proportion: number
-    }[];
-    allegiance: string;
-    state: string;
-    market_id: string;
-    distance_from_star: number;
-    controlling_minor_faction: string;
+    controlling_minor_faction_cased: string;
+    controlling_minor_faction_id: string;
     services: {
         name: string;
         name_lower: string;
@@ -417,14 +387,14 @@ export interface IngameIdsSchema {
     happiness: any;
 }
 
-export type EBGSFactions = PaginateResult<EBGSFactionSchemaDetailed>;
+export type EBGSFactionsDetailed = PaginateResult<EBGSFactionSchemaDetailed>;
 export type EBGSFactionsMinimal = PaginateResult<EBGSFactionSchemaMinimal>;
 
 export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
 export type EBGSSystemsWOHistory = PaginateResult<EBGSSystemSchemaWOHistory>;
 
+export type EBGSStationsDetailed = PaginateResult<EBGSStationSchemaDetailed>;
 export type EBGSStations = PaginateResult<EBGSStationSchema>;
-export type EBGSStationsWOHistory = PaginateResult<EBGSStationSchemaWOHistory>;
 
 export type EBGSUser = EBGSUserSchema;
 export type EBGSUsers = PaginateResult<EBGSUser>;
@@ -439,4 +409,4 @@ export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
 export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history'][0]>;
 export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
-export type EBGSStationHistory = PaginateResult<EBGSStationSchema['history'][0]>;
+export type EBGSStationHistoryPaginate = PaginateResult<EBGSStationHistory>;

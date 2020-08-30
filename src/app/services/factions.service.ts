@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSFactions, EBGSFactionSchemaDetailed, EBGSFactionsMinimal } from '../typings';
+import { EBGSFactionSchemaDetailed, EBGSFactionsDetailed, EBGSFactionsMinimal } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
@@ -24,21 +24,21 @@ export class FactionsService {
         return this.parseFactionData(factionsList, 'id', timeMin, timeMax);
     }
 
-    private getHistoryById(id: string, timeMin: string, timeMax: string): Observable<EBGSFactions> {
-        return this.http.get<EBGSFactions>('/api/ebgs/v5/factions', {
+    private getHistoryById(id: string, timeMin: string, timeMax: string): Observable<EBGSFactionsDetailed> {
+        return this.http.get<EBGSFactionsDetailed>('/api/ebgs/v5/factions', {
             params: new HttpParams().set('id', id).set('timeMin', timeMin).set('timeMax', timeMax).set('systemDetails', 'true')
         });
     }
 
-    private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSFactions> {
-        return this.http.get<EBGSFactions>('/api/ebgs/v5/factions', {
+    private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSFactionsDetailed> {
+        return this.http.get<EBGSFactionsDetailed>('/api/ebgs/v5/factions', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('name', name).set('timeMin', timeMin).set('timeMax', timeMax).set('systemDetails', 'true')
         })
     }
 
     // tslint:disable-next-line:max-line-length
     private async parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionSchemaDetailed[]> {
-        const allFactionsGet: Promise<EBGSFactions>[] = [];
+        const allFactionsGet: Promise<EBGSFactionsDetailed>[] = [];
         const returnFactions: EBGSFactionSchemaDetailed[] = [];
         if (timeMin === undefined || timeMin === null) {
             timeMin = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
@@ -48,7 +48,7 @@ export class FactionsService {
         }
         factionsList.forEach(faction => {
             allFactionsGet.push(new Promise((resolve, reject) => {
-                let history: Observable<EBGSFactions>;
+                let history: Observable<EBGSFactionsDetailed>;
                 if (type === 'name') {
                     history = this.getHistory(faction, timeMin.getTime().toString(), timeMax.getTime().toString());
                 }

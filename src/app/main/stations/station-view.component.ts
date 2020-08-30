@@ -1,8 +1,8 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
-import { EBGSUser, EBGSStationSchema, IngameIdsSchema } from '../../typings';
+import { EBGSStationSchemaDetailed, EBGSUser } from '../../typings';
 import { StationsService } from '../../services/stations.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 
@@ -13,17 +13,19 @@ import { IngameIdsService } from '../../services/ingameIds.service';
 export class StationViewComponent implements OnInit {
     @HostBinding('class.content-area') contentArea = true;
     isAuthenticated: boolean;
-    stationData: EBGSStationSchema;
+    stationData: EBGSStationSchemaDetailed;
     successAlertState = false;
     failureAlertState = false;
     user: EBGSUser;
+
     constructor(
         private stationService: StationsService,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private titleService: Title,
         private ingameIdsService: IngameIdsService
-    ) { }
+    ) {
+    }
 
     async ngOnInit() {
         this.getAuthentication();
