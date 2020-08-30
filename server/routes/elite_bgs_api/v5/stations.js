@@ -17,86 +17,98 @@
 "use strict";
 
 const express = require('express');
-var cors = require('cors')
+const mongoose = require('mongoose');
+const cors = require('cors');
 const _ = require('lodash');
 
+const utilities = require('../../../modules/utilities');
+
 let router = express.Router();
+let ObjectId = mongoose.Types.ObjectId;
+let recordsPerPage = 10;
+let aggregateOptions = {
+    maxTimeMS: 60000
+}
 
 /**
-   * @swagger
-   * /stations:
-   *   get:
-   *     description: Get the Stations
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - name: id
-   *         description: ID of the document.
-   *         in: query
-   *         type: string
-   *       - name: eddbId
-   *         description: EDDB ID of the station.
-   *         in: query
-   *         type: string
-   *       - name: name
-   *         description: Station name.
-   *         in: query
-   *         type: string
-   *       - name: type
-   *         description: Station type.
-   *         in: query
-   *         type: string
-   *       - name: system
-   *         description: System name the station is in.
-   *         in: query
-   *         type: string
-   *       - name: economy
-   *         description: Station economy.
-   *         in: query
-   *         type: string
-   *       - name: allegiance
-   *         description: Name of the allegiance.
-   *         in: query
-   *         type: string
-   *       - name: government
-   *         description: Name of the government type.
-   *         in: query
-   *         type: string
-   *       - name: state
-   *         description: State the station is in.
-   *         in: query
-   *         type: string
-   *       - name: beginsWith
-   *         description: Starting characters of the station.
-   *         in: query
-   *         type: string
-   *       - name: timemin
-   *         description: Minimum time for the station history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: timemax
-   *         description: Maximum time for the station history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: count
-   *         description: Number of history records. Disables timemin and timemax
-   *         in: query
-   *         type: string
-   *       - name: page
-   *         description: Page no of response.
-   *         in: query
-   *         type: integer
-   *     responses:
-   *       200:
-   *         description: An array of stations with historical data
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/EBGSStationsPageV4'
-   */
+ * @swagger
+ * /stations:
+ *   get:
+ *     description: Get the Stations
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: ID of the document.
+ *         in: query
+ *         type: string
+ *       - name: eddbId
+ *         description: EDDB ID of the station.
+ *         in: query
+ *         type: string
+ *       - name: name
+ *         description: Station name.
+ *         in: query
+ *         type: string
+ *       - name: type
+ *         description: Station type.
+ *         in: query
+ *         type: string
+ *       - name: system
+ *         description: System name the station is in.
+ *         in: query
+ *         type: string
+ *       - name: systemId
+ *         description: Filter by system id.
+ *         in: query
+ *         type: string
+ *       - name: economy
+ *         description: Station economy.
+ *         in: query
+ *         type: string
+ *       - name: allegiance
+ *         description: Name of the allegiance.
+ *         in: query
+ *         type: string
+ *       - name: government
+ *         description: Name of the government type.
+ *         in: query
+ *         type: string
+ *       - name: state
+ *         description: State the station is in.
+ *         in: query
+ *         type: string
+ *       - name: beginsWith
+ *         description: Starting characters of the station.
+ *         in: query
+ *         type: string
+ *       - name: timeMin
+ *         description: Minimum time for the station history in milliseconds.
+ *         in: query
+ *         type: string
+ *       - name: timeMax
+ *         description: Maximum time for the station history in milliseconds.
+ *         in: query
+ *         type: string
+ *       - name: count
+ *         description: Number of history records. Disables timeMin and timeMax
+ *         in: query
+ *         type: string
+ *       - name: page
+ *         description: Page no of response.
+ *         in: query
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: An array of stations with historical data
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/EBGSStationsPageV4'
+ */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
         let page = 1;
         let history = false;
         let greaterThanTime;
@@ -104,31 +116,34 @@ router.get('/', cors(), async (req, res, next) => {
         let count;
 
         if (req.query.id) {
-            query._id = req.query.id;
+            query._id = utilities.arrayOrNot(req.query.id, ObjectId);
         }
         if (req.query.eddbId) {
-            query.eddb_id = req.query.eddbId;
+            query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
         }
         if (req.query.name) {
-            query.name_lower = req.query.name.toLowerCase();
+            query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
         }
         if (req.query.type) {
-            query.type = req.query.type.toLowerCase();
+            query.type = utilities.arrayOrNot(req.query.type, _.toLower);
         }
         if (req.query.system) {
-            query.system_lower = req.query.system.toLowerCase();
+            query.system_lower = utilities.arrayOrNot(req.query.system, _.toLower);
+        }
+        if (req.query.systemId) {
+            query.system_id = utilities.arrayOrNot(req.query.systemId, ObjectId);
         }
         if (req.query.economy) {
-            query.economy = req.query.economy.toLowerCase();
+            query.economy = utilities.arrayOrNot(req.query.economy, _.toLower);
         }
         if (req.query.allegiance) {
-            query.allegiance = req.query.allegiance.toLowerCase();
+            query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
         }
         if (req.query.government) {
-            query.government = req.query.government.toLowerCase();
+            query.government = utilities.arrayOrNot(req.query.government, _.toLower);
         }
         if (req.query.state) {
-            query.state = req.query.state.toLowerCase();
+            query.state = utilities.arrayOrNot(req.query.state, _.toLower);
         }
         if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
             query.name_lower = {
@@ -138,27 +153,31 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.page) {
             page = req.query.page;
         }
-        if (req.query.timemin && req.query.timemax) {
+        if (req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
-        if (req.query.timemin && !req.query.timemax) {
+        if (req.query.timeMin && !req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
         }
-        if (!req.query.timemin && req.query.timemax) {
+        if (!req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
         if (req.query.count) {
             history = true
             count = +req.query.count
         }
         if (history) {
-            let result = await getStations(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
+            let result = await getStations(query, {
+                greater: greaterThanTime,
+                lesser: lesserThanTime,
+                count: count
+            }, page);
             res.status(200).json(result);
         } else {
             let result = await getStations(query, {}, page);
@@ -170,50 +189,87 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getStations(query, history, page) {
-    let paginateOptions = {
-        select: { history: 0 },
-        lean: true,
-        leanWithId: false,
-        page: page,
-        limit: 10
-    };
+    let stationModel = await require('../../../models/ebgs_stations_v5');
+    let aggregate = stationModel.aggregate().option(aggregateOptions);
+    aggregate.match(query);
+
+    let countAggregate = stationModel.aggregate().option(aggregateOptions);
+    countAggregate.match(query);
+
+    if (!_.isEmpty(history)) {
+        let lookupMatchAndArray = [{
+            $eq: ["$station_id", "$$id"]
+        }];
+        if (history.count) {
+            aggregate.lookup({
+                from: "ebgshistorystationv5",
+                as: "history",
+                let: { "id": "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: lookupMatchAndArray
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            station_id: 0,
+                            station_name_lower: 0
+                        }
+                    },
+                    {
+                        $limit: history.count
+                    }
+                ]
+            });
+        } else {
+            lookupMatchAndArray.push(
+                {
+                    $gte: ["$updated_at", new Date(history.greater)]
+                },
+                {
+                    $lte: ["$updated_at", new Date(history.lesser)]
+                }
+            );
+
+            aggregate.lookup({
+                from: "ebgshistorystationv5",
+                as: "history",
+                let: { "id": "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: lookupMatchAndArray
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            station_id: 0,
+                            station_name_lower: 0
+                        }
+                    }
+                ]
+            });
+        }
+    }
+
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let stationModel = await require('../../../models/ebgs_stations_v5');
-    let stationResult = await stationModel.paginate(query, paginateOptions);
-    if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_station_v5');
-        let historyPromises = [];
-        stationResult.docs.forEach(station => {
-            historyPromises.push((async () => {
-                let record;
-                if (history.count) {
-                    record = await historyModel.find({
-                        station_id: station._id
-                    }).sort({
-                        updated_at: -1
-                    }).limit(history.count).lean();
-                } else {
-                    record = await historyModel.find({
-                        station_id: station._id,
-                        updated_at: {
-                            $lte: history.lesser,
-                            $gte: history.greater
-                        }
-                    }).lean();
-                }
-                record.forEach(history => {
-                    delete history.station_id;
-                    delete history.station_name_lower;
-                });
-                station.history = record;
-                return record;
-            })());
-        });
-        await Promise.all(historyPromises);
-    }
-    return stationResult;
+
+    return stationModel.aggregatePaginate(aggregate, {
+        page,
+        countQuery: countAggregate,
+        limit: recordsPerPage,
+        customLabels: {
+            totalDocs: "total",
+            totalPages: "pages"
+        }
+    });
 }
 
 module.exports = router;

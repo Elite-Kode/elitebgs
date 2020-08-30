@@ -62,11 +62,11 @@ let aggregateOptions = {
  *         description: State the system is in.
  *         in: query
  *         type: string
- *       - name: primaryeconomy
+ *       - name: primaryEconomy
  *         description: The primary economy of the system.
  *         in: query
  *         type: string
- *       - name: secondaryeconomy
+ *       - name: secondaryEconomy
  *         description: The secondary economy of the system.
  *         in: query
  *         type: string
@@ -74,7 +74,7 @@ let aggregateOptions = {
  *         description: The faction present in the system.
  *         in: query
  *         type: string
- *       - name: factionid
+ *       - name: factionId
  *         description: The id of the faction present in the system.
  *         in: query
  *         type: string
@@ -126,16 +126,16 @@ let aggregateOptions = {
  *         description: Get the detailed faction data of the factions in the system.
  *         in: query
  *         type: boolean
- *       - name: timemin
- *         description: Minimum time for the system history in miliseconds.
+ *       - name: timeMin
+ *         description: Minimum time for the system history in milliseconds.
  *         in: query
  *         type: string
- *       - name: timemax
- *         description: Maximum time for the system history in miliseconds.
+ *       - name: timeMax
+ *         description: Maximum time for the system history in milliseconds.
  *         in: query
  *         type: string
  *       - name: count
- *         description: Number of history records. Disables timemin and timemax
+ *         description: Number of history records. Disables timeMin and timeMax
  *         in: query
  *         type: string
  *       - name: page
@@ -152,7 +152,7 @@ let aggregateOptions = {
  */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
         let page = 1;
         let history = false;
         let minimal = false;
@@ -178,11 +178,11 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.state) {
             query.state = utilities.arrayOrNot(req.query.state, _.toLower);
         }
-        if (req.query.primaryeconomy) {
-            query.primary_economy = utilities.arrayOrNot(req.query.primaryeconomy.toLowerCase(), _.toLower);
+        if (req.query.primaryEconomy) {
+            query.primary_economy = utilities.arrayOrNot(req.query.primaryEconomy.toLowerCase(), _.toLower);
         }
-        if (req.query.secondaryeconomy) {
-            query.secondary_economy = utilities.arrayOrNot(req.query.secondaryeconomy.toLowerCase(), _.toLower);
+        if (req.query.secondaryEconomy) {
+            query.secondary_economy = utilities.arrayOrNot(req.query.secondaryEconomy.toLowerCase(), _.toLower);
         }
         if (req.query.faction) {
             query["factions"] = {
@@ -191,10 +191,10 @@ router.get('/', cors(), async (req, res, next) => {
                 }
             };
         }
-        if (req.query.factionid) {
+        if (req.query.factionId) {
             query["factions"] = {
                 $elemMatch: {
-                    faction_id: utilities.arrayOrNot(req.query.factionid, ObjectId)
+                    faction_id: utilities.arrayOrNot(req.query.factionId, ObjectId)
                 }
             };
         }
@@ -215,20 +215,20 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.page) {
             page = req.query.page;
         }
-        if (req.query.timemin && req.query.timemax) {
+        if (req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
-        if (req.query.timemin && !req.query.timemax) {
+        if (req.query.timeMin && !req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
         }
-        if (!req.query.timemin && req.query.timemax) {
+        if (!req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
         if (req.query.count) {
             history = true

@@ -18,7 +18,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors')
+const cors = require('cors');
 const _ = require('lodash');
 
 const utilities = require('../../../modules/utilities');
@@ -120,7 +120,7 @@ let aggregateOptions = {
  */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
         let page = 1;
         let history = false;
         let minimal = false;
