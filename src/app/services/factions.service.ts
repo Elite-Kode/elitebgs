@@ -1,69 +1,45 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EBGSFactions, EBGSFactionsWOHistory, EBGSFactionSchema, EBGSFactionSchemaWOHistory, EBGSFactionHistoryPaginate } from '../typings';
+import { EBGSFactionSchemaDetailed, EBGSFactionsDetailed, EBGSFactionsMinimal } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class FactionsService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {
+    }
 
-    getFactionsBegins(page: string, name: string): Observable<EBGSFactionsWOHistory> {
-        return this.http.get<EBGSFactionsWOHistory>('/frontend/factions', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', name)
+    getFactionsBegins(page: string, name: string): Observable<EBGSFactionsMinimal> {
+        return this.http.get<EBGSFactionsMinimal>('/api/ebgs/v5/factions', {
+            params: new HttpParams({encoder: new CustomEncoder()}).set('page', page + 1).set('minimal', 'true').set('beginsWith', name)
         });
     }
 
-    getFactions(name: string): Observable<EBGSFactionsWOHistory> {
-        return this.http.get<EBGSFactionsWOHistory>('/frontend/factions', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name)
-        });
-    }
-
-    getFactionsById(id: string): Observable<EBGSFactionsWOHistory> {
-        return this.http.get<EBGSFactionsWOHistory>('/frontend/factions', {
-            params: new HttpParams().set('id', id)
-        });
-    }
-
-    getHistoryById(id: string, timemin: string, timemax: string): Observable<EBGSFactions> {
-        return this.http.get<EBGSFactions>('/frontend/factions', {
-            params: new HttpParams().set('id', id).set('timemin', timemin).set('timemax', timemax)
-        });
-    }
-
-    getHistory(name: string, timemin: string, timemax: string): Observable<EBGSFactions> {
-        return this.http.get<EBGSFactions>('/frontend/factions', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('name', name).set('timemin', timemin).set('timemax', timemax)
-        })
-    }
-
-    getHistoryAdmin(page: string, id: string): Observable<EBGSFactionHistoryPaginate> {
-        return this.http.get<EBGSFactionHistoryPaginate>('/frontend/factionhistoryadmin', {
-            params: new HttpParams().set('id', id).set('page', page + 1)
-        });
-    }
-
-    putFactionAdmin(faction: EBGSFactionSchemaWOHistory): Observable<boolean> {
-        return this.http.put<boolean>('/frontend/factionadmin', faction);
-    }
-
-    putFactionHistoryAdmin(record: EBGSFactionSchema['history']): Observable<boolean> {
-        return this.http.put<boolean>('/frontend/factionhistoryadmin', record);
-    }
-
-    parseFactionDataName(factionsList: string[]): Promise<EBGSFactionSchema[]> {
+    parseFactionDataName(factionsList: string[]): Promise<EBGSFactionSchemaDetailed[]> {
         return this.parseFactionData(factionsList, 'name');
     }
 
-    parseFactionDataId(factionsList: string[], timeMin: Date, timeMax: Date): Promise<EBGSFactionSchema[]> {
+    parseFactionDataId(factionsList: string[], timeMin: Date, timeMax: Date): Promise<EBGSFactionSchemaDetailed[]> {
         return this.parseFactionData(factionsList, 'id', timeMin, timeMax);
     }
 
-    private async parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionSchema[]> {
-        const allFactionsGet: Promise<EBGSFactions>[] = [];
-        const returnFactions: EBGSFactionSchema[] = [];
+    private getHistoryById(id: string, timeMin: string, timeMax: string): Observable<EBGSFactionsDetailed> {
+        return this.http.get<EBGSFactionsDetailed>('/api/ebgs/v5/factions', {
+            params: new HttpParams().set('id', id).set('timeMin', timeMin).set('timeMax', timeMax).set('systemDetails', 'true')
+        });
+    }
+
+    private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSFactionsDetailed> {
+        return this.http.get<EBGSFactionsDetailed>('/api/ebgs/v5/factions', {
+            params: new HttpParams({encoder: new CustomEncoder()}).set('name', name).set('timeMin', timeMin).set('timeMax', timeMax).set('systemDetails', 'true')
+        });
+    }
+
+    // tslint:disable-next-line:max-line-length
+    private async parseFactionData(factionsList: string[], type: string, timeMin?: Date, timeMax?: Date): Promise<EBGSFactionSchemaDetailed[]> {
+        const allFactionsGet: Promise<EBGSFactionsDetailed>[] = [];
+        const returnFactions: EBGSFactionSchemaDetailed[] = [];
         if (timeMin === undefined || timeMin === null) {
             timeMin = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
         }
@@ -72,7 +48,7 @@ export class FactionsService {
         }
         factionsList.forEach(faction => {
             allFactionsGet.push(new Promise((resolve, reject) => {
-                let history: Observable<EBGSFactions>;
+                let history: Observable<EBGSFactionsDetailed>;
                 if (type === 'name') {
                     history = this.getHistory(faction, timeMin.getTime().toString(), timeMax.getTime().toString());
                 }

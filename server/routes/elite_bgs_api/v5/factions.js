@@ -18,7 +18,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors')
+const cors = require('cors');
 const _ = require('lodash');
 
 const utilities = require('../../../modules/utilities');
@@ -58,7 +58,7 @@ let aggregateOptions = {
  *         description: Name of the government type.
  *         in: query
  *         type: string
- *       - name: beginswith
+ *       - name: beginsWith
  *         description: Starting characters of the faction.
  *         in: query
  *         type: string
@@ -66,7 +66,7 @@ let aggregateOptions = {
  *         description: Filter by system.
  *         in: query
  *         type: string
- *       - name: systemid
+ *       - name: systemId
  *         description: Filter by system id.
  *         in: query
  *         type: string
@@ -94,16 +94,16 @@ let aggregateOptions = {
  *         description: Get the detailed system data the faction currently is in.
  *         in: query
  *         type: boolean
- *       - name: timemin
- *         description: Minimum time for the faction history in miliseconds.
+ *       - name: timeMin
+ *         description: Minimum time for the faction history in milliseconds.
  *         in: query
  *         type: string
- *       - name: timemax
- *         description: Maximum time for the faction history in miliseconds.
+ *       - name: timeMax
+ *         description: Maximum time for the faction history in milliseconds.
  *         in: query
  *         type: string
  *       - name: count
- *         description: Number of history records per system presence. Disables timemin and timemax
+ *         description: Number of history records per system presence. Disables timeMin and timeMax
  *         in: query
  *         type: string
  *       - name: page
@@ -116,11 +116,11 @@ let aggregateOptions = {
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/EBGSFactionsPageV4'
+ *             $ref: '#/definitions/EBGSFactionsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
         let page = 1;
         let history = false;
         let minimal = false;
@@ -143,7 +143,7 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.government) {
             query.government = utilities.arrayOrNot(req.query.government, _.toLower);
         }
-        if (req.query.beginsWith) {
+        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             };
@@ -151,7 +151,7 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.system) {
             query["faction_presence.system_name_lower"] = utilities.arrayOrNot(req.query.system, _.toLower);
         }
-        if (req.query.systemid) {
+        if (req.query.systemId) {
             query["faction_presence.system_id"] = utilities.arrayOrNot(req.query.system, ObjectId);
         }
         if (req.query.activeState) {
@@ -193,20 +193,20 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.page) {
             page = req.query.page;
         }
-        if (req.query.timemin && req.query.timemax) {
+        if (req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
-        if (req.query.timemin && !req.query.timemax) {
+        if (req.query.timeMin && !req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
         }
-        if (!req.query.timemin && req.query.timemax) {
+        if (!req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
         if (req.query.count) {
             history = true
@@ -245,7 +245,7 @@ async function getFactions(query, history, minimal, page, request) {
     countAggregate.match(query);
 
     if (!_.isEmpty(history)) {
-        if (minimal === 'true') {
+        if (minimal) {
             throw new Error("Minimal cannot work with History");
         }
         let lookupMatchAndArray = [{
@@ -254,7 +254,7 @@ async function getFactions(query, history, minimal, page, request) {
         if (history.count) {
             if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
-            } else if (request.query.systemid && request.query.filterSystemInHistory === 'true') {
+            } else if (request.query.systemId && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_id);
             } else {
                 lookupMatchAndArray.push({
@@ -296,7 +296,7 @@ async function getFactions(query, history, minimal, page, request) {
             );
             if (request.query.system && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_name_lower);
-            } else if (request.query.systemid && request.query.filterSystemInHistory === 'true') {
+            } else if (request.query.systemId && request.query.filterSystemInHistory === 'true') {
                 lookupMatchAndArray.push(query.faction_presence.system_id);
             }
             aggregate.lookup({
@@ -371,7 +371,7 @@ async function getFactions(query, history, minimal, page, request) {
         }
     });
 
-    if (minimal === 'true') {
+    if (minimal) {
         aggregate.project({
             faction_presence: 0
         });

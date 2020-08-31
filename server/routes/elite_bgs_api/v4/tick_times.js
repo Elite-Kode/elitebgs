@@ -23,29 +23,30 @@ const _ = require('lodash');
 let router = express.Router();
 
 /**
-   * @swagger
-   * /ticks:
-   *   get:
-   *     description: Get the last tick time and tick history
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - name: timemin
-   *         description: Minimum time for the tick history in miliseconds (Checks updated_at).
-   *         in: query
-   *         type: string
-   *       - name: timemax
-   *         description: Maximum time for the tick history in miliseconds (Checks updated_at).
-   *         in: query
-   *         type: string
-   *     responses:
-   *       200:
-   *         description: An array of systems with historical data
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/TickTimesV4'
-   */
+ * @swagger
+ * /ticks:
+ *   get:
+ *     description: Get the last tick time and tick history
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: timemin
+ *         description: Minimum time for the tick history in miliseconds (Checks updated_at).
+ *         in: query
+ *         type: string
+ *       - name: timemax
+ *         description: Maximum time for the tick history in miliseconds (Checks updated_at).
+ *         in: query
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: An array of systems with historical data
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/TickTimesV4'
+ *     deprecated: true
+ */
 router.get('/', cors(), async (req, res, next) => {
     try {
         let query = new Object;

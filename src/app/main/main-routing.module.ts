@@ -23,7 +23,7 @@ const mainRoutes: Routes = [
                 component: SystemListComponent
             },
             {
-                path: 'system/:systemid',
+                path: 'system/:systemId',
                 component: SystemViewComponent
             },
             {
@@ -31,7 +31,7 @@ const mainRoutes: Routes = [
                 component: FactionListComponent
             },
             {
-                path: 'faction/:factionid',
+                path: 'faction/:factionId',
                 component: FactionViewComponent
             },
             {
@@ -39,7 +39,7 @@ const mainRoutes: Routes = [
                 component: StationListComponent
             },
             {
-                path: 'station/:stationid',
+                path: 'station/:stationId',
                 component: StationViewComponent
             }
         ]

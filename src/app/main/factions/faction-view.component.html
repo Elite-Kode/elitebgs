@@ -77,7 +77,7 @@
                 <span class="label" *ngFor="let recovering of presence.recovering_states"
                     [ngClass]="{'label-info': recovering.trend === 0,'label-success': recovering.trend > 0,'label-danger':recovering.trend < 0}">{{recovering.state}}</span>
             </clr-dg-cell>
-            <clr-dg-cell>{{presence.population | number}}</clr-dg-cell>
+            <clr-dg-cell>{{presence.system_details.population | number}}</clr-dg-cell>
             <clr-dg-cell>
                 {{getUpdatedAtFormatted(presence.updated_at).time}}
                 <span class="label"

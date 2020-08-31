@@ -6,7 +6,7 @@ import { StationsService } from '../../services/stations.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
 import { IStation } from './station.interface';
-import { EBGSStationsWOHistory, IngameIdsSchema } from '../../typings';
+import { EBGSStations, IngameIdsSchema } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -41,7 +41,7 @@ export class StationListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    showStation(stations: EBGSStationsWOHistory) {
+    showStation(stations: EBGSStations) {
         this.totalRecords = stations.total;
         this.stationData = stations.docs.map(responseStation => {
             const id = responseStation._id;

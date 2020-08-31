@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../typings';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { EBGSSystemSchemaDetailed } from '../typings';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -27,14 +27,16 @@ import { IngameIdsService } from '../services/ingameIds.service';
     templateUrl: './system-happiness-chart.component.html'
 })
 export class SystemHappinessChartComponent implements OnInit, OnChanges {
-    @Input() systemData: EBGSSystemChart;
+    @Input() systemData: EBGSSystemSchemaDetailed;
     // options: Options;
     options: any;
     chart: Chart;
+
     constructor(
         private themeService: ThemeService,
         private ingameIdsService: IngameIdsService
-    ) { }
+    ) {
+    }
 
     ngOnInit(): void {
         this.createChart();
@@ -44,8 +46,8 @@ export class SystemHappinessChartComponent implements OnInit, OnChanges {
         // Todo: Copied over to server\routes\chart_generator.js
         const allTimeFactions: string[] = [];
         this.systemData.faction_history.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         this.systemData.faction_history.sort((a, b) => {
@@ -72,7 +74,7 @@ export class SystemHappinessChartComponent implements OnInit, OnChanges {
                 let timeBegin = 0;
                 let timeEnd = 0;
                 this.systemData.faction_history.forEach(record => {
-                    if (record.faction === faction) {
+                    if (record.faction_name === faction) {
                         if (previousHappiness !== record.happiness) {
                             if (record.happiness === happiness[0]) {
                                 timeBegin = Date.parse(record.updated_at);

@@ -62,11 +62,11 @@ let aggregateOptions = {
  *         description: State the system is in.
  *         in: query
  *         type: string
- *       - name: primaryeconomy
+ *       - name: primaryEconomy
  *         description: The primary economy of the system.
  *         in: query
  *         type: string
- *       - name: secondaryeconomy
+ *       - name: secondaryEconomy
  *         description: The secondary economy of the system.
  *         in: query
  *         type: string
@@ -74,7 +74,7 @@ let aggregateOptions = {
  *         description: The faction present in the system.
  *         in: query
  *         type: string
- *       - name: factionid
+ *       - name: factionId
  *         description: The id of the faction present in the system.
  *         in: query
  *         type: string
@@ -114,7 +114,7 @@ let aggregateOptions = {
  *         description: Search by sphere instead of cube.
  *         in: query
  *         type: boolean
- *       - name: beginswith
+ *       - name: beginsWith
  *         description: Starting characters of the system.
  *         in: query
  *         type: string
@@ -126,16 +126,20 @@ let aggregateOptions = {
  *         description: Get the detailed faction data of the factions in the system.
  *         in: query
  *         type: boolean
- *       - name: timemin
- *         description: Minimum time for the system history in miliseconds.
+ *       - name: factionHistory
+ *         description: Get the history of the factions along with the system history.
+ *         in: query
+ *         type: boolean
+ *       - name: timeMin
+ *         description: Minimum time for the system history in milliseconds.
  *         in: query
  *         type: string
- *       - name: timemax
- *         description: Maximum time for the system history in miliseconds.
+ *       - name: timeMax
+ *         description: Maximum time for the system history in milliseconds.
  *         in: query
  *         type: string
  *       - name: count
- *         description: Number of history records. Disables timemin and timemax
+ *         description: Number of history records. Disables timeMin and timeMax
  *         in: query
  *         type: string
  *       - name: page
@@ -148,11 +152,11 @@ let aggregateOptions = {
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/EBGSSystemsPageV4'
+ *             $ref: '#/definitions/EBGSSystemsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
         let page = 1;
         let history = false;
         let minimal = false;
@@ -178,11 +182,11 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.state) {
             query.state = utilities.arrayOrNot(req.query.state, _.toLower);
         }
-        if (req.query.primaryeconomy) {
-            query.primary_economy = utilities.arrayOrNot(req.query.primaryeconomy.toLowerCase(), _.toLower);
+        if (req.query.primaryEconomy) {
+            query.primary_economy = utilities.arrayOrNot(req.query.primaryEconomy.toLowerCase(), _.toLower);
         }
-        if (req.query.secondaryeconomy) {
-            query.secondary_economy = utilities.arrayOrNot(req.query.secondaryeconomy.toLowerCase(), _.toLower);
+        if (req.query.secondaryEconomy) {
+            query.secondary_economy = utilities.arrayOrNot(req.query.secondaryEconomy.toLowerCase(), _.toLower);
         }
         if (req.query.faction) {
             query["factions"] = {
@@ -191,10 +195,10 @@ router.get('/', cors(), async (req, res, next) => {
                 }
             };
         }
-        if (req.query.factionid) {
+        if (req.query.factionId) {
             query["factions"] = {
                 $elemMatch: {
-                    faction_id: utilities.arrayOrNot(req.query.factionid, ObjectId)
+                    faction_id: utilities.arrayOrNot(req.query.factionId, ObjectId)
                 }
             };
         }
@@ -204,7 +208,7 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.security) {
             query.security = utilities.arrayOrNot(req.query.security.toLowerCase(), _.toLower);
         }
-        if (req.query.beginsWith) {
+        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
             query.name_lower = {
                 $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
             };
@@ -215,20 +219,20 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.page) {
             page = req.query.page;
         }
-        if (req.query.timemin && req.query.timemax) {
+        if (req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
-        if (req.query.timemin && !req.query.timemax) {
+        if (req.query.timeMin && !req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
+            greaterThanTime = new Date(Number(req.query.timeMin));
+            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
         }
-        if (!req.query.timemin && req.query.timemax) {
+        if (!req.query.timeMin && req.query.timeMax) {
             history = true;
-            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-            lesserThanTime = new Date(Number(req.query.timemax));
+            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
+            lesserThanTime = new Date(Number(req.query.timeMax));
         }
         if (req.query.count) {
             history = true
@@ -359,7 +363,7 @@ async function getSystems(query, history, minimal, page, request) {
     countAggregate.match(query);
 
     if (!_.isEmpty(history)) {
-        if (minimal === 'true') {
+        if (minimal) {
             throw new Error("Minimal cannot work with History");
         }
         let lookupMatchAndArray = [{
@@ -381,6 +385,7 @@ async function getSystems(query, history, minimal, page, request) {
                     {
                         $project: {
                             system_id: 0,
+                            system_name: 0,
                             system_name_lower: 0
                         }
                     },
@@ -389,6 +394,32 @@ async function getSystems(query, history, minimal, page, request) {
                     }
                 ]
             });
+            if(request.query.factionHistory === 'true'){
+                aggregate.lookup({
+                    from: "ebgshistoryfactionv5",
+                    as: "faction_history",
+                    let: { "id": "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: lookupMatchAndArray
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                system_id: 0,
+                                system: 0,
+                                system_lower: 0
+                            }
+                        },
+                        {
+                            $limit: history.count
+                        }
+                    ]
+                });
+            }
         } else {
             lookupMatchAndArray.push(
                 {
@@ -414,11 +445,35 @@ async function getSystems(query, history, minimal, page, request) {
                     {
                         $project: {
                             system_id: 0,
+                            system_name: 0,
                             system_name_lower: 0
                         }
                     }
                 ]
             });
+            if(request.query.factionHistory === 'true'){
+                aggregate.lookup({
+                    from: "ebgshistoryfactionv5",
+                    as: "faction_history",
+                    let: { "id": "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: lookupMatchAndArray
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                system_id: 0,
+                                system: 0,
+                                system_lower: 0
+                            }
+                        }
+                    ]
+                });
+            }
         }
     }
 
@@ -666,7 +721,7 @@ async function getSystems(query, history, minimal, page, request) {
         }
     });
 
-    if (minimal === 'true') {
+    if (minimal) {
         aggregate.project({
             factions: 0,
             conflicts: 0

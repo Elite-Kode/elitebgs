@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EBGSDonor, EBGSPatron, EBGSCredits, EBGSUsers, EBGSUser, EBGSSystemSchemaWOHistory, EBGSSystemSchema } from '../typings';
+import { EBGSCredits, EBGSDonor, EBGSPatron, EBGSUser, EBGSUsers } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 
 @Injectable()
 export class UsersService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {
+    }
 
     getDonors(): Observable<EBGSDonor[]> {
         return this.http.get<EBGSDonor[]>('/frontend/donors')
@@ -36,7 +37,7 @@ export class UsersService {
 
     getUsersBegins(page: string, user: string): Observable<EBGSUsers> {
         return this.http.get<EBGSUsers>('/frontend/users', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('page', page + 1).set('beginsWith', user)
+            params: new HttpParams({encoder: new CustomEncoder()}).set('page', page + 1).set('beginsWith', user)
         }).pipe(map((users: EBGSUsers): EBGSUsers => {
             users.docs.forEach((singleUser, i, allUsers) => {
                 allUsers[i].patronage.since = new Date(singleUser.patronage.since);
@@ -50,7 +51,7 @@ export class UsersService {
 
     getUser(id: string): Observable<EBGSUsers> {
         return this.http.get<EBGSUsers>('/frontend/users', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('id', id)
+            params: new HttpParams({encoder: new CustomEncoder()}).set('id', id)
         }).pipe(map((users: EBGSUsers): EBGSUsers => {
             users.docs.forEach((singleUser, i, allUsers) => {
                 allUsers[i].patronage.since = new Date(singleUser.patronage.since);

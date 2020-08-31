@@ -23,77 +23,78 @@ const _ = require('lodash');
 let router = express.Router();
 
 /**
-   * @swagger
-   * /stations:
-   *   get:
-   *     description: Get the Stations
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - name: id
-   *         description: ID of the document.
-   *         in: query
-   *         type: string
-   *       - name: eddbId
-   *         description: EDDB ID of the station.
-   *         in: query
-   *         type: string
-   *       - name: name
-   *         description: Station name.
-   *         in: query
-   *         type: string
-   *       - name: type
-   *         description: Station type.
-   *         in: query
-   *         type: string
-   *       - name: system
-   *         description: System name the station is in.
-   *         in: query
-   *         type: string
-   *       - name: economy
-   *         description: Station economy.
-   *         in: query
-   *         type: string
-   *       - name: allegiance
-   *         description: Name of the allegiance.
-   *         in: query
-   *         type: string
-   *       - name: government
-   *         description: Name of the government type.
-   *         in: query
-   *         type: string
-   *       - name: state
-   *         description: State the station is in.
-   *         in: query
-   *         type: string
-   *       - name: beginswith
-   *         description: Starting characters of the station.
-   *         in: query
-   *         type: string
-   *       - name: timemin
-   *         description: Minimum time for the station history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: timemax
-   *         description: Maximum time for the station history in miliseconds.
-   *         in: query
-   *         type: string
-   *       - name: count
-   *         description: Number of history records. Disables timemin and timemax
-   *         in: query
-   *         type: string
-   *       - name: page
-   *         description: Page no of response.
-   *         in: query
-   *         type: integer
-   *     responses:
-   *       200:
-   *         description: An array of stations with historical data
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/EBGSStationsPageV4'
-   */
+ * @swagger
+ * /stations:
+ *   get:
+ *     description: Get the Stations
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: ID of the document.
+ *         in: query
+ *         type: string
+ *       - name: eddbId
+ *         description: EDDB ID of the station.
+ *         in: query
+ *         type: string
+ *       - name: name
+ *         description: Station name.
+ *         in: query
+ *         type: string
+ *       - name: type
+ *         description: Station type.
+ *         in: query
+ *         type: string
+ *       - name: system
+ *         description: System name the station is in.
+ *         in: query
+ *         type: string
+ *       - name: economy
+ *         description: Station economy.
+ *         in: query
+ *         type: string
+ *       - name: allegiance
+ *         description: Name of the allegiance.
+ *         in: query
+ *         type: string
+ *       - name: government
+ *         description: Name of the government type.
+ *         in: query
+ *         type: string
+ *       - name: state
+ *         description: State the station is in.
+ *         in: query
+ *         type: string
+ *       - name: beginswith
+ *         description: Starting characters of the station.
+ *         in: query
+ *         type: string
+ *       - name: timemin
+ *         description: Minimum time for the station history in miliseconds.
+ *         in: query
+ *         type: string
+ *       - name: timemax
+ *         description: Maximum time for the station history in miliseconds.
+ *         in: query
+ *         type: string
+ *       - name: count
+ *         description: Number of history records. Disables timemin and timemax
+ *         in: query
+ *         type: string
+ *       - name: page
+ *         description: Page no of response.
+ *         in: query
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: An array of stations with historical data
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/EBGSStationsPageV4'
+ *     deprecated: true
+ */
 router.get('/', cors(), async (req, res, next) => {
     try {
         let query = new Object;
@@ -158,7 +159,11 @@ router.get('/', cors(), async (req, res, next) => {
             count = +req.query.count
         }
         if (history) {
-            let result = await getStations(query, { greater: greaterThanTime, lesser: lesserThanTime, count: count }, page);
+            let result = await getStations(query, {
+                greater: greaterThanTime,
+                lesser: lesserThanTime,
+                count: count
+            }, page);
             res.status(200).json(result);
         } else {
             let result = await getStations(query, {}, page);

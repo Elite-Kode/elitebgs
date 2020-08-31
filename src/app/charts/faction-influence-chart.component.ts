@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSFactionSchema } from '../typings';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { EBGSFactionHistory, EBGSFactionSchemaDetailed } from '../typings';
 // import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -10,10 +10,12 @@ import { ThemeService } from '../services/theme.service';
 })
 
 export class FactionInfluenceChartComponent implements OnInit, OnChanges {
-    @Input() factionData: EBGSFactionSchema;
+    @Input() factionData: EBGSFactionSchemaDetailed;
     options: any;
     chart: Chart;
-    constructor(private themeService: ThemeService) { }
+
+    constructor(private themeService: ThemeService) {
+    }
 
     ngOnInit(): void {
         this.createChart();
@@ -40,7 +42,7 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
         });
         allSystems.forEach(system => {
             const data: [number, number][] = [];
-            let lastElement: EBGSFactionSchema['history'][0];
+            let lastElement: EBGSFactionHistory;
             history.forEach(element => {
                 if (element.system === system) {
                     data.push([
@@ -71,13 +73,13 @@ export class FactionInfluenceChartComponent implements OnInit, OnChanges {
             });
         });
         this.options = {
-            xAxis: { type: 'datetime' },
+            xAxis: {type: 'datetime'},
             yAxis: {
                 title: {
                     text: 'Influence'
                 }
             },
-            title: { text: 'Influence Trend' },
+            title: {text: 'Influence Trend'},
             series: series,
             exporting: {
                 enabled: true,
