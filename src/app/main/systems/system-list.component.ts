@@ -6,7 +6,7 @@ import { SystemsService } from '../../services/systems.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
 import { ISystem } from './system.interface';
-import { EBGSSystemsWOHistory, IngameIdsSchema } from '../../typings';
+import { EBGSSystemsMinimal, IngameIdsSchema } from '../../typings';
 import { debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -41,7 +41,7 @@ export class SystemListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    showSystem(systems: EBGSSystemsWOHistory) {
+    showSystem(systems: EBGSSystemsMinimal) {
         this.totalRecords = systems.total;
         this.systemData = systems.docs.map(responseSystem => {
             const id = responseSystem._id;

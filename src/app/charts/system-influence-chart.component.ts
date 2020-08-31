@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../typings';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { EBGSFactionHistoryDetailed, EBGSSystemSchemaDetailed } from '../typings';
 // import { Options, LineChartSeriesOptions } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -10,10 +10,12 @@ import { ThemeService } from '../services/theme.service';
 })
 
 export class SystemInfluenceChartComponent implements OnInit, OnChanges {
-    @Input() systemData: EBGSSystemChart;
+    @Input() systemData: EBGSSystemSchemaDetailed;
     options: any;
     chart: Chart;
-    constructor(private themeService: ThemeService) { }
+
+    constructor(private themeService: ThemeService) {
+    }
 
     ngOnInit(): void {
         this.createChart();
@@ -23,8 +25,8 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
         // Copied over to server\routes\chart_generator.js
         const allTimeFactions: string[] = [];
         this.systemData.faction_history.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         this.systemData.faction_history.sort((a, b) => {
@@ -39,9 +41,9 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
         const series: any[] = [];
         allTimeFactions.forEach(faction => {
             const data: [number, number][] = [];
-            let lastRecord: EBGSSystemChart['faction_history'][0];
+            let lastRecord: EBGSFactionHistoryDetailed;
             this.systemData.faction_history.forEach(record => {
-                if (record.faction === faction) {
+                if (record.faction_name === faction) {
                     data.push([
                         Date.parse(record.updated_at),
                         Number.parseFloat((record.influence * 100).toFixed(2))
@@ -63,7 +65,7 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
             })
             if (latestUpdate) {
                 data.push([
-                    Date.parse(latestUpdate.updated_at),
+                    Date.parse(latestUpdate.faction_details.faction_presence.updated_at),
                     Number.parseFloat((lastRecord.influence * 100).toFixed(2))
                 ]);
             }
@@ -73,13 +75,13 @@ export class SystemInfluenceChartComponent implements OnInit, OnChanges {
             });
         });
         this.options = {
-            xAxis: { type: 'datetime' },
+            xAxis: {type: 'datetime'},
             yAxis: {
                 title: {
                     text: 'Influence'
                 }
             },
-            title: { text: 'Influence Trend' },
+            title: {text: 'Influence Trend'},
             series: series,
             exporting: {
                 enabled: true,

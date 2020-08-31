@@ -33,7 +33,7 @@ export class FactionsService {
     private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSFactionsDetailed> {
         return this.http.get<EBGSFactionsDetailed>('/api/ebgs/v5/factions', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('name', name).set('timeMin', timeMin).set('timeMax', timeMax).set('systemDetails', 'true')
-        })
+        });
     }
 
     // tslint:disable-next-line:max-line-length

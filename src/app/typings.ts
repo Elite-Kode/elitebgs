@@ -79,8 +79,18 @@ export interface EBGSFactionHistory {
     }[];
 }
 
+export interface EBGSFactionHistoryDetailed extends Omit<EBGSFactionHistory, 'system' | 'system_lower' | 'system_id'> {
+    faction_id: string;
+    faction_name: string;
+    faction_name_lower: string;
+}
+
 export interface EBGSFactionSchema extends EBGSFactionSchemaMinimal {
     faction_presence: EBGSFactionPresence[];
+}
+
+export interface EBGSFactionSystemSchema extends EBGSFactionSchemaMinimal {
+    faction_presence: EBGSFactionPresence;
 }
 
 export interface EBGSFactionSchemaDetailed extends Omit<EBGSFactionSchema, 'faction_presence'> {
@@ -89,34 +99,31 @@ export interface EBGSFactionSchemaDetailed extends Omit<EBGSFactionSchema, 'fact
     controlling: boolean;
 }
 
-export interface EBGSSystemSchema {
+export interface EBGSFactionSchemaMinimal {
     _id: string;
     __v: number;
     eddb_id: number;
     name: string;
     name_lower: string;
-    x: number;
-    y: number;
-    z: number;
-    system_address: string;
-    name_aliases: string;
-    population: number;
+    updated_at: string;
     government: string;
     allegiance: string;
-    state: string;
-    security: string;
-    primary_economy: string;
-    secondary_economy: string;
-    needs_permit: boolean;
-    reserve_type: string;
-    controlling_minor_faction: string;
-    controlling_minor_faction_cased: string;
-    controlling_minor_faction_id: string;
-    factions: {
-        faction_id: string;
-        name: string;
-        name_lower: string;
-    }[];
+    home_system_name: string;
+    is_player_faction: boolean;
+}
+
+export interface EBGSSystemFaction {
+    faction_id: string;
+    name: string;
+    name_lower: string;
+}
+
+export interface EBGSSystemFactionDetails extends EBGSSystemFaction {
+    faction_details: EBGSFactionSystemSchema;
+}
+
+export interface EBGSSystemSchema extends EBGSSystemSchemaMinimal {
+    factions: EBGSSystemFaction[];
     conflicts: {
         type: string;
         status: string;
@@ -139,57 +146,48 @@ export interface EBGSSystemSchema {
             days_won: number;
         };
     }[];
+}
+
+export interface EBGSSystemHistory {
+    _id: string;
     updated_at: string;
-    history: {
-        _id: string;
-        updated_at: string;
-        updated_by: string;
-        population: number;
-        government: string;
-        allegiance: string;
-        state: string;
-        security: string;
-        controlling_minor_faction: string;
-        factions: {
-            faction_id: string;
+    updated_by: string;
+    population: number;
+    government: string;
+    allegiance: string;
+    state: string;
+    security: string;
+    controlling_minor_faction: string;
+    controlling_minor_faction_cased: string;
+    controlling_minor_faction_id: string;
+    factions: EBGSSystemFaction[];
+    conflicts: {
+        type: string;
+        status: string;
+        faction1: {
             name: string;
             name_lower: string;
-        }[];
-        conflicts: {
-            type: string;
-            status: string;
-            faction1: {
-                name: string;
-                name_lower: string;
-                stake: string;
-                stake_lower: string;
-                days_won: number;
-            };
-            faction2: {
-                name: string;
-                name_lower: string;
-                stake: string;
-                stake_lower: string;
-                days_won: number;
-            };
-        }[];
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
+        faction2: {
+            name: string;
+            name_lower: string;
+            stake: string;
+            stake_lower: string;
+            days_won: number;
+        };
     }[];
 }
 
-export interface EBGSFactionSchemaMinimal {
-    _id: string;
-    __v: number;
-    eddb_id: number;
-    name: string;
-    name_lower: string;
-    updated_at: string;
-    government: string;
-    allegiance: string;
-    home_system_name: string;
-    is_player_faction: boolean;
+export interface EBGSSystemSchemaDetailed extends Omit<EBGSSystemSchema, 'factions'> {
+    factions: EBGSSystemFactionDetails[];
+    history: EBGSSystemHistory[];
+    faction_history: EBGSFactionHistoryDetailed[];
 }
 
-export interface EBGSSystemSchemaWOHistory {
+export interface EBGSSystemSchemaMinimal {
     _id: string;
     __v: number;
     eddb_id: number;
@@ -209,29 +207,8 @@ export interface EBGSSystemSchemaWOHistory {
     needs_permit: boolean;
     reserve_type: string;
     controlling_minor_faction: string;
-    factions: {
-        faction_id: string;
-        name: string;
-        name_lower: string;
-    }[];
-    conflicts: {
-        type: string;
-        status: string;
-        faction1: {
-            name: string;
-            name_lower: string;
-            stake: string;
-            stake_lower: string;
-            days_won: number;
-        };
-        faction2: {
-            name: string;
-            name_lower: string;
-            stake: string;
-            stake_lower: string;
-            days_won: number;
-        };
-    }[];
+    controlling_minor_faction_cased: string;
+    controlling_minor_faction_id: string;
     updated_at: string;
 }
 
@@ -310,36 +287,34 @@ interface EBGSUserSchema {
     }[];
 }
 
-type EBGSSystemFaction = EBGSSystemSchema['factions'][0];
+// interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
+//     influence: number;
+//     state: string;
+//     happiness: string;
+//     active_states: {
+//         state: string;
+//     }[];
+//     pending_states: {
+//         state: string;
+//         trend: number;
+//     }[];
+//     recovering_states: {
+//         state: string;
+//         trend: number;
+//     }[];
+//     updated_at: string;
+// }
 
-interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
-    influence: number;
-    state: string;
-    happiness: string;
-    active_states: {
-        state: string;
-    }[];
-    pending_states: {
-        state: string;
-        trend: number;
-    }[];
-    recovering_states: {
-        state: string;
-        trend: number;
-    }[];
-    updated_at: string;
-}
+// interface EBGSFactionHistoryList extends EBGSFactionHistory {
+//     faction: string;
+//     faction_lower: string;
+// }
 
-interface EBGSFactionHistoryList extends EBGSFactionHistory {
-    faction: string;
-    faction_lower: string;
-}
-
-interface EBGSSystemChartSchema extends EBGSSystemSchema {
-    factions: EBGSSystemFactionChartSchema[];
-    faction_history: EBGSFactionHistoryList[];
-    controlling_faction: EBGSSystemFactionChartSchema;
-}
+// interface EBGSSystemChartSchema extends EBGSSystemSchemaDetailed {
+//     factions: EBGSSystemFactionChartSchema[];
+//     faction_history: EBGSFactionHistoryList[];
+//     controlling_faction: EBGSSystemFactionChartSchema;
+// }
 
 interface EBGSDonorSchema {
     _id: string;
@@ -390,8 +365,9 @@ export interface IngameIdsSchema {
 export type EBGSFactionsDetailed = PaginateResult<EBGSFactionSchemaDetailed>;
 export type EBGSFactionsMinimal = PaginateResult<EBGSFactionSchemaMinimal>;
 
-export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
-export type EBGSSystemsWOHistory = PaginateResult<EBGSSystemSchemaWOHistory>;
+// export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
+export type EBGSSystemsDetailed = PaginateResult<EBGSSystemSchemaDetailed>;
+export type EBGSSystemsMinimal = PaginateResult<EBGSSystemSchemaMinimal>;
 
 export type EBGSStationsDetailed = PaginateResult<EBGSStationSchemaDetailed>;
 export type EBGSStations = PaginateResult<EBGSStationSchema>;
@@ -399,7 +375,7 @@ export type EBGSStations = PaginateResult<EBGSStationSchema>;
 export type EBGSUser = EBGSUserSchema;
 export type EBGSUsers = PaginateResult<EBGSUser>;
 
-export type EBGSSystemChart = EBGSSystemChartSchema;
+// export type EBGSSystemChart = EBGSSystemChartSchema;
 
 export type EBGSDonor = EBGSDonorSchema;
 export type EBGSPatron = EBGSPatronSchema;
@@ -407,6 +383,6 @@ export type EBGSCredits = EBGSCreditsSchema;
 
 export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
-export type EBGSSystemHistory = PaginateResult<EBGSSystemSchema['history'][0]>;
+export type EBGSSystemHistoryPaginate = PaginateResult<EBGSSystemHistory>;
 export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
 export type EBGSStationHistoryPaginate = PaginateResult<EBGSStationHistory>;

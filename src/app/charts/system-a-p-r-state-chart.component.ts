@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { EBGSSystemChart } from '../typings';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { EBGSSystemSchemaDetailed } from '../typings';
 // import { Options, XRangeChartSeriesOptions, DataPoint, SeriesChart } from 'highcharts';
 import { Chart } from 'angular-highcharts';
 import { ThemeService } from '../services/theme.service';
@@ -31,15 +31,17 @@ import sum from 'lodash-es/sum';
     templateUrl: './system-a-p-r-state-chart.component.html'
 })
 export class SystemAPRStateChartComponent implements OnInit, OnChanges {
-    @Input() systemData: EBGSSystemChart;
+    @Input() systemData: EBGSSystemSchemaDetailed;
     @Input() type: string;
     // options: Options;
     options: any;
     chart: Chart;
+
     constructor(
         private themeService: ThemeService,
         private ingameIdsService: IngameIdsService
-    ) { }
+    ) {
+    }
 
     ngOnInit(): void {
         this.createChart();
@@ -71,15 +73,15 @@ export class SystemAPRStateChartComponent implements OnInit, OnChanges {
         const maxStatesConcurrent: number[] = [];
         const factions: string[] = [];
         this.systemData.faction_history.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         allTimeFactions.forEach((faction, index) => {
             const allStates: string[] = [];
             let maxStates = 0;
             this.systemData.faction_history.forEach((record, recordIndex, records) => {
-                if (record.faction === faction && record[stateType]) {
+                if (record.faction_name === faction && record[stateType]) {
                     if (record[stateType].length === 0) {
                         records[recordIndex][stateType].push({
                             state: 'none',
@@ -126,7 +128,7 @@ export class SystemAPRStateChartComponent implements OnInit, OnChanges {
             const previousStates: string[] = new Array(maxStatesConcurrent[index]);
             const tempBegin: number[] = new Array(maxStatesConcurrent[index]);
             this.systemData.faction_history.filter(record => {
-                return record.faction === faction;
+                return record.faction_name === faction;
             }).forEach(record => {
                 if (record[stateType] && !isEqual(record[stateType].map(recordState => {
                     return recordState.state;

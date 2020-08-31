@@ -6,7 +6,7 @@ import { FactionsService } from '../../services/factions.service';
 import { SystemsService } from '../../services/systems.service';
 import { IngameIdsService } from '../../services/ingameIds.service';
 import { ThemeService } from '../../services/theme.service';
-import { EBGSFactionSchemaDetailed, EBGSSystemChart, EBGSUser, IngameIdsSchema } from '../../typings';
+import { EBGSFactionSchemaDetailed, EBGSSystemSchemaDetailed, EBGSUser, IngameIdsSchema } from '../../typings';
 import * as moment from 'moment';
 
 @Component({
@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     isAuthenticated: boolean;
     user: EBGSUser;
     factions: EBGSFactionSchemaDetailed[] = [];
-    systems: EBGSSystemChart[] = [];
+    systems: EBGSSystemSchemaDetailed[] = [];
     factionModal: boolean;
     systemModal: boolean;
     FDevIDs: IngameIdsSchema;
@@ -93,6 +93,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 system.recovering_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });
+                if (system.system_details.controlling_minor_faction_id === faction._id) {
+                    system.controlling = true;
+                }
             });
         });
     }
@@ -103,26 +106,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
             return system.name;
         });
 
-        const systemData = await this.systemsService.parseSystemDataName(systemList);
-        this.systems = systemData;
+        this.systems = await this.systemsService.parseSystemDataName(systemList);
         this.systems.forEach(system => {
             system.state = FDevIDs.state[system.state].name;
             system.factions.forEach(faction => {
-                faction.state = FDevIDs.state[faction.state].name;
-                faction.happiness = faction.happiness ? FDevIDs.happiness[faction.happiness].name : '';
-                faction.active_states = faction.active_states ? faction.active_states : [];
-                faction.active_states.forEach(state => {
+                faction.faction_details.faction_presence.state = FDevIDs.state[faction.faction_details.faction_presence.state].name;
+
+                faction.faction_details.faction_presence.happiness = faction.faction_details.faction_presence.happiness
+                    ? FDevIDs.happiness[faction.faction_details.faction_presence.happiness].name
+                    : '';
+
+                faction.faction_details.faction_presence.active_states = faction.faction_details.faction_presence.active_states
+                    ? faction.faction_details.faction_presence.active_states
+                    : [];
+
+                faction.faction_details.faction_presence.active_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });
-                faction.pending_states.forEach(state => {
+                faction.faction_details.faction_presence.pending_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });
-                faction.recovering_states.forEach(state => {
+                faction.faction_details.faction_presence.recovering_states.forEach(state => {
                     state.state = FDevIDs.state[state.state].name;
                 });
-                if (faction.name_lower === system.controlling_minor_faction) {
-                    system.controlling_faction = faction;
-                }
             });
         });
     }

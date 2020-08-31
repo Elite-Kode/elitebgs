@@ -31,7 +31,7 @@ export class StationViewComponent implements OnInit {
         this.getAuthentication();
         const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const station = await this.stationService
-            .parseStationDataId([this.route.snapshot.paramMap.get('stationid')]);
+            .parseStationDataId([this.route.snapshot.paramMap.get('stationId')]);
         this.stationData = station[0];
         this.stationData.type = FDevIDs.station[this.stationData.type].name;
         this.stationData.government = FDevIDs.government[this.stationData.government].name;

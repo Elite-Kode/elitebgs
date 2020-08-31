@@ -126,6 +126,10 @@ let aggregateOptions = {
  *         description: Get the detailed faction data of the factions in the system.
  *         in: query
  *         type: boolean
+ *       - name: factionHistory
+ *         description: Get the history of the factions along with the system history.
+ *         in: query
+ *         type: boolean
  *       - name: timeMin
  *         description: Minimum time for the system history in milliseconds.
  *         in: query
@@ -359,7 +363,7 @@ async function getSystems(query, history, minimal, page, request) {
     countAggregate.match(query);
 
     if (!_.isEmpty(history)) {
-        if (minimal === 'true') {
+        if (minimal) {
             throw new Error("Minimal cannot work with History");
         }
         let lookupMatchAndArray = [{
@@ -381,6 +385,7 @@ async function getSystems(query, history, minimal, page, request) {
                     {
                         $project: {
                             system_id: 0,
+                            system_name: 0,
                             system_name_lower: 0
                         }
                     },
@@ -389,6 +394,32 @@ async function getSystems(query, history, minimal, page, request) {
                     }
                 ]
             });
+            if(request.query.factionHistory === 'true'){
+                aggregate.lookup({
+                    from: "ebgshistoryfactionv5",
+                    as: "faction_history",
+                    let: { "id": "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: lookupMatchAndArray
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                system_id: 0,
+                                system: 0,
+                                system_lower: 0
+                            }
+                        },
+                        {
+                            $limit: history.count
+                        }
+                    ]
+                });
+            }
         } else {
             lookupMatchAndArray.push(
                 {
@@ -414,11 +445,35 @@ async function getSystems(query, history, minimal, page, request) {
                     {
                         $project: {
                             system_id: 0,
+                            system_name: 0,
                             system_name_lower: 0
                         }
                     }
                 ]
             });
+            if(request.query.factionHistory === 'true'){
+                aggregate.lookup({
+                    from: "ebgshistoryfactionv5",
+                    as: "faction_history",
+                    let: { "id": "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: lookupMatchAndArray
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                system_id: 0,
+                                system: 0,
+                                system_lower: 0
+                            }
+                        }
+                    ]
+                });
+            }
         }
     }
 
@@ -666,7 +721,7 @@ async function getSystems(query, history, minimal, page, request) {
         }
     });
 
-    if (minimal === 'true') {
+    if (minimal) {
         aggregate.project({
             factions: 0,
             conflicts: 0
