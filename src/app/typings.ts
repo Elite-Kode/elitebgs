@@ -33,6 +33,8 @@ export interface EBGSFactionConflict {
     stake: string;
     stake_lower: string;
     days_won: number;
+    system_id: string;
+    system_name: string;
 }
 
 export interface EBGSFactionSystemDetails extends EBGSFactionPresence {
