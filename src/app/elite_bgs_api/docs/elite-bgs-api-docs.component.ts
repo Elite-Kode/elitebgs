@@ -31,6 +31,11 @@ export class EliteBgsApiDocsComponent {
                 versionName: 'V4',
                 specLocation: '/api/ebgs/v4/api-docs.json',
                 swaggerLocation: '/api/ebgs/v4/docs'
+            },
+            {
+                versionName: 'V5',
+                specLocation: '/api/ebgs/v5/api-docs.json',
+                swaggerLocation: '/api/ebgs/v5/docs'
             }
         ]
     }

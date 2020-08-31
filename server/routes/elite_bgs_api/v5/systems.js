@@ -152,7 +152,7 @@ let aggregateOptions = {
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/EBGSSystemsPageV4'
+ *             $ref: '#/definitions/EBGSSystemsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
     try {

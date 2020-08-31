@@ -44,7 +44,7 @@ let router = express.Router();
    *         schema:
    *           type: array
    *           items:
-   *             $ref: '#/definitions/TickTimesV4'
+   *             $ref: '#/definitions/TickTimesV5'
    */
 router.get('/', cors(), async (req, res, next) => {
     try {

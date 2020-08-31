@@ -26,8 +26,6 @@ interface EBGSFactionPresence {
 export interface EBGSFactionConflict {
     type: string;
     status: string;
-    system_id: string;
-    system_name: string;
     opponent_name: string;
     opponent_name_lower: string;
     opponent_faction_id: string;

@@ -106,10 +106,16 @@ app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
     res.send(swagger.EBGSAPIv4);
 });
 
+app.use('/api/ebgs/v5/api-docs.json', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swagger.EBGSAPIv5);
+});
+
 app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv1));
 app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv2));
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv3));
 app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv4));
+app.use('/api/ebgs/v5/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv5));
 
 app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
 app.use('/api/ebgs/v4/systems', ebgsSystemsV4);

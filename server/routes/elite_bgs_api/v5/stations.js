@@ -104,7 +104,7 @@ let aggregateOptions = {
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/EBGSStationsPageV4'
+ *             $ref: '#/definitions/EBGSStationsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
     try {
@@ -216,6 +216,7 @@ async function getStations(query, history, page) {
                     {
                         $project: {
                             station_id: 0,
+                            station_name: 0,
                             station_name_lower: 0
                         }
                     },
@@ -249,6 +250,7 @@ async function getStations(query, history, page) {
                     {
                         $project: {
                             station_id: 0,
+                            station_name: 0,
                             station_name_lower: 0
                         }
                     }
