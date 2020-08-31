@@ -31,11 +31,12 @@ let router = express.Router();
 router.get('/factions/influence', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                systemDetails: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -148,11 +149,12 @@ router.get('/factions/influence', async (req, res, next) => {
 router.get('/factions/state', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                systemDetails: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -313,11 +315,12 @@ router.get('/factions/recovering', (req, res, next) => {
 let factionActivePendingRecovering = async (req, res, next, type) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                systemDetails: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -583,11 +586,12 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
 router.get('/factions/happiness', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/factions`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                systemDetails: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -734,11 +738,13 @@ router.get('/factions/happiness', async (req, res, next) => {
 router.get('/systems/influence', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                factionDetails: 'true',
+                factionHistory: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -758,8 +764,8 @@ router.get('/systems/influence', async (req, res, next) => {
         const history = responseObject.docs[0].history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         factionHistory.sort((a, b) => {
@@ -776,7 +782,7 @@ router.get('/systems/influence', async (req, res, next) => {
             const data = [];
             let lastRecord;
             factionHistory.forEach(record => {
-                if (record.faction === faction) {
+                if (record.faction_name === faction) {
                     data.push([
                         Date.parse(record.updated_at),
                         Number.parseFloat((record.influence * 100).toFixed(2))
@@ -798,7 +804,7 @@ router.get('/systems/influence', async (req, res, next) => {
             })
             if (latestUpdate) {
                 data.push([
-                    Date.parse(latestUpdate.updated_at),
+                    Date.parse(latestUpdate.faction_details.faction_presence.updated_at),
                     Number.parseFloat((lastRecord.influence * 100).toFixed(2))
                 ]);
             }
@@ -855,11 +861,13 @@ router.get('/systems/influence', async (req, res, next) => {
 router.get('/systems/state', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                factionDetails: 'true',
+                factionHistory: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -878,8 +886,8 @@ router.get('/systems/state', async (req, res, next) => {
         const factionHistory = responseObject.docs[0].faction_history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         factionHistory.sort((a, b) => {
@@ -905,7 +913,7 @@ router.get('/systems/state', async (req, res, next) => {
                 let timeBegin = 0;
                 let timeEnd = 0;
                 factionHistory.forEach(record => {
-                    if (record.faction === faction) {
+                    if (record.faction_name === faction) {
                         if (previousState !== record.state) {
                             if (record.state === state[0]) {
                                 timeBegin = Date.parse(record.updated_at);
@@ -1020,11 +1028,13 @@ router.get('/systems/recovering', (req, res, next) => {
 let systemActivePendingRecovering = async (req, res, next, type) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                factionDetails: 'true',
+                factionHistory: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -1065,15 +1075,15 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
         const factions = [];
         const factionHistory = responseObject.docs[0].faction_history;
         factionHistory.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         allTimeFactions.forEach((faction, index) => {
             const allStates = [];
             let maxStates = 0;
             factionHistory.forEach((record, recordIndex, records) => {
-                if (record.faction === faction) {
+                if (record.faction_name === faction) {
                     if (record[stateType].length === 0) {
                         records[recordIndex][stateType].push({
                             state: 'none',
@@ -1119,7 +1129,7 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             const previousStates = new Array(maxStatesConcurrent[index]);
             const tempBegin = new Array(maxStatesConcurrent[index]);
             factionHistory.filter(record => {
-                return record.faction === faction;
+                return record.faction_name === faction;
             }).forEach(record => {
                 if (record[stateType] && !_.isEqual(record[stateType].map(recordState => {
                     return recordState.state;
@@ -1290,11 +1300,13 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
 router.get('/systems/happiness', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/frontend/systems`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
                 timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timemax: req.query.timemax,
+                factionDetails: 'true',
+                factionHistory: 'true'
             },
             json: true,
             resolveWithFullResponse: true
@@ -1313,8 +1325,8 @@ router.get('/systems/happiness', async (req, res, next) => {
         const factionHistory = responseObject.docs[0].faction_history;
         const allTimeFactions = [];
         factionHistory.forEach(record => {
-            if (allTimeFactions.indexOf(record.faction) === -1) {
-                allTimeFactions.push(record.faction);
+            if (allTimeFactions.indexOf(record.faction_name) === -1) {
+                allTimeFactions.push(record.faction_name);
             }
         });
         factionHistory.sort((a, b) => {
@@ -1338,7 +1350,7 @@ router.get('/systems/happiness', async (req, res, next) => {
                 let timeBegin = 0;
                 let timeEnd = 0;
                 factionHistory.forEach(record => {
-                    if (record.faction === faction) {
+                    if (record.faction_name === faction) {
                         if (previousHappiness !== record.happiness) {
                             if (record.happiness === happiness[0]) {
                                 timeBegin = Date.parse(record.updated_at);
