@@ -218,7 +218,6 @@ function Journal() {
                             system: message.StarSystem,
                             system_lower: message.StarSystem.toLowerCase(),
                             system_id: system._id,
-                            type: message.StationType,
                             economy: message.StationEconomy,
                             all_economies: message.StationEconomies.map(economy => {
                                 return {
@@ -613,6 +612,7 @@ function Journal() {
                     station.allegiance !== message.StationAllegiance.toLowerCase() ||
                     station.state !== message.StationFaction.FactionState.toLowerCase() ||
                     station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
+                    station.type !== message.StationType.toLowerCase() ||
                     nameIsDifferent ||
                     !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
@@ -632,6 +632,7 @@ function Journal() {
                         station.government = message.StationGovernment;
                         station.allegiance = message.StationAllegiance;
                         station.state = message.StationFaction.FactionState;
+                        station.type = message.StationType
                         station.controlling_minor_faction_cased = message.StationFaction.Name;
                         station.controlling_minor_faction = message.StationFaction.Name;
                         station.controlling_minor_faction_id = faction._id;
@@ -641,6 +642,7 @@ function Journal() {
                         historyObject = {
                             updated_at: message.timestamp,
                             updated_by: "EDDN",
+                            type: message.StationType,
                             government: message.StationGovernment,
                             allegiance: message.StationAllegiance,
                             state: message.StationFaction.FactionState,
@@ -835,6 +837,7 @@ function Journal() {
                 item.allegiance === message.StationAllegiance.toLowerCase() &&
                 item.state === message.StationFaction.FactionState.toLowerCase() &&
                 item.controlling_minor_faction === message.StationFaction.Name.toLowerCase() &&
+                item.type === message.StationType.toLowerCase() &&
                 _.isEqual(_.sortBy(item.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
                 return false;
             }
