@@ -87,15 +87,31 @@ let aggregateOptions = {
  *         in: query
  *         type: string
  *       - name: activeState
- *         description: Name of the active state of any faction in the system.
+ *         description: (slow) Name of the active state of any faction in the system.
  *         in: query
  *         type: string
  *       - name: pendingState
- *         description: Name of the pending state of any faction in the system.
+ *         description: (slow) Name of the pending state of any faction in the system.
  *         in: query
  *         type: string
  *       - name: recoveringState
- *         description: Name of the recovering state of any faction in the system.
+ *         description: (slow) Name of the recovering state of any faction in the system.
+ *         in: query
+ *         type: string
+ *       - name: influenceGT
+ *         description: (slow) Faction present with influence greater than. Must be between 0 and 1.
+ *         in: query
+ *         type: string
+ *       - name: influenceLT
+ *         description: (slow) Faction present with influence lesser than. Must be between 0 and 1.
+ *         in: query
+ *         type: string
+ *       - name: factionAllegiance
+ *         description: (slow) Faction present with allegiance.
+ *         in: query
+ *         type: string
+ *       - name: factionGovernment
+ *         description: (slow) Faction present with government.
  *         in: query
  *         type: string
  *       - name: referenceSystem
@@ -110,8 +126,12 @@ let aggregateOptions = {
  *         description: The distance from the system centred around which the search should be made.
  *         in: query
  *         type: string
+ *       - name: referenceDistanceMin
+ *         description: The minimum distance from the system centred around which the search should be made.
+ *         in: query
+ *         type: string
  *       - name: sphere
- *         description: Search by sphere instead of cube.
+ *         description: (slow) Search by sphere instead of cube.
  *         in: query
  *         type: boolean
  *       - name: beginsWith
@@ -256,12 +276,17 @@ router.get('/', cors(), async (req, res, next) => {
 
 async function getSystems(query, history, minimal, page, request) {
     let referenceDistance = 20;
+    let referenceDistanceMin = 0;
     let systemModel = await require('../../../models/ebgs_systems_v5');
     let aggregate = systemModel.aggregate().option(aggregateOptions);
     let countAggregate = systemModel.aggregate().option(aggregateOptions);
     if (request.query.referenceSystem || request.query.referenceSystemId) {
         if (request.query.referenceDistance) {
             referenceDistance = request.query.referenceDistance;
+        }
+
+        if (request.query.referenceDistanceMin) {
+            referenceDistanceMin = request.query.referenceDistanceMin;
         }
 
         let lookupPipeline = {};
@@ -359,8 +384,121 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
+    if (request.query.sphere !== 'true') {
+        query["$expr"]["$and"].push({
+            $not: {
+                $and: [
+                    {
+                        $gt: [
+                            "$x",
+                            {
+                                $subtract: ["$referenceSystem.x", +referenceDistanceMin]
+                            }
+                        ]
+                    },
+                    {
+                        $lt: [
+                            "$x",
+                            {
+                                add: ["$referenceSystem.x", +referenceDistanceMin]
+                            }
+                        ]
+                    },
+                    {
+                        $gt: [
+                            "$y",
+                            {
+                                $subtract: ["$referenceSystem.y", +referenceDistanceMin]
+                            }
+                        ]
+                    },
+                    {
+                        $lt: [
+                            "$y",
+                            {
+                                $add: ["$referenceSystem.y", +referenceDistanceMin]
+                            }
+                        ]
+                    },
+                    {
+                        $gt: [
+                            "$z",
+                            {
+                                $subtract: ["$referenceSystem.z", +referenceDistanceMin]
+                            }
+                        ]
+                    },
+                    {
+                        $lt: [
+                            "$z",
+                            {
+                                $add: ["$referenceSystem.z", +referenceDistanceMin]
+                            }
+                        ]
+                    }
+                ]
+            }
+        });
+    }
+
     aggregate.match(query);
     countAggregate.match(query);
+
+    let spherePipeline = {};
+
+    if (request.query.referenceSystem || request.query.referenceSystemId) {
+        let addFieldsPipeline = {
+            distanceFromReferenceSystem: {
+                $sqrt: {
+                    $add: [
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$x", "$referenceSystem.x"]
+                                },
+                                2
+                            ]
+                        },
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$y", "$referenceSystem.y"]
+                                },
+                                2
+                            ]
+                        },
+                        {
+                            $pow: [
+                                {
+                                    $subtract: ["$z", "$referenceSystem.z"]
+                                },
+                                2
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
+        aggregate.addFields(addFieldsPipeline);
+        countAggregate.addFields(addFieldsPipeline);
+
+        if (request.query.sphere === 'true') {
+            spherePipeline = {
+                distanceFromReferenceSystem: {
+                    $lte: +referenceDistance,
+                    $gte: +referenceDistanceMin
+                }
+            };
+            aggregate.match(spherePipeline);
+            countAggregate.match(spherePipeline);
+        }
+
+        aggregate.project({
+            referenceSystem: 0
+        }).sort({
+            distanceFromReferenceSystem: 1
+        });
+    }
 
     if (!_.isEmpty(history)) {
         if (minimal) {
@@ -394,7 +532,7 @@ async function getSystems(query, history, minimal, page, request) {
                     }
                 ]
             });
-            if(request.query.factionHistory === 'true'){
+            if (request.query.factionHistory === 'true') {
                 aggregate.lookup({
                     from: "ebgshistoryfactionv5",
                     as: "faction_history",
@@ -451,7 +589,7 @@ async function getSystems(query, history, minimal, page, request) {
                     }
                 ]
             });
-            if(request.query.factionHistory === 'true'){
+            if (request.query.factionHistory === 'true') {
                 aggregate.lookup({
                     from: "ebgshistoryfactionv5",
                     as: "faction_history",
@@ -477,65 +615,19 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
-    let spherePipeline = {};
-
-    if (request.query.referenceSystem) {
-        let addFieldsPipeline = {
-            distanceFromReferenceSystem: {
-                $sqrt: {
-                    $add: [
-                        {
-                            $pow: [
-                                {
-                                    $subtract: ["$x", "$referenceSystem.x"]
-                                },
-                                2
-                            ]
-                        },
-                        {
-                            $pow: [
-                                {
-                                    $subtract: ["$y", "$referenceSystem.y"]
-                                },
-                                2
-                            ]
-                        },
-                        {
-                            $pow: [
-                                {
-                                    $subtract: ["$z", "$referenceSystem.z"]
-                                },
-                                2
-                            ]
-                        }
-                    ]
-                }
-            }
-        };
-        aggregate.addFields(addFieldsPipeline);
-        countAggregate.addFields(addFieldsPipeline);
-
-        if (request.query.sphere === 'true') {
-            spherePipeline = {
-                distanceFromReferenceSystem: {
-                    $lte: +referenceDistance
-                }
-            };
-            aggregate.match(spherePipeline);
-            countAggregate.match(spherePipeline);
-        }
-
-        aggregate.project({
-            referenceSystem: 0
-        }).sort({
-            distanceFromReferenceSystem: 1
-        });
+    if (!request.query.activeState && !request.query.pendingState && !request.query.recoveringState
+        && !request.query.influenceGT && !request.query.influenceLT
+        && !request.query.factionAllegiance && !request.query.factionGovernment) {
+        aggregate.skip((page - 1) * recordsPerPage).limit(recordsPerPage);  // Optimisation for limit and skip when filters on lookups are not present
     }
 
     let detailsLookup = {};
     let detailsAddFields = {};
 
-    if (request.query.activeState || request.query.pendingState || request.query.recoveringState || request.query.factionDetails === 'true') {
+    if (request.query.activeState || request.query.pendingState || request.query.recoveringState
+        || request.query.influenceGT || request.query.influenceLT
+        || request.query.factionAllegiance || request.query.factionGovernment
+        || request.query.factionDetails === 'true') {
         detailsLookup = {
             from: "ebgsfactionv5",
             as: "faction_details",
@@ -591,10 +683,12 @@ async function getSystems(query, history, minimal, page, request) {
         aggregate.lookup(detailsLookup).addFields(detailsAddFields);
     }
 
-    let stateQuery = {};
+    let metadataQuery = {};
 
-    if (request.query.activeState || request.query.pendingState || request.query.recoveringState) {
-        let stateAddFieldsPipeline = {
+    if (request.query.activeState || request.query.pendingState || request.query.recoveringState
+        || request.query.influenceGT || request.query.influenceLT
+        || request.query.factionAllegiance || request.query.factionGovernment) {
+        let metadataAddFieldsPipeline = {
             active_states: {
                 $reduce: {
                     input: {
@@ -657,28 +751,79 @@ async function getSystems(query, history, minimal, page, request) {
                         $concatArrays: ["$$value", "$$this"]
                     }
                 }
+            },
+            influences: {
+                $map: {
+                    input: "$faction_details",
+                    as: "faction_info",
+                    in: "$$faction_info.faction_presence.influence"
+                }
+            },
+            faction_allegiances: {
+                $map: {
+                    input: "$faction_details",
+                    as: "faction_info",
+                    in: "$$faction_info.faction_presence.allegiance"
+                }
+            },
+            faction_governments: {
+                $map: {
+                    input: "$faction_details",
+                    as: "faction_info",
+                    in: "$$faction_info.faction_presence.government"
+                }
             }
         };
-        aggregate.addFields(stateAddFieldsPipeline);
-        countAggregate.lookup(detailsLookup).addFields(detailsAddFields).addFields(stateAddFieldsPipeline);
+        aggregate.addFields(metadataAddFieldsPipeline);
+        countAggregate.lookup(detailsLookup).addFields(detailsAddFields).addFields(metadataAddFieldsPipeline);
 
         if (request.query.activeState) {
-            stateQuery["active_states"] = {
+            metadataQuery["active_states"] = {
                 $elemMatch: utilities.arrayOrNot(request.query.activeState.toLowerCase(), _.toLower, true)
             };
         }
         if (request.query.pendingState) {
-            stateQuery["pending_states"] = {
+            metadataQuery["pending_states"] = {
                 $elemMatch: utilities.arrayOrNot(request.query.pendingState.toLowerCase(), _.toLower, true)
             };
         }
         if (request.query.recoveringState) {
-            stateQuery["recovering_states"] = {
+            metadataQuery["recovering_states"] = {
                 $elemMatch: utilities.arrayOrNot(request.query.recoveringState.toLowerCase(), _.toLower, true)
             };
         }
-        aggregate.match(stateQuery);
-        countAggregate.match(stateQuery);
+        if (request.query.influenceGT || request.query.influenceLT) {
+            metadataQuery["influences"] = {
+                $gt: +request.query.influenceGT,
+                $lt: +request.query.influenceLT
+            };
+        }
+        if (request.query.influenceGT && request.query.influenceLT) {
+            metadataQuery["influences"] = {
+                $gt: +request.query.influenceGT,
+                $lt: +request.query.influenceLT
+            };
+        } else if (request.query.influenceLT) {
+            metadataQuery["influences"] = {
+                $lt: +request.query.influenceLT
+            };
+        } else if (request.query.influenceGT) {
+            metadataQuery["influences"] = {
+                $gt: +request.query.influenceGT
+            };
+        }
+        if (request.query.factionAllegiance) {
+            metadataQuery["faction_allegiances"] = {
+                $elemMatch: utilities.arrayOrNot(request.query.factionAllegiance.toLowerCase(), _.toLower, true)
+            };
+        }
+        if (request.query.factionGovernment) {
+            metadataQuery["faction_governments"] = {
+                $elemMatch: utilities.arrayOrNot(request.query.factionGovernment.toLowerCase(), _.toLower, true)
+            };
+        }
+        aggregate.match(metadataQuery);
+        countAggregate.match(metadataQuery);
 
         aggregate.project({
             active_states: 0,
@@ -732,7 +877,7 @@ async function getSystems(query, history, minimal, page, request) {
         faction_details: 0
     });
 
-    if (_.isEmpty(query) && _.isEmpty(spherePipeline) && _.isEmpty(stateQuery)) {
+    if (_.isEmpty(query) && _.isEmpty(spherePipeline) && _.isEmpty(metadataQuery)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
 

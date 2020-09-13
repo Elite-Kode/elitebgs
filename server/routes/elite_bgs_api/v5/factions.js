@@ -86,6 +86,14 @@ let aggregateOptions = {
  *         description: Name of the recovering state of the faction.
  *         in: query
  *         type: string
+ *       - name: influenceGT
+ *         description: Factions with influence greater than. Must be between 0 and 1.
+ *         in: query
+ *         type: string
+ *       - name: influenceLT
+ *         description: Factions with influence lesser than. Must be between 0 and 1.
+ *         in: query
+ *         type: string
  *       - name: minimal
  *         description: Get minimal data of the faction.
  *         in: query
@@ -183,6 +191,32 @@ router.get('/', cors(), async (req, res, next) => {
                         $elemMatch: {
                             state: utilities.arrayOrNot(req.query.recoveringState, _.toLower)
                         }
+                    }
+                }
+            };
+        }
+        if (req.query.influenceGT && req.query.influenceGT) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    influence: {
+                        $gt: +request.query.influenceGT,
+                        $lt: +request.query.influenceLT
+                    }
+                }
+            };
+        } else if (req.query.influenceGT) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    influence: {
+                        $gt: +request.query.influenceGT
+                    }
+                }
+            };
+        } else if (req.query.influenceLT) {
+            query["faction_presence"] = {
+                $elemMatch: {
+                    influence: {
+                        $gt: +request.query.influenceLT,
                     }
                 }
             };
