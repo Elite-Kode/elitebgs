@@ -382,63 +382,63 @@ async function getSystems(query, history, minimal, page, request) {
                 }
             ]
         }
-    }
 
-    if (request.query.sphere !== 'true') {
-        query["$expr"]["$and"].push({
-            $not: {
-                $and: [
-                    {
-                        $gt: [
-                            "$x",
-                            {
-                                $subtract: ["$referenceSystem.x", +referenceDistanceMin]
-                            }
-                        ]
-                    },
-                    {
-                        $lt: [
-                            "$x",
-                            {
-                                add: ["$referenceSystem.x", +referenceDistanceMin]
-                            }
-                        ]
-                    },
-                    {
-                        $gt: [
-                            "$y",
-                            {
-                                $subtract: ["$referenceSystem.y", +referenceDistanceMin]
-                            }
-                        ]
-                    },
-                    {
-                        $lt: [
-                            "$y",
-                            {
-                                $add: ["$referenceSystem.y", +referenceDistanceMin]
-                            }
-                        ]
-                    },
-                    {
-                        $gt: [
-                            "$z",
-                            {
-                                $subtract: ["$referenceSystem.z", +referenceDistanceMin]
-                            }
-                        ]
-                    },
-                    {
-                        $lt: [
-                            "$z",
-                            {
-                                $add: ["$referenceSystem.z", +referenceDistanceMin]
-                            }
-                        ]
-                    }
-                ]
-            }
-        });
+        if (request.query.sphere !== 'true' && request.query.referenceDistanceMin) {
+            query["$expr"]["$and"].push({
+                $not: {
+                    $and: [
+                        {
+                            $gt: [
+                                "$x",
+                                {
+                                    $subtract: ["$referenceSystem.x", +referenceDistanceMin]
+                                }
+                            ]
+                        },
+                        {
+                            $lt: [
+                                "$x",
+                                {
+                                    add: ["$referenceSystem.x", +referenceDistanceMin]
+                                }
+                            ]
+                        },
+                        {
+                            $gt: [
+                                "$y",
+                                {
+                                    $subtract: ["$referenceSystem.y", +referenceDistanceMin]
+                                }
+                            ]
+                        },
+                        {
+                            $lt: [
+                                "$y",
+                                {
+                                    $add: ["$referenceSystem.y", +referenceDistanceMin]
+                                }
+                            ]
+                        },
+                        {
+                            $gt: [
+                                "$z",
+                                {
+                                    $subtract: ["$referenceSystem.z", +referenceDistanceMin]
+                                }
+                            ]
+                        },
+                        {
+                            $lt: [
+                                "$z",
+                                {
+                                    $add: ["$referenceSystem.z", +referenceDistanceMin]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            });
+        }
     }
 
     aggregate.match(query);
