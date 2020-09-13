@@ -615,11 +615,13 @@ async function getSystems(query, history, minimal, page, request) {
         }
     }
 
-    if (!request.query.activeState && !request.query.pendingState && !request.query.recoveringState
-        && !request.query.influenceGT && !request.query.influenceLT
-        && !request.query.factionAllegiance && !request.query.factionGovernment) {
-        aggregate.skip((page - 1) * recordsPerPage).limit(recordsPerPage);  // Optimisation for limit and skip when filters on lookups are not present
-    }
+    // Optimisation not working when deployed on server. Always returning only 10 records total.
+
+    // if (!request.query.activeState && !request.query.pendingState && !request.query.recoveringState
+    //     && !request.query.influenceGT && !request.query.influenceLT
+    //     && !request.query.factionAllegiance && !request.query.factionGovernment) {
+    //     aggregate.skip((page - 1) * recordsPerPage).limit(recordsPerPage);  // Optimisation for limit and skip when filters on lookups are not present
+    // }
 
     let detailsLookup = {};
     let detailsAddFields = {};
