@@ -17,7 +17,7 @@
 "use strict";
 
 const express = require('express');
-var cors = require('cors')
+const cors = require('cors')
 const _ = require('lodash');
 
 let router = express.Router();
@@ -30,12 +30,12 @@ let router = express.Router();
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: timemin
-   *         description: Minimum time for the tick history in miliseconds (Checks updated_at).
+   *       - name: timeMin
+   *         description: Minimum time for the tick history in milliseconds (Checks updated_at).
    *         in: query
    *         type: string
-   *       - name: timemax
-   *         description: Maximum time for the tick history in miliseconds (Checks updated_at).
+   *       - name: timeMax
+   *         description: Maximum time for the tick history in milliseconds (Checks updated_at).
    *         in: query
    *         type: string
    *     responses:
@@ -48,29 +48,29 @@ let router = express.Router();
    */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let query = new Object;
+        let query = {};
 
-        if (req.query.timemin && req.query.timemax) {
+        if (req.query.timeMin && req.query.timeMax) {
             query = {
                 updated_at: {
-                    $lte: new Date(Number(req.query.timemax)),
-                    $gte: new Date(Number(req.query.timemin))
+                    $lte: new Date(Number(req.query.timeMax)),
+                    $gte: new Date(Number(req.query.timeMin))
                 }
             }
         }
-        if (req.query.timemin && !req.query.timemax) {
+        if (req.query.timeMin && !req.query.timeMax) {
             query = {
                 updated_at: {
-                    $lte: new Date(Number(+req.query.timemin + 604800000)),    // Adding seven days worth of miliseconds
-                    $gte: new Date(Number(req.query.timemin))
+                    $lte: new Date(Number(+req.query.timeMin + 604800000)),    // Adding seven days worth of miliseconds
+                    $gte: new Date(Number(req.query.timeMin))
                 }
             }
         }
-        if (!req.query.timemin && req.query.timemax) {
+        if (!req.query.timeMin && req.query.timeMax) {
             query = {
                 updated_at: {
-                    $lte: new Date(Number(req.query.timemax)),
-                    $gte: new Date(Number(+req.query.timemax - 604800000))    // Subtracting seven days worth of miliseconds
+                    $lte: new Date(Number(req.query.timeMax)),
+                    $gte: new Date(Number(+req.query.timeMax - 604800000))    // Subtracting seven days worth of miliseconds
                 }
             }
         }
@@ -83,7 +83,7 @@ router.get('/', cors(), async (req, res, next) => {
 
 async function getTicks(query) {
     let tickTimesV4Model = await require('../../../models/tick_times_v4');
-    let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
+    let tickTimesResult = await tickTimesV4Model.find(query).sort({ time: -1 }).lean();
     if (_.isEmpty(query)) {
         return tickTimesResult.limit(1);
     } else {

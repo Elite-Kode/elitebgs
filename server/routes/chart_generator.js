@@ -34,8 +34,8 @@ router.get('/factions/influence', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 systemDetails: 'true'
             },
             json: true,
@@ -152,8 +152,8 @@ router.get('/factions/state', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 systemDetails: 'true'
             },
             json: true,
@@ -318,8 +318,8 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 systemDetails: 'true'
             },
             json: true,
@@ -589,8 +589,8 @@ router.get('/factions/happiness', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 systemDetails: 'true'
             },
             json: true,
@@ -741,8 +741,8 @@ router.get('/systems/influence', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -864,8 +864,8 @@ router.get('/systems/state', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -1031,8 +1031,8 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -1303,8 +1303,8 @@ router.get('/systems/happiness', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timemin: req.query.timemin,
-                timemax: req.query.timemax,
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -1453,10 +1453,10 @@ router.get('/systems/happiness', async (req, res, next) => {
 router.get('/tick', async (req, res, next) => {
     try {
         let requestOptions = {
-            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v4/ticks`,
+            url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/ticks`,
             qs: {
-                timemin: req.query.timemin,
-                timemax: req.query.timemax
+                timeMin: req.query.timemin,
+                timeMax: req.query.timemax
             },
             json: true,
             resolveWithFullResponse: true
