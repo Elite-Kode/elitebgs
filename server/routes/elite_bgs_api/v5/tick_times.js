@@ -83,7 +83,7 @@ router.get('/', cors(), async (req, res, next) => {
 
 async function getTicks(query) {
     let tickTimesV4Model = await require('../../../models/tick_times_v4');
-    let tickTimesResult = await tickTimesV4Model.find(query).sort({ time: -1 }).lean();
+    let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
     if (_.isEmpty(query)) {
         return tickTimesResult.limit(1);
     } else {
