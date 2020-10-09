@@ -19,7 +19,7 @@
     "private": true,
     "dependencies": {
         "@angular/animations": "^10.1.5",
-        "@angular/cdk": "^8.2.3",
+        "@angular/cdk": "^10.2.4",
         "@angular/common": "^10.1.5",
         "@angular/compiler": "^10.1.5",
         "@angular/core": "^10.1.5",
@@ -31,7 +31,7 @@
         "@bugsnag/plugin-angular": "^6.5.0",
         "@bugsnag/plugin-express": "^6.5.1",
         "@clr/angular": "^4.0.3",
-        "@clr/core": "^3.0.0",
+        "@clr/core": "^4.0.3",
         "@clr/icons": "^4.0.3",
         "@clr/ui": "^4.0.3",
         "@webcomponents/webcomponentsjs": "^2.0.0",
