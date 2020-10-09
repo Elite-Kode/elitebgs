@@ -11,7 +11,7 @@ import { ThemeService } from '../services/theme.service';
 })
 export class TickComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
-    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     totalRecords = 0;
     daysGap = 0;
     loading = true;
