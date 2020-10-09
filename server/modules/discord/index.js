@@ -34,11 +34,17 @@ client.on("guildMemberAdd", async member => {
         });
         let configModel = await require('../../../server/models/configs');
         let config = await configModel.findOne();
-        await member.addRole(config.user_role_id);
-        if (user) {
-            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("Registered user " + member.id + " has joined");
-        } else {
-            client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("Unregistered user " + member.id + " has joined");
+        await member.roles.add(config.user_role_id);
+        let guild = await client.guilds.fetch(config.guild_id)
+        if (guild.available) {
+            let announcementChannel = guild.channels.cache.get(config.admin_channel_id);
+            if (announcementChannel.type === 'text') {
+                if (user) {
+                    announcementChannel.send("Registered user " + member.id + " has joined");
+                } else {
+                    announcementChannel.send("Unregistered user " + member.id + " has joined");
+                }
+            }
         }
     } catch (err) {
         bugsnagCaller(err);
