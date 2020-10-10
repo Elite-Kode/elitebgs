@@ -86,6 +86,6 @@
         "pm2": "^4.5.0",
         "tslint": "~6.1.0",
         "typescript": "~4.0.3",
-        "webpack-bugsnag-plugins": "SayakMukhopadhyay/webpack-bugsnag-plugins#5d329646308ed77830d71a1bd71b944d7f6ca5b7"
+        "webpack-bugsnag-plugins": "github:SayakMukhopadhyay/webpack-bugsnag-plugins#283eb7d6b5ce40206cc2dadfb677146f96adb165"
     }
 }
