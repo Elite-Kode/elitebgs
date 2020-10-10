@@ -13,7 +13,7 @@ import { UsersService } from '../../services/users.service';
 })
 export class AdminUsersListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-container') contentContainer = true;
-    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     userData: IAdminUsers[] = [];
     totalRecords = 0;
     loading = true;

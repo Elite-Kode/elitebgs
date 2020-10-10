@@ -47,8 +47,9 @@
               "node_modules/prismjs/themes/prism.css"
             ],
             "scripts": [
+              "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
+              "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
               "node_modules/mutationobserver-shim/dist/mutationobserver.min.js",
-              "node_modules/@webcomponents/custom-elements/custom-elements.min.js",
               "node_modules/@clr/icons/clr-icons.min.js",
               "node_modules/prismjs/prism.js",
               "node_modules/prismjs/components/prism-json.min.js"
@@ -112,7 +113,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "css"
+      "style": "css"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

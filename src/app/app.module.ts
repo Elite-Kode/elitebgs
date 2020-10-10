@@ -52,9 +52,9 @@ import { Client } from '@bugsnag/core';
 let bugsnagClient: Client = {} as Client
 
 if (Bugsnag.use) {
-    bugsnagClient = bugsnag({
+    bugsnagClient = bugsnag.start({
         apiKey: Bugsnag.token,
-        notifyReleaseStages: ['development', 'production'],
+        enabledReleaseStages: ['development', 'production'],
         collectUserIp: false,
         appVersion: environment.version
     })

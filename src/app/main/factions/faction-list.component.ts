@@ -15,7 +15,7 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class FactionListComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
-    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     factionData: IFaction[] = [];
     loading = true;

@@ -75,13 +75,13 @@ if (secrets.bugsnag_use) {
     app.use(bugsnagClientMiddleware.requestHandler);
 }
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(session({
     name: "EliteBGS",
     secret: secrets.session_secret,
-    cookie: {maxAge: 7 * 24 * 60 * 60 * 1000},
-    store: new mongoStore({mongooseConnection: require('./server/db').elite_bgs})
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
+    store: new mongoStore({ mongooseConnection: require('./server/db').elite_bgs })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -179,7 +179,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async (id, done) => {
     try {
         let model = await require('./server/models/ebgs_users');
-        let user = await model.findOne({id: id})
+        let user = await model.findOne({ id: id })
         done(null, user);
     } catch (err) {
         bugsnagCaller(err);
@@ -194,7 +194,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
     }
     try {
         let model = await require('./server/models/ebgs_users');
-        let user = await model.findOne({id: profile.id});
+        let user = await model.findOne({ id: profile.id });
         if (user) {
             let updatedUser = {
                 id: profile.id,
@@ -206,7 +206,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
             }
             try {
                 await model.findOneAndUpdate(
-                    {id: profile.id},
+                    { id: profile.id },
                     updatedUser,
                     {
                         upsert: false,
@@ -233,14 +233,20 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 }
             };
             await model.findOneAndUpdate(
-                {id: profile.id},
+                { id: profile.id },
                 user,
                 {
                     upsert: true,
                     runValidators: true
                 })
             if (secrets.discord_use) {
-                client.guilds.get(config.guild_id).channels.get(config.admin_channel_id).send("User " + profile.id + " has joined Elite BGS");
+                let guild = await client.guilds.fetch(config.guild_id)
+                if (guild.available) {
+                    let announcementChannel = guild.channels.cache.get(config.admin_channel_id);
+                    if (announcementChannel.type === 'text') {
+                        announcementChannel.send("User " + profile.id + " has joined Elite BGS");
+                    }
+                }
             }
             done(null, user);
         }

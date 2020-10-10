@@ -17,7 +17,7 @@ import { debounceTime, switchMap } from 'rxjs/operators';
 })
 export class SystemViewComponent implements OnInit, AfterViewInit {
     @HostBinding('class.content-area') contentArea = true;
-    @ViewChild(ClrDatagrid, {static: false}) datagrid: ClrDatagrid;
+    @ViewChild(ClrDatagrid) datagrid: ClrDatagrid;
     isAuthenticated: boolean;
     systemData: EBGSSystemSchemaDetailed;
     successAlertState = false;

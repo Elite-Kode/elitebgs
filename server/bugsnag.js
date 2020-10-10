@@ -25,12 +25,12 @@ const useBugsnag = require('../secrets').bugsnag_use;
 let bugsnagClient = {}
 
 if (useBugsnag) {
-    bugsnagClient = bugsnag({
+    bugsnagClient = bugsnag.start({
         apiKey: require('../secrets').bugsnag_token,
-        notifyReleaseStages: ['development', 'production'],
+        enabledReleaseStages: ['development', 'production'],
+        plugins: [bugsnagExpress],
         appVersion: processVars.version
     });
-    bugsnagClient.use(bugsnagExpress);
 }
 
 function bugsnagCaller(err, metaData, logToConsole = true) {
