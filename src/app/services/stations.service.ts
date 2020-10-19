@@ -16,6 +16,12 @@ export class StationsService {
         });
     }
 
+    getStationIdByEDDBId(eddbid: string): Observable<EBGSStations> {
+        return this.http.get<EBGSStations>('/api/ebgs/v5/stations', {
+            params: new HttpParams({encoder: new CustomEncoder()}).set('eddbId', eddbid).set('minimal', 'true')
+        })
+    }
+
     parseStationDataName(systemsList: string[]): Promise<EBGSStationSchemaDetailed[]> {
         return this.parseStationData(systemsList, 'name');
     }

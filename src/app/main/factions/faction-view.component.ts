@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostBinding, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FactionsService } from '../../services/factions.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -38,6 +38,7 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
     constructor(
         private factionService: FactionsService,
         private route: ActivatedRoute,
+        private router: Router,
         private authenticationService: AuthenticationService,
         private titleService: Title,
         private ingameIdsService: IngameIdsService,
@@ -52,6 +53,7 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
     }
 
     async ngOnInit() {
+        this.checkRedirect();
         this.getAuthentication();
         this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.chartLoading = true;
@@ -67,6 +69,15 @@ export class FactionViewComponent implements OnInit, AfterViewInit {
                 this.updateFaction(faction[0]);
                 this.chartLoading = false;
             });
+    }
+
+    checkRedirect() {
+        const routerParam = this.route.snapshot.paramMap.get('factionId')
+        if (routerParam.startsWith('eddbId-')) {
+            this.factionService.getFactionIdByEDDBId(routerParam.slice(7)).subscribe(factions => {
+                this.router.navigateByUrl('/faction/' + factions.docs[0]._id)
+            })
+        }
     }
 
     async getFactionData(): Promise<EBGSFactionSchemaDetailed[]> {

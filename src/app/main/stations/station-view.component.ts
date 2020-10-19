@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthenticationService } from '../../services/authentication.service';
 import { EBGSStationSchemaDetailed, EBGSUser } from '../../typings';
@@ -21,6 +21,7 @@ export class StationViewComponent implements OnInit {
     constructor(
         private stationService: StationsService,
         private route: ActivatedRoute,
+        private router: Router,
         private authenticationService: AuthenticationService,
         private titleService: Title,
         private ingameIdsService: IngameIdsService
@@ -28,6 +29,7 @@ export class StationViewComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.checkRedirect();
         this.getAuthentication();
         const FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         const station = await this.stationService
@@ -43,6 +45,15 @@ export class StationViewComponent implements OnInit {
         });
         this.stationData.state = FDevIDs.state[this.stationData.state].name;
         this.titleService.setTitle(this.stationData.name + ' - Elite BGS');
+    }
+
+    checkRedirect() {
+        const routerParam = this.route.snapshot.paramMap.get('stationId')
+        if (routerParam.startsWith('eddbId-')) {
+            this.stationService.getStationIdByEDDBId(routerParam.slice(7)).subscribe(stations => {
+                this.router.navigateByUrl('/station/' + stations.docs[0]._id)
+            })
+        }
     }
 
     getAuthentication() {

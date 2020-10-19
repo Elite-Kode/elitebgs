@@ -16,6 +16,12 @@ export class SystemsService {
         });
     }
 
+    getSystemIdByEDDBId(eddbid: string): Observable<EBGSSystemsMinimal> {
+        return this.http.get<EBGSSystemsMinimal>('/api/ebgs/v5/systems', {
+            params: new HttpParams({encoder: new CustomEncoder()}).set('eddbId', eddbid).set('minimal', 'true')
+        })
+    }
+
     parseSystemDataName(systemsList: string[]): Promise<EBGSSystemSchemaDetailed[]> {
         return this.parseSystemData(systemsList, 'name');
     }
