@@ -16,6 +16,12 @@ export class FactionsService {
         });
     }
 
+    getFactionIdByEDDBId(eddbid: string): Observable<EBGSFactionsMinimal> {
+        return this.http.get<EBGSFactionsMinimal>('/api/ebgs/v5/factions', {
+            params: new HttpParams({encoder: new CustomEncoder()}).set('eddbId', eddbid).set('minimal', 'true')
+        })
+    }
+
     parseFactionDataName(factionsList: string[]): Promise<EBGSFactionSchemaDetailed[]> {
         return this.parseFactionData(factionsList, 'name');
     }

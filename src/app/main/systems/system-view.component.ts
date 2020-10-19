@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostBinding, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { ClrDatagrid } from '@clr/angular';
 import { SystemsService } from '../../services/systems.service';
@@ -34,6 +34,7 @@ export class SystemViewComponent implements OnInit, AfterViewInit {
     constructor(
         private systemService: SystemsService,
         private route: ActivatedRoute,
+        private router: Router,
         private authenticationService: AuthenticationService,
         private titleService: Title,
         private ingameIdsService: IngameIdsService,
@@ -48,6 +49,7 @@ export class SystemViewComponent implements OnInit, AfterViewInit {
     }
 
     async ngOnInit() {
+        this.checkRedirect();
         this.getAuthentication();
         this.FDevIDs = await this.ingameIdsService.getAllIds().toPromise();
         this.chartLoading = true;
@@ -63,6 +65,15 @@ export class SystemViewComponent implements OnInit, AfterViewInit {
                 this.updateSystem(system[0]);
                 this.chartLoading = false;
             });
+    }
+
+    checkRedirect() {
+        const routerParam = this.route.snapshot.paramMap.get('systemId')
+        if (routerParam.startsWith('eddbId-')) {
+            this.systemService.getSystemIdByEDDBId(routerParam.slice(7)).subscribe(systems => {
+                this.router.navigateByUrl('/system/' + systems.docs[0]._id)
+            })
+        }
     }
 
     async getSystemData(): Promise<EBGSSystemSchemaDetailed[]> {
