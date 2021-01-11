@@ -93,6 +93,9 @@ module.exports = {
         },
         'thargoid': {
             'name': 'Thargoid'
+        },
+        'guardian': {
+            'name': 'Guardian'
         }
     },
     economy : {
