@@ -90,6 +90,9 @@ module.exports = {
         },
         'pilotsfederation': {
             'name': 'Pilots Federation'
+        },
+        'thargoid': {
+            'name': 'Thargoid'
         }
     },
     economy : {
