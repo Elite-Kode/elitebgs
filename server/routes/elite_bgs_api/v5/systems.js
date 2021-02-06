@@ -521,11 +521,6 @@ async function getSystems(query, history, minimal, page, request) {
                         }
                     },
                     {
-                        $sort: {
-                            updated_at: -1.0
-                        }
-                    },
-                    {
                         $project: {
                             system_id: 0,
                             system_name: 0,
@@ -613,11 +608,6 @@ async function getSystems(query, history, minimal, page, request) {
                             $expr: {
                                 $and: lookupMatchAndArray
                             }
-                        }
-                    },
-                    {
-                        $sort: {
-                            updated_at: -1.0
                         }
                     },
                     {

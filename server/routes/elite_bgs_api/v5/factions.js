@@ -376,11 +376,6 @@ async function getFactions(query, history, minimal, page, request) {
                         }
                     },
                     {
-                        $sort: {
-                            updated_at: -1.0
-                        }
-                    },
-                    {
                         $project: {
                             faction_id: 0,
                             faction_name: 0,
