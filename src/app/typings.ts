@@ -287,35 +287,6 @@ interface EBGSUserSchema {
     }[];
 }
 
-// interface EBGSSystemFactionChartSchema extends EBGSSystemFaction {
-//     influence: number;
-//     state: string;
-//     happiness: string;
-//     active_states: {
-//         state: string;
-//     }[];
-//     pending_states: {
-//         state: string;
-//         trend: number;
-//     }[];
-//     recovering_states: {
-//         state: string;
-//         trend: number;
-//     }[];
-//     updated_at: string;
-// }
-
-// interface EBGSFactionHistoryList extends EBGSFactionHistory {
-//     faction: string;
-//     faction_lower: string;
-// }
-
-// interface EBGSSystemChartSchema extends EBGSSystemSchemaDetailed {
-//     factions: EBGSSystemFactionChartSchema[];
-//     faction_history: EBGSFactionHistoryList[];
-//     controlling_faction: EBGSSystemFactionChartSchema;
-// }
-
 interface EBGSDonorSchema {
     _id: string;
     username: string;
@@ -365,7 +336,6 @@ export interface IngameIdsSchema {
 export type EBGSFactionsDetailed = PaginateResult<EBGSFactionSchemaDetailed>;
 export type EBGSFactionsMinimal = PaginateResult<EBGSFactionSchemaMinimal>;
 
-// export type EBGSSystemChartPaginate = PaginateResult<EBGSSystemChartSchema>;
 export type EBGSSystemsDetailed = PaginateResult<EBGSSystemSchemaDetailed>;
 export type EBGSSystemsMinimal = PaginateResult<EBGSSystemSchemaMinimal>;
 
@@ -375,14 +345,9 @@ export type EBGSStations = PaginateResult<EBGSStationSchema>;
 export type EBGSUser = EBGSUserSchema;
 export type EBGSUsers = PaginateResult<EBGSUser>;
 
-// export type EBGSSystemChart = EBGSSystemChartSchema;
-
 export type EBGSDonor = EBGSDonorSchema;
 export type EBGSPatron = EBGSPatronSchema;
 export type EBGSCredits = EBGSCreditsSchema;
 
 export type Tick = TickSchema[];
 export type TickDisplay = TickDisplaySchema[];
-export type EBGSSystemHistoryPaginate = PaginateResult<EBGSSystemHistory>;
-export type EBGSFactionHistoryPaginate = PaginateResult<EBGSFactionHistory>;
-export type EBGSStationHistoryPaginate = PaginateResult<EBGSStationHistory>;

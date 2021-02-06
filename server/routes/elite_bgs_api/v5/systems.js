@@ -521,6 +521,11 @@ async function getSystems(query, history, minimal, page, request) {
                         }
                     },
                     {
+                        $sort: {
+                            updated_at: -1.0
+                        }
+                    },
+                    {
                         $project: {
                             system_id: 0,
                             system_name: 0,
@@ -546,14 +551,44 @@ async function getSystems(query, history, minimal, page, request) {
                             }
                         },
                         {
+                            $sort: {
+                                faction_id: 1.0,
+                                updated_at: -1.0
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: {
+                                    faction_id: "$faction_id"
+                                },
+                                docs: {
+                                    $push: "$$ROOT"
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                top: {
+                                    "$slice": ["$docs", history.count]
+                                }
+                            }
+                        },
+                        {
+                            $unwind: {
+                                path: "$top"
+                            }
+                        },
+                        {
+                            $replaceRoot: {
+                                newRoot: "$top"
+                            }
+                        },
+                        {
                             $project: {
                                 system_id: 0,
                                 system: 0,
                                 system_lower: 0
                             }
-                        },
-                        {
-                            $limit: history.count
                         }
                     ]
                 });
@@ -578,6 +613,11 @@ async function getSystems(query, history, minimal, page, request) {
                             $expr: {
                                 $and: lookupMatchAndArray
                             }
+                        }
+                    },
+                    {
+                        $sort: {
+                            updated_at: -1.0
                         }
                     },
                     {

@@ -308,14 +308,44 @@ async function getFactions(query, history, minimal, page, request) {
                         }
                     },
                     {
+                        $sort: {
+                            system_id: 1.0,
+                            updated_at: -1.0
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                system_id: "$system_id"
+                            },
+                            docs: {
+                                $push: "$$ROOT"
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            top: {
+                                "$slice": ["$docs", history.count]
+                            }
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$top"
+                        }
+                    },
+                    {
+                        $replaceRoot: {
+                            newRoot: "$top"
+                        }
+                    },
+                    {
                         $project: {
                             faction_id: 0,
                             faction_name: 0,
                             faction_name_lower: 0
                         }
-                    },
-                    {
-                        $limit: history.count
                     }
                 ]
             });
@@ -343,6 +373,11 @@ async function getFactions(query, history, minimal, page, request) {
                             $expr: {
                                 $and: lookupMatchAndArray
                             }
+                        }
+                    },
+                    {
+                        $sort: {
+                            updated_at: -1.0
                         }
                     },
                     {
