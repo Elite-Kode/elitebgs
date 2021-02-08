@@ -263,6 +263,8 @@ async function getStations(query, history, page) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
 
+    aggregate.allowDiskUse(true);
+
     return stationModel.aggregatePaginate(aggregate, {
         page,
         countQuery: countAggregate,

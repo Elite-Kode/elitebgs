@@ -57,6 +57,8 @@ const frontEnd = require('./server/routes/front_end');
 const chartGenerator = require('./server/routes/chart_generator');
 const ingameIds = require('./server/routes/ingame_ids');
 
+const bugsnagClient = require('./server/bugsnag').bugsnagClient;
+
 require('./server/modules/eddn');
 
 if (secrets.discord_use) {
@@ -70,7 +72,6 @@ const app = express();
 let bugsnagClientMiddleware = {}
 
 if (secrets.bugsnag_use) {
-    const bugsnagClient = require('./server/bugsnag').bugsnagClient;
     bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
     app.use(bugsnagClientMiddleware.requestHandler);
 }

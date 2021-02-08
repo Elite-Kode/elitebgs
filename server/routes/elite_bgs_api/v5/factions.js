@@ -450,6 +450,8 @@ async function getFactions(query, history, minimal, page, request) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
 
+    aggregate.allowDiskUse(true);
+
     return factionModel.aggregatePaginate(aggregate, {
         page,
         countQuery: countAggregate,
