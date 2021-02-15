@@ -56,6 +56,7 @@ const authUser = require('./server/routes/auth/auth_user');
 const frontEnd = require('./server/routes/front_end');
 const chartGenerator = require('./server/routes/chart_generator');
 const ingameIds = require('./server/routes/ingame_ids');
+const health = require('./server/routes/health');
 
 const bugsnagClient = require('./server/bugsnag').bugsnagClient;
 
@@ -135,6 +136,7 @@ app.use('/auth/user', authUser);
 app.use('/frontend', frontEnd);
 app.use('/chartgenerator', chartGenerator);
 app.use('/ingameids', ingameIds);
+app.use('/health', health);
 
 // Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
