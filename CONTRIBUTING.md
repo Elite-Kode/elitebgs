@@ -39,29 +39,53 @@ Install dependencies
 
 See below on how to contribute using branches and pull requests.
 
-## Configure MongoDB 
+## Configure MongoDB
 
 - Make sure [MongoDB](https://www.mongodb.com/what-is-mongodb) is installed and running on the default port 27017
+- Enabling [access control](https://docs.mongodb.com/manual/tutorial/enable-authentication/) is highly recommended and essential for production environments
 - Create a database in the mongodb instance, `elite_bgs`, and a collection called `configs`
 - Add a single document in the `configs` collection with the following data:
 
   ```json
     { 
-        "time_offset" : 60000, // Reject incoming records older than this (in milliseconds)
-        "guild_id" : "", // Discord guild id where you want the website bot to notify]
-        "admin_channel_id" : "", // Discord channel id where you want the website bot to notify
-        "user_role_id" : "", // Discord role id for new members in the Discord server
+        "time_offset" : 60000, 
+        "guild_id" : "", 
+        "admin_channel_id" : "",
+        "user_role_id" : "", 
+        "blacklisted_software" : [], 
+        "version_software" : []
+    }
+  ```
+
+- `time_offset` is an integer, where records older than that many milliseconds will be rejected
+- `guild_id` If using Discord, your guild (server) ID, otherwise blank
+- `admin_channel_id` If using Discord, the channel ID you'd like EliteBGS admin notifications, otherwise blank
+- `user_role_id` If using Discord, the Discord role ID that EliteBGS admin notifications should use, otherwise blank
+- `blacklisted_software` is an array of software that cannot submit data to EliteBGS. Example format (the apps may or may not be bad, just an example):
+
+  ```json
+    { 
+        ...
         "blacklisted_software" : [
             "^ed-ibe (api)$", 
-            "^ed central production server$", // These are examples
+            "^ed central production server$",
             "^eliteocr$", 
             "^regulatednoise__dj$", 
             "^ocellus - elite: dangerous assistant$", 
             "^eva"
         ], 
+        ...
+    }
+  ```
+
+- `version_software` is an array of software that is too old to submit data to EliteBGS. Example format:
+
+  ```json
+    { 
+        ...
         "version_software" : [
             {
-                "name" : "E:D Market Connector [Windows]", // List of software versions to check against. Versions below these wont be accepted
+                "name" : "E:D Market Connector [Windows]",
                 "version" : "2.4.2.0"
             }, 
             {
@@ -72,23 +96,7 @@ See below on how to contribute using branches and pull requests.
     }
   ```
 
-- `time_offset` is an integer, where records older than that many milliseconds will be rejected
-- If using Discord, make sure `discord_use` is set to true in the `secrets.js` configuration file below, and fill in `guild_id`, `admin_channel_id` and `user_role_id`
-- `blacklisted_software` is an array of software that cannot submit data to EliteBGS
-- `version_software` is an array of software that is too old to submit data to EliteBGS
-
-If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software` and `version_software` as empty arrays:
-
-  ```json
-    { 
-        "time_offset" : 60000, // Reject incoming records older than this (in seconds)
-        "guild_id" : "", // Discord guild id where you want the website bot to notify]
-        "admin_channel_id" : "", // Discord channel id where you want the website bot to notify
-        "user_role_id" : "", // Discord role id for new members in the Discord server
-        "blacklisted_software" : [], 
-        "version_software" : []
-    }
-  ```
+If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software` and `version_software` as empty arrays as in the first definition.
 
 ## Configure Back End
 
@@ -154,19 +162,27 @@ export { RouteAuth, Bugsnag };
 > **Security notice:** Do not add or commit your secrets to Git.
 
 ## Optional Integrations
-### Discord integration
 
-Elite BGS can send admin notifications to Discord bot applications. THIS IS NOT BGSBOT.
+EliteBGS has two integrations, Discord to send admin notifications, and BugSnag to capture and analyze errors.
 
-If you want to use Discord:
+### Discord notification integration
 
-- [Setup a Discord application](https://discord.com/developers/applications), enable developer mode, create a bot application, and follow the instructions to find your Discord user's client_id and client_secret, and the Discord token for the application
+Elite BGS can send admin notifications to a Discord server (guild). THIS IS NOT BGSBOT. The EliteBGS front end uses Discord for user authentication, but you don't need this integration to make that work.
+
+If you want to integrate with Discord:
+
+- [Setup a Discord application](https://discord.com/developers/applications), enable developer mode, [create a bot application](https://www.writebots.com/discord-bot-token/), and follow the instructions to find your Discord user's client_id and client_secret, and the Discord bot token for the application
 - In secrets.js, set `discord_use` to `true`
 - In secrets.js, copy your Discord application's Client ID to `client_id`, Client Secret to `client_secret`, and Public Key to `discord_token`. You can find this under Developer Portal -> My Applications -> \<application name\>
+- In MongoDB, change the following values in the configs collection:
+  - `guild_id` The [guild (server) ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)
+  - `admin_channel_id` The [channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) you'd like EliteBGS admin notifications
+  - `user_role_id` The [Discord role ID](https://discordhelp.net/role-id) that EliteBGS admin notifications should use. @everyone is fine, but you may wish to use [something custom](https://support.discord.com/hc/en-us/articles/206029707-How-do-I-set-up-Permissions-), such as write only permissions.
 
 If you don't want to use Discord:
 
-- In secrets.js, set `discord_use` to `false`. The other Discord related settings can be blank.
+- In secrets.js, set `discord_use` to `false`. The other Discord related settings can be blank
+- In MongoDB set `guild_id`, `admin_channel_id`, `user_role_id` to blank in the configs collection. 
 
 > **Security notice:** Do not add or commit your secrets to Git.
 
