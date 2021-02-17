@@ -17,6 +17,7 @@
 "use strict";
 
 const express = require('express');
+const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 const logger = require('morgan');
@@ -70,6 +71,8 @@ require('./server/modules/tick/listener');
 
 const app = express();
 
+require('./server/db')
+
 let bugsnagClientMiddleware = {}
 
 if (secrets.bugsnag_use) {
@@ -83,7 +86,7 @@ app.use(session({
     name: "EliteBGS",
     secret: secrets.session_secret,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
-    store: new mongoStore({ mongooseConnection: require('./server/db').elite_bgs })
+    store: new mongoStore({ mongooseConnection: mongoose.connection })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -181,7 +184,7 @@ passport.serializeUser(function (user, done) {
 });
 passport.deserializeUser(async (id, done) => {
     try {
-        let model = await require('./server/models/ebgs_users');
+        let model = require('./server/models/ebgs_users');
         let user = await model.findOne({ id: id })
         done(null, user);
     } catch (err) {
@@ -196,7 +199,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
         client = require('./server/modules/discord/client');
     }
     try {
-        let model = await require('./server/models/ebgs_users');
+        let model = require('./server/models/ebgs_users');
         let user = await model.findOne({ id: profile.id });
         if (user) {
             let updatedUser = {
@@ -221,7 +224,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 done(err);
             }
         } else {
-            let configModel = await require('./server/models/configs');
+            let configModel = require('./server/models/configs');
             let config = await configModel.findOne();
             let user = {
                 id: profile.id,

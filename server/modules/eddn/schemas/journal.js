@@ -127,8 +127,7 @@ function Journal() {
                             }
                         };
 
-                        let model = await ebgsFactionsModel;
-                        model.findOneAndUpdate(
+                        ebgsFactionsModel.findOneAndUpdate(
                             { name: faction.Name },
                             factionObject,
                             {
@@ -138,8 +137,7 @@ function Journal() {
                             .exec();
                     }
                     systemObject.minor_faction_presences = factionArray;
-                    let model = await ebgsSystemsModel;
-                    model.findOneAndUpdate(
+                    ebgsSystemsModel.findOneAndUpdate(
                         { name: systemObject.name },
                         systemObject,
                         {
@@ -174,8 +172,7 @@ function Journal() {
                     });
                     (async () => {
                         try {
-                            let model = await ebgsSystemsV3Model;
-                            let system = await model.findOne(
+                            let system = await ebgsSystemsV3Model.findOne(
                                 {
                                     name_lower: message.StarSystem.toLowerCase(),
                                     x: this.correctCoordinates(message.StarPos[0]),
@@ -264,7 +261,7 @@ function Journal() {
                                     }
                                 }
                                 if (hasEddbId) {
-                                    model.findOneAndUpdate(
+                                    ebgsSystemsV3Model.findOneAndUpdate(
                                         {
                                             name_lower: message.StarSystem.toLowerCase(),
                                             x: this.correctCoordinates(message.StarPos[0]),
@@ -282,7 +279,7 @@ function Journal() {
                                         let id = await eddbIdPromise;
                                         systemObject.eddb_id = id;
                                         try {
-                                            await model.findOneAndUpdate(
+                                            await ebgsSystemsV3Model.findOneAndUpdate(
                                                 {
                                                     name_lower: message.StarSystem.toLowerCase(),
                                                     x: this.correctCoordinates(message.StarPos[0]),
@@ -300,7 +297,7 @@ function Journal() {
                                         }
                                     } catch (err) {   // If eddb id cannot be fetched, create the record without it.
                                         try {
-                                            await model.findOneAndUpdate(
+                                            await ebgsSystemsV3Model.findOneAndUpdate(
                                                 {
                                                     name_lower: message.StarSystem.toLowerCase(),
                                                     x: this.correctCoordinates(message.StarPos[0]),
@@ -325,13 +322,12 @@ function Journal() {
                     })();
                     (async () => {
                         try {
-                            let model = await ebgsFactionsV3Model;
                             let messageFactionsLower = [];
                             message.Factions.forEach(faction => {
                                 messageFactionsLower.push(faction.Name.toLowerCase());
                             });
 
-                            let allFactionsPresentInSystem = model.find(
+                            let allFactionsPresentInSystem = ebgsFactionsV3Model.find(
                                 {
                                     faction_presence: {
                                         $elemMatch: { system_name_lower: message.StarSystem.toLowerCase() }
@@ -340,7 +336,7 @@ function Journal() {
                                 { history: 0 }
                             ).lean();
 
-                            let allFactionsPresentInMessage = model.find(
+                            let allFactionsPresentInMessage = ebgsFactionsV3Model.find(
                                 {
                                     name_lower: {
                                         $in: messageFactionsLower
@@ -386,7 +382,7 @@ function Journal() {
                                                     let id = await this.getFactionEDDBId(faction.name);
                                                     faction.eddb_id = id;
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV3Model.findOneAndUpdate(
                                                             {
                                                                 name: faction.name
                                                             },
@@ -401,7 +397,7 @@ function Journal() {
                                                     }
                                                 } catch (err) {
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV3Model.findOneAndUpdate(
                                                             {
                                                                 name: faction.name
                                                             },
@@ -416,7 +412,7 @@ function Journal() {
                                                     }
                                                 }
                                             } else {
-                                                model.findOneAndUpdate(
+                                                ebgsFactionsV3Model.findOneAndUpdate(
                                                     {
                                                         name: faction.name
                                                     },
@@ -490,7 +486,7 @@ function Journal() {
                                             try {
                                                 let id = await this.getFactionEDDBId(messageFaction.Name);
                                                 try {
-                                                    model.findOneAndUpdate(
+                                                    ebgsFactionsV3Model.findOneAndUpdate(
                                                         {
                                                             name: factionObject.name
                                                         },
@@ -505,7 +501,7 @@ function Journal() {
                                                 }
                                             } catch (err) {
                                                 try {
-                                                    model.findOneAndUpdate(
+                                                    ebgsFactionsV3Model.findOneAndUpdate(
                                                         {
                                                             name: factionObject.name
                                                         },
@@ -627,7 +623,7 @@ function Journal() {
                                                         let id = await this.getFactionEDDBId(messageFaction.Name)
                                                         factionObject.eddb_id = id;
                                                         try {
-                                                            model.findOneAndUpdate(
+                                                            ebgsFactionsV3Model.findOneAndUpdate(
                                                                 {
                                                                     name: messageFaction.Name
                                                                 },
@@ -642,7 +638,7 @@ function Journal() {
                                                         }
                                                     } catch (err) {
                                                         try {
-                                                            model.findOneAndUpdate(
+                                                            ebgsFactionsV3Model.findOneAndUpdate(
                                                                 {
                                                                     name: messageFaction.Name
                                                                 },
@@ -659,7 +655,7 @@ function Journal() {
                                                     let id = await this.getFactionEDDBId(messageFaction.Name)
                                                     factionObject.eddb_id = id;
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV3Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -674,7 +670,7 @@ function Journal() {
                                                     }
                                                 } else {
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV3Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -743,8 +739,7 @@ function Journal() {
                 });
                 (async () => {
                     try {
-                        let model = await ebgsSystemsV4Model;
-                        let system = await model.findOne(
+                        let system = await ebgsSystemsV4Model.findOne(
                             {
                                 name_lower: message.StarSystem.toLowerCase(),
                                 x: this.correctCoordinates(message.StarPos[0]),
@@ -775,9 +770,8 @@ function Journal() {
                                     !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
                                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
 
-                                    let historyModel = await ebgsHistorySystemV4Model;
                                     let timeNow = Date.now();
-                                    let systemHistory = await historyModel.find({
+                                    let systemHistory = await ebgsHistorySystemV4Model.find({
                                         system_id: system._id,
                                         updated_at: {
                                             $lte: new Date(timeNow),
@@ -855,7 +849,7 @@ function Journal() {
                         if (!_.isEmpty(systemObject)) {
                             if (hasEddbId) {
                                 try {
-                                    let systemReturn = await model.findOneAndUpdate(
+                                    let systemReturn = await ebgsSystemsV4Model.findOneAndUpdate(
                                         {
                                             name_lower: message.StarSystem.toLowerCase(),
                                             x: this.correctCoordinates(message.StarPos[0]),
@@ -886,7 +880,7 @@ function Journal() {
                                     let id = await eddbIdPromise;
                                     systemObject.eddb_id = id;
                                     try {
-                                        let systemReturn = await model.findOneAndUpdate(
+                                        let systemReturn = await ebgsSystemsV4Model.findOneAndUpdate(
                                             {
                                                 name_lower: message.StarSystem.toLowerCase(),
                                                 x: this.correctCoordinates(message.StarPos[0]),
@@ -914,7 +908,7 @@ function Journal() {
                                     }
                                 } catch (err) {       // If eddb id cannot be fetched, create the record without it.
                                     try {
-                                        let systemReturn = await model.findOneAndUpdate(
+                                        let systemReturn = await ebgsSystemsV4Model.findOneAndUpdate(
                                             {
                                                 name_lower: message.StarSystem.toLowerCase(),
                                                 x: this.correctCoordinates(message.StarPos[0]),
@@ -954,13 +948,12 @@ function Journal() {
                 })();
                 (async () => {
                     try {
-                        let model = await ebgsFactionsV4Model;
                         let messageFactionsLower = [];
                         message.Factions.forEach(faction => {
                             messageFactionsLower.push(faction.Name.toLowerCase());
                         });
 
-                        let allFactionsPresentInSystem = model.find(
+                        let allFactionsPresentInSystem = ebgsFactionsV4Model.find(
                             {
                                 faction_presence: {
                                     $elemMatch: { system_name_lower: message.StarSystem.toLowerCase() }
@@ -968,7 +961,7 @@ function Journal() {
                             }
                         ).lean();
 
-                        let allFactionsPresentInMessage = model.find(
+                        let allFactionsPresentInMessage = ebgsFactionsV4Model.find(
                             {
                                 name_lower: {
                                     $in: messageFactionsLower
@@ -1014,7 +1007,7 @@ function Journal() {
                                                 let id = await this.getFactionEDDBId(factionObject.name);
                                                 factionObject.eddb_id = id;
                                                 try {
-                                                    model.findOneAndUpdate(
+                                                    ebgsFactionsV4Model.findOneAndUpdate(
                                                         {
                                                             name: factionObject.name
                                                         },
@@ -1034,7 +1027,7 @@ function Journal() {
                                                 }
                                             } catch (err) {
                                                 try {
-                                                    model.findOneAndUpdate(
+                                                    ebgsFactionsV4Model.findOneAndUpdate(
                                                         {
                                                             name: factionObject.name
                                                         },
@@ -1055,7 +1048,7 @@ function Journal() {
                                             }
                                         } else {
                                             try {
-                                                model.findOneAndUpdate(
+                                                ebgsFactionsV4Model.findOneAndUpdate(
                                                     {
                                                         name: factionObject.name
                                                     },
@@ -1180,7 +1173,7 @@ function Journal() {
                                             let id = await this.getFactionEDDBId(messageFaction.Name);
                                             factionObject.eddb_id = id;
                                             try {
-                                                let factionReturn = await model.findOneAndUpdate(
+                                                let factionReturn = await ebgsFactionsV4Model.findOneAndUpdate(
                                                     {
                                                         name: factionObject.name
                                                     },
@@ -1204,7 +1197,7 @@ function Journal() {
                                             }
                                         } catch (err) {
                                             try {
-                                                let factionReturn = await model.findOneAndUpdate(
+                                                let factionReturn = await ebgsFactionsV4Model.findOneAndUpdate(
                                                     {
                                                         name: factionObject.name
                                                     },
@@ -1325,7 +1318,7 @@ function Journal() {
                                                     let id = await this.getFactionEDDBId(messageFaction.Name);
                                                     factionObject.eddb_id = id;
                                                     try {
-                                                        let factionReturn = await model.findOneAndUpdate(
+                                                        let factionReturn = await ebgsFactionsV4Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -1350,7 +1343,7 @@ function Journal() {
                                                     }
                                                 } catch (err) {
                                                     try {
-                                                        let factionReturn = await model.findOneAndUpdate(
+                                                        let factionReturn = await ebgsFactionsV4Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -1430,7 +1423,7 @@ function Journal() {
                                                     let id = await this.getFactionEDDBId(messageFaction.Name);
                                                     factionObject.eddb_id = id;
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV4Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -1452,7 +1445,7 @@ function Journal() {
                                                     }
                                                 } catch (err) {
                                                     try {
-                                                        model.findOneAndUpdate(
+                                                        ebgsFactionsV4Model.findOneAndUpdate(
                                                             {
                                                                 name: messageFaction.Name
                                                             },
@@ -1475,7 +1468,7 @@ function Journal() {
                                                 }
                                             } else {
                                                 try {
-                                                    model.findOneAndUpdate(
+                                                    ebgsFactionsV4Model.findOneAndUpdate(
                                                         {
                                                             name: messageFaction.Name
                                                         },
@@ -1538,8 +1531,7 @@ function Journal() {
                     serviceArray.push(serviceObject);
                 });
                 try {
-                    let model = await ebgsStationsV4Model;
-                    let station = await model.findOne(
+                    let station = await ebgsStationsV4Model.findOne(
                         {
                             name_lower: message.StationName.toLowerCase(),
                             system_lower: message.StarSystem.toLowerCase()
@@ -1567,9 +1559,8 @@ function Journal() {
                                 station.controlling_minor_faction !== message.StationFaction.Name.toLowerCase() ||
                                 !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
-                                let historyModel = await ebgsHistoryStationV4Model;
                                 let timeNow = Date.now();
-                                let stationHistory = await historyModel.find({
+                                let stationHistory = await ebgsHistoryStationV4Model.find({
                                     station_id: station._id,
                                     updated_at: {
                                         $lte: new Date(timeNow),
@@ -1645,7 +1636,7 @@ function Journal() {
                     if (!_.isEmpty(stationObject)) {
                         if (hasEddbId) {
                             try {
-                                let stationReturn = await model.findOneAndUpdate(
+                                let stationReturn = await ebgsStationsV4Model.findOneAndUpdate(
                                     {
                                         name_lower: message.StationName.toLowerCase(),
                                         system_lower: message.StarSystem.toLowerCase()
@@ -1674,7 +1665,7 @@ function Journal() {
                                 let id = await eddbIdPromise;
                                 stationObject.eddb_id = id;
                                 try {
-                                    let stationReturn = await model.findOneAndUpdate(
+                                    let stationReturn = await ebgsStationsV4Model.findOneAndUpdate(
                                         {
                                             name_lower: message.StationName.toLowerCase(),
                                             system_lower: message.StarSystem.toLowerCase()
@@ -1700,7 +1691,7 @@ function Journal() {
                                 }
                             } catch (err) {
                                 try {
-                                    let stationReturn = await model.findOneAndUpdate(
+                                    let stationReturn = await ebgsStationsV4Model.findOneAndUpdate(
                                         {
                                             name_lower: message.StationName.toLowerCase(),
                                             system_lower: message.StarSystem.toLowerCase()
@@ -1802,8 +1793,7 @@ function Journal() {
             if (!message.Conflicts) {
                 message.Conflicts = [];
             }
-            let configCheckModel = await configModel;
-            let configRecord = await configCheckModel.findOne({}).lean();
+            let configRecord = await configModel.findOne({}).lean();
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
@@ -1869,8 +1859,7 @@ function Journal() {
             if (!message.StationAllegiance) {
                 message.StationAllegiance = "Independent";
             }
-            let configCheckModel = await configModel;
-            let configRecord = await configCheckModel.findOne({}).lean();
+            let configRecord = await configModel.findOne({}).lean();
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
@@ -2037,9 +2026,8 @@ function Journal() {
                     _.isEqual(_.sortBy(faction.recovering_states, ['state']), _.sortBy(recoveringStates, ['state']))) {
                     doUpdate = false;
                 } else {
-                    let historyModel = await ebgsHistoryFactionV4Model;
                     let timeNow = Date.now();
-                    let factionHistory = await historyModel.find({
+                    let factionHistory = await ebgsHistoryFactionV4Model.find({
                         faction_id: dbFaction._id,
                         system_lower: faction.system_name_lower,
                         updated_at: {

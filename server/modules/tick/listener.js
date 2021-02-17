@@ -32,14 +32,13 @@ socket.on('message', (data) => {
 
 let saveTick = async tickTime => {
     try {
-        let model = await tickTimesV4Model;
-        let existingTicks = await model.find({
+        let existingTicks = await tickTimesV4Model.find({
             time: {
                 $gte: tickTime
             }
         }).lean();
         if (_.isEmpty(existingTicks)) {
-            let document = new model({
+            let document = new tickTimesV4Model({
                 time: tickTime,
                 updated_at: new Date(Date.now())
             });

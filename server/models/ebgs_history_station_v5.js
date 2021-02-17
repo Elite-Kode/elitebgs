@@ -15,39 +15,31 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
+let ObjectId = mongoose.Schema.Types.ObjectId;
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-    let ObjectId = mongoose.Schema.Types.ObjectId;
+let ebgsHistoryStation = new mongoose.Schema({
+    station_id: { type: ObjectId, index: true },
+    station_name: String,
+    station_name_lower: { type: String, lowercase: true },
+    updated_at: { type: Date, index: true },
+    updated_by: String,
+    type: { type: String, lowercase: true, index: true },
+    government: { type: String, lowercase: true },
+    allegiance: { type: String, lowercase: true },
+    state: { type: String, lowercase: true },
+    controlling_minor_faction_cased: String,
+    controlling_minor_faction: { type: String, lowercase: true },
+    controlling_minor_faction_id: { type: ObjectId, index: true },
+    services: [{
+        _id: false,
+        name: String,
+        name_lower: { type: String, lowercase: true }
+    }]
+}, { runSettersOnQuery: true });
 
-    let ebgsHistoryStation = new Schema({
-        station_id: { type: ObjectId, index: true },
-        station_name: String,
-        station_name_lower: { type: String, lowercase: true },
-        updated_at: { type: Date, index: true },
-        updated_by: String,
-        type: { type: String, lowercase: true, index: true },
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
-        state: { type: String, lowercase: true },
-        controlling_minor_faction_cased: String,
-        controlling_minor_faction: { type: String, lowercase: true },
-        controlling_minor_faction_id: { type: ObjectId, index: true },
-        services: [{
-            _id: false,
-            name: String,
-            name_lower: { type: String, lowercase: true }
-        }]
-    }, { runSettersOnQuery: true });
+ebgsHistoryStation.plugin(mongoosePaginate);
 
-    ebgsHistoryStation.plugin(mongoosePaginate);
-
-    let model = connection.model('ebgsHistoryStationV5', ebgsHistoryStation);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsHistoryStationV5', ebgsHistoryStation);

@@ -19,9 +19,8 @@
 const _ = require('lodash');
 const request = require('request-promise-native');
 const semver = require('semver');
+const mongoose = require('mongoose');
 
-let db = require('../../../db');
-let elitebgsConnection = db.elite_bgs;
 const bugsnagCaller = require('../../../bugsnag').bugsnagCaller;
 
 const ebgsFactionsV5Model = require('../../../models/ebgs_factions_v5');
@@ -45,7 +44,7 @@ function Journal() {
     ];
 
     this.trackSystem = async (message, header) => {
-        let mongoSession = await elitebgsConnection.startSession();
+        let mongoSession = await mongoose.startSession();
         if (message.event === "FSDJump" || message.event === "Location" || message.event === "CarrierJump") {
             try {
                 // Check if the message is well formed
@@ -56,11 +55,8 @@ function Journal() {
                     return nonBGSFactions.indexOf(faction.Name) === -1;
                 });
                 await mongoSession.withTransaction(async () => {
-                    let systemModel = await ebgsSystemsV5Model;
-                    let factionModel = await ebgsFactionsV5Model;
-                    let stationModel = await ebgsStationsV5Model;
                     // First get the system from the db which matches the system address
-                    let system = await systemModel.findOne({
+                    let system = await ebgsSystemsV5Model.findOne({
                         system_address: message.SystemAddress
                     }).lean();
                     if (!system) {
@@ -81,7 +77,7 @@ function Journal() {
                     let factions = await Promise.all(message.Factions.map(async messageFaction => {
                         // First try to get the faction data
                         let factionNameLower = messageFaction.Name.toLowerCase();
-                        let faction = await factionModel.findOne({
+                        let faction = await ebgsFactionsV5Model.findOne({
                             name_lower: factionNameLower
                         }).lean();
                         if (!faction) {
@@ -112,7 +108,7 @@ function Journal() {
                         return [conflict.Faction1.Stake.toLowerCase(), conflict.Faction2.Stake.toLowerCase()];
                     }));
                     // Get the station records of the stations that are at stake
-                    let stations = await stationModel.find(
+                    let stations = await ebgsStationsV5Model.find(
                         {
                             name_lower: {
                                 $in: stationsAtStake
@@ -186,16 +182,12 @@ function Journal() {
                     };
                 });
                 await mongoSession.withTransaction(async () => {
-                    let systemModel = await ebgsSystemsV5Model;
-                    let factionModel = await ebgsFactionsV5Model;
-                    let stationModel = await ebgsStationsV5Model;
-
                     // First, try to get the system record for this station which matches the system address
-                    let system = await systemModel.findOne({
+                    let system = await ebgsSystemsV5Model.findOne({
                         system_address: message.SystemAddress
                     }).lean();
                     // Try to get the faction record for the station owner
-                    let faction = await factionModel.findOne({
+                    let faction = await ebgsFactionsV5Model.findOne({
                         name_lower: message.StationFaction.Name.toLowerCase()
                     }).lean();
 
@@ -205,7 +197,7 @@ function Journal() {
                     }
 
                     // Get the station from the db which matches the market id
-                    let station = await stationModel.findOne({
+                    let station = await ebgsStationsV5Model.findOne({
                         market_id: message.MarketID
                     }).lean();
 
@@ -310,10 +302,9 @@ function Journal() {
                     nameIsDifferent ||
                     !_.isEqual(_.sortBy(system.conflicts, ['faction1.name_lower']), _.sortBy(conflictsArray, ['faction1.name_lower'])) ||
                     !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))) {
-                    let historyModel = await ebgsHistorySystemV5Model;
                     let timeNow = Date.now();
                     // Get all history records which are less than 48 hours old
-                    let systemHistory = await historyModel.find({
+                    let systemHistory = await ebgsHistorySystemV5Model.find({
                         system_id: system._id,
                         updated_at: {
                             $lte: new Date(timeNow),
@@ -375,10 +366,8 @@ function Journal() {
     this.formAndSetFactionRecord = async (message, factions, stations, system) => {
         // Check if all the parameters are valid
         if (message && system && factions.length > 0 && stations) {
-            let model = await ebgsFactionsV5Model;
-
             // Get all factions from the db which has the current system as a presence system
-            let allFactionsPresentInSystemDB = await model.find(
+            let allFactionsPresentInSystemDB = await ebgsFactionsV5Model.find(
                 {
                     faction_presence: {
                         $elemMatch: { system_id: system._id }
@@ -616,10 +605,9 @@ function Journal() {
                     nameIsDifferent ||
                     !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))) {
 
-                    let historyModel = await ebgsHistoryStationV5Model;
                     let timeNow = Date.now();
                     // Get all history records which are less than 48 hours old
-                    let stationHistory = await historyModel.find({
+                    let stationHistory = await ebgsHistoryStationV5Model.find({
                         station_id: station._id,
                         updated_at: {
                             $lte: new Date(timeNow),
@@ -698,8 +686,7 @@ function Journal() {
             if (!message.Conflicts) {
                 message.Conflicts = [];
             }
-            let configCheckModel = await configModel;
-            let configRecord = await configCheckModel.findOne({}).lean();
+            let configRecord = await configModel.findOne({}).lean();
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
@@ -763,8 +750,7 @@ function Journal() {
             if (!message.StationAllegiance) {
                 message.StationAllegiance = "Independent";
             }
-            let configCheckModel = await configModel;
-            let configRecord = await configCheckModel.findOne({}).lean();
+            let configRecord = await configModel.findOne({}).lean();
             if (configRecord.blacklisted_software.findIndex(software => {
                 let regexp = new RegExp(software, "i");
                 return regexp.test(header.softwareName);
@@ -948,9 +934,8 @@ function Journal() {
             // The presence data in the master record is the same as the incoming message so dont update
             doUpdate = false;
         } else {
-            let historyModel = await ebgsHistoryFactionV5Model;
             let timeNow = Date.now();
-            let factionHistory = await historyModel.find({
+            let factionHistory = await ebgsHistoryFactionV5Model.find({
                 faction_id: dbFaction._id,
                 system_id: system._id,
                 updated_at: {
@@ -1049,8 +1034,7 @@ function Journal() {
 
     // Used in V5
     this.setSystemRecord = async (systemAddress, systemObject) => {
-        let model = await ebgsSystemsV5Model;
-        return await model.findOneAndUpdate(
+        return await ebgsSystemsV5Model.findOneAndUpdate(
             {
                 system_address: systemAddress
             },
@@ -1065,8 +1049,7 @@ function Journal() {
 
     // Used in V5
     this.setFactionRecord = async (nameLower, factionObject) => {
-        let model = await ebgsFactionsV5Model;
-        return await model.findOneAndUpdate(
+        return await ebgsFactionsV5Model.findOneAndUpdate(
             {
                 name_lower: nameLower
             },
@@ -1081,8 +1064,7 @@ function Journal() {
 
     // Used in V5
     this.setStationRecord = async (marketId, stationObject) => {
-        let model = await ebgsStationsV5Model;
-        return await model.findOneAndUpdate(
+        return await ebgsStationsV5Model.findOneAndUpdate(
             {
                 market_id: marketId
             },
@@ -1097,22 +1079,19 @@ function Journal() {
 
     // Used in V4
     this.setSystemHistory = async historyObject => {
-        let model = await ebgsHistorySystemV5Model;
-        let document = new model(historyObject);
+        let document = new ebgsHistorySystemV5Model(historyObject);
         await document.save();
     }
 
     // Used in V4
     this.setFactionHistory = async historyObject => {
-        let model = await ebgsHistoryFactionV5Model;
-        let document = new model(historyObject);
+        let document = new ebgsHistoryFactionV5Model(historyObject);
         await document.save();
     }
 
     // Used in V4
     this.setStationHistory = async historyObject => {
-        let model = await ebgsHistoryStationV5Model;
-        let document = new model(historyObject);
+        let document = new ebgsHistoryStationV5Model(historyObject);
         await document.save();
     }
 }

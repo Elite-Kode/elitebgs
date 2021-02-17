@@ -15,46 +15,37 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
-
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-
-    let ebgsSystem = new Schema({
-        eddb_id: Number,
-        edsm_id: Number,
+let ebgsSystem = new mongoose.Schema({
+    eddb_id: Number,
+    edsm_id: Number,
+    name: String,
+    name_lower: { type: String, lowercase: true, index: true },
+    x: Number,
+    y: Number,
+    z: Number,
+    population: Number,
+    government: { type: String, lowercase: true, index: true },
+    allegiance: { type: String, lowercase: true, index: true },
+    state: { type: String, lowercase: true, index: true },
+    security: { type: String, lowercase: true, index: true },
+    primary_economy: { type: String, lowercase: true, index: true },
+    power: [{ type: String, lowercase: true }],
+    power_state: { type: String, lowercase: true, index: true },
+    needs_permit: Boolean,
+    updated_at: Date,
+    simbad_ref: { type: String, lowercase: true },
+    controlling_minor_faction: { type: String, lowercase: true },
+    reserve_type: { type: String, lowercase: true },
+    minor_faction_presences: [{
+        _id: false,
         name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        x: Number,
-        y: Number,
-        z: Number,
-        population: Number,
-        government: { type: String, lowercase: true, index: true },
-        allegiance: { type: String, lowercase: true, index: true },
-        state: { type: String, lowercase: true, index: true },
-        security: { type: String, lowercase: true, index: true },
-        primary_economy: { type: String, lowercase: true, index: true },
-        power: [{ type: String, lowercase: true }],
-        power_state: { type: String, lowercase: true, index: true },
-        needs_permit: Boolean,
-        updated_at: Date,
-        simbad_ref: { type: String, lowercase: true },
-        controlling_minor_faction: { type: String, lowercase: true },
-        reserve_type: { type: String, lowercase: true },
-        minor_faction_presences: [{
-            _id: false,
-            name: String,
-            name_lower: { type: String, lowercase: true }
-        }]
-    }, { runSettersOnQuery: true });
+        name_lower: { type: String, lowercase: true }
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsSystem.plugin(mongoosePaginate);
+ebgsSystem.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsSystem', ebgsSystem);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsSystem', ebgsSystem);

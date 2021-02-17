@@ -17,6 +17,7 @@
 "use strict";
 
 const express = require('express');
+const mongoose = require('mongoose');
 var cors = require('cors')
 const _ = require('lodash');
 
@@ -73,7 +74,7 @@ let router = express.Router();
    */
 router.get('/', cors(), async (req, res, next) => {
     try {
-        let factions = await require('../../../models/ebgs_factions_v3');
+        let factions = require('../../../models/ebgs_factions_v3');
         let query = new Object;
         let page = 1;
         let history = false;
@@ -117,7 +118,7 @@ router.get('/', cors(), async (req, res, next) => {
         }
         if (history) {
             if (query._id) {
-                query._id = require('../../../db').mongoose.Types.ObjectId(query._id);
+                query._id = mongoose.Types.ObjectId(query._id);
             }
             let aggregate = factions.aggregate();
             let aggregateOptions = {

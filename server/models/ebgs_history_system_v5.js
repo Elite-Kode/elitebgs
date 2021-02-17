@@ -15,64 +15,56 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
+let ObjectId = mongoose.Schema.Types.ObjectId;
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-    let ObjectId = mongoose.Schema.Types.ObjectId;
-
-    let ebgsHistorySystem = new Schema({
-        system_id: { type: ObjectId, index: true },
-        system_name: String,
-        system_name_lower: { type: String, lowercase: true },
-        updated_at: { type: Date, index: true },
-        updated_by: String,
-        population: Number,
-        government: { type: String, lowercase: true },
-        allegiance: { type: String, lowercase: true },
-        state: { type: String, lowercase: true },
-        security: { type: String, lowercase: true },
-        controlling_minor_faction_cased: String,
-        controlling_minor_faction: { type: String, lowercase: true },
-        controlling_minor_faction_id: { type: ObjectId, index: true },
-        factions: [{
-            _id: false,
+let ebgsHistorySystem = new mongoose.Schema({
+    system_id: { type: ObjectId, index: true },
+    system_name: String,
+    system_name_lower: { type: String, lowercase: true },
+    updated_at: { type: Date, index: true },
+    updated_by: String,
+    population: Number,
+    government: { type: String, lowercase: true },
+    allegiance: { type: String, lowercase: true },
+    state: { type: String, lowercase: true },
+    security: { type: String, lowercase: true },
+    controlling_minor_faction_cased: String,
+    controlling_minor_faction: { type: String, lowercase: true },
+    controlling_minor_faction_id: { type: ObjectId, index: true },
+    factions: [{
+        _id: false,
+        faction_id: { type: ObjectId, index: true },
+        name: String,
+        name_lower: { type: String, lowercase: true }
+    }],
+    conflicts: [{
+        _id: false,
+        type: { type: String, lowercase: true },
+        status: { type: String, lowercase: true },
+        faction1: {
             faction_id: { type: ObjectId, index: true },
             name: String,
-            name_lower: { type: String, lowercase: true }
-        }],
-        conflicts: [{
-            _id: false,
-            type: { type: String, lowercase: true },
-            status: { type: String, lowercase: true },
-            faction1: {
-                faction_id: { type: ObjectId, index: true },
-                name: String,
-                name_lower: { type: String, lowercase: true },
-                station_id: { type: ObjectId, index: true },
-                stake: String,
-                stake_lower: { type: String, lowercase: true },
-                days_won: Number
-            },
-            faction2: {
-                faction_id: { type: ObjectId, index: true },
-                name: String,
-                name_lower: { type: String, lowercase: true },
-                station_id: { type: ObjectId, index: true },
-                stake: String,
-                stake_lower: { type: String, lowercase: true },
-                days_won: Number
-            }
-        }]
-    }, { runSettersOnQuery: true });
+            name_lower: { type: String, lowercase: true },
+            station_id: { type: ObjectId, index: true },
+            stake: String,
+            stake_lower: { type: String, lowercase: true },
+            days_won: Number
+        },
+        faction2: {
+            faction_id: { type: ObjectId, index: true },
+            name: String,
+            name_lower: { type: String, lowercase: true },
+            station_id: { type: ObjectId, index: true },
+            stake: String,
+            stake_lower: { type: String, lowercase: true },
+            days_won: Number
+        }
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsHistorySystem.plugin(mongoosePaginate);
+ebgsHistorySystem.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsHistorySystemV5', ebgsHistorySystem);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsHistorySystemV5', ebgsHistorySystem);

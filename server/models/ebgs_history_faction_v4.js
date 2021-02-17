@@ -15,61 +15,53 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
+let ObjectId = mongoose.Schema.Types.ObjectId;
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-    let ObjectId = mongoose.Schema.Types.ObjectId;
-
-    let ebgsHistoryFaction = new Schema({
-        faction_id: { type: ObjectId, index: true },
-        faction_name: String,
-        faction_name_lower: { type: String, lowercase: true },
-        updated_at: { type: Date, index: true },
-        updated_by: String,
-        system: String,
-        system_lower: { type: String, lowercase: true },
+let ebgsHistoryFaction = new mongoose.Schema({
+    faction_id: { type: ObjectId, index: true },
+    faction_name: String,
+    faction_name_lower: { type: String, lowercase: true },
+    updated_at: { type: Date, index: true },
+    updated_by: String,
+    system: String,
+    system_lower: { type: String, lowercase: true },
+    state: { type: String, lowercase: true },
+    influence: Number,
+    happiness: { type: String, lowercase: true },
+    active_states: [{
+        _id: false,
+        state: { type: String, lowercase: true }
+    }],
+    pending_states: [{
+        _id: false,
         state: { type: String, lowercase: true },
-        influence: Number,
-        happiness: { type: String, lowercase: true },
-        active_states: [{
-            _id: false,
-            state: { type: String, lowercase: true }
-        }],
-        pending_states: [{
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-        }],
-        recovering_states: [{
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-        }],
-        conflicts: [{
-            _id: false,
-            type: { type: String, lowercase: true },
-            status: { type: String, lowercase: true },
-            opponent_name: String,
-            opponent_name_lower: { type: String, lowercase: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
-        }],
-        systems: [{
-            _id: false,
-            name: String,
-            name_lower: { type: String, lowercase: true }
-        }]
-    }, { runSettersOnQuery: true });
+        trend: Number
+    }],
+    recovering_states: [{
+        _id: false,
+        state: { type: String, lowercase: true },
+        trend: Number
+    }],
+    conflicts: [{
+        _id: false,
+        type: { type: String, lowercase: true },
+        status: { type: String, lowercase: true },
+        opponent_name: String,
+        opponent_name_lower: { type: String, lowercase: true },
+        stake: String,
+        stake_lower: { type: String, lowercase: true },
+        days_won: Number
+    }],
+    systems: [{
+        _id: false,
+        name: String,
+        name_lower: { type: String, lowercase: true }
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsHistoryFaction.plugin(mongoosePaginate);
+ebgsHistoryFaction.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsHistoryFactionV4', ebgsHistoryFaction);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsHistoryFactionV4', ebgsHistoryFaction);

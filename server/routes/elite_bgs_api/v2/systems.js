@@ -85,7 +85,7 @@ let router = express.Router();
    */
 router.get('/', passport.authenticate('basic', { session: false }), async (req, res, next) => {
     try {
-        let systems = await require('../../../models/ebgs_systems');
+        let systems = require('../../../models/ebgs_systems');
         let query = new Object;
         let page = 1;
 

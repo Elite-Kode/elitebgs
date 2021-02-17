@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
 router.post('/edit', async (req, res, next) => {
     if (req.user) {
         try {
-            let users = await require('../../models/ebgs_users');
+            let users = require('../../models/ebgs_users');
             let user = req.user;
             let factionPromise = [];
             let systemPromise = [];
@@ -42,7 +42,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === faction.toLowerCase();
                     }) === -1) {
                         factionPromise.push((async () => {
-                            let model = await require('../../models/ebgs_factions_v4');
+                            let model = require('../../models/ebgs_factions_v4');
                             let factionGot = await model.findOne({
                                 name_lower: faction.toLowerCase()
                             }).lean();
@@ -65,7 +65,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === system.toLowerCase();
                     }) === -1) {
                         systemPromise.push((async () => {
-                            let model = await require('../../models/ebgs_systems_v4');
+                            let model = require('../../models/ebgs_systems_v4');
                             let systemGot = await model.findOne({
                                 name_lower: system.toLowerCase()
                             }).lean();
@@ -88,7 +88,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === station.toLowerCase();
                     }) === -1) {
                         stationPromise.push((async () => {
-                            let model = await require('../../models/ebgs_stations_v4');
+                            let model = require('../../models/ebgs_stations_v4');
                             let stationGot = await model.findOne({
                                 name_lower: station.toLowerCase()
                             }).lean();
@@ -125,7 +125,7 @@ router.post('/edit', async (req, res, next) => {
 router.delete('/edit', async (req, res, next) => {
     if (req.user) {
         try {
-            let users = await require('../../models/ebgs_users');
+            let users = require('../../models/ebgs_users');
             let user = req.user;
             if (req.query.faction) {
                 let index = user.factions.findIndex(element => {
@@ -168,7 +168,7 @@ router.delete('/edit', async (req, res, next) => {
 router.delete('/delete', async (req, res, next) => {
     if (req.user && (req.user._id === req.query.userid || req.user.access === 0)) {
         try {
-            let users = await require('../../models/ebgs_users');
+            let users = require('../../models/ebgs_users');
             await users.findByIdAndRemove(req.query.userid)
             res.send(true);
         } catch (err) {
