@@ -1369,7 +1369,7 @@ function Journal() {
                                                 }
                                             } else {
                                                 try {
-                                                    let factionReturn = await model.findOneAndUpdate(
+                                                    let factionReturn = await ebgsFactionsV4Model.findOneAndUpdate(
                                                         {
                                                             name: messageFaction.Name
                                                         },
