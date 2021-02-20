@@ -21,49 +21,41 @@ mongoose.Promise = global.Promise;
 
 const bugsnagCaller = require('./bugsnag').bugsnagCaller;
 let elite_bgs_url = require('../secrets').elite_bgs_db_url;
+let elite_bgs_db_user = require('../secrets').elite_bgs_db_user
+let elite_bgs_db_pwd = require('../secrets').elite_bgs_db_pwd
 
-let elite_bgs_connection;
-
-function connect() {
-    elite_bgs_connection = mongoose.createConnection(elite_bgs_url);
+let options = {
+    keepAlive: true,
+    keepAliveInitialDelay: 120000,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    user: elite_bgs_db_user,
+    pass: elite_bgs_db_pwd
 }
 
-connect();
+mongoose.connect(elite_bgs_url, options, err => {
+    if (err) {
+        bugsnagCaller(err);
+        console.log(err);
+    }
+});
 
-elite_bgs_connection.on('connected', () => {
+
+mongoose.connection.on('connected', () => {
     console.log(`Connected to ${elite_bgs_url}`);
 });
 
-elite_bgs_connection.on('error', err => {
+mongoose.connection.on('error', err => {
     bugsnagCaller(err);
     console.log(`Mongoose error ${err}`);
 });
 
-(function () {
-    let tracker = 0;
-    elite_bgs_connection.on('disconnected', () => {
-        console.log(`Mongoose connection to ${elite_bgs_url} disconnected`);
-        if (tracker < 5) {
-            console.log('Mongoose disconnected. Reconnecting in 5 seconds');
-            tracker++;
-
-            setTimeout(() => {
-                tracker--;
-            }, 60000);
-
-            setTimeout(() => {
-                connect();
-            }, 5000);
-        }
-    })
+mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose connection disconnected');
 });
 
-process.on('SIGINT', () => {
-    elite_bgs_connection.close(() => {
-        console.log(`Connection to ${elite_bgs_url} closed via app termination`);
-    });
+process.on('SIGINT', async () => {
+    await mongoose.connection.close();
+    console.log(`Connection to ${elite_bgs_url} closed via app termination`);
     process.exit(0);
 });
-
-module.exports.elite_bgs = elite_bgs_connection;
-module.exports.mongoose = mongoose;

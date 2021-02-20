@@ -15,19 +15,11 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
+let tickTimes = new mongoose.Schema({
+    time: Date,
+    updated_at: Date
+});
 
-    let tickTimes = new Schema({
-        time: Date,
-        updated_at: Date
-    });
-
-    let model = connection.model('tickTimesV4', tickTimes);
-
-    return model;
-})();
+module.exports = mongoose.model('tickTimesV4', tickTimes);

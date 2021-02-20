@@ -15,78 +15,70 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
-let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+let ObjectId = mongoose.Schema.Types.ObjectId;
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-    let ObjectId = mongoose.Schema.Types.ObjectId;
-
-    let ebgsSystem = new Schema({
-        eddb_id: { type: Number, index: true },
+let ebgsSystem = new mongoose.Schema({
+    eddb_id: { type: Number, index: true },
+    name: String,
+    name_lower: { type: String, lowercase: true, index: true },
+    name_aliases: [{
+        _id: false,
         name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        name_aliases: [{
-            _id: false,
-            name: String,
-            name_lower: String
-        }],
-        x: Number,
-        y: Number,
-        z: Number,
-        system_address: { type: String, index: true },
-        population: Number,
-        government: { type: String, lowercase: true, index: true },
-        allegiance: { type: String, lowercase: true, index: true },
-        state: { type: String, lowercase: true, index: true },
-        security: { type: String, lowercase: true, index: true },
-        primary_economy: { type: String, lowercase: true, index: true },
-        secondary_economy: { type: String, lowercase: true, index: true },
-        needs_permit: Boolean,      // Not in Journal
-        reserve_type: { type: String, lowercase: true },    // Not in Journal
-        controlling_minor_faction_cased: String,
-        controlling_minor_faction: { type: String, lowercase: true, index: true },
-        controlling_minor_faction_id: { type: ObjectId, index: true },
-        factions: [{
-            _id: false,
+        name_lower: String
+    }],
+    x: Number,
+    y: Number,
+    z: Number,
+    system_address: { type: String, index: true },
+    population: Number,
+    government: { type: String, lowercase: true, index: true },
+    allegiance: { type: String, lowercase: true, index: true },
+    state: { type: String, lowercase: true, index: true },
+    security: { type: String, lowercase: true, index: true },
+    primary_economy: { type: String, lowercase: true, index: true },
+    secondary_economy: { type: String, lowercase: true, index: true },
+    needs_permit: Boolean,      // Not in Journal
+    reserve_type: { type: String, lowercase: true },    // Not in Journal
+    controlling_minor_faction_cased: String,
+    controlling_minor_faction: { type: String, lowercase: true, index: true },
+    controlling_minor_faction_id: { type: ObjectId, index: true },
+    factions: [{
+        _id: false,
+        faction_id: { type: ObjectId, index: true },
+        name: String,
+        name_lower: { type: String, lowercase: true }
+    }],
+    conflicts: [{
+        _id: false,
+        type: { type: String, lowercase: true },
+        status: { type: String, lowercase: true },
+        faction1: {
             faction_id: { type: ObjectId, index: true },
             name: String,
-            name_lower: { type: String, lowercase: true }
-        }],
-        conflicts: [{
-            _id: false,
-            type: { type: String, lowercase: true },
-            status: { type: String, lowercase: true },
-            faction1: {
-                faction_id: { type: ObjectId, index: true },
-                name: String,
-                name_lower: { type: String, lowercase: true },
-                station_id: { type: ObjectId, index: true },
-                stake: String,
-                stake_lower: { type: String, lowercase: true },
-                days_won: Number
-            },
-            faction2: {
-                faction_id: { type: ObjectId, index: true },
-                name: String,
-                name_lower: { type: String, lowercase: true },
-                station_id: { type: ObjectId, index: true },
-                stake: String,
-                stake_lower: { type: String, lowercase: true },
-                days_won: Number
-            }
-        }],
-        updated_at: { type: Date, index: true }
-    }, { runSettersOnQuery: true });
+            name_lower: { type: String, lowercase: true },
+            station_id: { type: ObjectId, index: true },
+            stake: String,
+            stake_lower: { type: String, lowercase: true },
+            days_won: Number
+        },
+        faction2: {
+            faction_id: { type: ObjectId, index: true },
+            name: String,
+            name_lower: { type: String, lowercase: true },
+            station_id: { type: ObjectId, index: true },
+            stake: String,
+            stake_lower: { type: String, lowercase: true },
+            days_won: Number
+        }
+    }],
+    updated_at: { type: Date, index: true }
+}, { runSettersOnQuery: true });
 
-    ebgsSystem.plugin(mongoosePaginate);
-    ebgsSystem.plugin(mongooseAggregatePaginate);
+ebgsSystem.plugin(mongoosePaginate);
+ebgsSystem.plugin(mongooseAggregatePaginate);
 
-    let model = connection.model('ebgsSystemV5', ebgsSystem);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsSystemV5', ebgsSystem);

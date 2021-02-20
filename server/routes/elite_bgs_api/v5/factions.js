@@ -263,7 +263,7 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getFactions(query, history, minimal, page, request) {
-    let factionModel = await require('../../../models/ebgs_factions_v5');
+    let factionModel = require('../../../models/ebgs_factions_v5');
     let aggregate = factionModel.aggregate().option(aggregateOptions);
     aggregate.match(query).addFields({
         system_ids: {

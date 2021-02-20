@@ -157,10 +157,10 @@ async function getFactions(query, history, page) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let factionModel = await require('../../../models/ebgs_factions_v4');
+    let factionModel = require('../../../models/ebgs_factions_v4');
     let factionResult = await factionModel.paginate(query, paginateOptions);
     if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_faction_v4');
+        let historyModel = require('../../../models/ebgs_history_faction_v4');
         let historyPromises = [];
         factionResult.docs.forEach(faction => {
             historyPromises.push((async () => {

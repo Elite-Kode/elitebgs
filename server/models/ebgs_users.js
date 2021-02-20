@@ -15,50 +15,41 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
+let user = new mongoose.Schema({
+    id: String,
+    username: String,
+    avatar: String,
+    discriminator: String,
+    access: Number,
+    os_contribution: Number,
+    patronage: {
+        level: Number,
+        since: Date
+    },
+    donation: [{
+        amount: Number,
+        date: Date
+    }],
+    factions: [{
+        _id: false,
+        name: String,
+        name_lower: String
+    }],
+    systems: [{
+        _id: false,
+        name: String,
+        name_lower: String
+    }],
+    stations: [{
+        _id: false,
+        name: String,
+        name_lower: String
+    }]
+});
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
+user.plugin(mongoosePaginate);
 
-    let user = new Schema({
-        id: String,
-        username: String,
-        avatar: String,
-        discriminator: String,
-        access: Number,
-        os_contribution: Number,
-        patronage: {
-            level: Number,
-            since: Date
-        },
-        donation: [{
-            amount: Number,
-            date: Date
-        }],
-        factions: [{
-            _id: false,
-            name: String,
-            name_lower: String
-        }],
-        systems: [{
-            _id: false,
-            name: String,
-            name_lower: String
-        }],
-        stations: [{
-            _id: false,
-            name: String,
-            name_lower: String
-        }]
-    });
-
-    user.plugin(mongoosePaginate);
-
-    let model = connection.model('ebgsUsers', user);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsUsers', user);

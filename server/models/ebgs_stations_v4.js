@@ -15,45 +15,36 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
-
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-
-    let ebgsStation = new Schema({
-        eddb_id: { type: Number, index: true },
+let ebgsStation = new mongoose.Schema({
+    eddb_id: { type: Number, index: true },
+    name: String,
+    name_lower: { type: String, lowercase: true, index: true },
+    market_id: { type: String, index: true },
+    type: { type: String, lowercase: true, index: true },
+    system: String,
+    system_lower: { type: String, lowercase: true, index: true },
+    updated_at: { type: Date, index: true },
+    government: { type: String, lowercase: true, index: true },
+    economy: { type: String, lowercase: true, index: true },
+    all_economies: [{
+        _id: false,
+        name: { type: String, lowercase: true },
+        proportion: Number
+    }],
+    allegiance: { type: String, lowercase: true, index: true },
+    state: { type: String, lowercase: true, index: true },
+    distance_from_star: Number,
+    controlling_minor_faction: { type: String, lowercase: true, index: true },
+    services: [{
+        _id: false,
         name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        market_id: { type: String, index: true },
-        type: { type: String, lowercase: true, index: true },
-        system: String,
-        system_lower: { type: String, lowercase: true, index: true },
-        updated_at: { type: Date, index: true },
-        government: { type: String, lowercase: true, index: true },
-        economy: { type: String, lowercase: true, index: true },
-        all_economies: [{
-            _id: false,
-            name: { type: String, lowercase: true},
-            proportion: Number
-        }],
-        allegiance: { type: String, lowercase: true, index: true },
-        state: { type: String, lowercase: true, index: true },
-        distance_from_star: Number,
-        controlling_minor_faction: { type: String, lowercase: true, index: true },
-        services: [{
-            _id: false,
-            name: String,
-            name_lower: { type: String, lowercase: true }
-        }]
-    }, { runSettersOnQuery: true });
+        name_lower: { type: String, lowercase: true }
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsStation.plugin(mongoosePaginate);
+ebgsStation.plugin(mongoosePaginate);
 
-    let model = connection.model('ebgsStationV4', ebgsStation);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsStationV4', ebgsStation);

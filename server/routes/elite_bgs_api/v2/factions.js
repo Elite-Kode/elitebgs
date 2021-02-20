@@ -81,7 +81,7 @@ let router = express.Router();
    */
 router.get('/', passport.authenticate('basic', { session: false }), async (req, res, next) => {
     try {
-        let factions = await require('../../../models/ebgs_factions');
+        let factions = require('../../../models/ebgs_factions');
         let query = new Object;
         let page = 1;
 

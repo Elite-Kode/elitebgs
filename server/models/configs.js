@@ -15,26 +15,18 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
 
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
+let config = new mongoose.Schema({
+    guild_id: String,
+    admin_channel_id: String,
+    user_role_id: String,
+    blacklisted_software: [String],
+    version_software: [{
+        name: String,
+        version: String
+    }],
+    time_offset: Number
+});
 
-    let config = new Schema({
-        guild_id: String,
-        admin_channel_id: String,
-        user_role_id: String,
-        blacklisted_software: [String],
-        version_software: [{
-            name: String,
-            version: String
-        }],
-        time_offset: Number
-    });
-
-    let model = connection.model('configs', config);
-
-    return model;
-})();
+module.exports = mongoose.model('configs', config);

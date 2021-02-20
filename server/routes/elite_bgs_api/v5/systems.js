@@ -277,7 +277,7 @@ router.get('/', cors(), async (req, res, next) => {
 async function getSystems(query, history, minimal, page, request) {
     let referenceDistance = 20;
     let referenceDistanceMin = 0;
-    let systemModel = await require('../../../models/ebgs_systems_v5');
+    let systemModel = require('../../../models/ebgs_systems_v5');
     let aggregate = systemModel.aggregate().option(aggregateOptions);
     let countAggregate = systemModel.aggregate().option(aggregateOptions);
     if (request.query.referenceSystem || request.query.referenceSystemId) {

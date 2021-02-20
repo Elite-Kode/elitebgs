@@ -189,7 +189,7 @@ router.get('/', cors(), async (req, res, next) => {
 });
 
 async function getStations(query, history, page) {
-    let stationModel = await require('../../../models/ebgs_stations_v5');
+    let stationModel = require('../../../models/ebgs_stations_v5');
     let aggregate = stationModel.aggregate().option(aggregateOptions);
     aggregate.match(query);
 

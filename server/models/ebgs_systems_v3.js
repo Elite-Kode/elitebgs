@@ -15,59 +15,50 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
-
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-
-    let ebgsSystem = new Schema({
-        eddb_id: Number,
+let ebgsSystem = new mongoose.Schema({
+    eddb_id: Number,
+    name: String,
+    name_lower: { type: String, lowercase: true, index: true },
+    x: Number,
+    y: Number,
+    z: Number,
+    population: Number,
+    government: { type: String, lowercase: true, index: true },
+    allegiance: { type: String, lowercase: true, index: true },
+    state: { type: String, lowercase: true, index: true },
+    security: { type: String, lowercase: true, index: true },
+    primary_economy: { type: String, lowercase: true, index: true },
+    needs_permit: Boolean,      // Not in Journal
+    reserve_type: { type: String, lowercase: true },    // Not in Journal
+    controlling_minor_faction: { type: String, lowercase: true, index: true },
+    factions: [{
+        _id: false,
         name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        x: Number,
-        y: Number,
-        z: Number,
+        name_lower: { type: String, lowercase: true }
+    }],
+    updated_at: Date,
+    history: [{
+        updated_at: Date,
+        updated_by: String,
         population: Number,
-        government: { type: String, lowercase: true, index: true },
-        allegiance: { type: String, lowercase: true, index: true },
-        state: { type: String, lowercase: true, index: true },
-        security: { type: String, lowercase: true, index: true },
-        primary_economy: { type: String, lowercase: true, index: true },
-        needs_permit: Boolean,      // Not in Journal
-        reserve_type: { type: String, lowercase: true },    // Not in Journal
-        controlling_minor_faction: { type: String, lowercase: true, index: true },
+        government: { type: String, lowercase: true },
+        allegiance: { type: String, lowercase: true },
+        state: { type: String, lowercase: true },
+        security: { type: String, lowercase: true },
+        controlling_minor_faction: { type: String, lowercase: true },
         factions: [{
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
-        }],
-        updated_at: Date,
-        history: [{
-            updated_at: Date,
-            updated_by: String,
-            population: Number,
-            government: { type: String, lowercase: true },
-            allegiance: { type: String, lowercase: true },
-            state: { type: String, lowercase: true },
-            security: { type: String, lowercase: true },
-            controlling_minor_faction: { type: String, lowercase: true },
-            factions: [{
-                _id: false,
-                name: String,
-                name_lower: { type: String, lowercase: true }
-            }]
         }]
-    }, { runSettersOnQuery: true });
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsSystem.plugin(mongoosePaginate);
-    ebgsSystem.plugin(mongooseAggregatePaginate);
+ebgsSystem.plugin(mongoosePaginate);
+ebgsSystem.plugin(mongooseAggregatePaginate);
 
-    let model = connection.model('ebgsSystemV3', ebgsSystem);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsSystemV3', ebgsSystem);

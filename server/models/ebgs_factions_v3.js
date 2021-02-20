@@ -15,71 +15,62 @@
  */
 
 "use strict";
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
 
-let mongoosePaginate = require('mongoose-paginate');
-let mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
-
-module.exports = (async () => {
-    let db = require('../db');
-    let connection = db.elite_bgs;
-    let mongoose = db.mongoose;
-    let Schema = mongoose.Schema;
-
-    let ebgsFaction = new Schema({
-        eddb_id: Number,
-        name: String,
-        name_lower: { type: String, lowercase: true, index: true },
-        updated_at: Date,
-        government: { type: String, lowercase: true, index: true },
-        allegiance: { type: String, lowercase: true, index: true },
-        home_system_name: { type: String, lowercase: true },    // Not in Journal
-        is_player_faction: Boolean,     // Not in Journal
-        faction_presence: [{
+let ebgsFaction = new mongoose.Schema({
+    eddb_id: Number,
+    name: String,
+    name_lower: { type: String, lowercase: true, index: true },
+    updated_at: Date,
+    government: { type: String, lowercase: true, index: true },
+    allegiance: { type: String, lowercase: true, index: true },
+    home_system_name: { type: String, lowercase: true },    // Not in Journal
+    is_player_faction: Boolean,     // Not in Journal
+    faction_presence: [{
+        _id: false,
+        system_name: String,
+        system_name_lower: { type: String, lowercase: true },
+        state: { type: String, lowercase: true },
+        influence: Number,
+        pending_states: [{
             _id: false,
-            system_name: String,
-            system_name_lower: { type: String, lowercase: true },
             state: { type: String, lowercase: true },
-            influence: Number,
-            pending_states: [{
-                _id: false,
-                state: { type: String, lowercase: true },
-                trend: Number
-            }],
-            recovering_states: [{
-                _id: false,
-                state: { type: String, lowercase: true },
-                trend: Number
-            }]
+            trend: Number
         }],
-        history: [{
-            updated_at: { type: Date, index: true },
-            updated_by: String,
-            system: String,
-            system_lower: { type: String, lowercase: true },
+        recovering_states: [{
+            _id: false,
             state: { type: String, lowercase: true },
-            influence: Number,
-            pending_states: [{
-                _id: false,
-                state: { type: String, lowercase: true },
-                trend: Number
-            }],
-            recovering_states: [{
-                _id: false,
-                state: { type: String, lowercase: true },
-                trend: Number
-            }],
-            systems: [{
-                _id: false,
-                name: String,
-                name_lower: { type: String, lowercase: true }
-            }]
+            trend: Number
         }]
-    }, { runSettersOnQuery: true });
+    }],
+    history: [{
+        updated_at: { type: Date, index: true },
+        updated_by: String,
+        system: String,
+        system_lower: { type: String, lowercase: true },
+        state: { type: String, lowercase: true },
+        influence: Number,
+        pending_states: [{
+            _id: false,
+            state: { type: String, lowercase: true },
+            trend: Number
+        }],
+        recovering_states: [{
+            _id: false,
+            state: { type: String, lowercase: true },
+            trend: Number
+        }],
+        systems: [{
+            _id: false,
+            name: String,
+            name_lower: { type: String, lowercase: true }
+        }]
+    }]
+}, { runSettersOnQuery: true });
 
-    ebgsFaction.plugin(mongoosePaginate);
-    ebgsFaction.plugin(mongooseAggregatePaginate);
+ebgsFaction.plugin(mongoosePaginate);
+ebgsFaction.plugin(mongooseAggregatePaginate);
 
-    let model = connection.model('ebgsFactionV3', ebgsFaction);
-
-    return model;
-})();
+module.exports = mongoose.model('ebgsFactionV3', ebgsFaction);

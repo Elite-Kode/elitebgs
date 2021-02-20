@@ -28,11 +28,11 @@ client.on("ready", () => {
 
 client.on("guildMemberAdd", async member => {
     try {
-        let model = await require('../../../server/models/ebgs_users');
+        let model = require('../../../server/models/ebgs_users');
         let user = await model.findOne({
             id: member.id
         });
-        let configModel = await require('../../../server/models/configs');
+        let configModel = require('../../../server/models/configs');
         let config = await configModel.findOne();
         await member.roles.add(config.user_role_id);
         let guild = await client.guilds.fetch(config.guild_id)

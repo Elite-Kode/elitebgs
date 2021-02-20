@@ -178,10 +178,10 @@ async function getSystems(query, history, page) {
     if (_.isEmpty(query)) {
         throw new Error("Add at least 1 query parameter to limit traffic");
     }
-    let systemModel = await require('../../../models/ebgs_systems_v4');
+    let systemModel = require('../../../models/ebgs_systems_v4');
     let systemResult = await systemModel.paginate(query, paginateOptions);
     if (!_.isEmpty(history)) {
-        let historyModel = await require('../../../models/ebgs_history_system_v4');
+        let historyModel = require('../../../models/ebgs_history_system_v4');
         let historyPromises = [];
         systemResult.docs.forEach(system => {
             historyPromises.push((async () => {
