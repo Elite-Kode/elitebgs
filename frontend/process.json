@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "name": "elitebgs-guild-bot",
+            "name": "elitebgs-frontend",
             "script": "./bin/start.js",
             "watch": true,
             "log_date_format": "YYYY-MM-DD HH:mm Z",

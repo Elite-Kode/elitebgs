@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "name": "elitebgs",
+            "name": "elitebgs-eddn-listener",
             "script": "./bin/start.js",
             "watch": true,
             "log_date_format": "YYYY-MM-DD HH:mm Z",

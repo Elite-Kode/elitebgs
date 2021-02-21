@@ -17,7 +17,7 @@ export class IngameIdsService {
         } else if (this.idObservable) {
             return this.idObservable;
         } else {
-            this.idObservable = this.http.get<any>('/ingameids/all');
+            this.idObservable = this.http.get<any>('/api/ingameids/all');
             this.idObservable.subscribe(response => {
                 this.allIds = response;
             });

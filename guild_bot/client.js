@@ -57,4 +57,4 @@ client.on("error", err => {
     bugsnagCaller(err);
 })
 
-export default client;
+module.exports = client;

@@ -5,6 +5,7 @@
 import { version } from './version';
 
 export const environment = {
-  production: false,
-  version: version
+    production: false,
+    version: version,
+    baseUrl: 'http://localhost:3010'
 };

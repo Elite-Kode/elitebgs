@@ -1,4 +1,4 @@
-let version = require('../version');
+let version = require('./version');
 
 module.exports = {
     version

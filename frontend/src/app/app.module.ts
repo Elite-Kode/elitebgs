@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ErrorHandler, NgModule, Provider } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ClarityModule } from '@clr/angular';
 
 import { AppComponent } from './app.component';
@@ -48,6 +48,7 @@ import { Bugsnag } from '../secrets';
 import bugsnag from '@bugsnag/js'
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular'
 import { Client } from '@bugsnag/core';
+import { ApiInterceptor } from './utilities/ApiInterceptor';
 
 let bugsnagClient: Client = {} as Client
 
@@ -74,7 +75,16 @@ const providers: Provider[] = [
     ThemeService,
     TryAPIService,
     TickService,
-    IngameIdsService
+    IngameIdsService,
+    {
+        provide: 'BASE_API_URL',
+        useValue: environment.baseUrl
+    },
+    {
+        provide: HTTP_INTERCEPTORS,
+        useClass: ApiInterceptor,
+        multi: true,
+    }
 ]
 
 if (Bugsnag.use) {
