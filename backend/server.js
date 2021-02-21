@@ -107,8 +107,6 @@ app.use('/api/ebgs/v5/systems', ebgsSystemsV5);
 app.use('/api/ebgs/v5/stations', ebgsStationsV5);
 app.use('/api/ebgs/v5/ticks', tickTimesV5);
 
-// Todo: Move the below APIs to /api
-
 app.use('/api/chartgenerator', chartGenerator);
 app.use('/api/ingameids', ingameIds);
 app.use('/api/health', health);
