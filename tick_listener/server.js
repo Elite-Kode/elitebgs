@@ -32,6 +32,11 @@ let bugsnagClientMiddleware = {}
 
 if (secrets.bugsnag_use) {
     bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
+    app.use(bugsnagClientMiddleware.requestHandler);
+}
+
+// error handlers
+if (secrets.bugsnag_use) {
     app.use(bugsnagClientMiddleware.errorHandler);
 }
 
