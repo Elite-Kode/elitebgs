@@ -10,6 +10,7 @@ EliteBGS requires a few things to get going:
 2. NodeJS v8.9.0 (Carbon) and above
 3. MongoDb 3.2 and above
 4. Configure front end and back end secrets, with or without Discord and BugSnag integration
+5. A Discord account and "guild" (server) for oAuth authentication
 
 Both node.js and MongoDB must be installed and correctly working, otherwise these instructions may fail.
 
@@ -17,7 +18,7 @@ Both node.js and MongoDB must be installed and correctly working, otherwise thes
 
 - An IDE or code editor is highly recommended, preferably with node.js integration and debugger
 - GitHub Desktop can make working with GitHub a lot easier on Windows or Mac platforms
-- A Discord account if you want the EliteBGS server to notify you of admin events
+- EliteBGS admin notifications to Discord (this is not BGSBot)
 - A Bugsnag account and API token if you want crash reporting and analysis
 
 ## Obtain source code and install dependencies
@@ -128,12 +129,30 @@ The new `secrets.js` file needs to have the following content:
 - `elite_bgs_db_url` Elite BGS assumes a local MongoDB installation on port 27017. Change this if you have a cloud or different MongoDB configuration
 - `session_secret` is a random value. Create a random password using a password generator. Don't change it or your users will need to log in again
 - `discord_use` enables Discord if set to true, set to false otherwise
-- `client_id` is your application's Discord Client ID, leave it blank otherwise
+- `client_id` is your application's Discord Client ID - this CANNOT be blank. See next section
 - `client_secret` is your application's Discord Client Secret, leave it blank otherwise
 - `discord_token` is the bot public key, leave it blank otherwise
 - `bugsnag_use` enables BugSnag if set to true, set to false otherwise
 - `bugsnag_token` is your BugSnag API key, set it to a fake MD5 string otherwise
 - `bugsnag_sourcemap_send` will send extra data to BugSnag is set to true, set it false if you don't want this
+
+NB: Although MongoDB access control is strongly recommended, MongoDB has significant password composition limitations. We suggest a long random alphanumeric password rather than a highly complex password, because many punctuation characters including `;` are not valid MongoDB passwords.
+
+### Discord oAuth integration
+
+Elite BGS requires a valid oAuth2 redirect URL for your Discord server to be set up. Without this, Elite BGS will not run. This allows the front end to authenticate clients with Discord, and is *not* BGSBot or admin notification (that's a bit below).
+
+1. [Enable Discord developer mode](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)
+2. Login to the [Discord Developer Portal Application](https://discord.com/developers/applications)
+3. Click Applications > New Application
+> Call it something like "elitebgs-dev" or similar for development, and whatever you like in Production
+3. Navigate [Developer Dashboard](https://discord.com/developers/applications) > Applications > `elitebgs-dev` > OAuth2
+4. Click "Add Redirect" and use `http://localhost:3001/auth/discord/callback` for development, or `https://<yourEliteBGSUrl>/auth/discord/callback` for production
+5. Grab the client ID next on the oAuth page, and add it to `module.exports.client_id` in `secrets.js`
+
+[Reference for creating Discord applications](https://www.writebots.com/discord-bot-token/)
+
+> **Security notice:** Do not add or commit secrets.js or your client ID to Git.
 
 ## Configure Front End
 
@@ -163,26 +182,27 @@ export { RouteAuth, Bugsnag };
 
 ## Optional Integrations
 
-EliteBGS has two integrations, Discord to send admin notifications, and BugSnag to capture and analyze errors.
+EliteBGS has two integrations, send admin notifications via Discord, and BugSnag to capture and analyze errors.
 
 ### Discord notification integration
 
-Elite BGS can send admin notifications to a Discord server (guild). THIS IS NOT BGSBOT. The EliteBGS front end uses Discord for user authentication, but you don't need this integration to make that work.
+Elite BGS can send admin notifications to a Discord server (guild). THIS IS NOT BGSBOT or front end Discord authentication. The EliteBGS front end uses Discord for user authentication, but you don't need this integration to make that work.
 
 If you want to integrate with Discord:
 
-- [Setup a Discord application](https://discord.com/developers/applications), enable developer mode, [create a bot application](https://www.writebots.com/discord-bot-token/), and follow the instructions to find your Discord user's client_id and client_secret, and the Discord bot token for the application
-- In secrets.js, set `discord_use` to `true`
-- In secrets.js, copy your Discord application's Client ID to `client_id`, Client Secret to `client_secret`, and Public Key to `discord_token`. You can find this under Developer Portal -> My Applications -> \<application name\>
-- In MongoDB, change the following values in the configs collection:
-  - `guild_id` The [guild (server) ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)
-  - `admin_channel_id` The [channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) you'd like EliteBGS admin notifications
-  - `user_role_id` The [Discord role ID](https://discordhelp.net/role-id) that EliteBGS admin notifications should use. @everyone is fine, but you may wish to use [something custom](https://support.discord.com/hc/en-us/articles/206029707-How-do-I-set-up-Permissions-), such as write only permissions.
+1. In secrets.js, set `discord_use` to `true`
+2. Navigate to Discord's [Application Dashboard](https://discord.com/developers/applications) > `elitebgs-dev` or `whatever` > General Information 
+3. Copy Client ID to `client_id`, Client Secret to `client_secret`, and Public Key to `discord_token` in secrets.js
+4. In MongoDB, change the following values in the configs collection:
+
+- `guild_id` The [guild (server) ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)
+- `admin_channel_id` The [channel ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) you'd like EliteBGS admin notifications
+- `user_role_id` The [Discord role ID](https://discordhelp.net/role-id) that EliteBGS admin notifications should use. @everyone is fine, but you may wish to use [something custom](https://support.discord.com/hc/en-us/articles/206029707-How-do-I-set-up-Permissions-), such as write only permissions.
 
 If you don't want to use Discord:
 
-- In secrets.js, set `discord_use` to `false`. The other Discord related settings can be blank
-- In MongoDB set `guild_id`, `admin_channel_id`, `user_role_id` to blank in the configs collection. 
+- In secrets.js, set `discord_use` to `false`, and `client_id` to the Discord Client ID in the OAuth2 page. The rest can be blank
+- In MongoDB set `guild_id`, `admin_channel_id`, `user_role_id` to blank in the configs collection.
 
 > **Security notice:** Do not add or commit your secrets to Git.
 
@@ -212,7 +232,7 @@ To execute the project run in local development mode:
 
 To execute the project in production mode:
 
-`npm start`.
+`npm start`
 
 ## Contributing fixes and enhancements back to EliteBGS
 
