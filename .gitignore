@@ -204,4 +204,4 @@ dist
 secrets.*
 
 # Background Images
-src/assets/backgrounds
+frontend/src/assets/backgrounds
