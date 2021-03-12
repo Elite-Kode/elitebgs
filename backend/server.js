@@ -24,14 +24,14 @@ const bodyParser = require('body-parser');
 const secrets = require('./secrets');
 const swagger = require('./swagger');
 
-const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
-const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
-
-const ebgsFactionsV2 = require('./routes/elite_bgs_api/v2/factions');
-const ebgsSystemsV2 = require('./routes/elite_bgs_api/v2/systems');
-
-const ebgsFactionsV3 = require('./routes/elite_bgs_api/v3/factions');
-const ebgsSystemsV3 = require('./routes/elite_bgs_api/v3/systems');
+// const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
+// const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
+//
+// const ebgsFactionsV2 = require('./routes/elite_bgs_api/v2/factions');
+// const ebgsSystemsV2 = require('./routes/elite_bgs_api/v2/systems');
+//
+// const ebgsFactionsV3 = require('./routes/elite_bgs_api/v3/factions');
+// const ebgsSystemsV3 = require('./routes/elite_bgs_api/v3/systems');
 
 const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
 const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
