@@ -6,7 +6,7 @@ import { EddbApiDocsComponent } from './docs/eddb-api-docs.component';
 
 const eddbApiRoutes: Routes = [
     {
-        path: 'api/eddb',
+        path: 'apis/eddb',
         component: EddbApiComponent,
         children: [
             {

@@ -61,7 +61,7 @@ let paramsEBGSAPIv1 = {
         EBGSSystemPresence: { properties: swaggerDefinitions.ebgsSystemPresence },
         EBGSSystems: { properties: swaggerDefinitions.ebgsSystems }
     },
-    apis: ['./server/routes/elite_bgs_api/v1/*.js']
+    apis: ['./routes/elite_bgs_api/v1/*.js']
 };
 
 let swaggerSpecEBGSAPIv1 = makeSwaggerSpec(paramsEBGSAPIv1, true);
@@ -83,7 +83,7 @@ let paramsEBGSAPIv2 = {
         EBGSFactionsPage: { properties: swaggerDefinitions.pagination('EBGSFactions') },
         EBGSSystemsPage: { properties: swaggerDefinitions.pagination('EBGSSystems') }
     },
-    apis: ['./server/routes/elite_bgs_api/v2/*.js']
+    apis: ['./routes/elite_bgs_api/v2/*.js']
 };
 
 let swaggerSpecEBGSAPIv2 = makeSwaggerSpec(paramsEBGSAPIv2, true);
@@ -106,7 +106,7 @@ let paramsEBGSAPIv3 = {
         EBGSFactionsPageV3: { properties: swaggerDefinitions.pagination('EBGSFactionsV3') },
         EBGSSystemsPageV3: { properties: swaggerDefinitions.pagination('EBGSSystemsV3') }
     },
-    apis: ['./server/routes/elite_bgs_api/v3/*.js']
+    apis: ['./routes/elite_bgs_api/v3/*.js']
 };
 
 let swaggerSpecEBGSAPIv3 = makeSwaggerSpec(paramsEBGSAPIv3, false);
@@ -135,7 +135,7 @@ let paramsEBGSAPIv4 = {
         TickTimesV4: { properties: swaggerDefinitions.tickTimesV4 },
         TickTimesHistoryV4: { properties: swaggerDefinitions.tickTimesHistoryV4 }
     },
-    apis: ['./server/routes/elite_bgs_api/v4/*.js']
+    apis: ['./routes/elite_bgs_api/v4/*.js']
 };
 
 let swaggerSpecEBGSAPIv4 = makeSwaggerSpec(paramsEBGSAPIv4, false);
@@ -172,7 +172,7 @@ let paramsEBGSAPIv5 = {
         TickTimesHistoryV5: { properties: swaggerDefinitions.tickTimesHistoryV5 },
         TickTimesV5: { properties: swaggerDefinitions.tickTimesV5 }
     },
-    apis: ['./server/routes/elite_bgs_api/v5/*.js']
+    apis: ['./routes/elite_bgs_api/v5/*.js']
 };
 
 let swaggerSpecEBGSAPIv5 = makeSwaggerSpec(paramsEBGSAPIv5, false);
