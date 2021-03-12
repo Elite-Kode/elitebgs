@@ -1,0 +1,37 @@
+{
+    "name": "elitebgs-backend",
+    "scripts": {
+        "start": "cross-env PORT=4010 pm2 start process.json --env production",
+        "startdev": "cross-env NODE_ENV=development nodemon --inspect ./bin/start.js"
+    },
+    "private": true,
+    "dependencies": {
+        "@bugsnag/js": "^7.4.0",
+        "@bugsnag/plugin-express": "^7.3.5",
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "lodash": "^4.17.20",
+        "lodash-es": "^4.17.15",
+        "moment": "^2.29.1",
+        "mongoose": "^5.10.8",
+        "mongoose-aggregate-paginate": "^1.1.2",
+        "mongoose-aggregate-paginate-v2": "^1.0.42",
+        "mongoose-paginate": "^5.0.3",
+        "morgan": "^1.10.0",
+        "request": "^2.88.2",
+        "request-promise-native": "^1.0.9",
+        "swagger-jsdoc": "^4.2.3",
+        "swagger-ui-express": "^4.1.4",
+        "un-eval": "^1.2.0"
+    },
+    "devDependencies": {
+        "@bugsnag/core": "^7.3.5",
+        "@types/mongoose-paginate": "^5.0.8",
+        "@types/node": "^12.11.1",
+        "@types/swagger-schema-official": "^2.0.21",
+        "cross-env": "^7.0.2",
+        "nodemon": "^2.0.4",
+        "pm2": "^4.5.0"
+    }
+}
