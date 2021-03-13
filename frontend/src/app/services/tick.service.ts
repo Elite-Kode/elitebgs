@@ -13,12 +13,12 @@ export class TickService {
     ) { }
 
     getTick(): Observable<Tick> {
-        return this.http.get<Tick>('/api/ebgs/v4/ticks');
+        return this.http.get<Tick>('/api/ebgs/v5/ticks');
     }
 
     getTicks(timemin: string, timemax: string): Observable<Tick> {
-        return this.http.get<Tick>('/api/ebgs/v4/ticks', {
-            params: new HttpParams({ encoder: new CustomEncoder() }).set('timemin', timemin).set('timemax', timemax)
+        return this.http.get<Tick>('/api/ebgs/v5/ticks', {
+            params: new HttpParams({ encoder: new CustomEncoder() }).set('timeMin', timemin).set('timeMax', timemax)
         });
     }
 

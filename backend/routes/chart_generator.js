@@ -34,8 +34,8 @@ router.get('/factions/influence', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 systemDetails: 'true'
             },
             json: true,
@@ -128,10 +128,10 @@ router.get('/factions/influence', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-infleunce`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-infleunce`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -152,8 +152,8 @@ router.get('/factions/state', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 systemDetails: 'true'
             },
             json: true,
@@ -282,10 +282,10 @@ router.get('/factions/state', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -318,8 +318,8 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 systemDetails: 'true'
             },
             json: true,
@@ -565,10 +565,10 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             formData: {
                 options: un_eval(options).replace('systemsRegex', JSON.stringify(systems)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-${stateType}`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-${stateType}`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -589,8 +589,8 @@ router.get('/factions/happiness', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/factions`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 systemDetails: 'true'
             },
             json: true,
@@ -717,10 +717,10 @@ router.get('/factions/happiness', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-happiness`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-happiness`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -741,8 +741,8 @@ router.get('/systems/influence', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -840,10 +840,10 @@ router.get('/systems/influence', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-infleunce`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-infleunce`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -864,8 +864,8 @@ router.get('/systems/state', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -995,10 +995,10 @@ router.get('/systems/state', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -1031,8 +1031,8 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -1279,10 +1279,10 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             formData: {
                 options: un_eval(options).replace('factionsRegex', JSON.stringify(factions)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-${stateType}`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-${stateType}`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -1303,8 +1303,8 @@ router.get('/systems/happiness', async (req, res, next) => {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/systems`,
             qs: {
                 name: req.query.name,
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax,
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax,
                 factionDetails: 'true',
                 factionHistory: 'true'
             },
@@ -1432,10 +1432,10 @@ router.get('/systems/happiness', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-happiness`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-happiness`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
@@ -1455,8 +1455,8 @@ router.get('/tick', async (req, res, next) => {
         let requestOptions = {
             url: `${processVars.protocol}://${processVars.host}/api/ebgs/v5/ticks`,
             qs: {
-                timeMin: req.query.timemin,
-                timeMax: req.query.timemax
+                timeMin: req.query.timeMin,
+                timeMax: req.query.timeMax
             },
             json: true,
             resolveWithFullResponse: true
@@ -1534,10 +1534,10 @@ router.get('/tick', async (req, res, next) => {
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
-                filename: `${req.query.name}-${req.query.timemin}-${req.query.timemax}-state`,
-                resources: JSON.stringify({
-                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                }),
+                filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
+                // resources: JSON.stringify({
+                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                // }),
                 scale: 2
             },
             encoding: null,
