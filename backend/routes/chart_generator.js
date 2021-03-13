@@ -124,14 +124,14 @@ router.get('/factions/influence', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-infleunce`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -278,14 +278,14 @@ router.get('/factions/state', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -561,14 +561,14 @@ let factionActivePendingRecovering = async (req, res, next, type) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: un_eval(options).replace('systemsRegex', JSON.stringify(systems)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-${stateType}`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -713,14 +713,14 @@ router.get('/factions/happiness', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-happiness`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -836,14 +836,14 @@ router.get('/systems/influence', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-infleunce`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -991,14 +991,14 @@ router.get('/systems/state', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -1275,14 +1275,14 @@ let systemActivePendingRecovering = async (req, res, next, type) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: un_eval(options).replace('factionsRegex', JSON.stringify(factions)).replace('tickPositionsRegex', JSON.stringify(tickPositions)).replace('maxStatesConcurrentRegex', JSON.stringify(maxStatesConcurrent)),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-${stateType}`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -1428,14 +1428,14 @@ router.get('/systems/happiness', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-happiness`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
@@ -1530,14 +1530,14 @@ router.get('/tick', async (req, res, next) => {
             highchartsCurrentTheme = highchartsTheme.HighchartsDarkTheme;
         }
         let highchartsRequestOptions = {
-            url: `https://export.highcharts.com/`,
+            url: `http://localhost:7801/`,
             formData: {
                 options: JSON.stringify(options),
                 type: 'image/png',
                 filename: `${req.query.name}-${req.query.timeMin}-${req.query.timeMax}-state`,
-                // resources: JSON.stringify({
-                //     js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
-                // }),
+                resources: JSON.stringify({
+                    js: `theme = ${JSON.stringify(highchartsCurrentTheme)};Highcharts.setOptions(theme);`
+                }),
                 scale: 2
             },
             encoding: null,
