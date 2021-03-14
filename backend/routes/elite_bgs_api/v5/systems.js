@@ -236,6 +236,15 @@ router.get('/', cors(), async (req, res, next) => {
         if (req.query.minimal === 'true') {
             minimal = true;
         }
+        if (+req.query.referenceDistanceMin && +req.query.referenceDistanceMin !== 0) {
+            if (+req.query.referenceDistance > req.query.referenceDistanceMin + 10) {
+                throw new Error("referenceDistance cannot be more than 10 LY of referenceDistanceMin");
+            }
+        } else {
+            if (+req.query.referenceDistance > 30) {
+                throw new Error("referenceDistance cannot be more than 30 LY. Use referenceDistanceMin to calculate a shell");
+            }
+        }
         if (req.query.page) {
             page = req.query.page;
         }
