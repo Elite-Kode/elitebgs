@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { EBGSSystemSchemaDetailed, EBGSSystemsDetailed, EBGSSystemsMinimal } from '../typings';
 import { CustomEncoder } from './custom.encoder';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class SystemsService {
@@ -11,13 +12,13 @@ export class SystemsService {
     }
 
     getSystemsBegins(page: string, name: string): Observable<EBGSSystemsMinimal> {
-        return this.http.get<EBGSSystemsMinimal>('/api/ebgs/v5/systems', {
+        return this.http.get<EBGSSystemsMinimal>(environment.apiUrl + '/api/ebgs/v5/systems', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('page', page + 1).set('minimal', 'true').set('beginsWith', name)
         });
     }
 
     getSystemIdByEDDBId(eddbid: string): Observable<EBGSSystemsMinimal> {
-        return this.http.get<EBGSSystemsMinimal>('/api/ebgs/v5/systems', {
+        return this.http.get<EBGSSystemsMinimal>(environment.apiUrl + '/api/ebgs/v5/systems', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('eddbId', eddbid).set('minimal', 'true')
         })
     }
@@ -31,13 +32,13 @@ export class SystemsService {
     }
 
     private getHistoryById(id: string, timeMin: string, timeMax: string): Observable<EBGSSystemsDetailed> {
-        return this.http.get<EBGSSystemsDetailed>('/api/ebgs/v5/systems', {
+        return this.http.get<EBGSSystemsDetailed>(environment.apiUrl + '/api/ebgs/v5/systems', {
             params: new HttpParams().set('id', id).set('timeMin', timeMin).set('timeMax', timeMax).set('factionDetails', 'true').set('factionHistory', 'true')
         });
     }
 
     private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSSystemsDetailed> {
-        return this.http.get<EBGSSystemsDetailed>('/api/ebgs/v5/systems', {
+        return this.http.get<EBGSSystemsDetailed>(environment.apiUrl + '/api/ebgs/v5/systems', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('name', name).set('timeMin', timeMin).set('timeMax', timeMax).set('factionDetails', 'true').set('factionHistory', 'true')
         });
     }

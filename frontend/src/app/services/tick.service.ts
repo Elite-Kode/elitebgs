@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Tick, TickSchema, TickDisplaySchema } from '../typings';
 import { CustomEncoder } from './custom.encoder';
 import * as moment from 'moment';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class TickService {
@@ -13,11 +14,11 @@ export class TickService {
     ) { }
 
     getTick(): Observable<Tick> {
-        return this.http.get<Tick>('/api/ebgs/v5/ticks');
+        return this.http.get<Tick>(environment.apiUrl + '/api/ebgs/v5/ticks');
     }
 
     getTicks(timemin: string, timemax: string): Observable<Tick> {
-        return this.http.get<Tick>('/api/ebgs/v5/ticks', {
+        return this.http.get<Tick>(environment.apiUrl + '/api/ebgs/v5/ticks', {
             params: new HttpParams({ encoder: new CustomEncoder() }).set('timeMin', timemin).set('timeMax', timemax)
         });
     }
