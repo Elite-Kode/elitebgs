@@ -78,7 +78,7 @@ const providers: Provider[] = [
     IngameIdsService,
     {
         provide: 'BASE_API_URL',
-        useValue: environment.baseUrl
+        useValue: environment.apiUrl
     },
     {
         provide: HTTP_INTERCEPTORS,

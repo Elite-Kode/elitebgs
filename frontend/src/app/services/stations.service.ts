@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { EBGSStations, EBGSStationSchemaDetailed, EBGSStationsDetailed } from '../typings';
 import { CustomEncoder } from './custom.encoder';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class StationsService {
@@ -11,13 +12,13 @@ export class StationsService {
     }
 
     getStationsBegins(page: string, name: string): Observable<EBGSStations> {
-        return this.http.get<EBGSStations>('/api/ebgs/v5/stations', {
+        return this.http.get<EBGSStations>(environment.apiUrl + '/api/ebgs/v5/stations', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('page', page + 1).set('beginsWith', name)
         });
     }
 
     getStationIdByEDDBId(eddbid: string): Observable<EBGSStations> {
-        return this.http.get<EBGSStations>('/api/ebgs/v5/stations', {
+        return this.http.get<EBGSStations>(environment.apiUrl + '/api/ebgs/v5/stations', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('eddbId', eddbid).set('minimal', 'true')
         })
     }
@@ -31,13 +32,13 @@ export class StationsService {
     }
 
     private getHistoryById(id: string, timeMin: string, timeMax: string): Observable<EBGSStationsDetailed> {
-        return this.http.get<EBGSStationsDetailed>('/api/ebgs/v5/stations', {
+        return this.http.get<EBGSStationsDetailed>(environment.apiUrl + '/api/ebgs/v5/stations', {
             params: new HttpParams().set('id', id).set('timeMin', timeMin).set('timeMax', timeMax)
         });
     }
 
     private getHistory(name: string, timeMin: string, timeMax: string): Observable<EBGSStationsDetailed> {
-        return this.http.get<EBGSStationsDetailed>('/api/ebgs/v5/stations', {
+        return this.http.get<EBGSStationsDetailed>(environment.apiUrl + '/api/ebgs/v5/stations', {
             params: new HttpParams({encoder: new CustomEncoder()}).set('name', name).set('timeMin', timeMin).set('timeMax', timeMax)
         });
     }
