@@ -20,8 +20,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const _ = require('lodash');
+const redis = require('redis');
+const crypto = require('crypto');
 
 const utilities = require('../../../modules/utilities');
+
+const redisPort = 6379
+const redisClient = redis.createClient(redisPort);
+
+//log error to the console if any occurs
+redisClient.on("error", (err) => {
+    console.log(err);
+});
 
 let router = express.Router();
 let ObjectId = mongoose.Types.ObjectId;
@@ -126,139 +136,162 @@ let aggregateOptions = {
  *           items:
  *             $ref: '#/definitions/EBGSFactionsPageV5'
  */
-router.get('/', cors(), async (req, res, next) => {
-    try {
-        let query = {};
-        let page = 1;
-        let history = false;
-        let minimal = false;
-        let greaterThanTime;
-        let lesserThanTime;
-        let count;
 
-        if (req.query.id) {
-            query._id = utilities.arrayOrNot(req.query.id, ObjectId);
-        }
-        if (req.query.eddbId) {
-            query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
-        }
-        if (req.query.name) {
-            query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
-        }
-        if (req.query.allegiance) {
-            query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
-        }
-        if (req.query.government) {
-            query.government = utilities.arrayOrNot(req.query.government, _.toLower);
-        }
-        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
-            query.name_lower = {
-                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-            };
-        }
-        if (req.query.system) {
-            query["faction_presence.system_name_lower"] = utilities.arrayOrNot(req.query.system, _.toLower);
-        }
-        if (req.query.systemId) {
-            query["faction_presence.system_id"] = utilities.arrayOrNot(req.query.system, ObjectId);
-        }
-        if (req.query.activeState) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    active_states: {
-                        $elemMatch: {
-                            state: utilities.arrayOrNot(req.query.activeState, _.toLower)
+const redisGet = (key) => new Promise((resolve, reject) => {
+    redisClient.get(key, (err, data) => {
+        if (err) return reject(err);
+        return resolve(data);
+    });
+});
+
+router.get('/', cors(), async (req, res, next) => {
+    // A simple hash of the entire URL is used as a redis key. 
+    // Even small changes in the URL result in different hashes
+    let urlHash = require('crypto').createHash('sha256').update(req.originalUrl).digest("hex")
+
+    // Check the cache for the hash, and if found, deserialize directly to the response and leave
+    const factions = await redisGet(urlHash)
+    if (factions != null) {
+        res.status(200).send(JSON.parse(factions));
+    } else {
+        // Not cached, let's do it the hard way and stash the result in Redis
+        try {
+            let query = {};
+            let page = 1;
+            let history = false;
+            let minimal = false;
+            let greaterThanTime;
+            let lesserThanTime;
+            let count;
+
+            if (req.query.id) {
+                query._id = utilities.arrayOrNot(req.query.id, ObjectId);
+            }
+            if (req.query.eddbId) {
+                query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
+            }
+            if (req.query.name) {
+                query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
+            }
+            if (req.query.allegiance) {
+                query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
+            }
+            if (req.query.government) {
+                query.government = utilities.arrayOrNot(req.query.government, _.toLower);
+            }
+            if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
+                query.name_lower = {
+                    $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
+                };
+            }
+            if (req.query.system) {
+                query["faction_presence.system_name_lower"] = utilities.arrayOrNot(req.query.system, _.toLower);
+            }
+            if (req.query.systemId) {
+                query["faction_presence.system_id"] = utilities.arrayOrNot(req.query.system, ObjectId);
+            }
+            if (req.query.activeState) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        active_states: {
+                            $elemMatch: {
+                                state: utilities.arrayOrNot(req.query.activeState, _.toLower)
+                            }
                         }
                     }
-                }
-            };
-        }
-        if (req.query.pendingState) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    pending_states: {
-                        $elemMatch: {
-                            state: utilities.arrayOrNot(req.query.pendingState, _.toLower)
+                };
+            }
+            if (req.query.pendingState) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        pending_states: {
+                            $elemMatch: {
+                                state: utilities.arrayOrNot(req.query.pendingState, _.toLower)
+                            }
                         }
                     }
-                }
-            };
-        }
-        if (req.query.recoveringState) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    recovering_states: {
-                        $elemMatch: {
-                            state: utilities.arrayOrNot(req.query.recoveringState, _.toLower)
+                };
+            }
+            if (req.query.recoveringState) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        recovering_states: {
+                            $elemMatch: {
+                                state: utilities.arrayOrNot(req.query.recoveringState, _.toLower)
+                            }
                         }
                     }
-                }
-            };
-        }
-        if (req.query.influenceGT && req.query.influenceGT) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    influence: {
-                        $gt: +request.query.influenceGT,
-                        $lt: +request.query.influenceLT
+                };
+            }
+            if (req.query.influenceGT && req.query.influenceGT) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        influence: {
+                            $gt: +request.query.influenceGT,
+                            $lt: +request.query.influenceLT
+                        }
                     }
-                }
-            };
-        } else if (req.query.influenceGT) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    influence: {
-                        $gt: +request.query.influenceGT
+                };
+            } else if (req.query.influenceGT) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        influence: {
+                            $gt: +request.query.influenceGT
+                        }
                     }
-                }
-            };
-        } else if (req.query.influenceLT) {
-            query["faction_presence"] = {
-                $elemMatch: {
-                    influence: {
-                        $gt: +request.query.influenceLT,
+                };
+            } else if (req.query.influenceLT) {
+                query["faction_presence"] = {
+                    $elemMatch: {
+                        influence: {
+                            $gt: +request.query.influenceLT,
+                        }
                     }
-                }
-            };
+                };
+            }
+            if (req.query.minimal === 'true') {
+                minimal = true;
+            }
+            if (req.query.page) {
+                page = req.query.page;
+            }
+            if (req.query.timeMin && req.query.timeMax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timeMin));
+                lesserThanTime = new Date(Number(req.query.timeMax));
+            }
+            if (req.query.timeMin && !req.query.timeMax) {
+                history = true;
+                greaterThanTime = new Date(Number(req.query.timeMin));
+                lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
+            }
+            if (!req.query.timeMin && req.query.timeMax) {
+                history = true;
+                greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
+                lesserThanTime = new Date(Number(req.query.timeMax));
+            }
+            if (req.query.count) {
+                history = true
+                count = +req.query.count
+            }
+            if (history) {
+                let result = await getFactions(query, {
+                    greater: greaterThanTime,
+                    lesser: lesserThanTime,
+                    count: count
+                }, minimal, page, req);
+                // Store the result in redis for up to 10 minutes (it will expire after that)
+                redisClient.setex(urlHash, 600, JSON.stringify(result));
+                res.status(200).json(result);
+            } else {
+                let result = await getFactions(query, {}, minimal, page, req);
+                // Store the result in redis for up to 10 minutes (it will expire after that)
+                redisClient.setex(urlHash, 600, JSON.stringify(result));
+                res.status(200).json(result);
+            }
+        } catch (err) {
+            next(err);
         }
-        if (req.query.minimal === 'true') {
-            minimal = true;
-        }
-        if (req.query.page) {
-            page = req.query.page;
-        }
-        if (req.query.timeMin && req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timeMin));
-            lesserThanTime = new Date(Number(req.query.timeMax));
-        }
-        if (req.query.timeMin && !req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timeMin));
-            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
-        }
-        if (!req.query.timeMin && req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
-            lesserThanTime = new Date(Number(req.query.timeMax));
-        }
-        if (req.query.count) {
-            history = true
-            count = +req.query.count
-        }
-        if (history) {
-            let result = await getFactions(query, {
-                greater: greaterThanTime,
-                lesser: lesserThanTime,
-                count: count
-            }, minimal, page, req);
-            res.status(200).json(result);
-        } else {
-            let result = await getFactions(query, {}, minimal, page, req);
-            res.status(200).json(result);
-        }
-    } catch (err) {
-        next(err);
     }
 });
 
