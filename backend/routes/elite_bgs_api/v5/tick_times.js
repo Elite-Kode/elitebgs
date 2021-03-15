@@ -19,6 +19,16 @@
 const express = require('express');
 const cors = require('cors')
 const _ = require('lodash');
+const redis = require('redis');
+const crypto = require('crypto');
+
+const redisPort = 6379
+const redisClient = redis.createClient(redisPort);
+
+//log error to the console if any occurs
+redisClient.on("error", (err) => {
+    console.log(err);
+});
 
 let router = express.Router();
 
@@ -46,38 +56,58 @@ let router = express.Router();
    *           items:
    *             $ref: '#/definitions/TickTimesV5'
    */
-router.get('/', cors(), async (req, res, next) => {
-    try {
-        let query = {};
 
-        if (req.query.timeMin && req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timeMax)),
-                    $gte: new Date(Number(req.query.timeMin))
+const redisGet = (key) => new Promise((resolve, reject) => {
+    redisClient.get(key, (err, data) => {
+        if (err) return reject(err);
+        return resolve(data);
+    });
+});
+
+router.get('/', cors(), async (req, res, next) => {
+    // A simple hash of the entire URL is used as a redis key. 
+    // Even small changes in the URL result in different hashes
+    let urlHash = require('crypto').createHash('sha256').update(req.originalUrl).digest("hex")
+
+    // Check the cache for the hash, and if found, deserialize directly to the response and leave
+    const ticks = await redisGet(urlHash)
+    if (ticks != null) {
+        res.status(200).send(JSON.parse(ticks));
+    } else {
+        try {
+            let query = {};
+
+            if (req.query.timeMin && req.query.timeMax) {
+                query = {
+                    updated_at: {
+                        $lte: new Date(Number(req.query.timeMax)),
+                        $gte: new Date(Number(req.query.timeMin))
+                    }
                 }
             }
-        }
-        if (req.query.timeMin && !req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(+req.query.timeMin + 604800000)),    // Adding seven days worth of miliseconds
-                    $gte: new Date(Number(req.query.timeMin))
+            if (req.query.timeMin && !req.query.timeMax) {
+                query = {
+                    updated_at: {
+                        $lte: new Date(Number(+req.query.timeMin + 604800000)),    // Adding seven days worth of miliseconds
+                        $gte: new Date(Number(req.query.timeMin))
+                    }
                 }
             }
-        }
-        if (!req.query.timeMin && req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timeMax)),
-                    $gte: new Date(Number(+req.query.timeMax - 604800000))    // Subtracting seven days worth of miliseconds
+            if (!req.query.timeMin && req.query.timeMax) {
+                query = {
+                    updated_at: {
+                        $lte: new Date(Number(req.query.timeMax)),
+                        $gte: new Date(Number(+req.query.timeMax - 604800000))    // Subtracting seven days worth of miliseconds
+                    }
                 }
             }
+            let result = await getTicks(query);
+            // Store the tick result in redis for up one minute (everyone wants this to change)
+            redisClient.setex(urlHash, 60, JSON.stringify(result));
+            res.status(200).json(result);
+        } catch (err) {
+            next(err);
         }
-        let result = await getTicks(query);
-        res.status(200).json(result);
-    } catch (err) {
-        next(err);
     }
 });
 
