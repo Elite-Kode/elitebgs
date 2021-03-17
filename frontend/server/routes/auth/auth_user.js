@@ -42,7 +42,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === faction.toLowerCase();
                     }) === -1) {
                         factionPromise.push((async () => {
-                            let model = require('../../models/ebgs_factions_v4');
+                            let model = require('../../models/ebgs_factions_v5');
                             let factionGot = await model.findOne({
                                 name_lower: faction.toLowerCase()
                             }).lean();
@@ -65,7 +65,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === system.toLowerCase();
                     }) === -1) {
                         systemPromise.push((async () => {
-                            let model = require('../../models/ebgs_systems_v4');
+                            let model = require('../../models/ebgs_systems_v5');
                             let systemGot = await model.findOne({
                                 name_lower: system.toLowerCase()
                             }).lean();
@@ -88,7 +88,7 @@ router.post('/edit', async (req, res, next) => {
                         return element.name_lower === station.toLowerCase();
                     }) === -1) {
                         stationPromise.push((async () => {
-                            let model = require('../../models/ebgs_stations_v4');
+                            let model = require('../../models/ebgs_stations_v5');
                             let stationGot = await model.findOne({
                                 name_lower: station.toLowerCase()
                             }).lean();
