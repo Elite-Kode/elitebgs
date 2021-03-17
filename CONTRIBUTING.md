@@ -217,7 +217,7 @@ Elite BGS frontend requires a valid oAuth2 redirect URL for your Discord server 
 > Call it something like "elitebgs-dev" or similar for development, and whatever you like in Production
 
 - Navigate [Developer Dashboard](https://discord.com/developers/applications) > Applications > `elitebgs-dev` > OAuth2
-- Click "Add Redirect" and use `http://localhost:3001/auth/discord/callback` for development, or `https://<yourElite BGSUrl>/auth/discord/callback` for production
+- Click "Add Redirect" and use `http://localhost:3014/auth/discord/callback` for development, or `https://<yourElite BGSUrl>/auth/discord/callback` for production
 - Grab the client ID next on the oAuth page, and add it to `module.exports.client_id` in `secrets.js`
 
 [Reference for creating Discord applications](https://www.writebots.com/discord-bot-token/)
