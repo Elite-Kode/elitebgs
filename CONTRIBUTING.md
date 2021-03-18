@@ -175,9 +175,14 @@ Create a new `secrets.js` file with the following lines:
 
 ```js
   "use strict";
+  
+  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
   let elite_bgs_db_user = "[username for elite_bgs db]";
   let elite_bgs_db_pwd = "[password for elite_bgs db]";
   module.exports.elite_bgs_db_url = `mongodb://${elite_bgs_db_user}:${elite_bgs_db_pwd}@localhost:27017/elite_bgs`;
+  
+  // Unauthenticated MongoDB (the default, useful for development). Uncomment if not using authentication
+  // module.exports.elite_bgs_db_url = `mongodb://localhost:27017/elite_bgs`;
 
   module.exports.session_secret = "[a secret for express-session]";
 
