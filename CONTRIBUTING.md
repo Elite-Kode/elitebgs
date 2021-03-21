@@ -7,21 +7,21 @@ Thank you for contributing to this project. All contributions are welcome. But f
 Elite BGS requires a few things to get going:
 
 1. Git and Github account
-2. A recent NodeJS LTS version, v8.9.0 (Carbon) and above
-3. MongoDb 3.2 and above
+2. A recent Node.js LTS version, v12.18.2 (Erbium) and above
+3. MongoDB 4.0 and above
 4. Redis 6.2 (stable) and above
-5. Configure front end and back end secrets
-6. A Discord account and "guild" (server) for OAuth authentication (required)
+5. Configure secrets for `frontend`, `backend`, `eddn_listener`, `guild_bot` and `tick_listener`
+6. A Discord account for OAuth authentication (required) and a Discord "guild" (server) if `guild_bot` is required
 
-On the server or development workstation, node.js, MongoDB, and Redis must be installed and correctly working. Otherwise, these instructions may fail. If you develop on Windows, you will need to install Redis in Windows Subsystem For Linux (WSL2), a Docker container, or a virtual machine, as there are no current native Windows ports.
+On the server or development workstation, Node.js, MongoDB, and Redis must be installed and correctly working. Otherwise, these instructions may fail. If you develop on Windows, you will need to install Redis in Windows Subsystem For Linux (WSL2), a Docker container, or a virtual machine, as there are no current native Windows ports.
 
-To serve the `frontend` application scalably in production is not yet documented. Documentation updates on how to do this on a single host or within a Dockerized environment such as Google Cloud Platform or Kubernetes are most welcome.
+Documentation to serve the `frontend` application scalably in production is not yet available. Documentation updates on how to do this on a single host or within a Dockerized environment such as Google Cloud Platform or Kubernetes are most welcome.
 
 See below on how to contribute using branches and pull requests.
 
 ### Optional Requirements
 
-- An IDE or code editor is highly recommended, preferably with node.js integration and debugger
+- An IDE or code editor is highly recommended, preferably with Node.js integration and debugger
 - GitHub Desktop can make working with GitHub a lot easier on Windows or Mac platforms
 - `guild_bot` to send Elite BGS admin notifications to Discord
 - A Bugsnag account and API token if you want crash reporting and analysis
@@ -30,11 +30,11 @@ See below on how to contribute using branches and pull requests.
 
 ### Install node.js and npm
 
-Download the latest stable version of node.js for your platform, and let it install. After installation, restart your terminal or PowerShell window to ensure that node is now on the default path and check that both these commands work:
+Download the latest stable version of Node.js for your platform, and let it install. After installation, restart your terminal or PowerShell window to ensure that Node.js is now on the default path and check that both these commands work:
 
 ```console
     foo@bar:~$ node -v
-    v12.16.3
+    v12.18.2
     foo@bar:~$ npm -v
     6.14.4
 ```
@@ -133,10 +133,10 @@ Building Elite BGS is relatively straightforward if taken step by step. Being a 
 
 There are five major components to Elite BGS:
 
-- `backend` is the Elite BGS RESTful API Server and is written in node.js, Express, Redis, and MongoDB. Backend is read-only; it relies upon other servers to update MongoDB collections.
+- `backend` is the Elite BGS RESTful API Server and is written in Node.js, Express, Redis, and MongoDB. Backend is read-only; it relies upon other servers to update MongoDB collections.
 - `eddn_listener` listens to the EDDN firehose via a socket. It parses messages it is interested in and stores them in various MongoDB collections. It will throw errors if it sees records it doesn't necessarily care about, but these are warnings and not fatal
-- `frontend` is an Angular application written in TypeScript that is the user interface that most users are familiar.
-- `guild_bot` is a node.js application that provides admin notifications to a Discord server run by you, an Elite BGS administrator. This is not BGS Bot - that's an entirely different project.
+- `frontend` is an Angular application written in TypeScript that is the user interface that most users are familiar with.
+- `guild_bot` is a Node.js application that provides admin notifications to a Discord server run by you, an Elite BGS administrator. This is not BGS Bot - that's an entirely different project.
 - `tick_listener` is a small node.js application that watches for ticks from Cmdr Phelbore's tick service. In the future, this code will likely adopt Cmdr Phelbore's code, but for now, it relies upon monitoring a socket to determine when the tick occurs.
 
 ### Install dependencies
@@ -171,43 +171,108 @@ This will include the package in package.json as well as install it locally. Thi
 
 The secrets file is used by all Elite BGS components, including the front end, but we need it mainly for the back end services.
 
-Create a new `secrets.js` file with the following lines:
+Create a new `secrets.js` file for each service in their respective folders with the following lines:
+
+#### backend/secrets.js
 
 ```js
   "use strict";
   
   // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
-  let elite_bgs_db_user = "[username for elite_bgs db]";
-  let elite_bgs_db_pwd = "[password for elite_bgs db]";
-  module.exports.elite_bgs_db_url = `mongodb://${elite_bgs_db_user}:${elite_bgs_db_pwd}@localhost:27017/elite_bgs`;
+  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
+  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
   
-  // Unauthenticated MongoDB (the default, useful for development). Uncomment if not using authentication
-  // module.exports.elite_bgs_db_url = `mongodb://localhost:27017/elite_bgs`;
+  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
+
+  module.exports.bugsnag_use = [true/false];
+  module.exports.bugsnag_token = "[Bugsnag token for backend Express app]";
+```
+
+#### eddn_listener/secrets.js
+
+```js
+  "use strict";
+  
+  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
+  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
+  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
+  
+  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
+
+  module.exports.bugsnag_use = [true/false];
+  module.exports.bugsnag_token = "[Bugsnag token for eddn_listener Express app]";
+```
+
+#### frontend/secrets.js
+
+```js
+  "use strict";
+  
+  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
+  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
+  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
+  
+  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
+
+  module.exports.bugsnag_token_angular = "[Bugsnag token for frontend Angular app]";
+  module.exports.bugsnag_token = "[Bugsnag token for frontend Express app]";
+  module.exports.bugsnag_sourcemap_send = [true/false];
+  module.exports.bugsnag_use = [true/false];
 
   module.exports.session_secret = "[a secret for express-session]";
+  module.exports.client_id = "[Discord API client id]";
+  module.exports.client_secret = "[Discord API client secret]";
 
+  // Change the port to 4013 (or any other configured port) when running production
   module.exports.discord_use = [true/false];
+  module.exports.companion_bot_endpoint = "http://localhost:3013" 
+```
+
+#### guild_bot/secrets.js
+
+```js
+  "use strict";
+  
+  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
+  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
+  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
+  
+  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
+  
   module.exports.discord_token = "[Discord bot token]";
-  module.exports.client_id = '[Discord API client id]';
-  module.exports.client_secret = '[Discord API client secret]';
 
   module.exports.bugsnag_use = [true/false];
   module.exports.bugsnag_token = "[Bugsnag token for backend express app]";
-  module.exports.bugsnag_sourcemap_send = [true/false];
+```
 
+#### tick_listener/secrets.js
+
+```js
+  "use strict";
+  
+  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
+  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
+  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
+  
+  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
+
+  module.exports.bugsnag_use = [true/false];
+  module.exports.bugsnag_token = "[Bugsnag token for backend express app]";
 ```
 
 - `elite_bgs_db_user` if you have set up MongoDB access control (mandatory in production environments), the username for the elite_bgs collection, or blank in development
 - `elite_bgs_db_pwd` if you have set up MongoDB access control (mandatory in production environments), the password for the elite_bgs collection, or blank in development
 - `elite_bgs_db_url` Elite BGS assumes a local MongoDB installation on port 27017. Change this if you have a cloud or different MongoDB configuration
 - `session_secret` is a random value. Create a random password using a password generator. Please don't change it, or your users will need to log in again
-- `discord_use` enables Discord if set to true, set to false otherwise
+- `discord_use` enables Discord `guild_bot` integration if set to true, set to false otherwise
 - `client_id` is your application's Discord Client ID - this CANNOT be blank. See next section
-- `client_secret` is your application's Discord Client Secret. Please leave it blank otherwise
-- `discord_token` is the bot public key. Please leave it blank otherwise
+- `client_secret` is your application's Discord Client Secret - this CANNOT be blank. See next section
+- `discord_token` is the bot public key.
+- `companion_bot_endpoint` is the endpoint where the `guild_bot` is running. Default dev port is `3013` and prod port is `4013`
 - `bugsnag_use` enables BugSnag if set to true, set to false otherwise
-- `bugsnag_token` is your BugSnag API key. Please set it to a fake MD5 string otherwise
-- `bugsnag_sourcemap_send` will send extra data to BugSnag is set to true. Set it false if you don't want this
+- `bugsnag_token` is your BugSnag API key for each Express app. Please don't set it if `bugsnag_use` is `false`
+- `bugsnag_token_angular` is your BugSnag API key for the Angular app. Please don't set it if `bugsnag_use` is `false`
+- `bugsnag_sourcemap_send` will send sourcemaps of the built files to BugSnag if set to true. Set it false if you don't want this
 
 NB: Although MongoDB access control is strongly recommended, MongoDB has significant password composition limitations. We suggest a long random alphanumeric password rather than a highly complex password because many punctuation characters, including `;` are not valid MongoDB passwords.
 
@@ -229,20 +294,6 @@ Elite BGS frontend requires a valid oAuth2 redirect URL for your Discord server 
 
 > **Security notice:** Do not add or commit secrets.js or your client ID to Git.
 
-### Copy secrets.js to all services
-
-Assuming your master secrets.js file is outside the elitebgs repo:
-
-```console
-    foo@bar:~$ cp secrets.js ./elitebgs/backend/
-    foo@bar:~$ cp secrets.js ./elitebgs/eddn_listener/
-    foo@bar:~$ cp secrets.js ./elitebgs/frontend/
-    foo@bar:~$ cp secrets.js ./elitebgs/guild_bot/
-    foo@bar:~$ cp secrets.js ./elitebgs/tick_listener/
-```
-
-Adjust as necessary for the location of your master secrets.js file and operating system.
-
 ## Configure and build Elite BGS frontend
 
 The front end is a bit more complicated than the other Elite BGS components, which can quickly be started after installing the necessary node modules. The frontend code must be built at least once by hand to get past an interactive question, and it relies upon Angular and TypeScript to be installed, so we must get those installed the first time we build the app.
@@ -256,21 +307,16 @@ Create a file called `frontend/src/secrets.ts` (should be at the same level as `
 The new `secrets.ts` file needs to have the following content:
 
 ```ts
-class RouteAuth {
-    public static readonly auth: string = '[Generated Secret]';
-}
-
 class Bugsnag {
     public static readonly token: string = '[Bugsnag token for frontend angular app]';
     public static readonly use: boolean = [true/false]
 }
 
-export { RouteAuth, Bugsnag };
+export { Bugsnag };
 ```
 
-- `auth` is not currently used and can be anything
 - `use` when true enables BugSnag. Set it to `false` if not needed
-- `token` is an optional BugSnag token. Make it some random value if not needed
+- `token` is an optional BugSnag token. Please don't set it if `use` is `false`
 
 > **Security notice:** Do not add or commit your secrets to Git.
 
@@ -326,7 +372,7 @@ Elite BGS `guild_bot` can send admin notifications to a Discord server, also kno
 
 If you want to get admin notification via `guild_bot`:
 
-1. In secrets.js, set `discord_use` to `true`
+1. In `frontend/secrets.js`, set `discord_use` to `true` and `companion_bot_endpoint` to the endpoint where the `guild_bot` server is running (default `http://localhost:3013`)
 2. Navigate to Discord's [Application Dashboard](https://discord.com/developers/applications) > `elitebgs-dev` or `whatever` > General Information
 3. Copy Client ID to `client_id`, Client Secret to `client_secret`, and Public Key to `discord_token` in secrets.js
 4. In MongoDB, change the following values in the configs collection:
@@ -337,7 +383,7 @@ If you want to get admin notification via `guild_bot`:
 
 If you don't want to use Discord:
 
-- In secrets.js, set `discord_use` to `false`, and `client_id` to the Discord Client ID in the OAuth2 page. The rest can be blank
+- In `frontend/secrets.js`, set `discord_use` to `false`. `companion_bot_endpoint` can be left blank and `guild_bot` service need not be started
 - In MongoDB set `guild_id`, `admin_channel_id`, `user_role_id` to blank in the configs collection.
 
 > **Security notice:** Do not add or commit your secrets to Git.
@@ -348,15 +394,28 @@ BugSnag is an error capture and analysis platform. This is great for production,
 
 If you want to use BugSnag, create a BugSnag account, then an application, and obtain the application's API key.
 
-- In secrets.js, set `bugsnag_use` and `bugsnag_sourcemap_send` to `true`
-- In secrets.js, set `bugsnag_token` to your BugSnag application API key
-- In secrets.ts, set `Bugsnag.use` to `true`, and `token` to your BugSnag application API key
+You should create a separate application for each service. Also, the Express app in `frontend` should be a separate application from the `Angular` app.
+
+In each `secrets.js` file in `backend`, `eddn_listener`, `frontend`, `guild_bot`, and `tick_detector` 
+
+- set `bugsnag_use` to `true`
+- set `bugsnag_token` to your BugSnag application API key
+  
+Additionally in `frontend/secrets.js`
+
+- set `bugsnag_sourcemap_send` to `true`
+- set `bugsnag_token_angular` to your BugSnag application API key generated for the Angular application
+
+Additionally in `frontend/src/secrets.ts`
+
+- set `Bugsnag.use` to `true`, and `Bugsnag.token` to your BugSnag application API key
 
 If you don't want to use BugSnag, and rely on the console or your debugger instead:
 
-- In secrets.js, set `bugsnag_use` and `bugsnag_sourcemap_send` to `false`
-- In secrets.js, set `bugsnag_token` to a random MD5 value
-- In secrets.ts, set `Bugsnag.use` to `false`, and `token` to a random MD5 value
+In each `secrets.js` file in `backend`, `eddn_listener`, `frontend`, `guild_bot`, and `tick_detector`
+
+- set `bugsnag_use` to `true` and omit all other `bugsnag_` properties
+- In `frontend/src/secrets.ts`, set `Bugsnag.use` to `false`, and omit `Bugsnag.token`
 
 > **Security notice:** Do not add or commit your secrets to Git.
 
@@ -370,9 +429,9 @@ As Elite BGS is split into five parts, the following default HTTP ports are used
 | -- | -- | -- | -- |
 | backend API | 4010 | 3010 | 9029 |
 | eddn_listener | 4011 | 3011 | 9129 |
-| frontend app + API | 4014 | 3014 | 9429 |
-| guild_bot | 4013 | 3013 | 9329 |
 | tick_listener | 4012 | 3012 | 9229 |
+| guild_bot | 4013 | 3013 | 9329 |
+| frontend app + accompanying backend | 4014 | 3014 | 9429 |
 
 ### Development Mode
 
@@ -396,7 +455,7 @@ You can also use your IDE to navigate to `package.json` and configure, run, or d
 
 To execute the project in production mode:
 
-Ensure you have the correct URL in frontend/processVars.js, as otherwise the internal links within the application will not work, or will redirect the user to the main production site:
+Ensure you have the correct URL in `frontend/processVars.js`, as otherwise the internal links within the application will not work, or will redirect the user to the main production site:
 
 ```js
     } else if (process.env.NODE_ENV === 'production') {
