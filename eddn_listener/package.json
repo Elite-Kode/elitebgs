@@ -2,7 +2,7 @@
     "name": "elitebgs-eddn-listener",
     "scripts": {
         "start": "cross-env PORT=4011 pm2 start process.json --env production",
-        "startdev": "cross-env NODE_ENV=development nodemon --inspect ./bin/start.js"
+        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9129 ./bin/start.js"
     },
     "private": true,
     "dependencies": {
