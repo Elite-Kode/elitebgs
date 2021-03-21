@@ -24,6 +24,8 @@ const bodyParser = require('body-parser');
 const secrets = require('./secrets');
 const swagger = require('./swagger');
 
+const rediscache = require('./modules/utilities/rediscache');
+
 // const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
 // const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
 //
@@ -142,5 +144,9 @@ if (app.get('env') === 'production') {
         });
     });
 }
+
+// Create a single connection to redis
+rediscache.objCache = new rediscache.CacheFactory()
+rediscache.objCache.connect()
 
 module.exports = app;
