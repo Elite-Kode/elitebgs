@@ -118,9 +118,9 @@ Update npm:
 
 If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software`, `version_software` and `whitelisted_software` as empty arrays as in the first definition.
 
-### Install and configure Redis
+### Install Redis
 
-For Linux systems, follow the instructions at [https://redis.io/download](https://redis.io/download) and install the most recent stable Redis on your system. Make sure it is enabled and started:
+For Mac or Linux systems, follow the instructions at [https://redis.io/download](https://redis.io/download) and install the most recent stable Redis on your system. Make sure it is enabled and started:
 
 On most system.d based Linux flavors:
 
@@ -132,6 +132,26 @@ On most system.d based Linux flavors:
 That's it. Redis has no configuration. As Redis, by default, has no authentication or access control, please do not allow it to listen on a port open to the Internet.
 
 Installing on Windows requires installing the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or using a [Docker Redis container](https://hub.docker.com/_/redis). We recommend the Debian WSL2 version, as it's probably the easiest to get going, but if you already have Docker running, that works. WSL2 installs Debian by default, so follow those instructions to get Redis running.
+
+### Configuring Redis
+
+Insert the following lines into `backend/secrets.js` to enable Redis caching:
+
+```console
+module.exports.redis_use = true;
+module.exports.redis_host = 'localhost';
+module.exports.redis_port = 6379;
+module.exports.redis_password = '';
+module.exports.redis_timeout = 300; // 5 minutes of cache time
+```
+
+If you don't want Redis caching, you only need a single line:
+
+```console
+module.exports.redis_use = false;
+```
+
+**Known issue:** If Redis is not running when backend starts or fails after the API has started, the backend API may stop responding. The code has checks for this, but the asynchronous connection behavior seems to create calls that never end despite an error occuring on the console. To resolve this, either restart Redis and then the backend service, or disabling redis in the configuration, and restart the backend.
 
 ## Obtain source code and install dependencies
 
@@ -378,7 +398,7 @@ Please take care of any errors you see. Sometimes, two attempts are required to 
 
 ## Optional Integrations
 
-Elite BGS has two optional integrations, `guild_bot` to send admin notifications via Discord and a commercial monitoring platform called BugSnag to capture and analyze errors.
+Elite BGS has three optional integrations, Redis caching support detailed above, `guild_bot` to send admin notifications via Discord, and a commercial monitoring platform called BugSnag to capture and analyze errors.
 
 ### Send admin notifications via guild_bot
 
