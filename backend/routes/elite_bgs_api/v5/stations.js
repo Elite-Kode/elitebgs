@@ -117,7 +117,7 @@ router.get('/', cors(), async (req, res, next) => {
     let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
 
     // Check the in memory object cache for the URL
-    const stationdata = await rediscache.objCache.getKey(urlHash)
+    const stationdata = await objCache.getKey(urlHash)
     if (stationdata != null) {
         res.status(200).send(JSON.parse(stationdata));
         return
