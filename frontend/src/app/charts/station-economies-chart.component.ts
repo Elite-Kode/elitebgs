@@ -13,7 +13,9 @@ export class StationEconomiesChartComponent implements OnInit, OnChanges {
     @Input() stationData: EBGSStationSchemaDetailed;
     options: any;
     chart: Chart;
-    constructor(private themeService: ThemeService) { }
+
+    constructor(private themeService: ThemeService) {
+    }
 
     ngOnInit(): void {
         this.createChart();
@@ -21,7 +23,7 @@ export class StationEconomiesChartComponent implements OnInit, OnChanges {
 
     createChart(): void {
         // Todo: Copied over to server\routes\chart_generator.js
-        const economies = this.stationData.all_economies;
+        const economies = this.stationData ? this.stationData.all_economies : [];
         const data: any[] = [];
         economies.forEach(element => {
             data.push({

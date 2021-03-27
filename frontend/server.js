@@ -168,7 +168,9 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                     upsert: true,
                     runValidators: true
                 });
-            await axios.post(`${secrets.companion_bot_endpoint}/new-member`, { id: profile.id });
+            if (secrets.discord_use) {
+                await axios.post(`${secrets.companion_bot_endpoint}/new-member`, { id: profile.id });
+            }
             done(null, user);
         }
     } catch (err) {

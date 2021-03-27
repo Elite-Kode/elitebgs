@@ -205,3 +205,6 @@ secrets.*
 
 # Background Images
 frontend/src/assets/backgrounds
+
+# Static sec analysis
+*.sarif

@@ -11,7 +11,7 @@
         "buildprod": "ng build --prod",
         "builddev": "ng build --watch --progress",
         "runprod": "cross-env PORT=4014 pm2 start process.json --env production",
-        "rundev": "cross-env NODE_ENV=development nodemon --inspect ./bin/start.js"
+        "rundev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9429 ./bin/start.js"
     },
     "private": true,
     "dependencies": {
@@ -44,6 +44,7 @@
         "lodash-es": "^4.17.15",
         "moment": "^2.29.1",
         "mongoose": "^5.11.17",
+        "mongoose-aggregate-paginate-v2": "^1.0.42",
         "mongoose-paginate": "^5.0.3",
         "morgan": "^1.10.0",
         "passport": "^0.4.1",

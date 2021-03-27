@@ -16,7 +16,7 @@ For ultimate immersion and BGS control, we require not only the latest data but 
 
 If you find a bug, please create an issue in the issue tracker in Github, properly detailing the bug and reproduction steps.
 
-If you are willing to contribute to the project, please work on a fork and create a pull request.
+If you are willing to contribute to the project, read the [local environment setup instructions](CONTRIBUTING.md), and please work on a fork and create a pull request.
 
 ## Credits
 
