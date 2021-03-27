@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Spec, Path, Schema, Parameter } from 'swagger-schema-official';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { TryAPIService } from '../services/tryapi.service';
+import { environment } from 'environments/environment';
 
 export interface IInputSpec {
     versionName: string;
@@ -155,7 +156,8 @@ export class SwaggerUIComponent implements OnInit {
     }
 
     updateURL() {
-        this.tryAPIURL = this.doc.schemes + '://' + this.doc.host + this.doc.basePath + this.tryPath;
+        this.tryAPIURL = environment.apiUrl + this.doc.basePath + this.tryPath;
+
         if (this.parametersSelected.length > 0) {
             this.tryAPIURL += '?';
             for (let index = 0; index < this.parametersSelected.length; index++) {
@@ -180,7 +182,7 @@ export class SwaggerUIComponent implements OnInit {
     tryAPI(method: string, path: string) {
         this.createParametersInSelect(method, path);
         this.createFormParameters(this.parametersSelected);
-        this.tryAPIURL = this.doc.schemes + '://' + this.doc.host + this.doc.basePath + path;
+        this.tryAPIURL = environment.apiUrl + this.doc.basePath + path;
         this.tryAPIModal = true;
         this.tryAPIMethod = method;
         this.tryPath = path;
@@ -197,7 +199,7 @@ export class SwaggerUIComponent implements OnInit {
     reset() {
         this.createParametersInSelect(this.tryAPIMethod, this.tryPath);
         this.createFormParameters(this.parametersSelected);
-        this.tryAPIURL = this.doc.schemes + '://' + this.doc.host + this.doc.basePath + this.tryPath;
+        this.tryAPIURL = environment.apiUrl + this.doc.basePath + this.tryPath;
         this.tryAPIResponse = '';
     }
 }
