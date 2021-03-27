@@ -14,21 +14,6 @@ export class EliteBgsApiDocsComponent {
         this.titleService.setTitle('Elite BGS API Docs - Elite BGS');
         this.specs = [
             {
-                versionName: 'V1',
-                specLocation: environment.apiUrl + '/api/ebgs/v1/api-docs.json',
-                swaggerLocation: environment.apiUrl + '/api/ebgs/v1/docs'
-            },
-            {
-                versionName: 'V2',
-                specLocation: environment.apiUrl + '/api/ebgs/v2/api-docs.json',
-                swaggerLocation: environment.apiUrl + '/api/ebgs/v2/docs'
-            },
-            {
-                versionName: 'V3',
-                specLocation: environment.apiUrl + '/api/ebgs/v3/api-docs.json',
-                swaggerLocation: environment.apiUrl + '/api/ebgs/v3/docs'
-            },
-            {
                 versionName: 'V4',
                 specLocation: environment.apiUrl + '/api/ebgs/v4/api-docs.json',
                 swaggerLocation: environment.apiUrl + '/api/ebgs/v4/docs'
