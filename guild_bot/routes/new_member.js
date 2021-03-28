@@ -31,6 +31,7 @@ router.post('/', async (req, res) => {
             announcementChannel.send("User " + req.body.id + " has joined Elite BGS");
         }
     }
+    res.sendStatus(200)
 })
 
 module.exports = router;

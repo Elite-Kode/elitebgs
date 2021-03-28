@@ -18,6 +18,7 @@
 
 const express = require('express');
 const logger = require('morgan');
+const bodyParser = require('body-parser');
 const secrets = require('./secrets');
 
 const newMember = require('./routes/new_member');
@@ -31,6 +32,8 @@ const app = express();
 require('./db')
 
 let bugsnagClientMiddleware = {}
+
+app.use(bodyParser.json());
 
 app.use('/new-member', newMember);
 
