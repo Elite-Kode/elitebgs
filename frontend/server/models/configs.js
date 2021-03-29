@@ -26,6 +26,7 @@ let config = new mongoose.Schema({
         name: String,
         version: String
     }],
+    whitelisted_software: [String],
     time_offset: Number
 });
 

@@ -59,7 +59,8 @@ Update npm:
         "admin_channel_id" : "",
         "user_role_id" : "", 
         "blacklisted_software" : [], 
-        "version_software" : []
+        "version_software" : [],
+        "whitelisted_software" : []
     }
   ```
 
@@ -102,7 +103,20 @@ Update npm:
     }
   ```
 
-If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software` and `version_software` as empty arrays as in the first definition.
+- `whitelisted_software` is an array of the only softwares that can submit data to Elite BGS. Example format (the apps are trusted, just an example):
+
+  ```json
+    { 
+        ...
+        "whitelisted_software" : [
+            "^E:D Market Connector.*$", 
+            "^edd$"
+        ], 
+        ...
+    }
+  ```
+
+If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software`, `version_software` and `whitelisted_software` as empty arrays as in the first definition.
 
 ### Install and configure Redis
 

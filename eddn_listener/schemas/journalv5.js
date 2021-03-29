@@ -704,6 +704,12 @@ function Journal() {
             if (!pass) {
                 throw new Error("Message from old version " + header.softwareVersion + " software " + header.softwareName);
             }
+            if (configRecord.whitelisted_software.findIndex(software => {
+                let regexp = new RegExp(software, "i");
+                return regexp.test(header.softwareName);
+            }) === -1) {
+                throw new Error("Message not from whitelisted software " + header.softwareName);
+            }
             let messageTimestamp = new Date(message.timestamp);
             let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
             let currentTimestamp = new Date(Date.now() + configRecord.time_offset);
@@ -768,6 +774,12 @@ function Journal() {
             });
             if (!pass) {
                 throw new Error("Message from old version " + header.softwareVersion + " software " + header.softwareName);
+            }
+            if (configRecord.whitelisted_software.findIndex(software => {
+                let regexp = new RegExp(software, "i");
+                return regexp.test(header.softwareName);
+            }) === -1) {
+                throw new Error("Message not from whitelisted software " + header.softwareName);
             }
             let messageTimestamp = new Date(message.timestamp);
             let oldestTimestamp = new Date("2017-10-07T00:00:00Z");
