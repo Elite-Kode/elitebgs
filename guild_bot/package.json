@@ -6,23 +6,23 @@
     },
     "private": true,
     "dependencies": {
-        "@bugsnag/js": "^7.4.0",
-        "@bugsnag/plugin-express": "^7.3.5",
+        "@bugsnag/js": "^7.9.0",
+        "@bugsnag/plugin-express": "^7.9.0",
         "body-parser": "^1.19.0",
-        "discord.js": "^12.3.1",
+        "discord.js": "^12.5.2",
         "express": "^4.17.1",
         "lodash": "^4.17.20",
         "lodash-es": "^4.17.15",
-        "mongoose": "^5.10.8",
+        "mongoose": "^5.12.3",
         "mongoose-paginate": "^5.0.3",
         "morgan": "^1.10.0"
     },
     "devDependencies": {
-        "@bugsnag/core": "^7.3.5",
+        "@bugsnag/core": "^7.9.0",
         "@types/mongoose-paginate": "^5.0.8",
         "@types/node": "^12.11.1",
         "cross-env": "^7.0.2",
         "nodemon": "^2.0.4",
-        "pm2": "^4.5.0"
+        "pm2": "^4.5.6"
     }
 }
