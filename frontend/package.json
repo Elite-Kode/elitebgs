@@ -10,8 +10,8 @@
         "preparedev": "run-p builddev rundev",
         "buildprod": "ng build --prod",
         "builddev": "ng build --watch --progress",
-        "runprod": "cross-env PORT=4014 pm2 start process.json --env production",
-        "rundev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9429 ./bin/start.js"
+        "runprod": "cross-env PORT=4012 pm2 start process.json --env production",
+        "rundev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9229 ./bin/start.js"
     },
     "private": true,
     "dependencies": {
