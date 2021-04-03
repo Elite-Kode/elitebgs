@@ -17,12 +17,26 @@
 "use strict";
 
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors')
 const swaggerUi = require('swagger-ui-express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const axios = require('axios');
+const session = require('express-session');
+const mongoStore = require('connect-mongo')(session);
+const passport = require('passport');
+const DiscordStrategy = require('passport-discord').Strategy;
 const secrets = require('./secrets');
 const swagger = require('./swagger');
+const processVars = require('./processVars');
+const bugsnagCaller = require('./bugsnag').bugsnagCaller;
+
+const authCheck = require('./routes/auth/auth_check');
+const authDiscord = require('./routes/auth/discord');
+const authLogout = require('./routes/auth/logout');
+const authUser = require('./routes/auth/auth_user');
+const frontEnd = require('./routes/front_end');
 
 // const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
 // const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
@@ -45,7 +59,6 @@ const tickTimesV5 = require('./routes/elite_bgs_api/v5/tick_times');
 
 const chartGenerator = require('./routes/chart_generator');
 const ingameIds = require('./routes/ingame_ids');
-const health = require('./routes/health');
 
 const bugsnagClient = require('./bugsnag').bugsnagClient;
 
@@ -61,6 +74,20 @@ if (secrets.bugsnag_use) {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+    name: "EliteBGS",
+    secret: secrets.session_secret,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
+    store: new mongoStore({ mongooseConnection: mongoose.connection })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/auth/check', authCheck);
+app.use('/auth/discord', authDiscord);
+app.use('/auth/logout', authLogout);
+app.use('/auth/user', authUser);
+app.use('/frontend', frontEnd);
 
 if (app.get('env') === 'development') {
     app.use(cors())
@@ -109,7 +136,6 @@ app.use('/api/ebgs/v5/ticks', tickTimesV5);
 
 app.use('/api/chartgenerator', chartGenerator);
 app.use('/api/ingameids', ingameIds);
-app.use('/api/health', health);
 
 // error handlers
 if (secrets.bugsnag_use) {
@@ -142,5 +168,87 @@ if (app.get('env') === 'production') {
         });
     });
 }
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+passport.deserializeUser(async (id, done) => {
+    try {
+        let model = require('./models/ebgs_users');
+        let user = await model.findOne({ id: id })
+        done(null, user);
+    } catch (err) {
+        bugsnagCaller(err);
+        done(err);
+    }
+});
+
+let onAuthentication = async (accessToken, refreshToken, profile, done, type) => {
+    try {
+        let model = require('./models/ebgs_users');
+        let user = await model.findOne({ id: profile.id });
+        if (user) {
+            let updatedUser = {
+                id: profile.id,
+                username: profile.username,
+                discriminator: profile.discriminator
+            }
+            if (user.avatar || user.avatar === null) {
+                updatedUser.avatar = profile.avatar
+            }
+            try {
+                await model.findOneAndUpdate(
+                    { id: profile.id },
+                    updatedUser,
+                    {
+                        upsert: false,
+                        runValidators: true
+                    });
+                done(null, user);
+            } catch (err) {
+                bugsnagCaller(err);
+                done(err);
+            }
+        } else {
+            let user = {
+                id: profile.id,
+                username: profile.username,
+                avatar: profile.avatar,
+                discriminator: profile.discriminator,
+                access: 1,
+                os_contribution: 0,
+                patronage: {
+                    level: 0,
+                    since: null
+                }
+            };
+            await model.findOneAndUpdate(
+                { id: profile.id },
+                user,
+                {
+                    upsert: true,
+                    runValidators: true
+                });
+            if (secrets.discord_use) {
+                await axios.post(`${secrets.companion_bot_endpoint}/new-member`, { id: profile.id });
+            }
+            done(null, user);
+        }
+    } catch (err) {
+        bugsnagCaller(err);
+        done(err);
+    }
+}
+
+let onAuthenticationIdentify = (accessToken, refreshToken, profile, done) => {
+    onAuthentication(accessToken, refreshToken, profile, done, 'identify');
+}
+
+passport.use('discord', new DiscordStrategy({
+    clientID: secrets.client_id,
+    clientSecret: secrets.client_secret,
+    callbackURL: `${processVars.protocol}://${processVars.host}/auth/discord/callback`,
+    scope: ['identify']
+}, onAuthenticationIdentify));
 
 module.exports = app;

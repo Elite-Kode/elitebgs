@@ -20,8 +20,8 @@ const express = require('express');
 
 let router = express.Router();
 
-router.get('/liveness', (req, res) => {
-    res.send('OK');
-})
+router.get('/', (req, res) => {
+    res.send(req.isAuthenticated());
+});
 
 module.exports = router;
