@@ -24,6 +24,8 @@ const bodyParser = require('body-parser');
 const secrets = require('./secrets');
 const swagger = require('./swagger');
 
+const redisCache = require('./modules/utilities/rediscache');
+
 // const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
 // const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
 //
@@ -52,6 +54,9 @@ const bugsnagClient = require('./bugsnag').bugsnagClient;
 const app = express();
 
 require('./db')
+let objCache = new redisCache.CacheFactory()
+objCache.connect()
+redisCache.setObjCache(objCache)
 
 let bugsnagClientMiddleware = {}
 

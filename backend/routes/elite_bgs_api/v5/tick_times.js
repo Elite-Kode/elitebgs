@@ -20,11 +20,8 @@ const express = require('express');
 const cors = require('cors')
 const _ = require('lodash');
 
-const rediscache = require('../../../modules/utilities/rediscache');
+const redisCache = require('../../../modules/utilities/rediscache');
 const crypto = require('crypto');
-
-let objCache = new rediscache.CacheFactory()
-objCache.connect()
 
 let router = express.Router();
 
@@ -57,9 +54,9 @@ router.get('/', cors(), async (req, res, next) => {
     let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
 
     // Check the in memory object cache for the URL
-    const tickdata = await objCache.getKey(urlHash)
-    if (tickdata != null) {
-        res.status(200).send(JSON.parse(tickdata));
+    const tickData = await redisCache.objCache.getKey(urlHash)
+    if (tickData != null) {
+        res.status(200).send(JSON.parse(tickData));
         return
     }
 
@@ -93,7 +90,7 @@ router.get('/', cors(), async (req, res, next) => {
         let result = await getTicks(query);
 
         // Store the result in redis
-        objCache.setKey(urlHash, JSON.stringify(result))
+        redisCache.objCache.setKey(urlHash, JSON.stringify(result))
 
         res.status(200).json(result);
     } catch (err) {

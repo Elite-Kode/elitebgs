@@ -6,7 +6,7 @@ const { redis_use, redis_port, redis_host, redis_timeout, redis_password } = req
 
 // singleton
 let redisClient
-let objCache 
+let objCache
 
 class CacheNone {
 
@@ -38,11 +38,11 @@ class CacheRedis {
 
     connect = () => {
 
-        if (redis_use && redisClient == null ) {
+        if (redis_use && redisClient === null) {
             console.log(`Attempting to connect to Redis at ${redis_host}:${redis_port}`)
             redisClient = redis.createClient(redis_port, redis_host);
 
-            if (redis_password != '') {
+            if (redis_password !== '') {
                 redisClient.auth(redis_password)
             }
 
@@ -70,7 +70,7 @@ class CacheRedis {
     }
 
     getKey = (key) => new Promise((resolve, reject) => {
-        if ( redis_use && redisClient != null && this.#redisReady ) {
+        if (redis_use && redisClient !== null && this.#redisReady) {
             redisClient.get(key, (err, data) => {
                 if (err) return reject(err);
                 return resolve(data);
@@ -81,7 +81,7 @@ class CacheRedis {
     });
 
     setKey = (urlHash, data) => {
-        if ( redis_use && redisClient != null && this.#redisReady  ) {
+        if (redis_use && redisClient !== null && this.#redisReady) {
             redisClient.setex(urlHash, redis_timeout, data)
         }
     }
@@ -97,7 +97,10 @@ class CacheFactory {
     }
 }
 
-module.exports = {
-    CacheFactory
-};
+function setObjCache(objCache) {
+    this.objCache = objCache
+}
 
+module.exports = {
+    CacheFactory, objCache, redisClient, setObjCache
+};

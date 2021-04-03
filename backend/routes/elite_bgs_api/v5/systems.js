@@ -21,11 +21,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const _ = require('lodash');
 
-const rediscache = require('../../../modules/utilities/rediscache');
+const redisCache = require('../../../modules/utilities/rediscache');
 const crypto = require('crypto');
-
-let objCache = new rediscache.CacheFactory()
-objCache.connect()
 
 const utilities = require('../../../modules/utilities');
 
@@ -185,9 +182,9 @@ router.get('/', cors(), async (req, res, next) => {
     let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
 
     // Check the in memory object cache for the URL
-    const systemdata = await objCache.getKey(urlHash)
-    if (systemdata != null) {
-        res.status(200).send(JSON.parse(systemdata));
+    const systemData = await redisCache.objCache.getKey(urlHash)
+    if (systemData != null) {
+        res.status(200).send(JSON.parse(systemData));
         return
     }
 
@@ -291,14 +288,14 @@ router.get('/', cors(), async (req, res, next) => {
             }, minimal, page, req);
 
             // Store the result in redis
-            objCache.setKey(urlHash, JSON.stringify(result))
+            redisCache.objCache.setKey(urlHash, JSON.stringify(result))
 
             res.status(200).json(result);
         } else {
             let result = await getSystems(query, {}, minimal, page, req);
 
             // Store the result in redis
-            objCache.setKey(urlHash, JSON.stringify(result))
+            redisCache.objCache.setKey(urlHash, JSON.stringify(result))
 
             res.status(200).json(result);
         }
