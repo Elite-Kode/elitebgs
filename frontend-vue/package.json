@@ -1,0 +1,51 @@
+{
+    "name": "elitebgs-frontend",
+    "private": true,
+    "scripts": {
+        "lint": "vue-cli-service lint",
+        "builddev": "vue-cli-service build --watch",
+        "buildprod": "vue-cli-service build",
+        "dev": "vue-cli-service serve",
+        "rundev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9229 ./bin/start.js",
+        "runprod": "cross-env PORT=4012 pm2 start process.json --env production",
+        "start": "run-s buildprod runprod",
+        "startdev": "run-p builddev rundev"
+    },
+    "dependencies": {
+        "@bugsnag/js": "^7.9.0",
+        "@bugsnag/plugin-express": "^7.9.0",
+        "@bugsnag/plugin-vue": "^7.9.0",
+        "body-parser": "^1.19.0",
+        "consolidate": "^0.16.0",
+        "core-js": "^3.10.0",
+        "express": "^4.17.1",
+        "moment": "^2.24.0",
+        "mongoose": "^5.12.3",
+        "morgan": "^1.8.2",
+        "vue": "^2.6.11",
+        "vue-router": "^3.1.5",
+        "vuetify": "^2.4.9",
+        "vuex": "^3.1.2"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "^4.1.2",
+        "@vue/cli-plugin-eslint": "^4.1.2",
+        "@vue/cli-plugin-router": "^4.1.2",
+        "@vue/cli-plugin-vuex": "^4.1.2",
+        "@vue/cli-service": "^4.1.2",
+        "@vue/eslint-config-standard": "^4.0.0",
+        "babel-eslint": "^10.0.3",
+        "cross-env": "^7.0.3",
+        "eslint": "^5.16.0",
+        "eslint-plugin-vue": "^5.2.3",
+        "nodemon": "^2.0.2",
+        "npm-run-all": "^4.1.3",
+        "pm2": "^4.5.6",
+        "sass": "^1.25.0",
+        "sass-loader": "^8.0.2",
+        "vue-cli-plugin-vuetify": "^2.0.3",
+        "vue-template-compiler": "^2.6.11",
+        "vuetify-loader": "^1.4.3",
+        "webpack-bugsnag-plugins": "github:SayakMukhopadhyay/webpack-bugsnag-plugins#283eb7d6b5ce40206cc2dadfb677146f96adb165"
+    }
+}

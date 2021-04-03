@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 282.62711 200"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="html5-logo.svg"
+   width="282.62711"
+   height="200">
+  <metadata
+     id="metadata30">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>HTML5 Logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs28" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     id="namedview26"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.45254834"
+     inkscape:cx="272.87189"
+     inkscape:cy="93.362755"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:bbox-paths="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-page="true"
+     inkscape:snap-global="false" />
+  <title
+     id="title4">HTML5 Logo</title>
+  <g
+     id="g4145"
+     transform="matrix(0.390625,0,0,0.390625,0,-51.786844)">
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4160"
+       d="m 356.31986,305.0489 327.06997,0 40.13559,132.33898 -40.86775,135.08552 -350.20959,0"
+       style="fill:#d9d9d9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#e44d26"
+       id="polygon6"
+       points="107.644,470.877 74.633,100.62 437.367,100.62 404.321,470.819 255.778,512 " />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#f16529"
+       id="polygon8"
+       points="256,480.523 376.03,447.246 404.27,130.894 256,130.894 " />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#ebebeb"
+       id="polygon10"
+       points="256,268.217 195.91,268.217 191.76,221.716 256,221.716 256,176.305 255.843,176.305 142.132,176.305 143.219,188.488 154.38,313.627 256,313.627 " />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#ebebeb"
+       id="polygon12"
+       points="205.227,372.55 201.994,336.333 177.419,336.333 156.409,336.333 162.771,407.634 255.791,433.457 256,433.399 256,386.153 255.801,386.206 " />
+    <path
+       inkscape:connector-curvature="0"
+       id="path14"
+       d="m 33.749,132.57432 23.077,0 0,22.8 21.11,0 0,-22.8 23.078,0 0,69.044 -23.077,0 0,-23.12 -21.11,0 0,23.12 -23.077,0 0,-69.044 z" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path16"
+       d="m 131.361,155.47032 -20.316,0 0,-22.896 63.72,0 0,22.896 -20.325,0 0,46.148 -23.078,0 0,-46.148 z" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path18"
+       d="m 184.878,132.57432 24.063,0 14.802,24.26 14.787,-24.26 24.072,0 0,69.044 -22.982,0 0,-34.222 -15.877,24.549 -0.397,0 -15.888,-24.549 0,34.222 -22.58,0 0,-69.044 z" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path20"
+       d="m 274.087,132.57432 23.084,0 0,46.222 32.453,0 0,22.822 -55.537,0 0,-69.044 z" />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#ffffff"
+       id="polygon22"
+       points="361.399,268.217 349.162,268.217 255.843,268.217 255.843,313.627 311.761,313.627 306.49,372.521 255.843,386.191 255.843,433.435 348.937,407.634 349.62,399.962 360.291,280.411 " />
+    <polygon
+       transform="translate(-74.633,132.57432)"
+       style="fill:#ffffff"
+       id="polygon24"
+       points="255.843,176.305 255.843,204.509 255.843,221.605 255.843,221.716 365.385,221.716 365.385,221.716 365.531,221.716 366.442,211.509 368.511,188.488 369.597,176.305 " />
+    <path
+       style="fill:#9c9c9c;fill-opacity:1;stroke:none"
+       id="path6"
+       d="m 473.85279,394.54397 -3.14194,15.70973 63.94282,0 -1.99555,10.14763 -63.98528,0 -3.09949,15.70972 63.94282,0 -3.56652,17.91757 -25.77244,8.5342 -22.3333,-8.5342 1.52852,-7.76995 -15.70973,0 -3.73636,18.85167 36.93907,14.13876 42.58611,-14.13876 5.647,-28.3624 1.14639,-5.68947 7.26043,-36.5145 z"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
