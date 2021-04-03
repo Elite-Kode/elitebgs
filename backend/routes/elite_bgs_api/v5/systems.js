@@ -21,6 +21,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const _ = require('lodash');
 
+const rediscache = require('../../../modules/utilities/rediscache');
+const crypto = require('crypto');
+
+let objCache = new rediscache.CacheFactory()
+objCache.connect()
+
 const utilities = require('../../../modules/utilities');
 
 let router = express.Router();
@@ -175,6 +181,16 @@ let aggregateOptions = {
  *             $ref: '#/definitions/EBGSSystemsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
+    // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
+    let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
+
+    // Check the in memory object cache for the URL
+    const systemdata = await objCache.getKey(urlHash)
+    if (systemdata != null) {
+        res.status(200).send(JSON.parse(systemdata));
+        return
+    }
+
     try {
         let query = {};
         let page = 1;
@@ -273,9 +289,17 @@ router.get('/', cors(), async (req, res, next) => {
                 lesser: lesserThanTime,
                 count: count
             }, minimal, page, req);
+
+            // Store the result in redis
+            objCache.setKey(urlHash, JSON.stringify(result))
+
             res.status(200).json(result);
         } else {
             let result = await getSystems(query, {}, minimal, page, req);
+
+            // Store the result in redis
+            objCache.setKey(urlHash, JSON.stringify(result))
+
             res.status(200).json(result);
         }
     } catch (err) {
