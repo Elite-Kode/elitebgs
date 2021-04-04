@@ -15,6 +15,8 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
+    <link href="/css/index.css" rel="stylesheet"/>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
@@ -24,25 +26,25 @@
           href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
     <script>
-        window.addEventListener('load', function () {
-            window.cookieconsent.initialise({
-                'palette': {
-                    'popup': {
-                        'background': '#eb6c44',
-                        'text': '#ffffff'
-                    },
-                    'button': {
-                        'background': '#f5d948'
-                    }
-                },
-                'theme': 'edgeless',
-                'content': {
-                    'message': 'This website uses cookies to maintain a logged in session.',
-                    'link': 'Privacy Policy',
-                    'href': 'about/privacypolicy'
-                }
-            })
-        })
+    window.addEventListener('load', function () {
+      window.cookieconsent.initialise({
+        'palette': {
+          'popup': {
+            'background': '#eb6c44',
+            'text': '#ffffff'
+          },
+          'button': {
+            'background': '#f5d948'
+          }
+        },
+        'theme': 'edgeless',
+        'content': {
+          'message': 'This website uses cookies to maintain a logged in session.',
+          'link': 'Privacy Policy',
+          'href': 'about/privacypolicy'
+        }
+      })
+    })
     </script>
 </head>
 <body>
