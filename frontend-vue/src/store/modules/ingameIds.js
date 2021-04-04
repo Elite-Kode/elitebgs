@@ -27,7 +27,7 @@ const actions = {
 }
 
 function getName (state, id, key) {
-  return state.allIds[id][key]?.name
+  return state.allIds[id]?.[key]?.name
 }
 
 export default {

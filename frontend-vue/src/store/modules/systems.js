@@ -26,9 +26,7 @@ const mutations = {
 const actions = {
   async fetchSystems ({ commit }, { page, minimal, beginsWith }) {
     let response = await axios.get('/api/ebgs/v5/systems', { params: { page, minimal, beginsWith } })
-    let systemsPaginated = response.data
-    commit('setSystems', systemsPaginated.docs)
-    return systemsPaginated
+    return response.data
   }
 }
 

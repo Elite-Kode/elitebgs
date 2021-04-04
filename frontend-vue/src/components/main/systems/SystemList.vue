@@ -64,7 +64,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
+import { debounceTime, switchMap } from 'rxjs/operators'
 
 export default {
   name: 'SystemList',
@@ -108,15 +109,30 @@ export default {
   watch: {
     page () {
       this.fetchSystems()
-    },
-    systemName () {
-      this.fetchSystems()
     }
   },
   created () {
     this.fetchSystems()
+    this.$watchAsObservable('systemName')
+      .pipe(debounceTime(300))
+      .pipe(switchMap(value => {
+        this.loading = true
+        return this.$store.dispatch('fetchSystems', {
+          page: this.page,
+          minimal: true,
+          beginsWith: value.newValue
+        })
+      }))
+      .subscribe(systemsPaginated => {
+        this.setSystems(systemsPaginated.docs)
+        this.totalSystems = systemsPaginated.total
+        this.loading = false
+      })
   },
   methods: {
+    ...mapMutations([
+      'setSystems'
+    ]),
     async fetchSystems () {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystems', {
@@ -124,7 +140,7 @@ export default {
         minimal: true,
         beginsWith: this.systemName
       })
-      console.log(systemsPaginated)
+      this.setSystems(systemsPaginated.docs)
       this.totalSystems = systemsPaginated.total
       this.loading = false
     }
