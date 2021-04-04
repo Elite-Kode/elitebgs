@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import MainLayout from '@/components/MainLayout'
-import Home from '@/components/home/Home'
+import Home from '@/components/main/home/Home'
 import Admin from '@/components/admin/Admin'
 import Profile from '@/components/profile/Profile'
 import About from '@/components/about/About'
@@ -11,6 +11,7 @@ import Disclaimer from '@/components/about/Disclaimer'
 import TAndC from '@/components/about/TAndC'
 import Donate from '@/components/Donate'
 import Guide from '@/components/about/Guide'
+import SystemList from '@/components/main/systems/SystemList'
 
 Vue.use(Router)
 
@@ -23,7 +24,20 @@ export default new Router({
       children: [{
         path: '',
         component: Home,
-        name: 'home'
+        name: 'home',
+        children: [{
+          path: 'systems',
+          component: SystemList,
+          name: 'systems'
+        // }, {
+        //   path: 'factiona',
+        //   component: Curated,
+        //   name: 'factions'
+        // }, {
+        //   path: 'stations',
+        //   component: Curated,
+        //   name: 'stations'
+        }]
       }, {
         path: '/admin',
         component: Admin,

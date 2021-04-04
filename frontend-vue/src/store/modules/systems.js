@@ -1,34 +1,40 @@
 import axios from 'axios'
 
 const state = {
-  authenticated: false,
-  user: {}
+  systems: []
+}
+const getters = {
+  friendlySystems: (state, getters) => {
+    return state.systems.map(system => {
+      return {
+        _id: system._id,
+        name: system.name,
+        government: getters.government(system.government),
+        allegiance: getters.superpower(system.allegiance),
+        primary_economy: getters.economy(system.primary_economy),
+        secondary_economy: system.secondary_economy ? getters.economy(system.secondary_economy) : '',
+        state: getters.state(system.state)
+      }
+    })
+  }
 }
 const mutations = {
-  setAuthenticated (state, authenticated) {
-    state.authenticated = authenticated
-  },
-  setUser (state, user) {
-    state.user = user
+  setSystems (state, systems) {
+    state.systems = systems
   }
 }
 const actions = {
-  async checkAuthenticated ({ commit }) {
-    let response = await axios.get('/auth/check')
-    let isAuthenticated = response.data
-    commit('setAuthenticated', isAuthenticated)
-    return isAuthenticated
-  },
-  async fetchAuthUser ({ commit }) {
-    let response = await axios.get('/auth/user')
-    let userData = response.data
-    commit('setUser', userData)
-    return userData
+  async fetchSystems ({ commit }, { page, minimal, beginsWith }) {
+    let response = await axios.get('/api/ebgs/v5/systems', { params: { page, minimal, beginsWith } })
+    let systemsPaginated = response.data
+    commit('setSystems', systemsPaginated.docs)
+    return systemsPaginated
   }
 }
 
 export default {
   state,
+  getters,
   mutations,
   actions
 }

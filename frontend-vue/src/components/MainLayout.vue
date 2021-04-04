@@ -35,6 +35,7 @@ export default {
   created () {
     this.$store.dispatch('checkAuthenticated')
     this.$store.dispatch('fetchAuthUser')
+    this.$store.dispatch('fetchAllIds')
     this.$vuetify.theme.dark = this.theme === this.themes[1]
   },
   methods: {
