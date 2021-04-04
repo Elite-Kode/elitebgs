@@ -12,6 +12,8 @@ import TAndC from '@/components/about/TAndC'
 import Donate from '@/components/Donate'
 import Guide from '@/components/about/Guide'
 import SystemList from '@/components/main/systems/SystemList'
+import FactionList from '@/components/main/factions/FactionList'
+import StationList from '@/components/main/stations/StationList'
 
 Vue.use(Router)
 
@@ -29,14 +31,14 @@ export default new Router({
           path: 'systems',
           component: SystemList,
           name: 'systems'
-        // }, {
-        //   path: 'factiona',
-        //   component: Curated,
-        //   name: 'factions'
-        // }, {
-        //   path: 'stations',
-        //   component: Curated,
-        //   name: 'stations'
+        }, {
+          path: 'factions',
+          component: FactionList,
+          name: 'factions'
+        }, {
+          path: 'stations',
+          component: StationList,
+          name: 'stations'
         }]
       }, {
         path: '/admin',
