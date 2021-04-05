@@ -677,6 +677,9 @@ function Journal() {
             message.event &&
             message.SystemGovernment
         ) {
+            if (message.StarSystem === "Adityan") {
+                throw new Error("Adityan is being blocked");
+            }
             if (!message.SystemFaction.FactionState) {
                 message.SystemFaction.FactionState = "None";
             }
@@ -739,6 +742,9 @@ function Journal() {
             message.StationServices &&
             message.StationType
         ) {
+            if (message.StarSystem === "Adityan") {
+                throw new Error("Adityan is being blocked");
+            }
             if (message.StationType === "FleetCarrier") {
                 throw new Error("Message from Fleet Carrier");
             }
