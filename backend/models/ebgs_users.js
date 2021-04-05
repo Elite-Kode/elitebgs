@@ -18,6 +18,8 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 
+let ObjectId = mongoose.Schema.Types.ObjectId;
+
 let user = new mongoose.Schema({
     id: String,
     username: String,
@@ -35,16 +37,19 @@ let user = new mongoose.Schema({
     }],
     factions: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }],
     systems: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }],
     stations: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }]

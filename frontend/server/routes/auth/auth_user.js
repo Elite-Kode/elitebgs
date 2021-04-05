@@ -48,6 +48,7 @@ router.post('/edit', async (req, res, next) => {
                             }).lean();
                             if (factionGot) {
                                 user.factions.push({
+                                    id: factionGot._id,
                                     name: faction,
                                     name_lower: faction.toLowerCase()
                                 });
@@ -71,6 +72,7 @@ router.post('/edit', async (req, res, next) => {
                             }).lean();
                             if (systemGot) {
                                 user.systems.push({
+                                    id: systemGot._id,
                                     name: system,
                                     name_lower: system.toLowerCase()
                                 });
@@ -94,6 +96,7 @@ router.post('/edit', async (req, res, next) => {
                             }).lean();
                             if (stationGot) {
                                 user.stations.push({
+                                    id: stationGot._id,
                                     name: station,
                                     name_lower: station.toLowerCase()
                                 });
