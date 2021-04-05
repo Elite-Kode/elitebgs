@@ -18,7 +18,7 @@
     <div>
         <ed-toolbar>
         </ed-toolbar>
-        <v-content>
+        <v-main>
             <v-container fluid>
                 <v-row>
                     <v-col cols="12" lg="5" md="6">
@@ -276,7 +276,7 @@
                     </p>
                 </div>
             </v-footer>
-        </v-content>
+        </v-main>
     </div>
 </template>
 

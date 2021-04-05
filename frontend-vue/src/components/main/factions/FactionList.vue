@@ -37,6 +37,10 @@ import { debounceTime, switchMap } from 'rxjs/operators'
 
 export default {
   name: 'FactionList',
+  // Todo: See issue https://github.com/vuetifyjs/vuetify/issues/13378
+  // metaInfo: {
+  //   title: 'Faction Search - Elite BGS'
+  // },
   data () {
     return {
       factionName: '',
@@ -78,7 +82,6 @@ export default {
         this.loading = true
         return this.$store.dispatch('fetchFactions', {
           page: this.page,
-          minimal: true,
           beginsWith: value.newValue
         })
       }))
@@ -96,7 +99,6 @@ export default {
       this.loading = true
       let factionsPaginated = await this.$store.dispatch('fetchFactions', {
         page: this.page,
-        minimal: true,
         beginsWith: this.factionName
       })
       this.setFactions(factionsPaginated.docs)

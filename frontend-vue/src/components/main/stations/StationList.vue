@@ -37,6 +37,10 @@ import { debounceTime, switchMap } from 'rxjs/operators'
 
 export default {
   name: 'StationList',
+  // Todo: See issue https://github.com/vuetifyjs/vuetify/issues/13378
+  // metaInfo: {
+  //   title: 'Station Search - Elite BGS'
+  // },
   data () {
     return {
       stationName: '',
@@ -90,7 +94,6 @@ export default {
         this.loading = true
         return this.$store.dispatch('fetchStations', {
           page: this.page,
-          minimal: true,
           beginsWith: value.newValue
         })
       }))
@@ -108,7 +111,6 @@ export default {
       this.loading = true
       let stationsPaginated = await this.$store.dispatch('fetchStations', {
         page: this.page,
-        minimal: true,
         beginsWith: this.stationName
       })
       this.setStations(stationsPaginated.docs)

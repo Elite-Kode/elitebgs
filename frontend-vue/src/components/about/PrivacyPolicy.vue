@@ -18,13 +18,13 @@
     <div>
         <ed-toolbar>
         </ed-toolbar>
-        <v-content>
+        <v-main>
             <v-container fluid>
                 <owner-info/>
                 <h2>Privacy Policy</h2>
                 <privacy-policy-text/>
             </v-container>
-        </v-content>
+        </v-main>
     </div>
 </template>
 

@@ -26,8 +26,8 @@ const mutations = {
   }
 }
 const actions = {
-  async fetchStations ({ commit }, { page, minimal, beginsWith }) {
-    let response = await axios.get('/api/ebgs/v5/stations', { params: { page, minimal, beginsWith } })
+  async fetchStations (context, { page, beginsWith }) {
+    let response = await axios.get('/api/ebgs/v5/stations', { params: { page, minimal: true, beginsWith } })
     return response.data
   }
 }

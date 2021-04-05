@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const state = {
-  systems: []
+  systems: [],
+  selectedSystem: {}
 }
 const getters = {
   friendlySystems: (state, getters) => {
@@ -24,8 +25,24 @@ const mutations = {
   }
 }
 const actions = {
-  async fetchSystems ({ commit }, { page, minimal, beginsWith }) {
-    let response = await axios.get('/api/ebgs/v5/systems', { params: { page, minimal, beginsWith } })
+  async fetchSystems (context, { page, beginsWith }) {
+    let response = await axios.get('/api/ebgs/v5/systems', { params: { page, minimal: true, beginsWith } })
+    return response.data
+  },
+  async fetchSystemByEddbId (context, { eddbId }) {
+    let response = await axios.get('/api/ebgs/v5/systems', { params: { eddbId, minimal: true } })
+    return response.data
+  },
+  async fetchSystemHistoryById (context, { id, timeMin, timeMax }) {
+    let response = await axios.get('/api/ebgs/v5/systems', {
+      params: {
+        id,
+        timeMin,
+        timeMax,
+        factionDetails: true,
+        factionHistory: true
+      }
+    })
     return response.data
   }
 }

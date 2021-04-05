@@ -18,7 +18,7 @@
     <div>
         <ed-toolbar>
         </ed-toolbar>
-        <v-content>
+        <v-main>
             <v-container fluid>
                 <h1>Guide</h1>
                 <p>
@@ -156,7 +156,7 @@
                     That's all folks. Happy Grinding!
                 </p>
             </v-container>
-        </v-content>
+        </v-main>
     </div>
 </template>
 

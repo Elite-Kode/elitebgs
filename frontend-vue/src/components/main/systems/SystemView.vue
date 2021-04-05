@@ -1,5 +1,5 @@
 <template>
-
+  <h1>{{systemData?.name}}</h1>
 </template>
 
 <script>

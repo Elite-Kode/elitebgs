@@ -37,6 +37,10 @@ import { debounceTime, switchMap } from 'rxjs/operators'
 
 export default {
   name: 'SystemList',
+  // Todo: See issue https://github.com/vuetifyjs/vuetify/issues/13378
+  // metaInfo: {
+  //   title: 'System Search - Elite BGS'
+  // },
   data () {
     return {
       systemName: '',
@@ -87,7 +91,6 @@ export default {
         this.loading = true
         return this.$store.dispatch('fetchSystems', {
           page: this.page,
-          minimal: true,
           beginsWith: value.newValue
         })
       }))
@@ -105,7 +108,6 @@ export default {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystems', {
         page: this.page,
-        minimal: true,
         beginsWith: this.systemName
       })
       this.setSystems(systemsPaginated.docs)

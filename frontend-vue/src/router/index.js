@@ -14,6 +14,9 @@ import Guide from '@/components/about/Guide'
 import SystemList from '@/components/main/systems/SystemList'
 import FactionList from '@/components/main/factions/FactionList'
 import StationList from '@/components/main/stations/StationList'
+import SystemView from '@/components/main/systems/SystemView'
+import FactionView from '@/components/main/factions/FactionView'
+import StationView from '@/components/main/stations/StationView'
 
 Vue.use(Router)
 
@@ -32,13 +35,28 @@ export default new Router({
           component: SystemList,
           name: 'systems'
         }, {
+          path: 'systems/:systemId',
+          component: SystemView,
+          name: 'system-detail',
+          props: true
+        }, {
           path: 'factions',
           component: FactionList,
           name: 'factions'
         }, {
+          path: 'factions/:factionId',
+          component: FactionView,
+          name: 'faction-detail',
+          props: true
+        }, {
           path: 'stations',
           component: StationList,
           name: 'stations'
+        }, {
+          path: 'stations/:stationId',
+          component: StationView,
+          name: 'station-detail',
+          props: true
         }]
       }, {
         path: '/admin',
