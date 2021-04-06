@@ -24,9 +24,9 @@
       :items-per-page="10"
       :footer-props="tableFooter"
       :loading="loading">
-      <!--      <template v-slot:item._id="{item}">-->
-      <!--        <router-link :to="{ name: 'user-detail', params: { userId: item._id }}">{{ item._id }}</router-link>-->
-      <!--      </template>-->
+      <template v-slot:item.name="{item}">
+        <router-link :to="{ name: 'system-detail', params: { systemId: item._id }}">{{ item.name }}</router-link>
+      </template>
     </v-data-table>
   </div>
 </template>
