@@ -4,19 +4,13 @@
     <v-form>
       <h4>Filter System</h4>
       <v-row>
-        <v-col
-          cols="12"
-          sm="6"
-        >
-          <v-text-field
-            v-model="systemName"
-            hint="Qa'wakana"
-            label="System Name"
-          ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field v-model="systemName" hint="Qa'wakana" label="System Name"></v-text-field>
         </v-col>
       </v-row>
     </v-form>
     <v-data-table
+      class="elevation-1"
       :headers="headers"
       :items="systems"
       :page.sync="page"
@@ -73,16 +67,6 @@ export default {
       loading: false
     }
   },
-  computed: {
-    ...mapGetters({
-      systems: 'friendlySystems'
-    })
-  },
-  watch: {
-    page () {
-      this.fetchSystems()
-    }
-  },
   created () {
     this.fetchSystems()
     this.$watchAsObservable('systemName')
@@ -99,6 +83,16 @@ export default {
         this.totalSystems = systemsPaginated.total
         this.loading = false
       })
+  },
+  computed: {
+    ...mapGetters({
+      systems: 'friendlySystems'
+    })
+  },
+  watch: {
+    page () {
+      this.fetchSystems()
+    }
   },
   methods: {
     ...mapMutations([

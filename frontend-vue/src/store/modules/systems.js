@@ -27,7 +27,7 @@ const getters = {
       secondary_economy: system.secondary_economy ? getters.economy(system.secondary_economy) : '',
       security: getters.security(system.security),
       state: getters.state(system.state),
-      factions: system.factions.map(faction => {
+      factions: system.factions?.map(faction => {
         return {
           ...faction,
           faction_details: {
