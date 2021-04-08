@@ -96,7 +96,8 @@
       </template>
     </v-data-table>
     <h2 class="py-8">Conflicts</h2>
-    <v-expansion-panels focusable accordion multiple v-model="conflictsPanel">
+    <v-expansion-panels focusable accordion multiple v-model="conflictsPanel"
+                        v-if="system.conflicts && system.conflicts.length>0">
       <v-expansion-panel v-for="conflict in system.conflicts" :key="conflict.faction1.faction_id">
         <v-expansion-panel-header>
           {{ conflict.faction1.name }} vs {{ conflict.faction2.name }}
@@ -125,33 +126,68 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <p v-else-if="loading">Loading...</p>
+    <p v-else>No conflicts in system</p>
     <h2 class="py-8">Date Filter</h2>
     <v-row>
       <v-col cols="12" sm="6">
         <v-menu
+          ref="datepickerRef"
+          v-model="datePickerMenu"
           transition="scale-transition"
           offset-y
-          max-width="290px"
-          min-width="290px"
+          offset-x
+          @update:return-value="onChangedFilterDates"
+          min-width="auto"
           :close-on-content-click="false"
         >
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              label="Click to select date range"
+              label="Click to select date range (UTC)"
               prepend-icon="event"
               readonly
               :value="datePickerDisplay"
+              v-bind="attrs"
               v-on="on"
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="filterDates"
+            v-model="changedFilterDates"
             range
+            :show-current="currentUtcDate"
             show-adjacent-months
-          ></v-date-picker>
+          >
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-btn
+                  block
+                  text
+                  color="error"
+                  @click="datePickerMenu = false"
+                >
+                  Cancel
+                </v-btn>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-btn
+                  block
+                  text
+                  color="success"
+                  @click="$refs.datepickerRef.save(changedFilterDates)"
+                >
+                  OK
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
+    <v-card>
+      <v-card-title>
+        Graphs
+      </v-card-title>
+    </v-card>
   </div>
 </template>
 
@@ -169,6 +205,10 @@ export default {
       systemFilter: '',
       conflictsPanel: [],
       filterDates: [],
+      changedFilterDates: [],
+      datePickerMenu: false,
+      currentUtcDate: '',
+      dateFormat: 'YYYY-MM-DD',
       headers: [{
         text: '👑',
         value: 'is_controlling'
@@ -215,9 +255,11 @@ export default {
   },
   async created () {
     this.filterDates = [
-      moment().subtract(10, 'days').utc().format('YYYY-MM-DD'),
-      moment().utc().format('YYYY-MM-DD')
+      moment().subtract(10, 'days').utc().format(this.dateFormat),
+      moment().utc().format(this.dateFormat)
     ]
+    this.changedFilterDates = this.filterDates
+    this.currentUtcDate = moment().utc().format(this.dateFormat)
     await this.checkRedirect()
     this.fetchSystemWithHistoryById()
   },
@@ -258,6 +300,14 @@ export default {
         return 'red'
       }
     },
+    onChangedFilterDates (value) {
+      if (value) {
+        if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {
+          value.reverse()
+        }
+        this.filterDates = [...value]
+      }
+    },
     getConflictStakeMessage (stake) {
       if (stake) {
         return `${stake} is at stake`
@@ -277,8 +327,10 @@ export default {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystemWithHistoryById', {
         id: this.systemId,
-        timeMin: moment(this.filterDates[0], 'YYYY-MM-DD'),
-        timeMax: moment(this.filterDates[1], 'YYYY-MM-DD')
+        // timeMin: this.fromDateFilter,
+        timeMin: moment.utc(this.filterDates[0], this.dateFormat),
+        // timeMax: this.toDateFilter
+        timeMax: this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)
       })
       this.setSelectedSystem(systemsPaginated.docs[0])
       this.conflictsPanel = this.system.conflicts.map((conflict, index) => {
