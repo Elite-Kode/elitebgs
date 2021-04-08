@@ -199,8 +199,6 @@ export default {
   name: 'SystemView',
   data () {
     return {
-      fromDateFilter: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      toDateFilter: new Date(Date.now()),
       loading: false,
       systemFilter: '',
       conflictsPanel: [],
@@ -327,9 +325,7 @@ export default {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystemWithHistoryById', {
         id: this.systemId,
-        // timeMin: this.fromDateFilter,
         timeMin: moment.utc(this.filterDates[0], this.dateFormat),
-        // timeMax: this.toDateFilter
         timeMax: this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)
       })
       this.setSelectedSystem(systemsPaginated.docs[0])
