@@ -4,19 +4,13 @@
     <v-form>
       <h4>Filter Station</h4>
       <v-row>
-        <v-col
-          cols="12"
-          sm="6"
-        >
-          <v-text-field
-            v-model="stationName"
-            hint="Carpini Terminal"
-            label="Station Name"
-          ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field v-model="stationName" hint="Carpini Terminal" label="Station Name"></v-text-field>
         </v-col>
       </v-row>
     </v-form>
     <v-data-table
+      class="elevation-1"
       :headers="headers"
       :items="stations"
       :page.sync="page"
@@ -24,9 +18,9 @@
       :items-per-page="10"
       :footer-props="tableFooter"
       :loading="loading">
-      <!--      <template v-slot:item._id="{item}">-->
-      <!--        <router-link :to="{ name: 'user-detail', params: { userId: item._id }}">{{ item._id }}</router-link>-->
-      <!--      </template>-->
+      <template v-slot:item.name="{item}">
+        <router-link :to="{ name: 'station-detail', params: { stationId: item._id }}">{{ item.name }}</router-link>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -76,16 +70,6 @@ export default {
       loading: false
     }
   },
-  computed: {
-    ...mapGetters({
-      stations: 'friendlyStations'
-    })
-  },
-  watch: {
-    page () {
-      this.fetchStations()
-    }
-  },
   created () {
     this.fetchStations()
     this.$watchAsObservable('stationName')
@@ -102,6 +86,16 @@ export default {
         this.totalStations = stationsPaginated.total
         this.loading = false
       })
+  },
+  computed: {
+    ...mapGetters({
+      stations: 'friendlyStations'
+    })
+  },
+  watch: {
+    page () {
+      this.fetchStations()
+    }
   },
   methods: {
     ...mapMutations([
