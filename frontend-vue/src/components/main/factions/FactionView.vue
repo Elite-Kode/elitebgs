@@ -162,6 +162,7 @@
       <v-card-title>
         Graphs
       </v-card-title>
+      <faction-influence-chart :faction-data="faction"></faction-influence-chart>
     </v-card>
   </div>
 </template>
@@ -169,9 +170,13 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
+import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
 
 export default {
   name: 'FactionView',
+  components: {
+    'faction-influence-chart': FactionInfluenceChart
+  },
   data () {
     return {
       loading: false,
@@ -327,8 +332,8 @@ export default {
       this.loading = true
       let factionsPaginated = await this.$store.dispatch('fetchFactionWithHistoryById', {
         id: this.factionId,
-        timeMin: moment.utc(this.filterDates[0], this.dateFormat),
-        timeMax: this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)
+        timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
       })
       this.setSelectedFaction(factionsPaginated.docs[0])
       this.conflicts = this.faction.faction_presence.reduce((acc, system) => {

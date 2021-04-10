@@ -325,8 +325,8 @@ export default {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystemWithHistoryById', {
         id: this.systemId,
-        timeMin: moment.utc(this.filterDates[0], this.dateFormat),
-        timeMax: this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)
+        timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
       })
       this.setSelectedSystem(systemsPaginated.docs[0])
       this.conflictsPanel = this.system.conflicts.map((conflict, index) => {

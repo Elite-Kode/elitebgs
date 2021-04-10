@@ -108,8 +108,8 @@ export default {
       this.loading = true
       let stationsPaginated = await this.$store.dispatch('fetchStationWithHistoryById', {
         id: this.stationId,
-        timeMin: moment.utc(this.filterDates[0], this.dateFormat),
-        timeMax: this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)
+        timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
       })
       this.setSelectedStation(stationsPaginated.docs[0])
       this.loading = false
