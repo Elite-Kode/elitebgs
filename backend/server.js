@@ -38,6 +38,8 @@ const authLogout = require('./routes/auth/logout');
 const authUser = require('./routes/auth/auth_user');
 const frontEnd = require('./routes/front_end');
 
+const redisCache = require('./modules/utilities/rediscache');
+
 // const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
 // const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
 //
@@ -47,10 +49,10 @@ const frontEnd = require('./routes/front_end');
 // const ebgsFactionsV3 = require('./routes/elite_bgs_api/v3/factions');
 // const ebgsSystemsV3 = require('./routes/elite_bgs_api/v3/systems');
 
-const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
-const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
-const ebgsStationsV4 = require('./routes/elite_bgs_api/v4/stations');
-const tickTimesV4 = require('./routes/elite_bgs_api/v4/tick_times');
+// const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
+// const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
+// const ebgsStationsV4 = require('./routes/elite_bgs_api/v4/stations');
+// const tickTimesV4 = require('./routes/elite_bgs_api/v4/tick_times');
 
 const ebgsFactionsV5 = require('./routes/elite_bgs_api/v5/factions');
 const ebgsSystemsV5 = require('./routes/elite_bgs_api/v5/systems');
@@ -65,6 +67,9 @@ const bugsnagClient = require('./bugsnag').bugsnagClient;
 const app = express();
 
 require('./db')
+let objCache = new redisCache.CacheFactory()
+objCache.connect()
+redisCache.setObjCache(objCache)
 
 let bugsnagClientMiddleware = {}
 
@@ -123,11 +128,6 @@ app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv2)
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv3));
 app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv4));
 app.use('/api/ebgs/v5/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv5));
-
-app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
-app.use('/api/ebgs/v4/systems', ebgsSystemsV4);
-app.use('/api/ebgs/v4/stations', ebgsStationsV4);
-app.use('/api/ebgs/v4/ticks', tickTimesV4);
 
 app.use('/api/ebgs/v5/factions', ebgsFactionsV5);
 app.use('/api/ebgs/v5/systems', ebgsSystemsV5);
