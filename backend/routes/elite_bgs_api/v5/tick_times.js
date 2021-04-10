@@ -20,6 +20,9 @@ const express = require('express');
 const cors = require('cors')
 const _ = require('lodash');
 
+const redisCache = require('../../../modules/utilities/rediscache');
+const crypto = require('crypto');
+
 let router = express.Router();
 
 /**
@@ -47,6 +50,16 @@ let router = express.Router();
    *             $ref: '#/definitions/TickTimesV5'
    */
 router.get('/', cors(), async (req, res, next) => {
+    // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
+    let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
+
+    // Check the in memory object cache for the URL
+    const tickData = await redisCache.objCache.getKey(urlHash)
+    if (tickData != null) {
+        res.status(200).send(JSON.parse(tickData));
+        return
+    }
+
     try {
         let query = {};
 
@@ -75,6 +88,10 @@ router.get('/', cors(), async (req, res, next) => {
             }
         }
         let result = await getTicks(query);
+
+        // Store the result in redis
+        redisCache.objCache.setKey(urlHash, JSON.stringify(result))
+
         res.status(200).json(result);
     } catch (err) {
         next(err);
