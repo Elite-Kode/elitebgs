@@ -33,10 +33,10 @@ const swagger = require('./swagger');
 // const ebgsFactionsV3 = require('./routes/elite_bgs_api/v3/factions');
 // const ebgsSystemsV3 = require('./routes/elite_bgs_api/v3/systems');
 
-const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
-const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
-const ebgsStationsV4 = require('./routes/elite_bgs_api/v4/stations');
-const tickTimesV4 = require('./routes/elite_bgs_api/v4/tick_times');
+// const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
+// const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
+// const ebgsStationsV4 = require('./routes/elite_bgs_api/v4/stations');
+// const tickTimesV4 = require('./routes/elite_bgs_api/v4/tick_times');
 
 const ebgsFactionsV5 = require('./routes/elite_bgs_api/v5/factions');
 const ebgsSystemsV5 = require('./routes/elite_bgs_api/v5/systems');
@@ -96,11 +96,6 @@ app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv2)
 app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv3));
 app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv4));
 app.use('/api/ebgs/v5/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv5));
-
-app.use('/api/ebgs/v4/factions', ebgsFactionsV4);
-app.use('/api/ebgs/v4/systems', ebgsSystemsV4);
-app.use('/api/ebgs/v4/stations', ebgsStationsV4);
-app.use('/api/ebgs/v4/ticks', tickTimesV4);
 
 app.use('/api/ebgs/v5/factions', ebgsFactionsV5);
 app.use('/api/ebgs/v5/systems', ebgsSystemsV5);
