@@ -162,7 +162,56 @@
       <v-card-title>
         Graphs
       </v-card-title>
-      <faction-influence-chart :faction-data="faction"></faction-influence-chart>
+      <v-expansion-panels accordion multiple v-model="chartsPanel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Influences
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-influence-chart :faction-data="faction"></faction-influence-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-state-chart :faction-data="faction"></faction-state-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Active State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-state-apr-chart :faction-data="faction" type="active"></faction-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Pending State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-state-apr-chart :faction-data="faction" type="pending"></faction-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Recovering State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-state-apr-chart :faction-data="faction" type="recovering"></faction-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Happiness Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <faction-happiness-chart :faction-data="faction"></faction-happiness-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-card>
   </div>
 </template>
@@ -171,11 +220,17 @@
 import { mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
 import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
+import FactionStateChart from '@/components/charts/FactionStateChart'
+import FactionAPRStateChart from '@/components/charts/FactionAPRStateChart'
+import FactionHappinessChart from '@/components/charts/FactionHappinessChart'
 
 export default {
   name: 'FactionView',
   components: {
-    'faction-influence-chart': FactionInfluenceChart
+    'faction-influence-chart': FactionInfluenceChart,
+    'faction-state-chart': FactionStateChart,
+    'faction-state-apr-chart': FactionAPRStateChart,
+    'faction-happiness-chart': FactionHappinessChart
   },
   data () {
     return {
@@ -248,7 +303,8 @@ export default {
       }, {
         text: 'Days Won',
         value: 'days_won'
-      }]
+      }],
+      chartsPanel: [0, 1, 2, 3, 4, 5]
     }
   },
   props: {
@@ -312,6 +368,7 @@ export default {
         }
         this.filterDates = [...value]
       }
+      this.fetchFactionWithHistoryById()
     },
     getConflictStakeMessage (stake) {
       if (stake) {

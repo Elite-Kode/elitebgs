@@ -1,4 +1,5 @@
 import axios from 'axios'
+import _isEmpty from 'lodash/isEmpty'
 
 const state = {
   stations: [],
@@ -19,7 +20,7 @@ const getters = {
   },
   friendlyStation: (state, getters) => {
     let station = state.selectedStation
-    return {
+    return _isEmpty(station) ? {} : {
       ...station,
       government: getters.government(station.government),
       allegiance: getters.superpower(station.allegiance),
