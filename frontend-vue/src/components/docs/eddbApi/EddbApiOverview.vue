@@ -9,28 +9,30 @@
       an API for EDDB data sources.
     </h3>
     <h2>API</h2>
-    <div class="card">
-      <div class="card-title">Access</div>
-      <div class="card-text">
+    <v-card>
+      <v-card-title>Access</v-card-title>
+      <v-card-text>
         Consumers must make a GET request at any endpoint.
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Endpoints</div>
-      <div class="card-text">
-        <h3>Factions</h3>
-        <code>https://eddbapi.kodeblox.com/api/v4/factions?&lt;params&gt;</code>
-        <h3>Populated Systems</h3>
-        <code>https://eddbapi.kodeblox.com/api/v4/populatedsystems?&lt;params&gt;</code>
-        <h3>Stations</h3>
-        <code>https://eddbapi.kodeblox.com/api/v4/stations?&lt;params&gt;</code>
-        <h3>Systems</h3>
-        <code>https://eddbapi.kodeblox.com/api/v4/systems?&lt;params&gt;</code>
-      </div>
-      <div>
-        *Please note that the endpoints have been changed to their own subdomain.
-      </div>
-    </div>
+      </v-card-text>
+    </v-card>
+    <v-card class="mt-2">
+      <v-card-title>Endpoints</v-card-title>
+      <v-card-text>
+        <div>
+          <h3>Factions</h3>
+          <code>https://eddbapi.kodeblox.com/api/v4/factions?&lt;params&gt;</code>
+          <h3>Populated Systems</h3>
+          <code>https://eddbapi.kodeblox.com/api/v4/populatedsystems?&lt;params&gt;</code>
+          <h3>Stations</h3>
+          <code>https://eddbapi.kodeblox.com/api/v4/stations?&lt;params&gt;</code>
+          <h3>Systems</h3>
+          <code>https://eddbapi.kodeblox.com/api/v4/systems?&lt;params&gt;</code>
+        </div>
+        <div>
+          *Please note that the endpoints have been changed to their own subdomain.
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 

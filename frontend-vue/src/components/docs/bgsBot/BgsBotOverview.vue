@@ -7,8 +7,11 @@
       Discord.
     </h3>
     <h2>Invite</h2>
-    <a class="btn btn-primary"
-       href="https://discordapp.com/oauth2/authorize?&client_id=332846508888031232&scope=bot&permissions=0">Invite</a>
+    <v-btn
+      to="https://discordapp.com/oauth2/authorize?&client_id=332846508888031232&scope=bot&permissions=0"
+      color="primary"
+    > Invite
+    </v-btn>
     the bot to your server.
     <h2>Help</h2>
     <p>To get a complete idea of how to use the bot, go to the
