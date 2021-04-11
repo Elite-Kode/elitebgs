@@ -48,6 +48,7 @@ export default {
           Date.parse(normalisedTime.toISOString())
         ])
       })
+      data.reverse()
       series.push({
         name: 'Tick',
         data: data
@@ -88,8 +89,6 @@ export default {
           sourceWidth: 1200
         }
       }
-      // console.log(this.$refs)
-      // this.$refs.chart.chart.redraw()
     }
   }
 }
