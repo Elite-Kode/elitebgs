@@ -17,6 +17,7 @@ import StationList from '@/components/main/stations/StationList'
 import SystemView from '@/components/main/systems/SystemView'
 import FactionView from '@/components/main/factions/FactionView'
 import StationView from '@/components/main/stations/StationView'
+import Tick from '@/components/Tick'
 
 Vue.use(Router)
 
@@ -62,6 +63,10 @@ export default new Router({
         path: '/admin',
         component: Admin,
         name: 'admin'
+      }, {
+        path: '/tick',
+        component: Tick,
+        name: 'tick'
       }, {
         path: '/profile',
         component: Profile,

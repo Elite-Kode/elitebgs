@@ -367,6 +367,7 @@ export default {
         }
         this.filterDates = [...value]
       }
+      this.fetchSystemWithHistoryById()
     },
     getConflictStakeMessage (stake) {
       if (stake) {
