@@ -15,10 +15,19 @@
           />
         </v-avatar>
       </v-btn>
-      <v-toolbar-title class="headline text-uppercase">
+      <v-toolbar-title class="headline text-uppercase pr-2">
         <span>Elite </span>
         <span class="font-weight-light">BGS</span>
       </v-toolbar-title>
+      <v-btn text to="/eddb">
+        EDDB API
+      </v-btn>
+      <v-btn text to="/ebgs">
+        Elite BGS API
+      </v-btn>
+      <v-btn text to="/bgsbot">
+        BGSBot
+      </v-btn>
       <v-spacer/>
 
       <template v-if="$vuetify.breakpoint.mdAndUp">

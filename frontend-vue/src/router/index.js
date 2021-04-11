@@ -18,6 +18,13 @@ import SystemView from '@/components/main/systems/SystemView'
 import FactionView from '@/components/main/factions/FactionView'
 import StationView from '@/components/main/stations/StationView'
 import Tick from '@/components/Tick'
+import DocsLayout from '@/components/docs/DocsLayout'
+import EddbApiOverview from '@/components/docs/eddbApi/EddbApiOverview'
+import EddbApiDocs from '@/components/docs/eddbApi/EddbApiDocs'
+import EliteBgsApiOverview from '@/components/docs/eliteBgsApi/EliteBgsApiOverview'
+import EliteBgsApiDocs from '@/components/docs/eliteBgsApi/EliteBgsApiDocs'
+import BgsBotOverview from '@/components/docs/bgsBot/BgsBotOverview'
+import BgsBotDocs from '@/components/docs/bgsBot/BgsBotDocs'
 
 Vue.use(Router)
 
@@ -58,6 +65,57 @@ export default new Router({
           component: StationView,
           name: 'station-detail',
           props: true
+        }]
+      }, {
+        path: '/eddb',
+        component: DocsLayout,
+        props: {
+          overviewLink: '/eddb',
+          docsLink: '/eddb/docs'
+        },
+        name: 'eddb',
+        children: [{
+          path: '',
+          component: EddbApiOverview,
+          name: 'eddb-api-overview'
+        }, {
+          path: 'docs',
+          component: EddbApiDocs,
+          name: 'eddb-api-docs'
+        }]
+      }, {
+        path: '/ebgs',
+        component: DocsLayout,
+        props: {
+          overviewLink: '/ebgs',
+          docsLink: '/ebgs/docs'
+        },
+        name: 'ebgs',
+        children: [{
+          path: '',
+          component: EliteBgsApiOverview,
+          name: 'elite-bgs-api-overview'
+        }, {
+          path: 'docs',
+          component: EliteBgsApiDocs,
+          name: 'elite-bgs-api-docs'
+        }]
+      }, {
+        path: '/bgsbot',
+        component: DocsLayout,
+        props: {
+          overviewLink: '/bgsbot',
+          docsLink: '/bgsbot/docs'
+        },
+        name: 'bgsbot',
+        children: [{
+          path: '',
+          component: BgsBotOverview,
+          name: 'bgs-bot-overview'
+        }, {
+          path: 'docs',
+          component: BgsBotDocs,
+          name: 'bgs-bot-docs'
         }]
       }, {
         path: '/admin',
