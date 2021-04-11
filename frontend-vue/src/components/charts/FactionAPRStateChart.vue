@@ -76,7 +76,7 @@ export default {
           allTimeSystems.push(record.system)
         }
       })
-      allTimeSystems.forEach((system, index) => {
+      allTimeSystems.forEach((system) => {
         const allStates = []
         let maxStates = 0
         this.factionData.history.forEach((record, recordIndex, records) => {

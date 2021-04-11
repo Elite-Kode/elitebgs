@@ -187,6 +187,57 @@
       <v-card-title>
         Graphs
       </v-card-title>
+
+      <v-expansion-panels accordion multiple v-model="chartsPanel">
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Influences
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-influence-chart :system-data="system"></system-influence-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-state-chart :system-data="system"></system-state-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Active State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-state-apr-chart :system-data="system" type="active"></system-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Pending State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-state-apr-chart :system-data="system" type="pending"></system-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Recovering State Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-state-apr-chart :system-data="system" type="recovering"></system-state-apr-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header class="py-0">
+            Happiness Periods
+          </v-expansion-panel-header>
+          <v-expansion-panel-content class="custom-padding">
+            <system-happiness-chart :system-data="system"></system-happiness-chart>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-card>
   </div>
 </template>
@@ -194,9 +245,19 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import moment from 'moment'
+import SystemInfluenceChart from '@/components/charts/SystemInfluenceChart'
+import SystemStateChart from '@/components/charts/SystemStateChart'
+import SystemAPRStateChart from '@/components/charts/SystemAPRStateChart'
+import SystemHappinessChart from '@/components/charts/SystemHappinessChart'
 
 export default {
   name: 'SystemView',
+  components: {
+    'system-influence-chart': SystemInfluenceChart,
+    'system-state-chart': SystemStateChart,
+    'system-state-apr-chart': SystemAPRStateChart,
+    'system-happiness-chart': SystemHappinessChart
+  },
   data () {
     return {
       loading: false,
@@ -242,7 +303,8 @@ export default {
         text: 'Last Updated At (UTC)',
         value: 'updated_at',
         filterable: false
-      }]
+      }],
+      chartsPanel: [0, 1, 2, 3, 4, 5]
     }
   },
   props: {
