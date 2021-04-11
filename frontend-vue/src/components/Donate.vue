@@ -19,10 +19,10 @@
         <ed-toolbar scroll-of-screen scroll-threshold="64"/>
         <v-main>
             <v-container fluid>
-                <h1>Support Elite Shots</h1>
+                <h1>Support Elite BGS</h1>
                 <p>
                     Hi,
-                    <br> Thank you for showing interest in Elite Shots. Looking forward to suggestions and feedback. But
+                    <br> Thank you for showing interest in Elite BGS. Looking forward to suggestions and feedback. But
                     as you
                     might know, running this website is a costly process. If you like my work, please consider making a
                     donation
@@ -30,7 +30,7 @@
                 </p>
                 <v-row>
                     <v-col cols="6">
-                        <a class="patreon-button" href="https://www.patreon.com/bePatron?u=30377534"/>
+                        <a class="patreon-button" href="https://www.patreon.com/bePatron?u=6593507"/>
                     </v-col>
                     <v-col cols="6">
                         <a class="paypal-button" href="https://www.paypal.me/SayakMukhopadhyay"/>
