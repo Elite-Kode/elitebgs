@@ -38,8 +38,15 @@ export default {
   }
 }
 </script>
-<style>
-.custom-padding .v-expansion-panel-content__wrap {
-  padding: 0;
-}
+<style lang="sass">
+@import '~vuetify/src/styles/styles.sass'
+
+.custom-padding .v-expansion-panel-content__wrap
+  padding: 0
+
+.theme--dark.v-btn-toggle:not(.v-btn-toggle--dense) .v-btn.v-btn.v-size--default
+  border-color: map-deep-get($material-dark, 'background') !important
+
+.theme--light.v-btn-toggle:not(.v-btn-toggle--dense) .v-btn.v-btn.v-size--default
+  border-color: map-deep-get($material-light, 'background') !important
 </style>

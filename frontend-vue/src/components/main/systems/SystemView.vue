@@ -62,7 +62,8 @@
         <v-chip
           v-for="active_state in item.active_states"
           :key="active_state.state"
-          color="blue"
+          dark
+          :color="getChipColour(active_state.trend)"
           x-small>
           {{ active_state.state }}
         </v-chip>
@@ -71,6 +72,7 @@
         <v-chip
           v-for="pending_state in item.pending_states"
           :key="pending_state.state"
+          dark
           :color="getChipColour(pending_state.trend)"
           x-small>
           {{ pending_state.state }}
@@ -80,6 +82,7 @@
         <v-chip
           v-for="recovering_state in item.recovering_states"
           :key="recovering_state.state"
+          dark
           :color="getChipColour(recovering_state.trend)"
           x-small>
           {{ recovering_state.state }}
@@ -90,7 +93,7 @@
       </template>
       <template v-slot:item.updated_at="{item}">
         {{ formatDate(item.updated_at) }}
-        <v-chip small :color="item.age_flag">
+        <v-chip small :color="item.age_flag" dark>
           {{ item.from_now }}
         </v-chip>
       </template>
@@ -353,11 +356,11 @@ export default {
     },
     getChipColour (value) {
       if (value === 0) {
-        return 'blue'
+        return 'info'
       } else if (value > 0) {
-        return 'green'
+        return 'success'
       } else {
-        return 'red'
+        return 'error'
       }
     },
     onChangedFilterDates (value) {

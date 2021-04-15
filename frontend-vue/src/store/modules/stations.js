@@ -6,7 +6,7 @@ const state = {
   selectedStation: {}
 }
 const getters = {
-  friendlyStations: (state, getters) => {
+  friendlyStations (state, getters) {
     return state.stations.map(station => {
       return {
         ...station,
@@ -18,7 +18,7 @@ const getters = {
       }
     })
   },
-  friendlyStation: (state, getters) => {
+  friendlyStation (state, getters) {
     let station = state.selectedStation
     return _isEmpty(station) ? {} : {
       ...station,

@@ -6,7 +6,7 @@ const state = {
   selectedFaction: {}
 }
 const getters = {
-  friendlyFactions: (state) => {
+  friendlyFactions (state) {
     return state.factions.map(faction => {
       return {
         ...faction,
@@ -15,7 +15,7 @@ const getters = {
       }
     })
   },
-  friendlyFaction: (state, getters) => {
+  friendlyFaction (state, getters) {
     let faction = state.selectedFaction
     return _isEmpty(faction) ? {} : {
       ...faction,

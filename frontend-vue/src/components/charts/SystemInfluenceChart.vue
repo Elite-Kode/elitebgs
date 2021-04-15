@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="options"></highcharts>
+  <highcharts :options="options" ref="chart"></highcharts>
 </template>
 
 <script>
@@ -24,12 +24,14 @@ export default {
   created () {
     if (this.systemData && !_isEmpty(this.systemData)) {
       this.createChart()
+      this.$refs.chart.chart.reflow()
     }
   },
   watch: {
     systemData (newVal, oldVal) {
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
+        this.$refs.chart.chart.reflow()
       }
     }
   },

@@ -6,7 +6,7 @@ const state = {
   selectedSystem: {}
 }
 const getters = {
-  friendlySystems: (state, getters) => {
+  friendlySystems (state, getters) {
     return state.systems.map(system => {
       return {
         ...system,
@@ -18,7 +18,7 @@ const getters = {
       }
     })
   },
-  friendlySystem: (state, getters) => {
+  friendlySystem (state, getters) {
     let system = state.selectedSystem
     return _isEmpty(system) ? {} : {
       ...system,
