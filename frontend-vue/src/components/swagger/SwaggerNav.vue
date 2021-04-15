@@ -8,7 +8,7 @@
         <template v-slot:activator>
           <v-list-item-title>Paths</v-list-item-title>
         </template>
-        <v-list-item class="ml-4" v-for="path in paths" :key="path[0]" :to="pathLink(path[0])" exact>
+        <v-list-item v-for="path in paths" :key="path[0]" :to="pathLink(path[0])" exact>
           <v-list-item-content>
             <v-list-item-title>{{ path[0] }}</v-list-item-title>
           </v-list-item-content>
@@ -18,12 +18,7 @@
         <template v-slot:activator>
           <v-list-item-title>Definitions</v-list-item-title>
         </template>
-        <v-list-item
-          class="ml-4"
-          v-for="definition in definitions"
-          :key="definition[0]"
-          :to="definitionLink(definition[0])" exact
-        >
+        <v-list-item v-for="definition in definitions" :key="definition[0]" :to="definitionLink(definition[0])" exact>
           <v-list-item-content>
             <v-list-item-title>{{ definition[0] }}</v-list-item-title>
           </v-list-item-content>

@@ -88,7 +88,6 @@ export default new Router({
           children: [{
             path: '',
             component: SwaggerHome,
-            props: true,
             name: 'eddb-api-docs-home'
           }, {
             path: 'paths',

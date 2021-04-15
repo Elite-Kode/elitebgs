@@ -4,6 +4,7 @@
 
 <script>
 import SwaggerUi from '@/components/swagger/SwaggerUi'
+import _isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'EddbApiDocs',
@@ -64,7 +65,7 @@ export default {
   },
   watch: {
     selectedSpec (newVal, oldVal) {
-      if (oldVal && newVal && newVal.versionName !== oldVal.versionName) {
+      if (!_isEmpty(oldVal) && !_isEmpty(newVal) && newVal.versionName !== oldVal.versionName) {
         this.$router.push({
           name: 'eddb-api-docs-home',
           params: { version: this.selectedSpec.versionName }

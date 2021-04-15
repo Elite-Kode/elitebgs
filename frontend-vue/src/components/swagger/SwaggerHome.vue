@@ -6,7 +6,7 @@
       <h3>Version {{ selectedSpecDoc.info.version }}</h3>
       <v-row class="mt-4">
         <template v-for="path in paths">
-          <v-col cols="12" sm="12" md="6" lg="3" v-for="method in getMethods(path[0])" :key="path[0]+method">
+          <v-col cols="12" xs="12" sm="6" md="4" lg="3" v-for="method in getMethods(path[0])" :key="path[0]+method">
             <v-card>
               <v-card-title>
                 Endpoint {{ path[0] }}
