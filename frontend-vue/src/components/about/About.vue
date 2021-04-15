@@ -34,7 +34,7 @@
                             A tool to track and manage the Background Simulation (BGS) of Elite Dangerous. Visualise
                             influences and states using graphs and monitor factions and systems. Forget spreadsheets!
                         </p>
-                        <v-btn class="mr-2" color="primary" to="/guide">Guide</v-btn>
+                        <v-btn class="mr-2" color="primary" :to="{name: 'guide'}">Guide</v-btn>
                         <v-btn color="primary" href="https://github.com/SayakMukhopadhyay/elitebgs" outlined
                                target="_blank">
                             Source
@@ -165,15 +165,15 @@
                 </v-row>
                 <owner-info/>
                 <h2>
-                    <router-link to="/about/termsandconditions">Terms and Conditions</router-link>
+                  <router-link :to="{name: 'tandc'}">Terms and Conditions</router-link>
                 </h2>
                 <tandc-text/>
                 <h2>
-                    <router-link to="/about/disclaimer">Disclaimer</router-link>
+                  <router-link :to="{name: 'disclaimer'}">Disclaimer</router-link>
                 </h2>
                 <disclaimer-text/>
                 <h2>
-                    <router-link to="/about/privacypolicy">Privacy Policy</router-link>
+                  <router-link :to="{name: 'privacy-policy'}">Privacy Policy</router-link>
                 </h2>
                 <privacy-policy-text/>
             </v-container>

@@ -25,6 +25,7 @@
                     light
                     slider-color="secondary"
                 >
+<!--                  Todo: The to link must be a router name and not link-->
                     <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="tabItem.link">
                         {{ tabItem.name }}
                     </v-tab>

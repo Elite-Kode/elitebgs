@@ -1,0 +1,59 @@
+<template>
+  <div>
+    <template v-if="selectedSpecDoc">
+      <h1>{{ selectedSpecDoc.info.title }}</h1>
+      <h2>{{ selectedSpecDoc.info.description }}</h2>
+      <h3>Version {{ selectedSpecDoc.info.version }}</h3>
+      <v-row class="mt-4">
+        <template v-for="path in paths">
+          <v-col cols="12" sm="12" md="6" lg="3" v-for="method in getMethods(path[0])" :key="path[0]+method">
+            <v-card>
+              <v-card-title>
+                Endpoint {{ path[0] }}
+              </v-card-title>
+              <v-card-subtitle>
+                Method {{ method.toUpperCase() }}
+                <v-chip color="error" dark v-if="path[1][method].deprecated"> Deprecated</v-chip>
+              </v-card-subtitle>
+              <v-card-text> {{ path[1][method].description }}</v-card-text>
+              <v-card-actions>
+                <v-btn text color="primary" @click="tryApi(method, path[0])">
+                  Try API
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </template>
+      </v-row>
+    </template>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapState } from 'vuex'
+
+export default {
+  name: 'SwaggerHome',
+  computed: {
+    ...mapState({
+      selectedSpecDoc: state => state.tryApi.specDoc
+    }),
+    ...mapGetters({
+      paths: 'getPaths',
+      definitions: 'getDefinitions'
+    })
+  },
+  methods: {
+    getMethods (path) {
+      return Object.keys(this.selectedSpecDoc?.paths[path])
+    },
+    tryApi (method, path) {
+      console.log(method, path)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

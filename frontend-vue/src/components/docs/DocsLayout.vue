@@ -8,9 +8,8 @@
           light
           slider-color="secondary"
         >
-          <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="tabItem.link" exact>
-            {{ tabItem.name }}
-          </v-tab>
+          <v-tab :to="{name: overviewLink}" exact>Overview</v-tab>
+          <v-tab :to="{name: docsLink}">Docs</v-tab>
         </v-tabs>
       </template>
     </ed-toolbar>
@@ -35,17 +34,6 @@ export default {
     docsLink: {
       type: String,
       default: 'docs'
-    }
-  },
-  computed: {
-    tabItems () {
-      return [{
-        name: 'Overview',
-        link: this.overviewLink
-      }, {
-        name: 'Docs',
-        link: this.docsLink
-      }]
     }
   },
   components: {

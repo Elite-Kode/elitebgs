@@ -62,7 +62,7 @@
 import { mapState } from 'vuex'
 
 export default {
-  name: 'Data',
+  name: 'ProfileData',
   computed: {
     ...mapState({
       authUser: state => state.auth.user

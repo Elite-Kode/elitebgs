@@ -8,7 +8,7 @@
           light
           slider-color="secondary"
         >
-          <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="tabItem.link">
+          <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{name: tabItem.link}" :exact="tabItem.exact">
             {{ tabItem.name }}
           </v-tab>
         </v-tabs>
@@ -31,16 +31,17 @@ export default {
     return {
       tabItems: [{
         name: 'Home',
-        link: '/'
+        link: 'home',
+        exact: true
       }, {
         name: 'Systems',
-        link: '/systems'
+        link: 'systems'
       }, {
         name: 'Factions',
-        link: '/factions'
+        link: 'factions'
       }, {
         name: 'Stations',
-        link: '/stations'
+        link: 'stations'
       }]
     }
   },

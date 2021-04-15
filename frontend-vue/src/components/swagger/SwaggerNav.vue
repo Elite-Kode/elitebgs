@@ -1,0 +1,76 @@
+<template>
+  <v-navigation-drawer app clipped v-model="value">
+    <v-list expand>
+      <v-list-item :to="docsLink" exact>
+        Home
+      </v-list-item>
+      <v-list-group :value="true">
+        <template v-slot:activator>
+          <v-list-item-title>Paths</v-list-item-title>
+        </template>
+        <v-list-item class="ml-4" v-for="path in paths" :key="path[0]" :to="pathLink(path[0])" exact>
+          <v-list-item-content>
+            <v-list-item-title>{{ path[0] }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+      <v-list-group :value="true">
+        <template v-slot:activator>
+          <v-list-item-title>Definitions</v-list-item-title>
+        </template>
+        <v-list-item
+          class="ml-4"
+          v-for="definition in definitions"
+          :key="definition[0]"
+          :to="definitionLink(definition[0])" exact
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{ definition[0] }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list>
+  </v-navigation-drawer>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'SwaggerNav',
+  props: {
+    docsLink: {
+      type: String,
+      default: 'docs'
+    },
+    value: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    ...mapGetters({
+      paths: 'getPaths',
+      definitions: 'getDefinitions'
+    })
+  },
+  methods: {
+    pathLink (path) {
+      path.substring(1)
+      return `${this.docsLink}/paths#${path.substring(1)}`
+    },
+    definitionLink (definition) {
+      return `${this.docsLink}/definitions#${definition}`
+    }
+  },
+  watch: {
+    async value () {
+      this.$emit('input', this.value)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

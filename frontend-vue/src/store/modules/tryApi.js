@@ -1,34 +1,33 @@
 import axios from 'axios'
 
 const state = {
-  authenticated: false,
-  user: {}
+  specDoc: null
+}
+const getters = {
+  getPaths (state) {
+    return state.specDoc ? Object.entries(state.specDoc.paths) : []
+  },
+  getDefinitions (state) {
+    return state.specDoc ? Object.entries(state.specDoc.definitions) : []
+  }
 }
 const mutations = {
-  setAuthenticated (state, authenticated) {
-    state.authenticated = authenticated
-  },
-  setUser (state, user) {
-    state.user = user
+  setSpecDoc (state, specDoc) {
+    state.specDoc = specDoc
   }
 }
 const actions = {
-  async checkAuthenticated ({ commit }) {
-    let response = await axios.get('/auth/check')
-    let isAuthenticated = response.data
-    commit('setAuthenticated', isAuthenticated)
-    return isAuthenticated
-  },
-  async fetchAuthUser ({ commit }) {
-    let response = await axios.get('/auth/user')
-    let userData = response.data
-    commit('setUser', userData)
-    return userData
+  async fetchSpecDoc ({ commit }, { specLocation }) {
+    let response = await axios.get(specLocation)
+    let specDoc = response.data
+    commit('setSpecDoc', specDoc)
+    return specDoc
   }
 }
 
 export default {
   state,
+  getters,
   mutations,
   actions
 }

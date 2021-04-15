@@ -5,9 +5,10 @@
       :scroll-off-screen="scrollOfScreen"
       :scroll-threshold="scrollThreshold"
       app
+      clipped-left
       color="toolbar"
       dark>
-      <v-btn class="ml-4" exact icon large to="/">
+      <v-btn class="ml-4" exact icon large :to="{name: 'home'}">
         <v-avatar>
           <v-img
             :src="require('@/assets/BGSv1.svg')"
@@ -19,22 +20,53 @@
         <span>Elite </span>
         <span class="font-weight-light">BGS</span>
       </v-toolbar-title>
-      <v-btn text to="/eddb">
-        EDDB API
-      </v-btn>
-      <v-btn text to="/ebgs">
-        Elite BGS API
-      </v-btn>
-      <v-btn text to="/bgsbot">
-        BGSBot
-      </v-btn>
+      <template v-if="$vuetify.breakpoint.mdAndUp">
+        <v-btn text :to="{name: 'eddb-api-overview'}">
+          EDDB API
+        </v-btn>
+        <v-btn text :to="{name: 'elite-bgs-api-overview'}">
+          Elite BGS API
+        </v-btn>
+        <v-btn text :to="{name: 'bgs-bot-overview'}">
+          BGSBot
+        </v-btn>
+      </template>
       <v-spacer/>
+      <v-menu v-if="!$vuetify.breakpoint.mdAndUp" bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            dark
+            icon
+          >
+            <v-icon>api</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item :ripple="false" exact :to="{name: 'eddb-api-overview'}">
+            <v-list-item-content class="mr-0">
+              EDDB API
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item :ripple="false" exact :to="{name: 'elite-bgs-api-overview'}">
+            <v-list-item-content class="mr-0">
+              Elite BGS API
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item :ripple="false" exact :to="{name: 'bgs-bot-overview'}">
+            <v-list-item-content class="mr-0">
+              BGSBot
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <template v-if="$vuetify.breakpoint.mdAndUp">
-        <v-btn text to="/donate">
+        <v-btn text :to="{name: 'donate'}">
           Support Elite BGS
         </v-btn>
-        <v-btn text to="/tick">
+        <v-btn text :to="{name: 'tick'}">
           <v-icon>alarm</v-icon>
           {{ currentTick.time_formatted }}
         </v-btn>
@@ -46,7 +78,7 @@
                :to="{name: 'mod-queue'}" exact icon>
           <v-icon>fas fa-user-secret</v-icon>
         </v-btn>
-        <v-btn exact icon to="/about">
+        <v-btn exact icon :to="{name: 'about'}">
           <v-icon>info</v-icon>
         </v-btn>
       </template>
@@ -63,7 +95,7 @@
         <v-list>
           <v-list-item v-if="authenticated"
                        :ripple="false"
-                       to="/profile">
+                       :to="{name: 'profile-data'}">
             <v-list-item-icon class="mr-0">
               <v-icon>person</v-icon>
             </v-list-item-icon>
@@ -97,12 +129,6 @@
 
         <v-list>
           <v-list-item :ripple="false"
-                       to="/upload">
-            <v-list-item-icon class="mr-0">
-              <v-icon>fas fa-upload</v-icon>
-            </v-list-item-icon>
-          </v-list-item>
-          <v-list-item :ripple="false"
                        @click="switchTheme()">
             <v-list-item-icon class="mr-0">
               <v-icon v-if="theme === themes[0]">brightness_3</v-icon>
@@ -120,13 +146,13 @@
           </v-list-item>
           <v-list-item :ripple="false"
                        exact
-                       to="/about">
+                       :to="{name: 'about'}">
             <v-list-item-icon class="mr-0">
               <v-icon>info</v-icon>
             </v-list-item-icon>
           </v-list-item>
           <v-list-item :ripple="false"
-                       to="/donate">
+                       :to="{name: 'donate'}">
             <v-list-item-icon class="mr-0">
               <v-icon>attach_money</v-icon>
             </v-list-item-icon>

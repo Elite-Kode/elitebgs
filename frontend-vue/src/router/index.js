@@ -5,7 +5,7 @@ import Home from '@/components/main/home/Home'
 import Admin from '@/components/admin/Admin'
 import Profile from '@/components/profile/Profile'
 import About from '@/components/about/About'
-import Data from '@/components/profile/Data'
+import ProfileData from '@/components/profile/ProfileData'
 import PrivacyPolicy from '@/components/about/PrivacyPolicy'
 import Disclaimer from '@/components/about/Disclaimer'
 import TAndC from '@/components/about/TAndC'
@@ -25,6 +25,7 @@ import EliteBgsApiOverview from '@/components/docs/eliteBgsApi/EliteBgsApiOvervi
 import EliteBgsApiDocs from '@/components/docs/eliteBgsApi/EliteBgsApiDocs'
 import BgsBotOverview from '@/components/docs/bgsBot/BgsBotOverview'
 import BgsBotDocs from '@/components/docs/bgsBot/BgsBotDocs'
+import SwaggerHome from '@/components/swagger/SwaggerHome'
 
 Vue.use(Router)
 
@@ -33,7 +34,6 @@ export default new Router({
     {
       path: '/',
       component: MainLayout,
-      name: 'main',
       children: [{
         path: '',
         component: Home,
@@ -70,10 +70,9 @@ export default new Router({
         path: '/eddb',
         component: DocsLayout,
         props: {
-          overviewLink: '/eddb',
-          docsLink: '/eddb/docs'
+          overviewLink: 'eddb-api-overview',
+          docsLink: 'eddb-api-docs'
         },
-        name: 'eddb',
         children: [{
           path: '',
           component: EddbApiOverview,
@@ -82,15 +81,29 @@ export default new Router({
           path: 'docs',
           component: EddbApiDocs,
           name: 'eddb-api-docs'
+        }, {
+          path: 'docs/:version',
+          component: EddbApiDocs,
+          props: true,
+          children: [{
+            path: '',
+            component: SwaggerHome,
+            props: true,
+            name: 'eddb-api-docs-home'
+          }, {
+            path: 'paths',
+            component: SwaggerHome,
+            props: true,
+            name: 'eddb-api-docs-path'
+          }]
         }]
       }, {
         path: '/ebgs',
         component: DocsLayout,
         props: {
-          overviewLink: '/ebgs',
-          docsLink: '/ebgs/docs'
+          overviewLink: 'elite-bgs-api-overview',
+          docsLink: 'elite-bgs-api-docs'
         },
-        name: 'ebgs',
         children: [{
           path: '',
           component: EliteBgsApiOverview,
@@ -104,10 +117,9 @@ export default new Router({
         path: '/bgsbot',
         component: DocsLayout,
         props: {
-          overviewLink: '/bgsbot',
-          docsLink: '/bgsbot/docs'
+          overviewLink: 'bgs-bot-overview',
+          docsLink: 'bgs-bot-docs'
         },
-        name: 'bgsbot',
         children: [{
           path: '',
           component: BgsBotOverview,
@@ -128,11 +140,10 @@ export default new Router({
       }, {
         path: '/profile',
         component: Profile,
-        name: 'profile',
         children: [{
-          path: '/',
-          component: Data,
-          name: 'data'
+          path: '',
+          component: ProfileData,
+          name: 'profile-data'
         }]
       }, {
         path: '/about',
