@@ -26,14 +26,13 @@ import Toolbar from '@/components/Toolbar'
 
 export default {
   name: 'DocsLayout',
-  props: {
-    link: {
-      type: String,
-      default: ''
-    }
-  },
   components: {
     'ed-toolbar': Toolbar
+  },
+  computed: {
+    link () {
+      return this.$route.path.split('/')[1]
+    }
   }
 }
 </script>

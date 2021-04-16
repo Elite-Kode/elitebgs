@@ -1,5 +1,5 @@
 <template>
-  <swagger-ui :docs-link="docsLink" link="eddb" :docs-spec="specs" v-model="selectedSpec"></swagger-ui>
+  <swagger-ui :docs-link="docsLink" :docs-spec="specs" v-model="selectedSpec"></swagger-ui>
 </template>
 
 <script>

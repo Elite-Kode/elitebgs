@@ -25,10 +25,6 @@ export default {
       type: String,
       default: ''
     },
-    link: {
-      type: String,
-      default: ''
-    },
     method: {
       type: String,
       default: ''
@@ -42,10 +38,9 @@ export default {
       if (this.currentPath && !_isEmpty(this.currentPath)) {
         if (!this.method || !this.getMethods(this.currentPath[0]).find(method => method === this.method)) {
           this.$router.replace({
-            name: 'eddb-api-docs-path-method',
+            name: `${this.link}-api-docs-path-method`,
             params: {
               path: this.path,
-              link: this.link,
               method: this.getMethods(this.currentPath[0])[0]
             }
           })
@@ -62,6 +57,9 @@ export default {
       definitions: 'getDefinitions',
       getMethods: 'getMethods'
     }),
+    link () {
+      return this.$route.path.split('/')[1]
+    },
     currentPath () {
       return this.paths.find(path => path[0] === '/' + this.path)
     }
@@ -73,7 +71,7 @@ export default {
       }
     },
     $route (to, from) {
-      if (to.name === 'eddb-api-docs-path') {
+      if (to.name === `${this.link}-api-docs-path`) {
         this.$router.replace(from)
       }
     }

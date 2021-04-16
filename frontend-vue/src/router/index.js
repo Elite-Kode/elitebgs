@@ -70,9 +70,6 @@ export default new Router({
       }, {
         path: '/eddb',
         component: DocsLayout,
-        props: {
-          link: 'eddb'
-        },
         children: [{
           path: '',
           component: EddbApiOverview,

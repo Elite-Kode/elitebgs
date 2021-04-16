@@ -40,10 +40,6 @@ export default {
         return null
       }
     },
-    link: {
-      type: String,
-      default: ''
-    },
     value: {
       type: Boolean,
       default: true
@@ -54,15 +50,17 @@ export default {
       paths: 'getPaths',
       definitions: 'getDefinitions',
       getMethods: 'getMethods'
-    })
+    }),
+    link () {
+      return this.$route.path.split('/')[1]
+    }
   },
   methods: {
     getPathLink (path) {
       return {
         name: `${this.link}-api-docs-path`,
         params: {
-          path: path.substring(1),
-          link: this.link
+          path: path.substring(1)
         }
       }
     },
