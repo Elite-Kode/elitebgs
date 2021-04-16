@@ -34,15 +34,13 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'SwaggerNav',
   props: {
-    docsLink: {
-      type: Object,
-      default () {
-        return null
-      }
-    },
     value: {
       type: Boolean,
       default: true
+    },
+    version: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -53,6 +51,14 @@ export default {
     }),
     link () {
       return this.$route.path.split('/')[1]
+    },
+    docsLink () {
+      return {
+        name: `${this.link}-api-docs`,
+        params: {
+          version: this.version
+        }
+      }
     }
   },
   methods: {
@@ -65,7 +71,7 @@ export default {
       }
     },
     definitionLink (definition) {
-      return `${this.docsLink}/definitions#${definition}`
+      // return `${this.docsLink}/definitions#${definition}`
     }
   },
   watch: {

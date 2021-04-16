@@ -75,17 +75,13 @@ export default new Router({
           component: EddbApiOverview,
           name: 'eddb-api-overview'
         }, {
-          path: 'docs',
-          component: EddbApiDocs,
-          name: 'eddb-api-docs'
-        }, {
-          path: 'docs/:version',
+          path: 'docs/:version?',
           component: EddbApiDocs,
           props: true,
           children: [{
             path: '',
             component: SwaggerHome,
-            name: 'eddb-api-docs-home'
+            name: 'eddb-api-docs'
           }, {
             path: 'paths/:path',
             component: SwaggerPath,
