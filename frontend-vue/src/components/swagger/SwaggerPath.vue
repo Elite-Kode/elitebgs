@@ -6,7 +6,7 @@
       <v-tab
         v-for="currentMethod in getMethods(currentPath[0])"
         :key="currentMethod"
-        :to="{name: $route.name, params: {path, method:currentMethod}}"
+        :to="{name: `${link}-api-docs-path`, params: {path, method:currentMethod, version: $route.params.version}}"
       >
         {{ currentMethod }}
       </v-tab>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import _isEmpty from 'lodash/isEmpty'
 
 export default {
@@ -38,9 +38,10 @@ export default {
       if (this.currentPath && !_isEmpty(this.currentPath)) {
         if (!this.method || !this.getMethods(this.currentPath[0]).find(method => method === this.method)) {
           this.$router.replace({
-            name: `${this.link}-api-docs-path-method`,
+            name: `${this.link}-api-docs-path`,
             params: {
               path: this.path,
+              version: this.$route.params.version,
               method: this.getMethods(this.currentPath[0])[0]
             }
           })
@@ -49,12 +50,8 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      selectedSpecDoc: state => state.tryApi.specDoc
-    }),
     ...mapGetters({
       paths: 'getPaths',
-      definitions: 'getDefinitions',
       getMethods: 'getMethods'
     }),
     link () {
@@ -71,7 +68,7 @@ export default {
       }
     },
     $route (to, from) {
-      if (to.name === `${this.link}-api-docs-path`) {
+      if (!to.params.method && from.params.method) {
         this.$router.replace(from)
       }
     }

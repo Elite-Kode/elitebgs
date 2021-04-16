@@ -83,15 +83,10 @@ export default new Router({
             component: SwaggerHome,
             name: 'eddb-api-docs'
           }, {
-            path: 'paths/:path',
+            path: 'paths/:path/:method?',
             component: SwaggerPath,
             props: true,
             name: 'eddb-api-docs-path'
-          }, {
-            path: 'paths/:path/:method',
-            component: SwaggerPath,
-            props: true,
-            name: 'eddb-api-docs-path-method'
           }]
         }]
       }, {

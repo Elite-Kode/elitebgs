@@ -49,12 +49,12 @@ export default {
       definitions: 'getDefinitions',
       getMethods: 'getMethods'
     }),
-    link () {
+    rootLink () {
       return this.$route.path.split('/')[1]
     },
     docsLink () {
       return {
-        name: `${this.link}-api-docs`,
+        name: `${this.rootLink}-api-docs`,
         params: {
           version: this.version
         }
@@ -64,9 +64,10 @@ export default {
   methods: {
     getPathLink (path) {
       return {
-        name: `${this.link}-api-docs-path`,
+        name: `${this.rootLink}-api-docs-path`,
         params: {
-          path: path.substring(1)
+          path: path.substring(1),
+          version: this.version
         }
       }
     },

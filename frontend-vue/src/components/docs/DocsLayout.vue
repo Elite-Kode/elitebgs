@@ -8,8 +8,8 @@
           light
           slider-color="secondary"
         >
-          <v-tab :to="{name: link + '-api-overview'}" exact>Overview</v-tab>
-          <v-tab :to="{name: link + '-api-docs'}">Docs</v-tab>
+          <v-tab :to="{name: rootLink + '-api-overview'}" exact>Overview</v-tab>
+          <v-tab :to="{name: rootLink + '-api-docs'}">Docs</v-tab>
         </v-tabs>
       </template>
     </ed-toolbar>
@@ -30,7 +30,7 @@ export default {
     'ed-toolbar': Toolbar
   },
   computed: {
-    link () {
+    rootLink () {
       return this.$route.path.split('/')[1]
     }
   }
