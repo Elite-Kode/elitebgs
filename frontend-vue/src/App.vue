@@ -49,4 +49,10 @@ export default {
 
 .theme--light.v-btn-toggle:not(.v-btn-toggle--dense) .v-btn.v-btn.v-size--default
   border-color: map-deep-get($material-light, 'background') !important
+
+.tab-background.theme--dark.v-tabs > .v-tabs-bar
+  background-color: map-deep-get($material-dark, 'background') !important
+
+.tab-background.theme--light.v-tabs > .v-tabs-bar
+  background-color: map-deep-get($material-light, 'background') !important
 </style>

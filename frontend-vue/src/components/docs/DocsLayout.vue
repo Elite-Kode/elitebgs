@@ -8,8 +8,8 @@
           light
           slider-color="secondary"
         >
-          <v-tab :to="{name: overviewLink}" exact>Overview</v-tab>
-          <v-tab :to="{name: docsLink}">Docs</v-tab>
+          <v-tab :to="{name: link + '-api-overview'}" exact>Overview</v-tab>
+          <v-tab :to="{name: link + '-api-docs'}">Docs</v-tab>
         </v-tabs>
       </template>
     </ed-toolbar>
@@ -27,13 +27,9 @@ import Toolbar from '@/components/Toolbar'
 export default {
   name: 'DocsLayout',
   props: {
-    overviewLink: {
+    link: {
       type: String,
       default: ''
-    },
-    docsLink: {
-      type: String,
-      default: 'docs'
     }
   },
   components: {

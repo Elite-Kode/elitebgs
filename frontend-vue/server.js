@@ -37,7 +37,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'dist')))
 
-// Pass all 404 errors called by browser to angular
 app.all('*', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
 });

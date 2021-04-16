@@ -78,7 +78,6 @@ export default {
             tooltip: {
               headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
               pointFormatter () {
-                console.log(this)
                 return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${moment(this.y).utc().format('HH:mm')} UTC</b><br/>`
               }
             }

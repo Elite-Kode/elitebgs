@@ -8,7 +8,7 @@
         <template v-slot:activator>
           <v-list-item-title>Paths</v-list-item-title>
         </template>
-        <v-list-item v-for="path in paths" :key="path[0]" :to="pathLink(path[0])" exact>
+        <v-list-item v-for="path in paths" :key="path[0]" :to="getPathLink(path[0])">
           <v-list-item-content>
             <v-list-item-title>{{ path[0] }}</v-list-item-title>
           </v-list-item-content>
@@ -18,7 +18,7 @@
         <template v-slot:activator>
           <v-list-item-title>Definitions</v-list-item-title>
         </template>
-        <v-list-item v-for="definition in definitions" :key="definition[0]" :to="definitionLink(definition[0])" exact>
+        <v-list-item v-for="definition in definitions" :key="definition[0]" :to="definitionLink(definition[0])">
           <v-list-item-content>
             <v-list-item-title>{{ definition[0] }}</v-list-item-title>
           </v-list-item-content>
@@ -35,8 +35,14 @@ export default {
   name: 'SwaggerNav',
   props: {
     docsLink: {
+      type: Object,
+      default () {
+        return null
+      }
+    },
+    link: {
       type: String,
-      default: 'docs'
+      default: ''
     },
     value: {
       type: Boolean,
@@ -46,13 +52,19 @@ export default {
   computed: {
     ...mapGetters({
       paths: 'getPaths',
-      definitions: 'getDefinitions'
+      definitions: 'getDefinitions',
+      getMethods: 'getMethods'
     })
   },
   methods: {
-    pathLink (path) {
-      path.substring(1)
-      return `${this.docsLink}/paths#${path.substring(1)}`
+    getPathLink (path) {
+      return {
+        name: `${this.link}-api-docs-path`,
+        params: {
+          path: path.substring(1),
+          link: this.link
+        }
+      }
     },
     definitionLink (definition) {
       return `${this.docsLink}/definitions#${definition}`

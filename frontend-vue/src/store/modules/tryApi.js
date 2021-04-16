@@ -9,6 +9,9 @@ const getters = {
   },
   getDefinitions (state) {
     return state.specDoc ? Object.entries(state.specDoc.definitions) : []
+  },
+  getMethods: (state) => (path) => {
+    return Object.keys(state.specDoc?.paths[path])
   }
 }
 const mutations = {

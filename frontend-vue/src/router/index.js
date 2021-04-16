@@ -26,6 +26,7 @@ import EliteBgsApiDocs from '@/components/docs/eliteBgsApi/EliteBgsApiDocs'
 import BgsBotOverview from '@/components/docs/bgsBot/BgsBotOverview'
 import BgsBotDocs from '@/components/docs/bgsBot/BgsBotDocs'
 import SwaggerHome from '@/components/swagger/SwaggerHome'
+import SwaggerPath from '@/components/swagger/SwaggerPath'
 
 Vue.use(Router)
 
@@ -70,8 +71,7 @@ export default new Router({
         path: '/eddb',
         component: DocsLayout,
         props: {
-          overviewLink: 'eddb-api-overview',
-          docsLink: 'eddb-api-docs'
+          link: 'eddb'
         },
         children: [{
           path: '',
@@ -90,10 +90,15 @@ export default new Router({
             component: SwaggerHome,
             name: 'eddb-api-docs-home'
           }, {
-            path: 'paths',
-            component: SwaggerHome,
+            path: 'paths/:path',
+            component: SwaggerPath,
             props: true,
             name: 'eddb-api-docs-path'
+          }, {
+            path: 'paths/:path/:method',
+            component: SwaggerPath,
+            props: true,
+            name: 'eddb-api-docs-path-method'
           }]
         }]
       }, {

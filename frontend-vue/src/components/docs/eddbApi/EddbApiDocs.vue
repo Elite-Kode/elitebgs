@@ -1,5 +1,5 @@
 <template>
-  <swagger-ui :docs-link="docsLink" :docsSpec="specs" v-model="selectedSpec"></swagger-ui>
+  <swagger-ui :docs-link="docsLink" link="eddb" :docs-spec="specs" v-model="selectedSpec"></swagger-ui>
 </template>
 
 <script>
@@ -39,6 +39,11 @@ export default {
           versionName: 'V4',
           specLocation: 'https://eddbapi.kodeblox.com/api/v4/api-docs.json',
           swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
+        },
+        {
+          versionName: 'V5',
+          specLocation: 'https://generator.swagger.io/api/swagger.json',
+          swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
         }
       ],
       selectedSpec: {}
@@ -50,7 +55,12 @@ export default {
   },
   computed: {
     docsLink () {
-      return this.$route.path
+      return {
+        name: 'eddb-api-docs-home',
+        params: {
+          version: this.version
+        }
+      }
     }
   },
   methods: {

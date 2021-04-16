@@ -1,6 +1,6 @@
 <template>
   <div>
-    <swagger-nav :docs-link="docsLink" v-model="navOpen"></swagger-nav>
+    <swagger-nav :docs-link="docsLink" :link="link" v-model="navOpen"></swagger-nav>
     <div class="d-flex">
       <v-app-bar-nav-icon @click="toggleNav"/>
       <v-menu offset-y>
@@ -43,8 +43,14 @@ export default {
   },
   props: {
     docsLink: {
+      type: Object,
+      default () {
+        return null
+      }
+    },
+    link: {
       type: String,
-      default: 'docs'
+      default: ''
     },
     docsSpec: {
       type: Array,

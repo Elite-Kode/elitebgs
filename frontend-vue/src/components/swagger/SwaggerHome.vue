@@ -40,15 +40,13 @@ export default {
     }),
     ...mapGetters({
       paths: 'getPaths',
-      definitions: 'getDefinitions'
+      definitions: 'getDefinitions',
+      getMethods: 'getMethods'
     })
   },
   methods: {
-    getMethods (path) {
-      return Object.keys(this.selectedSpecDoc?.paths[path])
-    },
     tryApi (method, path) {
-      console.log(method, path)
+      // console.log(method, path)
     }
   }
 }

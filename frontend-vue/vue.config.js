@@ -2,7 +2,7 @@ const BugsnagSourceMapUploaderPlugin = require('webpack-bugsnag-plugins').Bugsna
 const secrets = require('./secrets');
 const processVars = require('./processVars');
 
-let plugins = [];
+let plugins
 
 if (secrets.bugsnag_sourcemap_send && secrets.bugsnag_use) {
     plugins = [
