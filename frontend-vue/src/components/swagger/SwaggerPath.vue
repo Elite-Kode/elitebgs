@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentPath">
+  <div v-if="currentPath && method">
     <h1>Endpoint {{ currentPath[0] }}</h1>
     <h3>General Information</h3>
     <v-tabs class="tab-background">
@@ -11,6 +11,96 @@
         {{ currentMethod }}
       </v-tab>
     </v-tabs>
+    <div class="mt-2">
+      <section>
+        <h3>{{ currentPath[1][method].description }}</h3>
+        Parameters
+        <v-simple-table dense class="elevation-1">
+          <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Parameter Description</th>
+            <th>Parameter Type</th>
+            <th>Data Type</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="parameter in currentPath[1][method].parameters" :key="parameter.name">
+            <td>{{ parameter.name }}</td>
+            <td>{{ parameter.description }}</td>
+            <td>{{ parameter.in }}</td>
+            <td v-if="parameter.type && parameter.type !== 'integer' && parameter.type !== 'array'">
+              <router-link :to="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.type}`">
+                {{ parameter.type }}
+              </router-link>
+            </td>
+            <td v-else-if="parameter.type && parameter.type === 'integer'">
+              <router-link to="https://developer.mozilla.org/en-US/docs/Glossary/number">{{
+                  parameter.type
+                }}
+              </router-link>
+            </td>
+            <td v-else-if="parameter.$ref">
+              <a>{{ getDefinitionFromRef(parameter.$ref) }}</a>
+            </td>
+            <td
+              v-else-if="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'">
+              <router-link :to="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.items.type}`">
+                {{ parameter.items.type }}[]
+              </router-link>
+            </td>
+            <td v-else-if="parameter.type && parameter.type === 'array' && parameter.items.$ref">
+              <a>{{ getDefinitionFromRef(parameter.items.$ref) }}[]</a>
+            </td>
+          </tr>
+          </tbody>
+        </v-simple-table>
+      </section>
+      <section>
+        <h4 class="mb-3">Response Content Types</h4>
+        <div v-for="responseType in currentPath[1][method].produces" :key="responseType">
+          {{ responseType }}
+        </div>
+      </section>
+      <section class="mt-3">
+        <h4>Responses</h4>
+        <v-simple-table dense class="elevation-1">
+          <tbody>
+          <tr v-for="responseCode in getResponses(method)" :key="responseCode">
+            <th>{{ responseCode }}</th>
+            <td>{{ currentPath[1][method].responses[responseCode].description }}</td>
+            <td
+              v-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type !== 'integer' && currentPath[1][method].responses[responseCode].schema.type !== 'array'">
+              <router-link
+                :to="`https://developer.mozilla.org/en-US/docs/Glossary/${currentPath[1][method].responses[responseCode].schema.type}`">
+                {{ currentPath[1][method].responses[responseCode].schema.type }}
+              </router-link>
+            </td>
+            <td
+              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'integer'">
+              <router-link to="https://developer.mozilla.org/en-US/docs/Glossary/number">
+                {{ currentPath[1][method].responses[responseCode].schema.type }}
+              </router-link>
+            </td>
+            <td v-else-if="currentPath[1][method].responses[responseCode].schema.$ref">
+              <a>{{ getDefinitionFromRef(currentPath[1][method].responses[responseCode].schema.$ref) }}</a>
+            </td>
+            <td
+              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'array' && currentPath[1][method].responses[responseCode].schema.items.type && currentPath[1][method].responses[responseCode].schema.items.type !== 'integer'">
+              <router-link
+                :to="`https://developer.mozilla.org/en-US/docs/Glossary/${currentPath[1][method].responses[responseCode].schema.items.type}`">
+                {{ currentPath[1][method].responses[responseCode].schema.items.type }}[]
+              </router-link>
+            </td>
+            <td
+              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'array' && currentPath[1][method].responses[responseCode].schema.items.$ref">
+              <a>{{ getDefinitionFromRef(currentPath[1][method].responses[responseCode].schema.items.$ref) }}[]</a>
+            </td>
+          </tr>
+          </tbody>
+        </v-simple-table>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -47,6 +137,12 @@ export default {
           })
         }
       }
+    },
+    getDefinitionFromRef (ref) {
+      return ref.replace('#/definitions/', '')
+    },
+    getResponses (method) {
+      return Object.keys(this.currentPath[1][method].responses)
     }
   },
   computed: {
