@@ -141,7 +141,7 @@ export default {
   methods: {
     getDefinitionPath (definition) {
       return {
-        name: 'eddb-api-docs-definition',
+        name: `${this.link}-api-docs-definition`,
         params: {
           definition: definition,
           version: this.$route.params.version
@@ -162,6 +162,9 @@ export default {
     ...mapGetters({
       definitions: 'getDefinitions'
     }),
+    link () {
+      return this.$route.path.split('/')[1]
+    },
     currentDefinition () {
       return this.definitions.find(definition => definition[0] === this.definition)
     }

@@ -293,7 +293,7 @@ export default {
     },
     getDefinitionPath (definition) {
       return {
-        name: 'eddb-api-docs-definition',
+        name: `${this.link}-api-docs-definition`,
         params: {
           definition: definition,
           version: this.$route.params.version

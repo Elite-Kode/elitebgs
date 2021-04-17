@@ -98,34 +98,41 @@ export default new Router({
       }, {
         path: '/ebgs',
         component: DocsLayout,
-        props: {
-          overviewLink: 'elite-bgs-api-overview',
-          docsLink: 'elite-bgs-api-docs'
-        },
         children: [{
           path: '',
           component: EliteBgsApiOverview,
-          name: 'elite-bgs-api-overview'
+          name: 'ebgs-api-overview'
         }, {
-          path: 'docs',
+          path: 'docs/:version?',
           component: EliteBgsApiDocs,
-          name: 'elite-bgs-api-docs'
+          props: true,
+          children: [{
+            path: '',
+            component: SwaggerHome,
+            name: 'ebgs-api-docs'
+          }, {
+            path: 'paths/:path/:method?',
+            component: SwaggerPath,
+            props: true,
+            name: 'ebgs-api-docs-path'
+          }, {
+            path: 'definitions/:definition',
+            component: SwaggerDefinition,
+            props: true,
+            name: 'ebgs-api-docs-definition'
+          }]
         }]
       }, {
         path: '/bgsbot',
         component: DocsLayout,
-        props: {
-          overviewLink: 'bgs-bot-overview',
-          docsLink: 'bgs-bot-docs'
-        },
         children: [{
           path: '',
           component: BgsBotOverview,
-          name: 'bgs-bot-overview'
+          name: 'bgsbot-api-overview'
         }, {
           path: 'docs',
           component: BgsBotDocs,
-          name: 'bgs-bot-docs'
+          name: 'bgsbot-api-docs'
         }]
       }, {
         path: '/admin',

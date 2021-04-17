@@ -24,10 +24,10 @@
         <v-btn text :to="{name: 'eddb-api-overview'}">
           EDDB API
         </v-btn>
-        <v-btn text :to="{name: 'elite-bgs-api-overview'}">
+        <v-btn text :to="{name: 'ebgs-api-overview'}">
           Elite BGS API
         </v-btn>
-        <v-btn text :to="{name: 'bgs-bot-overview'}">
+        <v-btn text :to="{name: 'bgsbot-api-overview'}">
           BGSBot
         </v-btn>
       </template>
@@ -49,12 +49,12 @@
               EDDB API
             </v-list-item-content>
           </v-list-item>
-          <v-list-item :ripple="false" exact :to="{name: 'elite-bgs-api-overview'}">
+          <v-list-item :ripple="false" exact :to="{name: 'ebgs-api-overview'}">
             <v-list-item-content class="mr-0">
               Elite BGS API
             </v-list-item-content>
           </v-list-item>
-          <v-list-item :ripple="false" exact :to="{name: 'bgs-bot-overview'}">
+          <v-list-item :ripple="false" exact :to="{name: 'bgsbot-api-overview'}">
             <v-list-item-content class="mr-0">
               BGSBot
             </v-list-item-content>

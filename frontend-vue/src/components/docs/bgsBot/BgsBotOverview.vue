@@ -15,7 +15,7 @@
     the bot to your server.
     <h2>Help</h2>
     <p>To get a complete idea of how to use the bot, go to the
-      <router-link :to="{name: 'bgs-bot-docs'}">Docs</router-link>
+      <router-link :to="{name: 'bgsbot-api-docs'}">Docs</router-link>
       tab. Or you can type
       <code>@BGSBot help</code> and get help on the commands in Discord itself.
     </p>
