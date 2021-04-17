@@ -30,27 +30,99 @@
             <td>{{ parameter.description }}</td>
             <td>{{ parameter.in }}</td>
             <td v-if="parameter.type && parameter.type !== 'integer' && parameter.type !== 'array'">
-              <router-link :to="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.type}`">
+              <a
+                :href="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.type}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {{ parameter.type }}
-              </router-link>
+              </a>
             </td>
             <td v-else-if="parameter.type && parameter.type === 'integer'">
-              <router-link to="https://developer.mozilla.org/en-US/docs/Glossary/number">{{
-                  parameter.type
-                }}
-              </router-link>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+                target="_blank"
+                rel="noopener noreferrer"
+              >{{ parameter.type }}</a>
             </td>
+            <!--If the type is an object and it has a reference-->
             <td v-else-if="parameter.$ref">
-              <a>{{ getDefinitionFromRef(parameter.$ref) }}</a>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/object"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Object
+              </a>
+              &#60;
+              <router-link
+                :to="getDefinitionPath(getDefinitionFromRef(parameter.$ref))"
+              >
+                {{ getDefinitionFromRef(parameter.$ref) }}
+              </router-link>
+              &#62;
+            </td>
+            <!--If the type is an array of some kind-->
+            <td
+              v-else-if="parameter.type &&
+                         parameter.type === 'array' &&
+                         parameter.items.type &&
+                         parameter.items.type !== 'integer'"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Array
+              </a>
+              &#60;
+              <a
+                :href="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.items.type}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ parameter.items.type }}
+              </a>
+              &#62;
             </td>
             <td
-              v-else-if="parameter.type && parameter.type === 'array' && parameter.items.type && parameter.items.type !== 'integer'">
-              <router-link :to="`https://developer.mozilla.org/en-US/docs/Glossary/${parameter.items.type}`">
-                {{ parameter.items.type }}[]
-              </router-link>
+              v-else-if="parameter.type &&
+                         parameter.type === 'array' &&
+                         parameter.items.type &&
+                         parameter.items.type === 'integer'"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Array
+              </a>
+              &#60;
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ parameter.items.type }}
+              </a>
+              &#62;
             </td>
+            <!--If the type is an array of some object with a ref-->
             <td v-else-if="parameter.type && parameter.type === 'array' && parameter.items.$ref">
-              <a>{{ getDefinitionFromRef(parameter.items.$ref) }}[]</a>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Array
+              </a>
+              &#60;
+              <router-link
+                :to="getDefinitionPath(getDefinitionFromRef(parameter.items.$ref))"
+              >
+                {{ getDefinitionFromRef(parameter.items.$ref) }}
+              </router-link>
+              &#62;
             </td>
           </tr>
           </tbody>
@@ -68,33 +140,114 @@
           <tbody>
           <tr v-for="responseCode in getResponses(method)" :key="responseCode">
             <th>{{ responseCode }}</th>
-            <td>{{ currentPath[1][method].responses[responseCode].description }}</td>
+            <td>{{ getResponse(responseCode).description }}</td>
             <td
-              v-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type !== 'integer' && currentPath[1][method].responses[responseCode].schema.type !== 'array'">
+              v-if="getResponse(responseCode).schema.type &&
+                    getResponse(responseCode).schema.type !== 'integer'&&
+                    getResponse(responseCode).schema.type !== 'array'"
+            >
+              <a
+                :href="`https://developer.mozilla.org/en-US/docs/Glossary/${getResponse(responseCode).schema.type}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ getResponse(responseCode).schema.type }}
+              </a>
+            </td>
+            <td
+              v-else-if="getResponse(responseCode).schema.type &&
+                         getResponse(responseCode).schema.type === 'integer'"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ getResponse(responseCode).schema.type }}
+              </a>
+            </td>
+            <!--If the type is an object and it has a reference-->
+            <td v-else-if="getResponse(responseCode).schema.$ref">
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/object"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Object
+              </a>
+              &#60;
               <router-link
-                :to="`https://developer.mozilla.org/en-US/docs/Glossary/${currentPath[1][method].responses[responseCode].schema.type}`">
-                {{ currentPath[1][method].responses[responseCode].schema.type }}
+                :to="getDefinitionPath(getDefinitionFromRef(getResponse(responseCode).schema.$ref))"
+              >
+                {{ getDefinitionFromRef(getResponse(responseCode).schema.$ref) }}
               </router-link>
+              &#62;
+            </td>
+            <!--If the type is an array of some kind-->
+            <td
+              v-else-if="getResponse(responseCode).schema.type &&
+                         getResponse(responseCode).schema.type === 'array' &&
+                         getResponse(responseCode).schema.items.type &&
+                         getResponse(responseCode).schema.items.type !== 'integer'"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Array
+              </a>
+              &#60;
+              <a
+                :href="`https://developer.mozilla.org/en-US/docs/Glossary/${getResponse(responseCode).schema.items.type}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ getResponse(responseCode).schema.items.type }}
+              </a>
+              &#62;
             </td>
             <td
-              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'integer'">
-              <router-link to="https://developer.mozilla.org/en-US/docs/Glossary/number">
-                {{ currentPath[1][method].responses[responseCode].schema.type }}
-              </router-link>
+              v-else-if="getResponse(responseCode).schema.type &&
+                         getResponse(responseCode).schema.type === 'array' &&
+                         getResponse(responseCode).schema.items.type &&
+                         getResponse(responseCode).schema.items.type === 'integer'"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Array
+              </a>
+              &#60;
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ getResponse(responseCode).schema.items.type }}
+              </a>
+              &#62;
             </td>
-            <td v-else-if="currentPath[1][method].responses[responseCode].schema.$ref">
-              <a>{{ getDefinitionFromRef(currentPath[1][method].responses[responseCode].schema.$ref) }}</a>
-            </td>
+            <!--If the type is an array of some object with a ref-->
             <td
-              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'array' && currentPath[1][method].responses[responseCode].schema.items.type && currentPath[1][method].responses[responseCode].schema.items.type !== 'integer'">
+              v-else-if="getResponse(responseCode).schema.type &&
+                         getResponse(responseCode).schema.type === 'array' &&
+                         getResponse(responseCode).schema.items.$ref"
+            >
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Array
+              </a>
+              &#60;
               <router-link
-                :to="`https://developer.mozilla.org/en-US/docs/Glossary/${currentPath[1][method].responses[responseCode].schema.items.type}`">
-                {{ currentPath[1][method].responses[responseCode].schema.items.type }}[]
+                :to="getDefinitionPath(getDefinitionFromRef(getResponse(responseCode).schema.items.$ref))"
+              >
+                {{ getDefinitionFromRef(getResponse(responseCode).schema.items.$ref) }}
               </router-link>
-            </td>
-            <td
-              v-else-if="currentPath[1][method].responses[responseCode].schema.type && currentPath[1][method].responses[responseCode].schema.type === 'array' && currentPath[1][method].responses[responseCode].schema.items.$ref">
-              <a>{{ getDefinitionFromRef(currentPath[1][method].responses[responseCode].schema.items.$ref) }}[]</a>
+              &#62;
             </td>
           </tr>
           </tbody>
@@ -138,11 +291,23 @@ export default {
         }
       }
     },
+    getDefinitionPath (definition) {
+      return {
+        name: 'eddb-api-docs-definition',
+        params: {
+          definition: definition,
+          version: this.$route.params.version
+        }
+      }
+    },
     getDefinitionFromRef (ref) {
       return ref.replace('#/definitions/', '')
     },
     getResponses (method) {
       return Object.keys(this.currentPath[1][method].responses)
+    },
+    getResponse (responseCode) {
+      return this.currentPath[1][this.method].responses[responseCode]
     }
   },
   computed: {

@@ -27,6 +27,7 @@ import BgsBotOverview from '@/components/docs/bgsBot/BgsBotOverview'
 import BgsBotDocs from '@/components/docs/bgsBot/BgsBotDocs'
 import SwaggerHome from '@/components/swagger/SwaggerHome'
 import SwaggerPath from '@/components/swagger/SwaggerPath'
+import SwaggerDefinition from '@/components/swagger/SwaggerDefinition'
 
 Vue.use(Router)
 
@@ -87,6 +88,11 @@ export default new Router({
             component: SwaggerPath,
             props: true,
             name: 'eddb-api-docs-path'
+          }, {
+            path: 'definitions/:definition',
+            component: SwaggerDefinition,
+            props: true,
+            name: 'eddb-api-docs-definition'
           }]
         }]
       }, {

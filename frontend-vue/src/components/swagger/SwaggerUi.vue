@@ -20,10 +20,10 @@
       </v-menu>
       <v-spacer/>
       <v-btn-toggle multiple max=0>
-        <v-btn color="primary" :href="selectedSpec.specLocation">
+        <v-btn color="primary" :href="selectedSpec.specLocation" target="_blank" rel="noopener noreferrer">
           Spec
         </v-btn>
-        <v-btn color="primary" :href="selectedSpec.swaggerLocation">
+        <v-btn color="primary" :href="selectedSpec.swaggerLocation" target="_blank" rel="noopener noreferrer">
           Swagger
         </v-btn>
       </v-btn-toggle>

@@ -72,7 +72,13 @@ export default {
       }
     },
     definitionLink (definition) {
-      // return `${this.docsLink}/definitions#${definition}`
+      return {
+        name: `${this.rootLink}-api-docs-definition`,
+        params: {
+          definition,
+          version: this.version
+        }
+      }
     }
   },
   watch: {
