@@ -38,11 +38,6 @@ export default {
           versionName: 'V4',
           specLocation: 'https://eddbapi.kodeblox.com/api/v4/api-docs.json',
           swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
-        },
-        {
-          versionName: 'V5',
-          specLocation: 'https://generator.swagger.io/api/swagger.json',
-          swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
         }
       ]
     }

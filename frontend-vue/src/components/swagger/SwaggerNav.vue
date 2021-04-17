@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app clipped v-model="value">
+  <v-navigation-drawer app clipped v-model="navState">
     <v-list expand>
       <v-list-item :to="docsLink" exact>
         Home
@@ -43,6 +43,11 @@ export default {
       default: ''
     }
   },
+  data () {
+    return {
+      navState: this.value
+    }
+  },
   computed: {
     ...mapGetters({
       paths: 'getPaths',
@@ -83,6 +88,7 @@ export default {
   },
   watch: {
     async value () {
+      this.navState = this.value
       this.$emit('input', this.value)
     }
   }
