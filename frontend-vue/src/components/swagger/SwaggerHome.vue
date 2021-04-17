@@ -17,7 +17,7 @@
               </v-card-subtitle>
               <v-card-text> {{ path[1][method].description }}</v-card-text>
               <v-card-actions>
-                <v-btn text color="primary" @click="tryApi(method, path[0])">
+                <v-btn text color="primary" @click="tryApi(path[0], method)">
                   Try API
                 </v-btn>
               </v-card-actions>
@@ -25,15 +25,27 @@
           </v-col>
         </template>
       </v-row>
+      <swagger-try-api v-model="tryApiOpen" :path="tryApiPath" :method="tryApiMethod"></swagger-try-api>
     </template>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import SwaggerTryApi from '@/components/swagger/SwaggerTryApi'
 
 export default {
   name: 'SwaggerHome',
+  components: {
+    'swagger-try-api': SwaggerTryApi
+  },
+  data () {
+    return {
+      tryApiOpen: false,
+      tryApiPath: '',
+      tryApiMethod: ''
+    }
+  },
   computed: {
     ...mapState({
       selectedSpecDoc: state => state.tryApi.specDoc
@@ -45,8 +57,10 @@ export default {
     })
   },
   methods: {
-    tryApi (method, path) {
-      // console.log(method, path)
+    tryApi (path, method) {
+      this.tryApiPath = path
+      this.tryApiMethod = method
+      this.tryApiOpen = true
     }
   }
 }

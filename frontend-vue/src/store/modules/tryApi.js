@@ -25,6 +25,14 @@ const actions = {
     let specDoc = response.data
     commit('setSpecDoc', specDoc)
     return specDoc
+  },
+  async fetchFromApiUrl (context, { url, method, data }) {
+    let response = await axios({
+      method,
+      url,
+      data
+    })
+    return response.data
   }
 }
 
