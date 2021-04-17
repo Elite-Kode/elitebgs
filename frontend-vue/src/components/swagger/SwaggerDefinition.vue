@@ -12,7 +12,114 @@
         <tbody>
         <tr v-for="property in getProperties()" :key="property">
           <td>{{ property }}</td>
-          <td></td>
+          <td
+            v-if="getProperty(property).type &&
+                  getProperty(property).type !== 'integer'&&
+                  getProperty(property).type !== 'array'"
+          >
+            <a
+              :href="`https://developer.mozilla.org/en-US/docs/Glossary/${getProperty(property).type}`"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ getProperty(property).type }}
+            </a>
+          </td>
+          <td
+            v-else-if="getProperty(property).type &&
+                       getProperty(property).type === 'integer'"
+          >
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ getProperty(property).type }}
+            </a>
+          </td>
+          <!--If the type is an object and it has a reference-->
+          <td v-else-if="getProperty(property).$ref">
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/object"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Object
+            </a>
+            &#60;
+            <router-link
+              :to="getDefinitionPath(getDefinitionFromRef(getProperty(property).$ref))"
+            >
+              {{ getDefinitionFromRef(getProperty(property).$ref) }}
+            </router-link>
+            &#62;
+          </td>
+          <!--If the type is an array of some kind-->
+          <td
+            v-else-if="getProperty(property).type &&
+                       getProperty(property).type === 'array' &&
+                       getProperty(property).items.type &&
+                       getProperty(property).items.type !== 'integer'"
+          >
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Array
+            </a>
+            &#60;
+            <a
+              :href="`https://developer.mozilla.org/en-US/docs/Glossary/${getProperty(property).items.type}`"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ getProperty(property).items.type }}
+            </a>
+            &#62;
+          </td>
+          <td
+            v-else-if="getProperty(property).type &&
+                       getProperty(property).type === 'array' &&
+                       getProperty(property).items.type &&
+                       getProperty(property).items.type === 'integer'"
+          >
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Array
+            </a>
+            &#60;
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/number"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ getProperty(property).items.type }}
+            </a>
+            &#62;
+          </td>
+          <!--If the type is an array of some object with a ref-->
+          <td
+            v-else-if="getProperty(property).type &&
+                       getProperty(property).type === 'array' &&
+                       getProperty(property).items.$ref"
+          >
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Glossary/array"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Array
+            </a>
+            &#60;
+            <router-link
+              :to="getDefinitionPath(getDefinitionFromRef(getProperty(property).items.$ref))"
+            >
+              {{ getDefinitionFromRef(getProperty(property).items.$ref) }}
+            </router-link>
+            &#62;
+          </td>
         </tr>
         </tbody>
       </v-simple-table>
@@ -32,11 +139,23 @@ export default {
     }
   },
   methods: {
+    getDefinitionPath (definition) {
+      return {
+        name: 'eddb-api-docs-definition',
+        params: {
+          definition: definition,
+          version: this.$route.params.version
+        }
+      }
+    },
     getDefinitionFromRef (ref) {
       return ref.replace('#/definitions/', '')
     },
     getProperties () {
       return Object.keys(this.currentDefinition[1].properties)
+    },
+    getProperty (property) {
+      return this.currentDefinition[1].properties[property]
     }
   },
   computed: {
