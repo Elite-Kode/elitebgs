@@ -87,9 +87,11 @@ export default {
     }
   },
   watch: {
-    async value () {
+    navState () {
+      this.$emit('input', this.navState)
+    },
+    value () {
       this.navState = this.value
-      this.$emit('input', this.value)
     }
   }
 }
