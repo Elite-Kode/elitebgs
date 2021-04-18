@@ -23,6 +23,10 @@ const _ = require('lodash');
 
 const ebgsUsers = require('../models/ebgs_users');
 
+let bannedAccess = 'BANNED'
+let normalAccess = 'NORMAL'
+let adminAccess = 'ADMIN'
+
 let router = express.Router();
 
 router.get('/backgroundimages', (req, res) => {
@@ -89,7 +93,7 @@ router.get('/credits', async (req, res, next) => {
 
 router.get('/users', async (req, res, next) => {
     try {
-        if (req.user.access === 0) {
+        if (req.user.access === adminAccess) {
             let users = await ebgsUsers;
             let query = new Object;
             let page = 1;
@@ -129,7 +133,7 @@ router.get('/users', async (req, res, next) => {
 
 router.put('/users', async (req, res, next) => {
     try {
-        if (req.user.access === 0 || req.user._id.toString() === req.body._id) {
+        if (req.user.access === adminAccess || req.user._id.toString() === req.body._id) {
             let users = await ebgsUsers;
             let body = req.body;
             body.$unset = {};
@@ -169,7 +173,7 @@ router.put('/users', async (req, res, next) => {
 
 router.get('/scripts', (req, res, next) => {
     try {
-        if (req.user.access === 0) {
+        if (req.user.access === adminAccess) {
             let pathToFile = path.resolve(__dirname, '../modules/scripts');
             let files = fs.readdirSync(pathToFile);
             res.send(files);

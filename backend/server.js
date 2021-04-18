@@ -215,7 +215,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 username: profile.username,
                 avatar: profile.avatar,
                 discriminator: profile.discriminator,
-                access: 1,
+                access: 'NORMAL',
                 os_contribution: 0,
                 patronage: {
                     level: 0,

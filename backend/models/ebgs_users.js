@@ -25,7 +25,7 @@ let user = new mongoose.Schema({
     username: String,
     avatar: String,
     discriminator: String,
-    access: Number,
+    access: { type: String, enum: ['NORMAL', 'BANNED', 'ADMIN'], uppercase: true },
     os_contribution: Number,
     patronage: {
         level: Number,

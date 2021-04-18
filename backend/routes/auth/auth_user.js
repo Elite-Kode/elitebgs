@@ -18,6 +18,10 @@
 
 const express = require('express');
 
+let bannedAccess = 'BANNED'
+let normalAccess = 'NORMAL'
+let adminAccess = 'ADMIN'
+
 let router = express.Router();
 
 router.get('/', (req, res) => {
@@ -166,7 +170,7 @@ router.delete('/edit', async (req, res, next) => {
 });
 
 router.delete('/delete', async (req, res, next) => {
-    if (req.user && (req.user._id === req.query.userid || req.user.access === 0)) {
+    if (req.user && (req.user._id === req.query.userid || req.user.access === adminAccess)) {
         try {
             let users = require('../../models/ebgs_users');
             await users.findByIdAndRemove(req.query.userid)
