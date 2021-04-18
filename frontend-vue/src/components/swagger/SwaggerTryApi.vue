@@ -3,39 +3,44 @@
     v-model="dialogState"
     fullscreen
     hide-overlay
+    scrollable
     transition="dialog-bottom-transition"
   >
     <v-card>
-      <v-toolbar light color="accent">
-        <v-btn
-          class="ml-0"
-          icon
-          light
-          @click="closeDialog"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Try API</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn tile color="success" @click="addParameter">
-            <v-icon>
-              add
-            </v-icon>
+      <v-card-title class="pa-0">
+        <v-toolbar dark color="primary">
+          <v-btn
+            class="ml-0"
+            icon
+            dark
+            @click="closeDialog"
+          >
+            <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-btn tile color="error" @click="reset">
-            <v-icon>
-              refresh
-            </v-icon>
-          </v-btn>
-          <v-btn tile color="success" @click="go">
-            <v-icon>
-              arrow_forward
-            </v-icon>
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card-title>{{ method.toUpperCase() }} - {{ tryApiUrl }}</v-card-title>
+          <v-toolbar-title>Try API</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn tile color="success" @click="addParameter">
+              <v-icon>
+                add
+              </v-icon>
+            </v-btn>
+            <v-btn tile color="error" @click="reset">
+              <v-icon>
+                refresh
+              </v-icon>
+            </v-btn>
+            <v-btn tile color="success" @click="go">
+              <v-icon>
+                arrow_forward
+              </v-icon>
+            </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+      </v-card-title>
+      <div class="url-bar d-flex align-center pl-3">
+        <h2>{{ method.toUpperCase() }} - {{ tryApiUrl }}</h2>
+      </div>
       <v-card-text>
         <v-form>
           <div v-for="(parameter, index) in parametersSelected" :key="parameter+index" class="d-flex my-2 align-center">
@@ -62,7 +67,12 @@
             </v-btn>
           </div>
         </v-form>
-        <pre><code>{{ tryApiResponse }}</code></pre>
+        <highlightjs
+          class="api-response"
+          v-if="tryApiResponse"
+          language='json'
+          :code="JSON.stringify(tryApiResponse, null, 2)"
+        />
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -167,6 +177,20 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="sass">
+.theme--light .api-response
+  @import '~highlight.js/scss/atelier-plateau-light'
 
+.theme--dark .api-response
+  @import "~highlight.js/scss/atelier-plateau-dark"
+</style>
+
+<style lang="sass" scoped>
+@import '~vuetify/src/styles/styles.sass'
+
+.url-bar
+  background-color: var(--v-accent-base)
+  min-height: 48px
+  width: 100%
+  color: map-deep-get($material-light, 'text', 'primary')
 </style>
