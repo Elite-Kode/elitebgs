@@ -25,14 +25,13 @@ export default {
   created () {
     if (this.tickData && !_isEmpty(this.tickData)) {
       this.createChart()
-      this.$refs.chart.chart.reflow()
     }
   },
   watch: {
     tickData (newVal, oldVal) {
+      this.$refs.chart.chart.reflow()
       if (this.tickData && !_isEmpty(this.tickData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
-        this.$refs.chart.chart.reflow()
       }
     }
   },

@@ -24,14 +24,13 @@ export default {
   created () {
     if (this.systemData && !_isEmpty(this.systemData)) {
       this.createChart()
-      this.$refs.chart.chart.reflow()
     }
   },
   watch: {
     systemData (newVal, oldVal) {
+      this.$refs.chart.chart.reflow()
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
-        this.$refs.chart.chart.reflow()
       }
     }
   },

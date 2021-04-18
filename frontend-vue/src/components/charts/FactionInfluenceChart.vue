@@ -24,14 +24,13 @@ export default {
   created () {
     if (this.factionData && !_isEmpty(this.factionData)) {
       this.createChart()
-      this.$refs.chart.chart.reflow()
     }
   },
   watch: {
     factionData (newVal, oldVal) {
+      this.$refs.chart.chart.reflow()
       if (this.factionData && !_isEmpty(this.factionData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
-        this.$refs.chart.chart.reflow()
       }
     }
   },
