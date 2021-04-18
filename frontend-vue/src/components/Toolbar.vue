@@ -75,7 +75,7 @@
           <v-icon v-if="theme === themes[0]">brightness_3</v-icon>
           <v-icon v-if="theme === themes[1]">wb_sunny</v-icon>
         </v-btn>
-        <v-btn v-if="authenticated && (authUser.access === modAccess || authUser.access === adminAccess)"
+        <v-btn v-if="authenticated && (authUser.access === adminAccess)"
                :to="{name: 'mod-queue'}" exact icon>
           <v-icon>fas fa-user-secret</v-icon>
         </v-btn>
@@ -137,7 +137,7 @@
             </v-list-item-icon>
           </v-list-item>
           <v-list-item
-            v-if="authenticated && (authUser.access === modAccess || authUser.access === adminAccess)"
+            v-if="authenticated && (authUser.access === adminAccess)"
             :ripple="false"
             :to="{name: 'mod-queue'}"
             exact>
@@ -192,7 +192,6 @@ export default {
     return {
       bannedAccess: 'BANNED',
       normalAccess: 'NORMAL',
-      modAccess: 'MOD',
       adminAccess: 'ADMIN',
       loginDialog: false
     }

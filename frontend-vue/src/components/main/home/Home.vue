@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'fill-height': isHome}">
+  <div :class="{'fill-height': isHome && !authenticated}">
     <ed-toolbar>
       <template v-slot:toolbar-tabs>
         <v-tabs
@@ -14,8 +14,8 @@
         </v-tabs>
       </template>
     </ed-toolbar>
-    <v-main :class="{'fill-height': isHome}">
-      <v-container fluid :class="{'fill-height': isHome}">
+    <v-main :class="{'fill-height': isHome && !authenticated}">
+      <v-container fluid :class="{'fill-height': isHome && !authenticated}">
         <home-view v-if="isHome"/>
         <router-view/>
       </v-container>
@@ -26,6 +26,7 @@
 <script>
 import Toolbar from '@/components/Toolbar'
 import HomeView from '@/components/main/home/HomeView'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Home',
@@ -52,6 +53,9 @@ export default {
     'ed-toolbar': Toolbar
   },
   computed: {
+    ...mapState({
+      authenticated: state => state.auth.authenticated
+    }),
     isHome () {
       return this.$route.name === 'home'
     }
