@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{'fill-height': isHome}">
     <ed-toolbar>
       <template v-slot:toolbar-tabs>
         <v-tabs
@@ -14,8 +14,9 @@
         </v-tabs>
       </template>
     </ed-toolbar>
-    <v-main>
-      <v-container fluid>
+    <v-main :class="{'fill-height': isHome}">
+      <v-container fluid :class="{'fill-height': isHome}">
+        <home-view v-if="isHome"/>
         <router-view/>
       </v-container>
     </v-main>
@@ -24,6 +25,7 @@
 
 <script>
 import Toolbar from '@/components/Toolbar'
+import HomeView from '@/components/main/home/HomeView'
 
 export default {
   name: 'Home',
@@ -46,7 +48,13 @@ export default {
     }
   },
   components: {
+    'home-view': HomeView,
     'ed-toolbar': Toolbar
+  },
+  computed: {
+    isHome () {
+      return this.$route.name === 'home'
+    }
   }
 }
 </script>

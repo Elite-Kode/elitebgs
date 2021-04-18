@@ -32,6 +32,7 @@
         </v-btn>
       </template>
       <v-spacer/>
+
       <v-menu v-if="!$vuetify.breakpoint.mdAndUp" bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn
@@ -229,7 +230,9 @@ export default {
       localStorage.setItem('theme', this.theme)
     },
     onClickLogin () {
-      this.loginDialog = true
+      if (this.$route.name !== 'home') {
+        this.loginDialog = true
+      }
     }
   }
 }
