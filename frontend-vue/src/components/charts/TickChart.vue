@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="options" ref="chart"></highcharts>
+  <highcharts v-if="options" :options="options" ref="chart"></highcharts>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default {
   name: 'TickChart',
   data () {
     return {
-      options: {}
+      options: null
     }
   },
   props: {
@@ -29,7 +29,9 @@ export default {
   },
   watch: {
     tickData (newVal, oldVal) {
-      this.$refs.chart.chart.reflow()
+      if (this.$refs.chart) {
+        this.$refs.chart.chart.reflow()
+      }
       if (this.tickData && !_isEmpty(this.tickData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
@@ -55,6 +57,9 @@ export default {
         data: data
       })
       this.options = {
+        chart: {
+          styledMode: true
+        },
         xAxis: { type: 'datetime' },
         yAxis: {
           title: {

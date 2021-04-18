@@ -55,4 +55,10 @@ export default {
 
 .tab-background.theme--light.v-tabs > .v-tabs-bar
   background-color: map-deep-get($material-light, 'background') !important
+
+.theme--light
+  @import '~highcharts/css/themes/grid-light'
+
+.theme--dark
+  @import '~highcharts/css/themes/dark-unica'
 </style>

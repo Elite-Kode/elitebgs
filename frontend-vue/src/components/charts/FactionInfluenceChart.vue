@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="options" ref="chart"></highcharts>
+  <highcharts v-if="options" :options="options" ref="chart"></highcharts>
 </template>
 
 <script>
@@ -10,7 +10,7 @@ export default {
   name: 'FactionInfluenceChart',
   data () {
     return {
-      options: {}
+      options: null
     }
   },
   props: {
@@ -28,7 +28,9 @@ export default {
   },
   watch: {
     factionData (newVal, oldVal) {
-      this.$refs.chart.chart.reflow()
+      if (this.$refs.chart) {
+        this.$refs.chart.chart.reflow()
+      }
       if (this.factionData && !_isEmpty(this.factionData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
@@ -86,6 +88,9 @@ export default {
         })
       })
       this.options = {
+        chart: {
+          styledMode: true
+        },
         xAxis: { type: 'datetime' },
         yAxis: {
           title: {

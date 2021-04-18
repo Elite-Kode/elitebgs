@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="options"></highcharts>
+  <highcharts v-if="options" :options="options"></highcharts>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
   name: 'SystemAPRStateChart',
   data () {
     return {
-      options: {}
+      options: null
     }
   },
   props: {
@@ -201,10 +201,11 @@ export default {
                 this.yAxis[0]
                   .labelGroup.element.childNodes[index]
                   .attributes.y.nodeValue = labelPositions[index] +
-                  parseFloat(this.yAxis[0].labelGroup.element.childNodes[index].style['font-size']) / 2
+                  11 / 2
               })
             }
-          }
+          },
+          styledMode: true
         },
         title: {
           text: `${stateTitle} Periods`

@@ -1,5 +1,5 @@
 <template>
-  <highcharts :options="options"></highcharts>
+  <highcharts v-if="options" :options="options"></highcharts>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default {
   name: 'FactionHappinessChart',
   data () {
     return {
-      options: {}
+      options: null
     }
   },
   props: {
@@ -106,7 +106,8 @@ export default {
       this.options = {
         chart: {
           height: 130 + allSystems.length * 40,
-          type: 'xrange'
+          type: 'xrange',
+          styledMode: true
         },
         title: {
           text: 'Happiness Periods'
