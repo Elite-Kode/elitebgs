@@ -184,6 +184,7 @@ export default {
       }
       this.options = {
         chart: {
+          colorCount: 21,
           height: 130 + _sum(maxStatesConcurrent) * 40,
           type: 'xrange',
           events: {

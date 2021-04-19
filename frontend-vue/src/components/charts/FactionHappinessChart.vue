@@ -105,6 +105,7 @@ export default {
       })
       this.options = {
         chart: {
+          colorCount: 21,
           height: 130 + allSystems.length * 40,
           type: 'xrange',
           styledMode: true

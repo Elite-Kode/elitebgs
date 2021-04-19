@@ -89,6 +89,7 @@ export default {
       })
       this.options = {
         chart: {
+          colorCount: 21,
           styledMode: true
         },
         xAxis: { type: 'datetime' },

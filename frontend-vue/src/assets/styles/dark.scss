@@ -1,8 +1,32 @@
+@import '~vuetify/src/styles/main.sass';
+
 // Chart background, point stroke for markers and columns etc
 $background-color: #2a2a2b;
 
 // Colors for data series and points.
-$colors: #2b908f #90ee7e #f45b5b #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
+$colors: [
+  map-get($red, lighten-1),
+  map-get($pink, lighten-1),
+  map-get($purple, lighten-1),
+  map-get($green, lighten-1),
+  map-get($blue, lighten-1),
+  map-get($yellow, lighten-1),
+  map-get($orange, lighten-1),
+  map-get($red, lighten-2),
+  map-get($pink, lighten-2),
+  map-get($purple, lighten-2),
+  map-get($blue, lighten-2),
+  map-get($green, lighten-2),
+  map-get($yellow, lighten-2),
+  map-get($orange, lighten-2),
+  map-get($red, lighten-3),
+  map-get($pink, lighten-3),
+  map-get($purple, lighten-3),
+  map-get($blue, lighten-3),
+  map-get($green, lighten-3),
+  map-get($yellow, lighten-3),
+  map-get($orange, lighten-3),
+];
 
 // Neutral colors
 $neutral-color-100: #fff;

@@ -107,6 +107,7 @@ export default {
       })
       this.options = {
         chart: {
+          colorCount: 21,
           height: 130 + allTimeFactions.length * 40,
           type: 'xrange',
           styledMode: true
