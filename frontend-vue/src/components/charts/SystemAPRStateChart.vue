@@ -201,7 +201,7 @@ export default {
                 this.yAxis[0]
                   .labelGroup.element.childNodes[index]
                   .attributes.y.nodeValue = labelPositions[index] +
-                  11 / 2
+                  12 / 2 // 12 is the font size in px of the y-axis labels
               })
             }
           },

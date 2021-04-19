@@ -57,8 +57,8 @@ export default {
   background-color: map-deep-get($material-light, 'background') !important
 
 .theme--light
-  @import '~highcharts/css/themes/grid-light'
+  @import '~@/assets/styles/light.scss'
 
 .theme--dark
-  @import '~highcharts/css/themes/dark-unica'
+  @import '~@/assets/styles/dark.scss'
 </style>
