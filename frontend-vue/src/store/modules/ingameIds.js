@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getName } from '@/store/helpers'
 
 const state = {
   allIds: {}
@@ -24,10 +25,6 @@ const actions = {
     commit('setAllIds', allIds)
     return allIds
   }
-}
-
-function getName (state, id, key) {
-  return state.allIds[id]?.[key]?.name
 }
 
 export default {
