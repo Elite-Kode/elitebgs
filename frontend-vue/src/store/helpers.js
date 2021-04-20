@@ -7,8 +7,10 @@ const formatTime = time => ({
   ...time,
   time_formatted: moment(time.time).utc().format('HH:mm'),
   time_local: moment(time.time).format('HH:mm'),
-  updated_at_formatted: moment(time.updated_at).utc().format('ddd, MMM D, HH:mm:ss')
+  updated_at_formatted: formatDate(time.updated_at)
 })
+
+const formatDate = date => moment(date).utc().format('ddd, MMM D, HH:mm:ss')
 
 const titlify = title => {
   let revised = title.charAt(0).toUpperCase()
@@ -63,6 +65,19 @@ const formattedFaction = (faction, getters) => {
   }
 }
 
+const systemDetailsTable = (system, faction) => {
+  return {
+    ...system,
+    controlling: system.system_details.controlling_minor_faction_id === faction._id ? '👑' : '',
+    influence: system.influence * 100,
+    name: system.system_name,
+    population: system.system_details.population,
+    system_id: system.system_id,
+    from_now: moment(system.updated_at).fromNow(true),
+    age_flag: getChipColour(-(moment().diff(moment(system.updated_at), 'days', true) - 1))
+  }
+}
+
 const formattedSystem = (system, getters) => {
   return _isEmpty(system) ? {} : {
     ...system,
@@ -106,10 +121,36 @@ const formattedSystem = (system, getters) => {
   }
 }
 
+const factionDetailsTable = (faction, system) => {
+  return {
+    ...faction.faction_details.faction_presence,
+    is_controlling: faction.faction_id === system.controlling_minor_faction_id ? '👑' : '',
+    influence: faction.faction_details.faction_presence.influence * 100,
+    name: faction.name,
+    faction_id: faction.faction_id,
+    from_now: moment(faction.faction_details.faction_presence.updated_at).fromNow(true),
+    age_flag: getChipColour(-(moment().diff(moment(faction.faction_details.faction_presence.updated_at), 'days', true) - 1))
+  }
+}
+
+const getChipColour = value => {
+  if (value === 0) {
+    return 'info'
+  } else if (value > 0) {
+    return 'success'
+  } else {
+    return 'error'
+  }
+}
+
 export {
   getName,
   formatTime,
+  formatDate,
   titlify,
   formattedFaction,
-  formattedSystem
+  systemDetailsTable,
+  formattedSystem,
+  factionDetailsTable,
+  getChipColour
 }

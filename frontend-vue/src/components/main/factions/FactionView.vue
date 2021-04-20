@@ -30,59 +30,7 @@
         </v-col>
       </v-row>
     </v-form>
-    <v-data-table
-      class="elevation-1"
-      :headers="headers"
-      :items="system_details"
-      :search="factionFilter"
-      hide-default-footer
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'system-detail', params: { systemId: item.system_id }}">{{
-            item.name
-          }}
-        </router-link>
-      </template>
-      <template v-slot:item.active_states="{item}">
-        <v-chip
-          v-for="active_state in item.active_states"
-          :key="active_state.state"
-          dark
-          :color="getChipColour(active_state.trend)"
-          x-small>
-          {{ active_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.pending_states="{item}">
-        <v-chip
-          v-for="pending_state in item.pending_states"
-          :key="pending_state.state"
-          dark
-          :color="getChipColour(pending_state.trend)"
-          x-small>
-          {{ pending_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.recovering_states="{item}">
-        <v-chip
-          v-for="recovering_state in item.recovering_states"
-          :key="recovering_state.state"
-          dark
-          :color="getChipColour(recovering_state.trend)"
-          x-small>
-          {{ recovering_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.influence="{item}">
-        {{ item.influence.toFixed(2) }}%
-      </template>
-      <template v-slot:item.updated_at="{item}">
-        {{ formatDate(item.updated_at) }}
-        <v-chip small :color="item.age_flag" dark>
-          {{ item.from_now }}
-        </v-chip>
-      </template>
-    </v-data-table>
+    <faction-table :loading="loading" :system-details="systemDetails" :faction-filter="factionFilter"/>
     <h2 class="py-8">Conflicts</h2>
     <v-data-table
       dense
@@ -171,7 +119,7 @@
             Influences
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-influence-chart :faction-data="faction"></faction-influence-chart>
+            <faction-influence-chart :faction-data="faction"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -179,7 +127,7 @@
             State Periods
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-chart :faction-data="faction"></faction-state-chart>
+            <faction-state-chart :faction-data="faction"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -187,7 +135,7 @@
             Active State Periods
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="active"></faction-state-apr-chart>
+            <faction-state-apr-chart :faction-data="faction" type="active"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -195,7 +143,7 @@
             Pending State Periods
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="pending"></faction-state-apr-chart>
+            <faction-state-apr-chart :faction-data="faction" type="pending"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -203,7 +151,7 @@
             Recovering State Periods
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="recovering"></faction-state-apr-chart>
+            <faction-state-apr-chart :faction-data="faction" type="recovering"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -211,7 +159,7 @@
             Happiness Periods
           </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-happiness-chart :faction-data="faction"></faction-happiness-chart>
+            <faction-happiness-chart :faction-data="faction"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -226,15 +174,19 @@ import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
 import FactionStateChart from '@/components/charts/FactionStateChart'
 import FactionAPRStateChart from '@/components/charts/FactionAPRStateChart'
 import FactionHappinessChart from '@/components/charts/FactionHappinessChart'
+import componentMethods from '@/mixins/componentMethods'
+import FactionTable from '@/components/main/factions/FactionTable'
 
 export default {
   name: 'FactionView',
   components: {
+    'faction-table': FactionTable,
     'faction-influence-chart': FactionInfluenceChart,
     'faction-state-chart': FactionStateChart,
     'faction-state-apr-chart': FactionAPRStateChart,
     'faction-happiness-chart': FactionHappinessChart
   },
+  mixins: [componentMethods],
   data () {
     return {
       loading: false,
@@ -248,46 +200,6 @@ export default {
       datePickerMenu: false,
       currentUtcDate: '',
       dateFormat: 'YYYY-MM-DD',
-      headers: [{
-        text: '👑',
-        value: 'controlling'
-      }, {
-        text: 'System Name',
-        value: 'name'
-      }, {
-        text: 'Influence',
-        value: 'influence',
-        filterable: false
-      }, {
-        text: 'State',
-        value: 'state'
-      }, {
-        text: 'Happiness',
-        value: 'happiness'
-      }, {
-        text: 'Active States',
-        value: 'active_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Pending States',
-        value: 'pending_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Recovering States',
-        value: 'recovering_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Population',
-        value: 'population',
-        filterable: false
-      }, {
-        text: 'Last Updated At (UTC)',
-        value: 'updated_at',
-        filterable: false
-      }],
       conflictHeaders: [{
         text: 'System Name',
         value: 'system_name'
@@ -330,18 +242,9 @@ export default {
     ...mapGetters({
       faction: 'friendlyFaction'
     }),
-    system_details () {
+    systemDetails () {
       return this.faction.faction_presence?.map(system => {
-        return {
-          ...system,
-          controlling: system.system_details.controlling_minor_faction_id === this.faction._id ? '👑' : '',
-          influence: system.influence * 100,
-          name: system.system_name,
-          population: system.system_details.population,
-          system_id: system.system_id,
-          from_now: moment(system.updated_at).fromNow(true),
-          age_flag: this.getChipColour(-(moment().diff(moment(system.updated_at), 'days', true) - 1))
-        }
+        return this.systemDetailsTable(system, this.faction)
       })
     },
     datePickerDisplay () {
@@ -352,18 +255,6 @@ export default {
     ...mapMutations([
       'setSelectedFaction'
     ]),
-    formatDate (date) {
-      return moment(date).utc().format('ddd, MMM D, HH:mm:ss')
-    },
-    getChipColour (value) {
-      if (value === 0) {
-        return 'info'
-      } else if (value > 0) {
-        return 'success'
-      } else {
-        return 'error'
-      }
-    },
     onChangedFilterDates (value) {
       if (value) {
         if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {

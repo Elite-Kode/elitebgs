@@ -17,19 +17,19 @@
       </section>
       <section>
         <v-card class="my-3">
-          <v-expansion-panels accordion multiple>
-            <v-expansion-panel v-for="faction of factions" :key="faction._id">
+          <v-expansion-panels accordion multiple v-model="factionsPanel">
+            <v-expansion-panel v-for="(faction, index) of factions" :key="faction._id">
               <v-expansion-panel-header class="py-0">
                 {{ faction.name }}
               </v-expansion-panel-header>
               <v-expansion-panel-content class="custom-padding">
-                <v-expansion-panels accordion multiple>
+                <v-expansion-panels accordion multiple v-model="factionsDataPanel[index]">
                   <v-expansion-panel>
                     <v-expansion-panel-header class="py-0">
                       Current State
                     </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      Table
+                      <faction-table :system-details="systemDetails(faction)"/>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                   <v-expansion-panel>
@@ -37,7 +37,7 @@
                       Last 10 Days
                     </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      Influence Chart
+                      <faction-influence-chart :faction-data="faction"/>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -56,19 +56,19 @@
       </section>
       <section>
         <v-card class="my-3">
-          <v-expansion-panels accordion multiple>
-            <v-expansion-panel v-for="system of systems" :key="system._id">
+          <v-expansion-panels accordion multiple v-model="systemsPanel">
+            <v-expansion-panel v-for="(system, index) of systems" :key="system._id">
               <v-expansion-panel-header class="py-0">
                 {{ system.name }}
               </v-expansion-panel-header>
               <v-expansion-panel-content class="custom-padding">
-                <v-expansion-panels accordion multiple>
+                <v-expansion-panels accordion multiple v-model="systemsDataPanel[index]">
                   <v-expansion-panel>
                     <v-expansion-panel-header class="py-0">
                       Current State
                     </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      Table
+                      <system-table :faction-details="factionDetails(system)"/>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                   <v-expansion-panel>
@@ -76,7 +76,7 @@
                       Last 10 Days
                     </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      Influence Chart
+                      <system-influence-chart :system-data="system"/>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -93,20 +93,34 @@
 import LoginCard from '@/components/LoginCard'
 import _isEmpty from 'lodash/isEmpty'
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import FactionTable from '@/components/main/factions/FactionTable'
+import componentMethods from '@/mixins/componentMethods'
+import SystemTable from '@/components/main/systems/SystemTable'
+import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
+import SystemInfluenceChart from '@/components/charts/SystemInfluenceChart'
 
 export default {
   name: 'HomeView',
   components: {
+    'faction-influence-chart': FactionInfluenceChart,
+    'system-influence-chart': SystemInfluenceChart,
+    'faction-table': FactionTable,
+    'system-table': SystemTable,
     'login-card': LoginCard
   },
+  mixins: [componentMethods],
   data () {
     return {
       bannedAccess: 'BANNED',
       normalAccess: 'NORMAL',
-      adminAccess: 'ADMIN'
+      adminAccess: 'ADMIN',
+      factionsPanel: [],
+      factionsDataPanel: [],
+      systemsPanel: [],
+      systemsDataPanel: []
     }
   },
-  async created () {
+  created () {
     if (this.authUser && !_isEmpty(this.authUser)) {
       this.fetchFactionWithHistoryById()
       this.fetchSystemWithHistoryById()
@@ -139,12 +153,14 @@ export default {
       // this.loading = true
       let factions = this.authUser.factions
       factions.sort((first, second) => first.name_lower > second.name_lower)
-      let factionPromises = factions.map(async faction => {
+      let factionPromises = factions.map(async (faction, index) => {
         let factionsPaginated = await this.$store.dispatch('fetchFactionWithHistoryById', {
           id: faction.id,
-          timeMin: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-          timeMax: new Date(Date.now())
+          timeMin: Date.now() - 10 * 24 * 60 * 60 * 1000,
+          timeMax: Date.now()
         })
+        this.factionsPanel.push(index)
+        this.factionsDataPanel.push([0, 1])
         return factionsPaginated.docs[0]
       })
       this.setUserFactions(await Promise.all(factionPromises))
@@ -154,16 +170,28 @@ export default {
       // this.loading = true
       let systems = this.authUser.systems
       systems.sort((first, second) => first.name_lower > second.name_lower)
-      let systemPromises = systems.map(async system => {
+      let systemPromises = systems.map(async (system, index) => {
         let systemsPaginated = await this.$store.dispatch('fetchSystemWithHistoryById', {
           id: system.id,
-          timeMin: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-          timeMax: new Date(Date.now())
+          timeMin: Date.now() - 10 * 24 * 60 * 60 * 1000,
+          timeMax: Date.now()
         })
+        this.systemsPanel.push(index)
+        this.systemsDataPanel.push([0, 1])
         return systemsPaginated.docs[0]
       })
       this.setUserSystems(await Promise.all(systemPromises))
       // this.loading = false
+    },
+    systemDetails (faction) {
+      return faction.faction_presence?.map(system => {
+        return this.systemDetailsTable(system, faction)
+      })
+    },
+    factionDetails (system) {
+      return system.factions?.map(faction => {
+        return this.factionDetailsTable(faction, system)
+      })
     }
   }
 }

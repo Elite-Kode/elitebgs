@@ -45,59 +45,7 @@
         </v-col>
       </v-row>
     </v-form>
-    <v-data-table
-      class="elevation-1"
-      :headers="headers"
-      :items="faction_details"
-      :search="systemFilter"
-      hide-default-footer
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'faction-detail', params: { factionId: item.faction_id }}">{{
-            item.name
-          }}
-        </router-link>
-      </template>
-      <template v-slot:item.active_states="{item}">
-        <v-chip
-          v-for="active_state in item.active_states"
-          :key="active_state.state"
-          dark
-          :color="getChipColour(active_state.trend)"
-          x-small>
-          {{ active_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.pending_states="{item}">
-        <v-chip
-          v-for="pending_state in item.pending_states"
-          :key="pending_state.state"
-          dark
-          :color="getChipColour(pending_state.trend)"
-          x-small>
-          {{ pending_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.recovering_states="{item}">
-        <v-chip
-          v-for="recovering_state in item.recovering_states"
-          :key="recovering_state.state"
-          dark
-          :color="getChipColour(recovering_state.trend)"
-          x-small>
-          {{ recovering_state.state }}
-        </v-chip>
-      </template>
-      <template v-slot:item.influence="{item}">
-        {{ item.influence.toFixed(2) }}%
-      </template>
-      <template v-slot:item.updated_at="{item}">
-        {{ formatDate(item.updated_at) }}
-        <v-chip small :color="item.age_flag" dark>
-          {{ item.from_now }}
-        </v-chip>
-      </template>
-    </v-data-table>
+    <system-table :loading="loading" :faction-details="factionDetails" :system-filter="systemFilter"/>
     <h2 class="py-8">Conflicts</h2>
     <v-expansion-panels focusable accordion multiple v-model="conflictsPanel"
                         v-if="system.conflicts && system.conflicts.length>0">
@@ -252,15 +200,19 @@ import SystemInfluenceChart from '@/components/charts/SystemInfluenceChart'
 import SystemStateChart from '@/components/charts/SystemStateChart'
 import SystemAPRStateChart from '@/components/charts/SystemAPRStateChart'
 import SystemHappinessChart from '@/components/charts/SystemHappinessChart'
+import componentMethods from '@/mixins/componentMethods'
+import SystemTable from '@/components/main/systems/SystemTable'
 
 export default {
   name: 'SystemView',
   components: {
+    'system-table': SystemTable,
     'system-influence-chart': SystemInfluenceChart,
     'system-state-chart': SystemStateChart,
     'system-state-apr-chart': SystemAPRStateChart,
     'system-happiness-chart': SystemHappinessChart
   },
+  mixins: [componentMethods],
   data () {
     return {
       loading: false,
@@ -271,42 +223,6 @@ export default {
       datePickerMenu: false,
       currentUtcDate: '',
       dateFormat: 'YYYY-MM-DD',
-      headers: [{
-        text: '👑',
-        value: 'is_controlling'
-      }, {
-        text: 'Faction Name',
-        value: 'name'
-      }, {
-        text: 'Influence',
-        value: 'influence',
-        filterable: false
-      }, {
-        text: 'State',
-        value: 'state'
-      }, {
-        text: 'Happiness',
-        value: 'happiness'
-      }, {
-        text: 'Active States',
-        value: 'active_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Pending States',
-        value: 'pending_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Recovering States',
-        value: 'recovering_states',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Last Updated At (UTC)',
-        value: 'updated_at',
-        filterable: false
-      }],
       chartsPanel: [0, 1, 2, 3, 4, 5]
     }
   },
@@ -330,17 +246,9 @@ export default {
     ...mapGetters({
       system: 'friendlySystem'
     }),
-    faction_details () {
+    factionDetails () {
       return this.system.factions?.map(faction => {
-        return {
-          ...faction.faction_details.faction_presence,
-          is_controlling: faction.faction_id === this.system.controlling_minor_faction_id ? '👑' : '',
-          influence: faction.faction_details.faction_presence.influence * 100,
-          name: faction.name,
-          faction_id: faction.faction_id,
-          from_now: moment(faction.faction_details.faction_presence.updated_at).fromNow(true),
-          age_flag: this.getChipColour(-(moment().diff(moment(faction.faction_details.faction_presence.updated_at), 'days', true) - 1))
-        }
+        return this.factionDetailsTable(faction, this.system)
       })
     },
     datePickerDisplay () {
@@ -351,18 +259,6 @@ export default {
     ...mapMutations([
       'setSelectedSystem'
     ]),
-    formatDate (date) {
-      return moment(date).utc().format('ddd, MMM D, HH:mm:ss')
-    },
-    getChipColour (value) {
-      if (value === 0) {
-        return 'info'
-      } else if (value > 0) {
-        return 'success'
-      } else {
-        return 'error'
-      }
-    },
     onChangedFilterDates (value) {
       if (value) {
         if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {
