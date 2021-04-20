@@ -21,6 +21,14 @@
             <v-expansion-panel v-for="(faction, index) of factions" :key="faction._id">
               <v-expansion-panel-header class="py-0">
                 {{ faction.name }}
+                <v-spacer/>
+                <v-btn
+                  outlined color="primary"
+                  :to="{ name: 'faction-detail', params: { factionId: faction._id }}"
+                  class="flex-grow-0 mr-3"
+                >
+                  Go to Faction
+                </v-btn>
               </v-expansion-panel-header>
               <v-expansion-panel-content class="custom-padding">
                 <v-expansion-panels accordion multiple v-model="factionsDataPanel[index]">
@@ -60,6 +68,14 @@
             <v-expansion-panel v-for="(system, index) of systems" :key="system._id">
               <v-expansion-panel-header class="py-0">
                 {{ system.name }}
+                <v-spacer/>
+                <v-btn
+                  outlined color="primary"
+                  :to="{ name: 'system-detail', params: { systemId: system._id }}"
+                  class="flex-grow-0 mr-3"
+                >
+                  Go to System
+                </v-btn>
               </v-expansion-panel-header>
               <v-expansion-panel-content class="custom-padding">
                 <v-expansion-panels accordion multiple v-model="systemsDataPanel[index]">
