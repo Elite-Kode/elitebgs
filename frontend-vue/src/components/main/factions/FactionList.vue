@@ -28,9 +28,11 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { debounceTime, switchMap } from 'rxjs/operators'
+import factionMethods from '@/mixins/factionMethods'
 
 export default {
   name: 'FactionList',
+  mixins: [factionMethods],
   // Todo: See issue https://github.com/vuetifyjs/vuetify/issues/13378
   // metaInfo: {
   //   title: 'Faction Search - Elite BGS'
@@ -64,10 +66,7 @@ export default {
       .pipe(debounceTime(300))
       .pipe(switchMap(value => {
         this.loading = true
-        return this.$store.dispatch('fetchFactions', {
-          page: this.page,
-          beginsWith: value.newValue
-        })
+        return this.fetchFactionsCall(this.page, value.newValue)
       }))
       .subscribe(factionsPaginated => {
         this.setFactions(factionsPaginated.docs)
@@ -91,10 +90,7 @@ export default {
     ]),
     async fetchFactions () {
       this.loading = true
-      let factionsPaginated = await this.$store.dispatch('fetchFactions', {
-        page: this.page,
-        beginsWith: this.factionName
-      })
+      let factionsPaginated = await this.fetchFactionsCall(this.page, this.factionName)
       this.setFactions(factionsPaginated.docs)
       this.totalFactions = factionsPaginated.total
       this.loading = false

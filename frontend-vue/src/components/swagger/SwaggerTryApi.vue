@@ -51,13 +51,13 @@
                   :value="parameter"
                   :items="parameters"
                   item-text="name"
-                  label="Parameter"></v-autocomplete>
+                  label="Parameter"/>
               </v-col>
               <v-col cols="12" sm="12" md="8">
                 <v-text-field
                   label="Value"
                   @input="parameterValueChanged($event, index)"
-                  :value="parameterSelectedValues[index]"></v-text-field>
+                  :value="parameterSelectedValues[index]"/>
               </v-col>
             </v-row>
             <v-btn color="error" class="ml-4" @click="deleteParameter(index)">

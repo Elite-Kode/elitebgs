@@ -10,10 +10,7 @@
       <section class="d-flex">
         <h1>Monitoring Factions</h1>
         <v-spacer/>
-        <v-btn class="primary">
-          <v-icon>add</v-icon>
-          Add
-        </v-btn>
+        <entity-add search-type="FACTION"/>
       </section>
       <section>
         <v-card class="my-3">
@@ -57,10 +54,7 @@
       <section class="d-flex">
         <h1>Monitoring Systems</h1>
         <v-spacer/>
-        <v-btn class="primary">
-          <v-icon>add</v-icon>
-          Add
-        </v-btn>
+        <entity-add search-type="SYSTEM"/>
       </section>
       <section>
         <v-card class="my-3">
@@ -114,10 +108,12 @@ import componentMethods from '@/mixins/componentMethods'
 import SystemTable from '@/components/main/systems/SystemTable'
 import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
 import SystemInfluenceChart from '@/components/charts/SystemInfluenceChart'
+import EntityAdd from '@/components/main/home/EntityAdd'
 
 export default {
   name: 'HomeView',
   components: {
+    'entity-add': EntityAdd,
     'faction-influence-chart': FactionInfluenceChart,
     'system-influence-chart': SystemInfluenceChart,
     'faction-table': FactionTable,

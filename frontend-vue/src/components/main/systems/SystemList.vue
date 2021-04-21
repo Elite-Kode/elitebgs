@@ -28,9 +28,11 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { debounceTime, switchMap } from 'rxjs/operators'
+import systemMethods from '@/mixins/systemMethods'
 
 export default {
   name: 'SystemList',
+  mixins: [systemMethods],
   // Todo: See issue https://github.com/vuetifyjs/vuetify/issues/13378
   // metaInfo: {
   //   title: 'System Search - Elite BGS'
@@ -73,10 +75,7 @@ export default {
       .pipe(debounceTime(300))
       .pipe(switchMap(value => {
         this.loading = true
-        return this.$store.dispatch('fetchSystems', {
-          page: this.page,
-          beginsWith: value.newValue
-        })
+        return this.fetchSystemsCall(this.page, value.newValue)
       }))
       .subscribe(systemsPaginated => {
         this.setSystems(systemsPaginated.docs)
@@ -100,10 +99,7 @@ export default {
     ]),
     async fetchSystems () {
       this.loading = true
-      let systemsPaginated = await this.$store.dispatch('fetchSystems', {
-        page: this.page,
-        beginsWith: this.systemName
-      })
+      let systemsPaginated = await this.fetchSystemsCall(this.page, this.systemName)
       this.setSystems(systemsPaginated.docs)
       this.totalSystems = systemsPaginated.total
       this.loading = false
