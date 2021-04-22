@@ -75,8 +75,10 @@
           <v-icon v-if="theme === themes[0]">brightness_3</v-icon>
           <v-icon v-if="theme === themes[1]">wb_sunny</v-icon>
         </v-btn>
-        <v-btn v-if="authenticated && (authUser.access === adminAccess)"
-               :to="{name: 'mod-queue'}" exact icon>
+        <v-btn
+          v-if="authenticated && (authUser.access === adminAccess)"
+          :to="{name: 'admin-data'}" exact icon
+        >
           <v-icon>fas fa-user-secret</v-icon>
         </v-btn>
         <v-btn exact icon :to="{name: 'about'}">
@@ -139,8 +141,9 @@
           <v-list-item
             v-if="authenticated && (authUser.access === adminAccess)"
             :ripple="false"
-            :to="{name: 'mod-queue'}"
-            exact>
+            :to="{name: 'admin-data'}"
+            exact
+          >
             <v-list-item-icon class="mr-0">
               <v-icon>fas fa-user-secret</v-icon>
             </v-list-item-icon>

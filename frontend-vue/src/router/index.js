@@ -28,6 +28,8 @@ import BgsBotDocs from '@/components/docs/bgsBot/BgsBotDocs'
 import SwaggerHome from '@/components/swagger/SwaggerHome'
 import SwaggerPath from '@/components/swagger/SwaggerPath'
 import SwaggerDefinition from '@/components/swagger/SwaggerDefinition'
+import AdminData from '@/components/admin/AdminData'
+import AdminUserList from '@/components/admin/users/AdminUserList'
 
 Vue.use(Router)
 
@@ -137,7 +139,15 @@ export default new Router({
       }, {
         path: '/admin',
         component: Admin,
-        name: 'admin'
+        children: [{
+          path: '',
+          component: AdminData,
+          name: 'admin-data'
+        }, {
+          path: 'users',
+          component: AdminUserList,
+          name: 'admin-users'
+        }]
       }, {
         path: '/tick',
         component: Tick,
