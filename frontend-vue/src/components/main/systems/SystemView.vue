@@ -319,7 +319,7 @@ export default {
       this.$store.dispatch('saveUserSystems', [this.system._id])
     },
     stopMonitor () {
-      console.log(this.system)
+      this.$store.dispatch('deleteUserSystem', this.system._id)
     }
   }
 }

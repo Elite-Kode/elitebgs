@@ -315,10 +315,10 @@ export default {
       this.loading = false
     },
     monitor () {
-      this.$store.dispatch('saveUserFactions', [this.system._id])
+      this.$store.dispatch('saveUserFactions', [this.faction._id])
     },
     stopMonitor () {
-      console.log(this.system)
+      this.$store.dispatch('deleteUserFaction', this.faction._id)
     }
   }
 }

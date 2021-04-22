@@ -33,6 +33,18 @@ const actions = {
   async saveUserStations (context, stations) {
     let response = await axios.post('/auth/user/monitor/stations', { stations: stations.join() })
     return response.data
+  },
+  async deleteUserFaction (context, faction) {
+    let response = await axios.delete('/auth/user/monitor/factions', { params: { faction } })
+    return response.data
+  },
+  async deleteUserSystem (context, system) {
+    let response = await axios.delete('/auth/user/monitor/systems', { params: { system } })
+    return response.data
+  },
+  async deleteUserStation (context, station) {
+    let response = await axios.delete('/auth/user/monitor/stations', { params: { station } })
+    return response.data
   }
 }
 

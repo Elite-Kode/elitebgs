@@ -128,48 +128,63 @@ router.post('/monitor/systems', async (req, res, next) => {
   }
 })
 
-router.delete('/edit', async (req, res, next) => {
-    if (req.user) {
-        try {
-            let users = require('../../models/ebgs_users');
-            let user = req.user;
-            if (req.query.faction) {
-                let index = user.factions.findIndex(element => {
-                    return element.name_lower === req.query.faction.toLowerCase();
-                });
-                if (index !== -1) {
-                    user.factions.splice(index, 1);
-                } else {
-                    res.send(false);
-                    return;
-                }
+router.delete('/monitor/factions', async (req, res, next) => {
+  if (req.user) {
+    try {
+      let users = require('../../models/ebgs_users')
+      if (req.query.faction) {
+        await users.findOneAndUpdate({
+            _id: req.user._id
+          },
+          {
+            $pull: {
+              factions: {
+                id: req.query.faction
+              }
             }
-            if (req.query.system) {
-                let index = user.systems.findIndex(element => {
-                    return element.name_lower === req.query.system.toLowerCase();
-                });
-                if (index !== -1) {
-                    user.systems.splice(index, 1);
-                } else {
-                    res.send(false);
-                    return;
-                }
-            }
-            await users.findOneAndUpdate({
-                _id: req.user._id
-            },
-                user, {
-                    upsert: false,
-                    runValidators: true
-                });
-            res.send(true);
-        } catch (err) {
-            console.log(err);
-            res.send(false);
-            next(err);
-        }
+          },
+          {
+            upsert: false,
+            runValidators: true
+          })
+      }
+      res.send(true)
+    } catch (err) {
+      console.log(err)
+      res.send(false)
+      next(err)
     }
-});
+  }
+})
+
+router.delete('/monitor/systems', async (req, res, next) => {
+  if (req.user) {
+    try {
+      let users = require('../../models/ebgs_users')
+      if (req.query.system) {
+        await users.findOneAndUpdate({
+            _id: req.user._id
+          },
+          {
+            $pull: {
+              systems: {
+                id: req.query.system
+              }
+            }
+          },
+          {
+            upsert: false,
+            runValidators: true
+          })
+      }
+      res.send(true)
+    } catch (err) {
+      console.log(err)
+      res.send(false)
+      next(err)
+    }
+  }
+})
 
 router.delete('/delete', async (req, res, next) => {
     if (req.user && (req.user._id === req.query.userid || req.user.access === adminAccess)) {
