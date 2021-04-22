@@ -1,4 +1,5 @@
 import { formattedFaction, formattedSystem } from '@/store/helpers'
+import axios from 'axios'
 
 const state = {
   factions: [],
@@ -20,7 +21,20 @@ const mutations = {
     state.systems = systems
   }
 }
-const actions = {}
+const actions = {
+  async saveUserFactions (context, factions) {
+    let response = await axios.post('/auth/user/monitor/factions', { factions: factions.join() })
+    return response.data
+  },
+  async saveUserSystems (context, systems) {
+    let response = await axios.post('/auth/user/monitor/systems', { systems: systems.join() })
+    return response.data
+  },
+  async saveUserStations (context, stations) {
+    let response = await axios.post('/auth/user/monitor/stations', { stations: stations.join() })
+    return response.data
+  }
+}
 
 export default {
   state,

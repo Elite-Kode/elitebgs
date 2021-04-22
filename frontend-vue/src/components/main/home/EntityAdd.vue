@@ -139,10 +139,12 @@ export default {
     async submit () {
       switch (this.searchType) {
         case 'FACTION': {
+          await this.$store.dispatch('saveUserFactions', this.entitiesSelected)
           await this.fetchFactions()
           break
         }
         case 'SYSTEM': {
+          await this.$store.dispatch('saveUserSystems', this.entitiesSelected)
           await this.fetchSystems()
           break
         }

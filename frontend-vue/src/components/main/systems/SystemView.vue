@@ -1,37 +1,45 @@
 <template>
   <div>
     <h1>{{ system.name }}</h1>
-    <v-btn-toggle multiple max=0>
-      <v-btn color="primary">
+    <v-btn-toggle max=0 multiple>
+      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor" disabled>
+        Stop Monitoring
+      </v-btn>
+      <v-btn v-else color="primary" @click="monitor">
         Monitor System
       </v-btn>
-      <v-btn color="primary">
+      <v-btn
+        :href="`https://eddb.io/system/${system.eddb_id}`"
+        color="primary"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         EDDB
       </v-btn>
     </v-btn-toggle>
     <v-row class="pt-8">
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Government : </b>{{ system.government }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Allegiance : </b>{{ system.allegiance }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Primary Economy : </b>{{ system.primary_economy }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Secondary Economy : </b>{{ system.secondary_economy }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>State : </b>{{ system.state }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Security : </b>{{ system.security }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Population : </b>{{ system.population }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Controlling Faction : </b>
         <router-link :to="{ name: 'faction-detail', params: { factionId: system.controlling_minor_faction_id }}">
           {{ system.controlling_minor_faction_cased }}
@@ -45,10 +53,15 @@
         </v-col>
       </v-row>
     </v-form>
-    <system-table :loading="loading" :faction-details="factionDetails" :system-filter="systemFilter"/>
+    <system-table :faction-details="factionDetails" :loading="loading" :system-filter="systemFilter"/>
     <h2 class="py-8">Conflicts</h2>
-    <v-expansion-panels focusable accordion multiple v-model="conflictsPanel"
-                        v-if="system.conflicts && system.conflicts.length>0">
+    <v-expansion-panels
+      v-if="system.conflicts && system.conflicts.length>0"
+      v-model="conflictsPanel"
+      accordion
+      focusable
+      multiple
+    >
       <v-expansion-panel v-for="conflict in system.conflicts" :key="conflict.faction1.faction_id">
         <v-expansion-panel-header>
           {{ conflict.faction1.name }} vs {{ conflict.faction2.name }}
@@ -56,7 +69,7 @@
         <v-expansion-panel-content>
           <p class="pt-4">Conflict Type: {{ conflict.type }}</p>
           <p>Conflict Status: {{ conflict.status }}</p>
-          <v-simple-table dense class="elevation-1">
+          <v-simple-table class="elevation-1" dense>
             <thead>
             <tr>
               <th>{{ conflict.faction1.name }}</th>
@@ -85,35 +98,35 @@
         <v-menu
           ref="datepickerRef"
           v-model="datePickerMenu"
-          transition="scale-transition"
-          offset-y
-          offset-x
-          @update:return-value="onChangedFilterDates"
-          min-width="auto"
           :close-on-content-click="false"
+          min-width="auto"
+          offset-x
+          offset-y
+          transition="scale-transition"
+          @update:return-value="onChangedFilterDates"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              v-bind="attrs"
+              v-on="on"
+              :value="datePickerDisplay"
               label="Click to select date range (UTC)"
               prepend-icon="event"
               readonly
-              :value="datePickerDisplay"
-              v-bind="attrs"
-              v-on="on"
             ></v-text-field>
           </template>
           <v-date-picker
             v-model="changedFilterDates"
-            range
             :show-current="currentUtcDate"
+            range
             show-adjacent-months
           >
             <v-row>
               <v-col cols="12" sm="6">
                 <v-btn
                   block
-                  text
                   color="error"
+                  text
                   @click="datePickerMenu = false"
                 >
                   Cancel
@@ -122,8 +135,8 @@
               <v-col cols="12" sm="6">
                 <v-btn
                   block
-                  text
                   color="success"
+                  text
                   @click="$refs.datepickerRef.save(changedFilterDates)"
                 >
                   OK
@@ -139,7 +152,7 @@
         Graphs
       </v-card-title>
 
-      <v-expansion-panels accordion multiple v-model="chartsPanel">
+      <v-expansion-panels v-model="chartsPanel" accordion multiple>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0">
             Influences
@@ -194,7 +207,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import SystemInfluenceChart from '@/components/charts/SystemInfluenceChart'
 import SystemStateChart from '@/components/charts/SystemStateChart'
@@ -246,6 +259,12 @@ export default {
     ...mapGetters({
       system: 'friendlySystem'
     }),
+    ...mapState({
+      authUser: state => state.auth.user
+    }),
+    isMonitored () {
+      return this.authUser?.systems?.findIndex(system => system.id === this.system._id) !== -1
+    },
     factionDetails () {
       return this.system.factions?.map(faction => {
         return this.factionDetailsTable(faction, this.system)
@@ -295,6 +314,12 @@ export default {
         return index
       })
       this.loading = false
+    },
+    monitor () {
+      this.$store.dispatch('saveUserSystems', [this.system._id])
+    },
+    stopMonitor () {
+      console.log(this.system)
     }
   }
 }

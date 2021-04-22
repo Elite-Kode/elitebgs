@@ -1,25 +1,33 @@
 <template>
   <div>
     <h1>{{ faction.name }}</h1>
-    <v-btn-toggle multiple max=0>
-      <v-btn color="primary">
+    <v-btn-toggle max=0 multiple>
+      <v-btn v-if="isMonitored" color="primary" disabled outlined @click="stopMonitor">
+        Stop Monitoring
+      </v-btn>
+      <v-btn v-else color="primary" @click="monitor">
         Monitor Faction
       </v-btn>
-      <v-btn color="primary">
+      <v-btn
+        :href="`https://eddb.io/faction/${faction.eddb_id}`"
+        color="primary"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         EDDB
       </v-btn>
     </v-btn-toggle>
     <v-row class="pt-8">
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Government : </b>{{ faction.government }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Allegiance : </b>{{ faction.allegiance }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Systems Presence : </b>{{ systemsPresence }}
       </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4" xl="3">
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Systems Controlled : </b>{{ systemsControlled }}
       </v-col>
     </v-row>
@@ -30,15 +38,15 @@
         </v-col>
       </v-row>
     </v-form>
-    <faction-table :loading="loading" :system-details="systemDetails" :faction-filter="factionFilter"/>
+    <faction-table :faction-filter="factionFilter" :loading="loading" :system-details="systemDetails"/>
     <h2 class="py-8">Conflicts</h2>
     <v-data-table
-      dense
+      v-if="conflicts && conflicts.length>0"
       :headers="conflictHeaders"
       :items="conflicts"
       class="elevation-1"
+      dense
       hide-default-footer
-      v-if="conflicts && conflicts.length>0"
     >
       <template v-slot:item.stake="{item}">
         {{ getConflictStakeMessage(item.stake) }}
@@ -60,35 +68,35 @@
         <v-menu
           ref="datepickerRef"
           v-model="datePickerMenu"
-          transition="scale-transition"
-          offset-y
-          offset-x
-          @update:return-value="onChangedFilterDates"
-          min-width="auto"
           :close-on-content-click="false"
+          min-width="auto"
+          offset-x
+          offset-y
+          transition="scale-transition"
+          @update:return-value="onChangedFilterDates"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              v-bind="attrs"
+              v-on="on"
+              :value="datePickerDisplay"
               label="Click to select date range (UTC)"
               prepend-icon="event"
               readonly
-              :value="datePickerDisplay"
-              v-bind="attrs"
-              v-on="on"
             ></v-text-field>
           </template>
           <v-date-picker
             v-model="changedFilterDates"
-            range
             :show-current="currentUtcDate"
+            range
             show-adjacent-months
           >
             <v-row>
               <v-col cols="12" sm="6">
                 <v-btn
                   block
-                  text
                   color="error"
+                  text
                   @click="datePickerMenu = false"
                 >
                   Cancel
@@ -97,8 +105,8 @@
               <v-col cols="12" sm="6">
                 <v-btn
                   block
-                  text
                   color="success"
+                  text
                   @click="$refs.datepickerRef.save(changedFilterDates)"
                 >
                   OK
@@ -113,7 +121,7 @@
       <v-card-title>
         Graphs
       </v-card-title>
-      <v-expansion-panels accordion multiple v-model="chartsPanel">
+      <v-expansion-panels v-model="chartsPanel" accordion multiple>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0">
             Influences
@@ -168,7 +176,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import FactionInfluenceChart from '@/components/charts/FactionInfluenceChart'
 import FactionStateChart from '@/components/charts/FactionStateChart'
@@ -242,6 +250,12 @@ export default {
     ...mapGetters({
       faction: 'friendlyFaction'
     }),
+    ...mapState({
+      authUser: state => state.auth.user
+    }),
+    isMonitored () {
+      return this.authUser?.factions?.findIndex(faction => faction.id === this.faction._id) !== -1
+    },
     systemDetails () {
       return this.faction.faction_presence?.map(system => {
         return this.systemDetailsTable(system, this.faction)
@@ -299,6 +313,12 @@ export default {
         }
       }, 0)
       this.loading = false
+    },
+    monitor () {
+      this.$store.dispatch('saveUserFactions', [this.system._id])
+    },
+    stopMonitor () {
+      console.log(this.system)
     }
   }
 }

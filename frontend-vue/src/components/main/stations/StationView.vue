@@ -5,7 +5,11 @@
       <v-btn color="primary">
         Monitor Station
       </v-btn>
-      <v-btn color="primary">
+      <v-btn color="primary"
+             :href="`https://eddb.io/station/${station.eddb_id}`"
+             target="_blank"
+             rel="noopener noreferrer"
+      >
         EDDB
       </v-btn>
     </v-btn-toggle>

@@ -186,7 +186,7 @@ passport.deserializeUser(async (id, done) => {
 let onAuthentication = async (accessToken, refreshToken, profile, done, type) => {
     try {
         let model = require('./models/ebgs_users');
-        let user = await model.findOne({ id: profile.id });
+        let user = await model.findOne({ id: profile.id }).lean();
         if (user) {
             let updatedUser = {
                 id: profile.id,
