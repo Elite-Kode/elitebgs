@@ -10,11 +10,13 @@ import stations from '@/store/modules/stations'
 import ticks from '@/store/modules/ticks'
 import tryApi from '@/store/modules/tryApi'
 import users from '@/store/modules/users'
+import admin from '@/store/modules/admin'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    admin,
     themes,
     auth,
     ingameIds,

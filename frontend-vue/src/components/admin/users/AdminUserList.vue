@@ -27,7 +27,7 @@
 
 <script>
 import { debounceTime, switchMap } from 'rxjs/operators'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'AdminUserList',
@@ -63,17 +63,20 @@ export default {
       .pipe(debounceTime(300))
       .pipe(switchMap(value => {
         this.loading = true
-        return this.fetchFactionsCall(this.page, value.newValue)
+        return this.$store.dispatch('fetchUsers', {
+          page: this.page,
+          beginsWith: value.newValue
+        })
       }))
-      .subscribe(factionsPaginated => {
-        this.setFactions(factionsPaginated.docs)
-        this.totalFactions = factionsPaginated.total
+      .subscribe(usersPaginated => {
+        this.setUsers(usersPaginated.docs)
+        this.totalUsers = usersPaginated.total
         this.loading = false
       })
   },
   computed: {
-    ...mapGetters({
-      factions: 'friendlyFactions'
+    ...mapState({
+      users: state => state.admin.users
     })
   },
   watch: {
@@ -83,13 +86,16 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'setFactions'
+      'setUsers'
     ]),
     async fetchUsers () {
       this.loading = true
-      let factionsPaginated = await this.fetchFactionsCall(this.page, this.factionName)
-      this.setFactions(factionsPaginated.docs)
-      this.totalFactions = factionsPaginated.total
+      let usersPaginated = await this.$store.dispatch('fetchUsers', {
+        page: this.page,
+        beginsWith: this.username
+      })
+      this.setUsers(usersPaginated.docs)
+      this.totalUsers = usersPaginated.total
       this.loading = false
     }
   }
