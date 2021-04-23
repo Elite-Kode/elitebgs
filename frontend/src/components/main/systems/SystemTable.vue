@@ -3,6 +3,7 @@
     class="elevation-1"
     :headers="headers"
     :items="factionDetails"
+    :items-per-page="factionDetails.length"
     :search="systemFilter"
     hide-default-footer
     :loading="loading">
