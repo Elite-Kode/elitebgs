@@ -37,7 +37,8 @@
         <b>Security : </b>{{ system.security }}
       </v-col>
       <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Population : </b>{{ system.population }}
+        <b>Population : </b>
+        <vue-numeric v-model="system.population" read-only/>
       </v-col>
       <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Controlling Faction : </b>

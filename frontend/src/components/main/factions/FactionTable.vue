@@ -45,6 +45,9 @@
     <template v-slot:item.influence="{item}">
       {{ item.influence.toFixed(2) }}%
     </template>
+    <template v-slot:item.population="{item}">
+      <vue-numeric v-model="item.population" read-only/>
+    </template>
     <template v-slot:item.updated_at="{item}">
       {{ formatDate(item.updated_at) }}
       <v-chip small :color="item.age_flag" dark>
