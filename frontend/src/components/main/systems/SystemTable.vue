@@ -18,7 +18,8 @@
         :key="active_state.state"
         dark
         :color="getChipColour(active_state.trend)"
-        x-small>
+        small
+      >
         {{ active_state.state }}
       </v-chip>
     </template>
@@ -28,7 +29,8 @@
         :key="pending_state.state"
         dark
         :color="getChipColour(pending_state.trend)"
-        x-small>
+        small
+      >
         {{ pending_state.state }}
       </v-chip>
     </template>
@@ -38,7 +40,8 @@
         :key="recovering_state.state"
         dark
         :color="getChipColour(recovering_state.trend)"
-        x-small>
+        small
+      >
         {{ recovering_state.state }}
       </v-chip>
     </template>
