@@ -2,7 +2,7 @@
   <div>
     <h1>{{ station.name }}</h1>
     <v-btn-toggle multiple max=0>
-      <v-btn color="primary">
+      <v-btn color="primary" disabled>
         Monitor Station
       </v-btn>
       <v-btn color="primary"

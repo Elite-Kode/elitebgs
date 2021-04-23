@@ -2,7 +2,7 @@
   <div>
     <h1>{{ faction.name }}</h1>
     <v-btn-toggle max=0 multiple>
-      <v-btn v-if="isMonitored" color="primary" disabled outlined @click="stopMonitor">
+      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor">
         Stop Monitoring
       </v-btn>
       <v-btn v-else color="primary" @click="monitor">
