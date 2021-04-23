@@ -57,7 +57,7 @@ module.exports = {
     history: {
         type: 'array',
         items: {
-            $ref: '#/definitions/EBGSStationHistoryV4'
+            $ref: '#/definitions/EBGSStationHistoryV5'
         }
     }
 }
