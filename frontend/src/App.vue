@@ -24,7 +24,10 @@ export default {
   },
   beforeMount () {
     try {
-      const stored = localStorage.getItem('theme')
+      let stored = localStorage.getItem('theme')
+      if (stored !== 'light' && stored !== 'dark') { // Fix for moving from old theme object to new theme string
+        stored = null
+      }
       if (stored) {
         this.theme = stored
       } else {
