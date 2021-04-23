@@ -1,8 +1,8 @@
 {
     "name": "elitebgs-guild-bot",
     "scripts": {
-        "start": "cross-env PORT=4013 pm2 start process.json --env production",
-        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9329 ./bin/start.js"
+        "start": "cross-env PORT=4015 pm2 start process.json --env production",
+        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9529 ./bin/start.js"
     },
     "private": true,
     "dependencies": {

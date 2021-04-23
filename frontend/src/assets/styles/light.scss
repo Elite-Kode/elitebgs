@@ -1,0 +1,109 @@
+@import '~vuetify/src/styles/settings/colors';
+
+/// Chart background, point stroke for markers and columns etc
+//$background-color: #ffffff;
+
+// Colors for data series and points.
+$colors: [
+  map-get($red, darken-1),
+  map-get($pink, darken-1),
+  map-get($purple, darken-1),
+  map-get($blue, darken-1),
+  map-get($green, darken-1),
+  map-get($yellow, darken-1),
+  map-get($orange, darken-1),
+  map-get($red, darken-2),
+  map-get($pink, darken-2),
+  map-get($purple, darken-2),
+  map-get($blue, darken-2),
+  map-get($green, darken-2),
+  map-get($yellow, darken-2),
+  map-get($orange, darken-2),
+  map-get($red, darken-3),
+  map-get($pink, darken-3),
+  map-get($purple, darken-3),
+  map-get($blue, darken-3),
+  map-get($green, darken-3),
+  map-get($yellow, darken-3),
+  map-get($orange, darken-3),
+];
+
+// Neutral colors
+//$neutral-color-100: #000000;
+//$neutral-color-80: #333333;
+//$neutral-color-60: #666666;
+//$neutral-color-40: #999999;
+//$neutral-color-20: #cccccc;
+//$neutral-color-10: #e6e6e6;
+//$neutral-color-5: #f2f2f2;
+//$neutral-color-3: #f7f7f7;
+
+// Colored, shades
+//$highlight-color-100: #003399;
+//$highlight-color-80: #335cad;
+//$highlight-color-60: #6685c2;
+//$highlight-color-20: #ccd6eb;
+//$highlight-color-10: #e6ebf5;
+
+// Fonts
+$font-family: "Roboto", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !default;
+$title-font-size: 16px;
+//$subtitle-font-size: 13px;
+$legend-font-size: 13px;
+$axis-labels-font-size: 12px;
+
+// Tooltip
+//$tooltip-border: 1px;
+$tooltip-background: rgba(255, 255, 255, 0.85);
+
+// Axes
+$xaxis-grid-line: 1px;
+
+// Range-selector
+//$range-selector-button-border: 0px;
+//$range-selector-input-text: $neutral-color-80;
+//$range-selector-input-border: $neutral-color-20;
+
+// Data-labels
+//$data-label-color: $neutral-color-80;
+
+// Buttons
+//$context-button-background: $background-color;
+
+//$highcharts-button-background:$neutral-color-3;
+//$highcharts-button-border: $neutral-color-20;
+//$highcharts-button-text:$neutral-color-80;
+
+//$highcharts-button-pressed-background: $highlight-color-10;
+//$highcharts-button-pressed-border: $neutral-color-20;
+//$highcharts-button-pressed-text: $neutral-color-80;
+
+//$highcharts-button-hover-background: $neutral-color-10;
+//$highcharts-button-hover-border: $neutral-color-20;
+//$highcharts-button-hover-text: $neutral-color-80;
+
+// Navigator
+//$navigator-series-fill: $highlight-color-80;
+//$navigator-series-border: $highlight-color-80;
+
+// Scrollbar
+//$scrollbar-track-background: $neutral-color-5;
+//$scrollbar-track-border: $neutral-color-5;
+
+// Indicators
+//$indicator-positive-line: #06b535;
+//$indicator-negative-line: #f21313;
+
+// Titles
+.highcharts-title, .highcharts-subtitle, .highcharts-yaxis .highcharts-axis-title {
+  text-transform: uppercase;
+}
+
+// Tooltip
+//.highcharts-tooltip text {
+//  fill: $neutral-color-80;
+//}
+
+@import '~highcharts/css/highcharts';
+
+
