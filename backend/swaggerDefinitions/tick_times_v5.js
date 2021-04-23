@@ -24,7 +24,7 @@ module.exports = {
     history:{
         type:'array',
         items:{
-            $ref:'#/definitions/TickTimesHistoryV4'
+            $ref:'#/definitions/TickTimesHistoryV5'
         }
     }
 }
