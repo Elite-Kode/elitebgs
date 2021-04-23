@@ -18,33 +18,29 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 
+let ObjectId = mongoose.Schema.Types.ObjectId;
+
 let user = new mongoose.Schema({
     id: String,
     username: String,
     avatar: String,
     discriminator: String,
-    access: Number,
-    os_contribution: Number,
-    patronage: {
-        level: Number,
-        since: Date
-    },
-    donation: [{
-        amount: Number,
-        date: Date
-    }],
+    access: { type: String, enum: ['NORMAL', 'BANNED', 'ADMIN'], uppercase: true },
     factions: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }],
     systems: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }],
     stations: [{
         _id: false,
+        id: { type: ObjectId, index: true },
         name: String,
         name_lower: String
     }]

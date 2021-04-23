@@ -26,15 +26,6 @@ let user = new mongoose.Schema({
     avatar: String,
     discriminator: String,
     access: { type: String, enum: ['NORMAL', 'BANNED', 'ADMIN'], uppercase: true },
-    os_contribution: Number,
-    patronage: {
-        level: Number,
-        since: Date
-    },
-    donation: [{
-        amount: Number,
-        date: Date
-    }],
     factions: [{
         _id: false,
         id: { type: ObjectId, index: true },

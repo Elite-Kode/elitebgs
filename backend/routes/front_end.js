@@ -34,63 +34,6 @@ router.get('/backgroundimages', (req, res) => {
     res.send(fs.readdirSync(pathToFile));
 });
 
-router.get('/donors', async (req, res, next) => {
-    try {
-        let users = await ebgsUsers;
-        let donations = await users.aggregate().unwind('donation').project({
-            amount: "$donation.amount",
-            date: "$donation.date",
-            username: 1
-        }).sort({
-            date: -1
-        });
-        res.send(donations);
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.get('/patrons', async (req, res, next) => {
-    try {
-        let users = await ebgsUsers;
-        let patrons = await users.aggregate().match({
-            "patronage.level": { $gt: 0 }
-        }).project({
-            level: "$patronage.level",
-            since: "$patronage.since",
-            username: 1
-        }).sort({
-            since: -1
-        });
-        res.send(patrons);
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.get('/credits', async (req, res, next) => {
-    try {
-        let users = await ebgsUsers;
-        let credits = await users.aggregate().match({
-            $or: [
-                { os_contribution: { $gt: 0 } },
-                { "patronage.level": { $gt: 1 } }
-            ]
-        }).project({
-            username: 1,
-            avatar: 1,
-            id: 1,
-            os_contribution: 1,
-            level: "$patronage.level"
-        }).sort({
-            since: -1
-        });
-        res.send(credits);
-    } catch (err) {
-        next(err);
-    }
-});
-
 router.get('/users', async (req, res, next) => {
     try {
         if (req.user.access === adminAccess) {
@@ -168,18 +111,6 @@ router.put('/users', async (req, res, next) => {
         }
     } catch (error) {
         next(error);
-    }
-});
-
-router.get('/scripts', (req, res, next) => {
-    try {
-        if (req.user.access === adminAccess) {
-            let pathToFile = path.resolve(__dirname, '../modules/scripts');
-            let files = fs.readdirSync(pathToFile);
-            res.send(files);
-        }
-    } catch (err) {
-        next(err);
     }
 });
 

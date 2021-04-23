@@ -215,12 +215,7 @@ let onAuthentication = async (accessToken, refreshToken, profile, done, type) =>
                 username: profile.username,
                 avatar: profile.avatar,
                 discriminator: profile.discriminator,
-                access: 'NORMAL',
-                os_contribution: 0,
-                patronage: {
-                    level: 0,
-                    since: null
-                }
+                access: 'NORMAL'
             };
             await model.findOneAndUpdate(
                 { id: profile.id },
