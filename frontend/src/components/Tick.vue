@@ -13,7 +13,6 @@
               v-model="datePickerMenu"
               :close-on-content-click="false"
               min-width="auto"
-              offset-x
               offset-y
               transition="scale-transition"
               @update:return-value="onChangedFilterDates"
