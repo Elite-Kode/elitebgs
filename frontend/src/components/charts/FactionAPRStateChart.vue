@@ -14,7 +14,7 @@ export default {
   name: 'FactionAPRStateChart',
   data () {
     return {
-      options: {}
+      options: null
     }
   },
   props: {
@@ -144,7 +144,7 @@ export default {
                 x: tempBegin[previousStateIndex],
                 x2: Date.parse(record.updated_at),
                 y: _sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                faction: system
+                system: system
               })
               previousStates[previousStateIndex] = null
             })
@@ -165,7 +165,7 @@ export default {
               x: tempBegin[previousStateIndex],
               x2: Date.now(),
               y: _sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-              faction: system
+              system: system
             })
             previousStates[previousStateIndex] = null
           }
@@ -261,7 +261,7 @@ export default {
         },
         tooltip: {
           headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
-          pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.faction}</b><br/>'
+          pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.system}</b><br/>'
         },
         series: series,
         exporting: {
