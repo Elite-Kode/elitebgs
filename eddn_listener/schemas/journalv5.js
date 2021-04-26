@@ -39,8 +39,8 @@ module.exports = Journal;
 function Journal() {
     this.schemaId = [
         // "http://schemas.elite-markets.net/eddn/journal/1",
-        // "https://eddn.edcd.io/schemas/journal/1"
-        "https://eddn.edcd.io/schemas/journal/1/test"
+        "https://eddn.edcd.io/schemas/journal/1"
+        // "https://eddn.edcd.io/schemas/journal/1/test"
     ];
 
     this.trackSystem = async (message, header) => {
@@ -429,6 +429,7 @@ function Journal() {
                     let pendingStates = getDoFactionUpdate.pendingStates;
                     let recoveringStates = getDoFactionUpdate.recoveringStates;
                     let conflicts = getDoFactionUpdate.conflicts;
+                    let happiness = getDoFactionUpdate.happiness;
                     let doUpdate = getDoFactionUpdate.doUpdate;
                     let doUpdateTime = getDoFactionUpdate.doUpdateTime;
                     let factionPresence = [];
@@ -452,7 +453,7 @@ function Journal() {
                                     system_id: system._id,
                                     state: messageFaction.FactionState,
                                     influence: messageFaction.Influence,
-                                    happiness: messageFaction.Happiness.toLowerCase(),
+                                    happiness: happiness,
                                     active_states: activeStates,
                                     pending_states: pendingStates,
                                     recovering_states: recoveringStates,
@@ -473,7 +474,7 @@ function Journal() {
                                 system_id: system._id,
                                 state: messageFaction.FactionState,
                                 influence: messageFaction.Influence,
-                                happiness: messageFaction.Happiness.toLowerCase(),
+                                happiness: happiness,
                                 active_states: activeStates,
                                 pending_states: pendingStates,
                                 recovering_states: recoveringStates,
@@ -517,7 +518,7 @@ function Journal() {
                             faction_name_lower: factionObject.name_lower,
                             state: messageFaction.FactionState,
                             influence: messageFaction.Influence,
-                            happiness: messageFaction.Happiness.toLowerCase(),
+                            happiness: happiness,
                             active_states: activeStates,
                             pending_states: pendingStates,
                             recovering_states: recoveringStates,
@@ -845,9 +846,12 @@ function Journal() {
 
     // Used in V4
     this.doFactionUpdate = async (messageFaction, dbFaction, message, factions, stations, system) => {
-        // Ignore the record if there is no happiness field or if the happiness string is empty
+        // Set the happiness value to "none" if there is no happiness field or if the happiness string is empty
+        let happiness = ''
         if (!messageFaction.Happiness || messageFaction.Happiness.length === 0) {
-            return { pendingStates: [], recoveringStates: [], doUpdate: false, dontUpdateTime: true };
+          happiness = 'none'
+        } else {
+          happiness = messageFaction.Happiness.toLowerCase()
         }
         // Form the states arrays
         let activeStates = [];
@@ -965,7 +969,7 @@ function Journal() {
 
         // doUpdate indicate if the new record should be added into the history and the master record data updated
         // doUpdateTime indicate if the master record's update time should be updated
-        return { activeStates, pendingStates, recoveringStates, conflicts, doUpdate, doUpdateTime }
+        return { activeStates, pendingStates, recoveringStates, conflicts, happiness, doUpdate, doUpdateTime }
     }
 
     // Used in V3 and V4
