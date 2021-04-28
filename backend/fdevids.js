@@ -280,6 +280,9 @@ module.exports = {
         },
         '$faction_happinessband5;': {
             'name': 'Despondent'
+        },
+        'none': {
+          'name': 'None'
         }
     }
 }
