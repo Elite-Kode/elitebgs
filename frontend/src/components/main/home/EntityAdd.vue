@@ -8,9 +8,7 @@
     </template>
 
     <v-card>
-      <v-card-title class="primary theme--dark v-card">
-        Search {{ search }}
-      </v-card-title>
+      <v-card-title class="primary theme--dark v-card"> Search {{ search }} </v-card-title>
 
       <v-card-text>
         <v-autocomplete
@@ -22,45 +20,28 @@
           multiple
           chips
           v-model="entitiesSelected"
-          @update:search-input="searchInputUpdated">
+          @update:search-input="searchInputUpdated"
+        >
           <template v-slot:selection="data">
-            <v-chip
-              v-bind="data.attrs"
-              :input-value="data.selected"
-              close
-              @click:close="remove(data.item)"
-            >
+            <v-chip v-bind="data.attrs" :input-value="data.selected" close @click:close="remove(data.item)">
               {{ data.item.name }}
             </v-chip>
           </template>
         </v-autocomplete>
       </v-card-text>
 
-      <v-divider/>
+      <v-divider />
 
       <v-card-actions>
-        <v-spacer/>
-        <v-btn
-          color="error"
-          text
-          @click="cancel"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="success"
-          text
-          @click="submit"
-        >
-          Submit
-        </v-btn>
+        <v-spacer />
+        <v-btn color="error" text @click="cancel"> Cancel </v-btn>
+        <v-btn color="success" text @click="submit"> Submit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-
 import { debounceTime, switchMap } from 'rxjs/operators'
 import factionMethods from '@/mixins/factionMethods'
 import systemMethods from '@/mixins/systemMethods'
@@ -68,7 +49,7 @@ import systemMethods from '@/mixins/systemMethods'
 export default {
   name: 'EntityAdd',
   mixins: [factionMethods, systemMethods],
-  data () {
+  data() {
     return {
       search: '',
       entities: [],
@@ -80,12 +61,12 @@ export default {
   props: {
     searchType: {
       type: String,
-      validator (value) {
+      validator(value) {
         return ['FACTION', 'SYSTEM', 'STATION'].indexOf(value) !== -1
       }
     }
   },
-  created () {
+  created() {
     switch (this.searchType) {
       case 'FACTION': {
         this.search = 'Factions'
@@ -100,43 +81,48 @@ export default {
     }
     this.$watchAsObservable('searchInput')
       .pipe(debounceTime(300))
-      .pipe(switchMap(value => {
-        switch (this.searchType) {
-          case 'FACTION': {
-            return this.fetchFactionsCall(1, value.newValue)
+      .pipe(
+        switchMap((value) => {
+          switch (this.searchType) {
+            case 'FACTION': {
+              return this.fetchFactionsCall(1, value.newValue)
+            }
+            case 'SYSTEM': {
+              return this.fetchSystemsCall(1, value.newValue)
+            }
           }
-          case 'SYSTEM': {
-            return this.fetchSystemsCall(1, value.newValue)
-          }
-        }
-      }))
-      .subscribe(entitiesPaginated => {
+        })
+      )
+      .subscribe((entitiesPaginated) => {
         this.entities = entitiesPaginated.docs
       })
   },
   methods: {
-    async fetchFactions () {
+    async fetchFactions() {
       this.entities = (await this.fetchFactionsCall(1, this.searchInput)).docs
     },
-    async fetchSystems () {
+    async fetchSystems() {
       this.entities = (await this.fetchSystemsCall(1, this.searchInput)).docs
     },
-    searchInputUpdated (value) {
+    searchInputUpdated(value) {
       if (value) {
         this.searchInput = value
       } else {
         this.searchInput = ''
       }
     },
-    remove (entity) {
-      this.entitiesSelected.splice(this.entitiesSelected.findIndex(select => select === entity._id), 1)
+    remove(entity) {
+      this.entitiesSelected.splice(
+        this.entitiesSelected.findIndex((select) => select === entity._id),
+        1
+      )
     },
-    cancel () {
+    cancel() {
       this.searchInput = ''
       this.entitiesSelected = []
       this.dialog = false
     },
-    async submit () {
+    async submit() {
       switch (this.searchType) {
         case 'FACTION': {
           await this.$store.dispatch('saveUserFactions', this.entitiesSelected)
@@ -155,6 +141,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

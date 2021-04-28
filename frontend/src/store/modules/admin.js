@@ -6,19 +6,19 @@ const state = {
 }
 const getters = {}
 const mutations = {
-  setUsers (state, users) {
+  setUsers(state, users) {
     state.users = users
   },
-  setSelectedUser (state, user) {
+  setSelectedUser(state, user) {
     state.selectedUser = user
   }
 }
 const actions = {
-  async fetchUsers (context, { page, beginsWith }) {
+  async fetchUsers(context, { page, beginsWith }) {
     let response = await axios.get('/frontend/users', { params: { page, beginsWith } })
     return response.data
   },
-  async fetchUserById (context, { id }) {
+  async fetchUserById(context, { id }) {
     let response = await axios.get('/frontend/users', { params: { id } })
     return response.data
   }

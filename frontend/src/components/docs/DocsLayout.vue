@@ -2,20 +2,15 @@
   <div>
     <ed-toolbar>
       <template v-slot:toolbar-tabs>
-        <v-tabs
-          align-with-title
-          background-color="accent"
-          light
-          slider-color="secondary"
-        >
-          <v-tab :to="{name: rootLink + '-api-overview'}" exact>Overview</v-tab>
-          <v-tab :to="{name: rootLink + '-api-docs'}">Docs</v-tab>
+        <v-tabs align-with-title background-color="accent" light slider-color="secondary">
+          <v-tab :to="{ name: rootLink + '-api-overview' }" exact>Overview</v-tab>
+          <v-tab :to="{ name: rootLink + '-api-docs' }">Docs</v-tab>
         </v-tabs>
       </template>
     </ed-toolbar>
     <v-main>
       <v-container fluid>
-        <router-view/>
+        <router-view />
       </v-container>
     </v-main>
   </div>
@@ -30,7 +25,7 @@ export default {
     'ed-toolbar': Toolbar
   },
   computed: {
-    rootLink () {
+    rootLink() {
       return this.$route.path.split('/')[1]
     }
   }

@@ -2,14 +2,12 @@
   <div>
     <swagger-nav v-model="navOpen" :version="version"></swagger-nav>
     <div class="d-flex">
-      <v-app-bar-nav-icon @click="toggleNav"/>
+      <v-app-bar-nav-icon @click="toggleNav" />
       <v-menu offset-y>
         <template v-slot:activator="{ attrs, on }">
           <v-btn v-bind="attrs" v-on="on" outlined color="primary">
             {{ selectedSpec.versionName }}
-            <v-icon right dark>
-              expand_more
-            </v-icon>
+            <v-icon right dark> expand_more </v-icon>
           </v-btn>
         </template>
         <v-list>
@@ -18,8 +16,8 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-spacer/>
-      <v-btn-toggle multiple max=0>
+      <v-spacer />
+      <v-btn-toggle multiple max="0">
         <v-btn color="primary" :href="selectedSpec.specLocation" target="_blank" rel="noopener noreferrer">
           Spec
         </v-btn>
@@ -28,7 +26,7 @@
         </v-btn>
       </v-btn-toggle>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -44,7 +42,7 @@ export default {
   props: {
     specs: {
       type: Array,
-      default () {
+      default() {
         return []
       }
     },
@@ -53,23 +51,23 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       navOpen: true,
       selectedSpec: {}
     }
   },
-  async created () {
+  async created() {
     await this.checkRedirectAndSelect()
     this.selectSpec()
   },
   computed: {
-    rootLink () {
+    rootLink() {
       return this.$route.path.split('/')[1]
     }
   },
   methods: {
-    async checkRedirectAndSelect () {
+    async checkRedirectAndSelect() {
       if (!this.version || !this.findSpec(this.version)) {
         // Is triggered when the browser hits the docs endpoint without or with the wrong version
         await this.$router.replace({
@@ -78,21 +76,21 @@ export default {
         })
       }
     },
-    selectSpec () {
+    selectSpec() {
       this.selectedSpec = this.findSpec(this.version)
     },
-    toggleNav () {
+    toggleNav() {
       this.navOpen = !this.navOpen
     },
-    versionSelected (version) {
+    versionSelected(version) {
       this.selectedSpec = this.findSpec(version.versionName)
     },
-    findSpec (version) {
-      return this.specs.find(spec => spec.versionName === version)
+    findSpec(version) {
+      return this.specs.find((spec) => spec.versionName === version)
     }
   },
   watch: {
-    selectedSpec (newVal, oldVal) {
+    selectedSpec(newVal, oldVal) {
       if (newVal?.versionName !== oldVal?.versionName) {
         this.$store.dispatch('fetchSpecDoc', { specLocation: this.selectedSpec.specLocation })
       }
@@ -109,12 +107,12 @@ export default {
         })
       }
     },
-    async version (newVal) {
+    async version(newVal) {
       if (newVal) {
         this.selectedSpec = this.findSpec(newVal)
       }
     },
-    $route (to, from) {
+    $route(to, from) {
       // Handles the case when the docs tab is re-clicked
       if (!to.params.version && from.params.version) {
         this.$router.replace(from)
@@ -124,6 +122,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

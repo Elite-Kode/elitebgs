@@ -17,9 +17,10 @@
       :server-items-length="totalFactions"
       :items-per-page="10"
       :footer-props="tableFooter"
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'faction-detail', params: { factionId: item._id }}">{{ item.name }}</router-link>
+      :loading="loading"
+    >
+      <template v-slot:item.name="{ item }">
+        <router-link :to="{ name: 'faction-detail', params: { factionId: item._id } }">{{ item.name }}</router-link>
       </template>
     </v-data-table>
   </div>
@@ -37,19 +38,23 @@ export default {
   // metaInfo: {
   //   title: 'Faction Search - Elite BGS'
   // },
-  data () {
+  data() {
     return {
       factionName: '',
-      headers: [{
-        text: 'Faction Name',
-        value: 'name'
-      }, {
-        text: 'Faction Government',
-        value: 'government'
-      }, {
-        text: 'Allegiance',
-        value: 'allegiance'
-      }],
+      headers: [
+        {
+          text: 'Faction Name',
+          value: 'name'
+        },
+        {
+          text: 'Faction Government',
+          value: 'government'
+        },
+        {
+          text: 'Allegiance',
+          value: 'allegiance'
+        }
+      ],
       tableFooter: {
         disableItemsPerPage: true,
         showFirstLastPage: true,
@@ -60,15 +65,17 @@ export default {
       loading: false
     }
   },
-  created () {
+  created() {
     this.fetchFactions()
     this.$watchAsObservable('factionName')
       .pipe(debounceTime(300))
-      .pipe(switchMap(value => {
-        this.loading = true
-        return this.fetchFactionsCall(this.page, value.newValue)
-      }))
-      .subscribe(factionsPaginated => {
+      .pipe(
+        switchMap((value) => {
+          this.loading = true
+          return this.fetchFactionsCall(this.page, value.newValue)
+        })
+      )
+      .subscribe((factionsPaginated) => {
         this.setFactions(factionsPaginated.docs)
         this.totalFactions = factionsPaginated.total
         this.loading = false
@@ -80,15 +87,13 @@ export default {
     })
   },
   watch: {
-    page () {
+    page() {
       this.fetchFactions()
     }
   },
   methods: {
-    ...mapMutations([
-      'setFactions'
-    ]),
-    async fetchFactions () {
+    ...mapMutations(['setFactions']),
+    async fetchFactions() {
       this.loading = true
       let factionsPaginated = await this.fetchFactionsCall(this.page, this.factionName)
       this.setFactions(factionsPaginated.docs)
@@ -99,6 +104,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

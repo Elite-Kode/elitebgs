@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -11,21 +11,22 @@ export default {
   name: 'App',
   computed: {
     ...mapState({
-      themes: state => state.themes.themes
+      themes: (state) => state.themes.themes
     }),
     theme: {
-      get () {
+      get() {
         return this.$store.state.themes.theme
       },
-      set (newTheme) {
+      set(newTheme) {
         this.$store.commit('setTheme', newTheme)
       }
     }
   },
-  beforeMount () {
+  beforeMount() {
     try {
       let stored = localStorage.getItem('theme')
-      if (stored !== 'light' && stored !== 'dark') { // Fix for moving from old theme object to new theme string
+      // Fix for moving from old theme object to new theme string
+      if (stored !== 'light' && stored !== 'dark') {
         stored = null
       }
       if (stored) {

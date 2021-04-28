@@ -9,7 +9,6 @@
             <path value="file://$PROJECT_DIR$/dev_proxy" />
             <path value="file://$PROJECT_DIR$/eddn_listener" />
             <path value="file://$PROJECT_DIR$/frontend" />
-            <path value="file://$PROJECT_DIR$/frontend-vue" />
             <path value="file://$PROJECT_DIR$/guild_bot" />
             <path value="file://$PROJECT_DIR$/tick_listener" />
           </resourceRoots>

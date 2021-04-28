@@ -17,9 +17,10 @@
       :server-items-length="totalSystems"
       :items-per-page="10"
       :footer-props="tableFooter"
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'system-detail', params: { systemId: item._id }}">{{ item.name }}</router-link>
+      :loading="loading"
+    >
+      <template v-slot:item.name="{ item }">
+        <router-link :to="{ name: 'system-detail', params: { systemId: item._id } }">{{ item.name }}</router-link>
       </template>
     </v-data-table>
   </div>
@@ -37,28 +38,35 @@ export default {
   // metaInfo: {
   //   title: 'System Search - Elite BGS'
   // },
-  data () {
+  data() {
     return {
       systemName: '',
-      headers: [{
-        text: 'System Name',
-        value: 'name'
-      }, {
-        text: 'System Government',
-        value: 'government'
-      }, {
-        text: 'Allegiance',
-        value: 'allegiance'
-      }, {
-        text: 'Primary Economy',
-        value: 'primary_economy'
-      }, {
-        text: 'Secondary Economy',
-        value: 'secondary_economy'
-      }, {
-        text: 'State',
-        value: 'state'
-      }],
+      headers: [
+        {
+          text: 'System Name',
+          value: 'name'
+        },
+        {
+          text: 'System Government',
+          value: 'government'
+        },
+        {
+          text: 'Allegiance',
+          value: 'allegiance'
+        },
+        {
+          text: 'Primary Economy',
+          value: 'primary_economy'
+        },
+        {
+          text: 'Secondary Economy',
+          value: 'secondary_economy'
+        },
+        {
+          text: 'State',
+          value: 'state'
+        }
+      ],
       tableFooter: {
         disableItemsPerPage: true,
         showFirstLastPage: true,
@@ -69,15 +77,17 @@ export default {
       loading: false
     }
   },
-  created () {
+  created() {
     this.fetchSystems()
     this.$watchAsObservable('systemName')
       .pipe(debounceTime(300))
-      .pipe(switchMap(value => {
-        this.loading = true
-        return this.fetchSystemsCall(this.page, value.newValue)
-      }))
-      .subscribe(systemsPaginated => {
+      .pipe(
+        switchMap((value) => {
+          this.loading = true
+          return this.fetchSystemsCall(this.page, value.newValue)
+        })
+      )
+      .subscribe((systemsPaginated) => {
         this.setSystems(systemsPaginated.docs)
         this.totalSystems = systemsPaginated.total
         this.loading = false
@@ -89,15 +99,13 @@ export default {
     })
   },
   watch: {
-    page () {
+    page() {
       this.fetchSystems()
     }
   },
   methods: {
-    ...mapMutations([
-      'setSystems'
-    ]),
-    async fetchSystems () {
+    ...mapMutations(['setSystems']),
+    async fetchSystems() {
       this.loading = true
       let systemsPaginated = await this.fetchSystemsCall(this.page, this.systemName)
       this.setSystems(systemsPaginated.docs)
@@ -108,6 +116,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

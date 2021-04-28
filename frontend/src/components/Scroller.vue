@@ -15,11 +15,11 @@
   -->
 
 <template>
-    <v-scale-transition origin="center center">
-        <v-btn v-if="scrollPosition > 100" bottom color="primary" fab fixed right @click="scrollToTop">
-            <v-icon>keyboard_arrow_up</v-icon>
-        </v-btn>
-    </v-scale-transition>
+  <v-scale-transition origin="center center">
+    <v-btn v-if="scrollPosition > 100" bottom color="primary" fab fixed right @click="scrollToTop">
+      <v-icon>keyboard_arrow_up</v-icon>
+    </v-btn>
+  </v-scale-transition>
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    scrollToTop () {
+    scrollToTop() {
       this.$vuetify.goTo(0, {
         duration: 500,
         easing: 'easeInOutCubic'

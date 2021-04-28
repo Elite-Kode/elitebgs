@@ -17,9 +17,10 @@
       :server-items-length="totalUsers"
       :items-per-page="10"
       :footer-props="tableFooter"
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'faction-detail', params: { factionId: item._id }}">{{ item.name }}</router-link>
+      :loading="loading"
+    >
+      <template v-slot:item.name="{ item }">
+        <router-link :to="{ name: 'faction-detail', params: { factionId: item._id } }">{{ item.name }}</router-link>
       </template>
     </v-data-table>
   </div>
@@ -31,22 +32,27 @@ import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'AdminUserList',
-  data () {
+  data() {
     return {
       username: '',
-      headers: [{
-        text: 'Username',
-        value: 'username'
-      }, {
-        text: 'Discriminator',
-        value: 'discriminator'
-      }, {
-        text: 'Access',
-        value: 'access'
-      }, {
-        text: 'Discord Id',
-        value: 'id'
-      }],
+      headers: [
+        {
+          text: 'Username',
+          value: 'username'
+        },
+        {
+          text: 'Discriminator',
+          value: 'discriminator'
+        },
+        {
+          text: 'Access',
+          value: 'access'
+        },
+        {
+          text: 'Discord Id',
+          value: 'id'
+        }
+      ],
       tableFooter: {
         disableItemsPerPage: true,
         showFirstLastPage: true,
@@ -57,18 +63,20 @@ export default {
       loading: false
     }
   },
-  created () {
+  created() {
     this.fetchUsers()
     this.$watchAsObservable('username')
       .pipe(debounceTime(300))
-      .pipe(switchMap(value => {
-        this.loading = true
-        return this.$store.dispatch('fetchUsers', {
-          page: this.page,
-          beginsWith: value.newValue
+      .pipe(
+        switchMap((value) => {
+          this.loading = true
+          return this.$store.dispatch('fetchUsers', {
+            page: this.page,
+            beginsWith: value.newValue
+          })
         })
-      }))
-      .subscribe(usersPaginated => {
+      )
+      .subscribe((usersPaginated) => {
         this.setUsers(usersPaginated.docs)
         this.totalUsers = usersPaginated.total
         this.loading = false
@@ -76,19 +84,17 @@ export default {
   },
   computed: {
     ...mapState({
-      users: state => state.admin.users
+      users: (state) => state.admin.users
     })
   },
   watch: {
-    page () {
+    page() {
       this.fetchUsers()
     }
   },
   methods: {
-    ...mapMutations([
-      'setUsers'
-    ]),
-    async fetchUsers () {
+    ...mapMutations(['setUsers']),
+    async fetchUsers() {
       this.loading = true
       let usersPaginated = await this.$store.dispatch('fetchUsers', {
         page: this.page,
@@ -102,6 +108,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

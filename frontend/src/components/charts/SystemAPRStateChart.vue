@@ -12,7 +12,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'SystemAPRStateChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -20,7 +20,7 @@ export default {
   props: {
     systemData: {
       type: Object,
-      default () {
+      default() {
         return null
       }
     },
@@ -29,25 +29,25 @@ export default {
       default: ''
     }
   },
-  created () {
+  created() {
     if (this.systemData && !_isEmpty(this.systemData)) {
       this.createChart()
     }
   },
   computed: {
     ...mapState({
-      allIds: state => state.ingameIds.allIds
+      allIds: (state) => state.ingameIds.allIds
     })
   },
   watch: {
-    systemData (newVal, oldVal) {
+    systemData(newVal, oldVal) {
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
     }
   },
   methods: {
-    async createChart () {
+    async createChart() {
       let stateType
       let stateTitle
       switch (this.type) {
@@ -71,7 +71,7 @@ export default {
       const allTimeStates = []
       const maxStatesConcurrent = []
       const factions = []
-      this.systemData.faction_history.forEach(record => {
+      this.systemData.faction_history.forEach((record) => {
         if (allTimeFactions.indexOf(record.faction_name) === -1) {
           allTimeFactions.push(record.faction_name)
         }
@@ -87,7 +87,7 @@ export default {
                 trend: 0
               })
             }
-            record[stateType].forEach(recordState => {
+            record[stateType].forEach((recordState) => {
               if (allStates.indexOf(recordState.state) === -1) {
                 allStates.push(recordState.state)
               }
@@ -113,52 +113,76 @@ export default {
       // const series: XRangeChartSeriesOptions[] = [];
       const series = []
       await this.$store.dispatch('fetchAllIds')
-      const states = Object.keys(this.allIds.state).filter(state => {
-        return state !== 'null'
-      }).map(state => {
-        return [state, this.allIds.state[state].name]
-      })
+      const states = Object.keys(this.allIds.state)
+        .filter((state) => {
+          return state !== 'null'
+        })
+        .map((state) => {
+          return [state, this.allIds.state[state].name]
+        })
       const data = {}
-      states.forEach(state => {
+      states.forEach((state) => {
         data[state[0]] = []
       })
       allTimeFactions.forEach((faction, index) => {
         factions.push(faction)
         const previousStates = new Array(maxStatesConcurrent[index])
         const tempBegin = new Array(maxStatesConcurrent[index])
-        this.systemData.faction_history.filter(record => {
-          return record.faction_name === faction
-        }).forEach(record => {
-          if (record[stateType] && !_isEqual(record[stateType].map(recordState => {
-            return recordState.state
-          }), previousStates)) {
-            const statesStarting = _pull(_difference(record[stateType].map(recordState => {
-              return recordState.state
-            }), previousStates), undefined, null)
-            const statesEnding = _pull(_difference(previousStates, record[stateType].map(recordState => {
-              return recordState.state
-            })), undefined, null)
-            statesEnding.forEach(state => {
-              const previousStateIndex = previousStates.indexOf(state)
-              data[state].push({
-                x: tempBegin[previousStateIndex],
-                x2: Date.parse(record.updated_at),
-                y: _sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
-                faction: faction
+        this.systemData.faction_history
+          .filter((record) => {
+            return record.faction_name === faction
+          })
+          .forEach((record) => {
+            if (
+              record[stateType] &&
+              !_isEqual(
+                record[stateType].map((recordState) => {
+                  return recordState.state
+                }),
+                previousStates
+              )
+            ) {
+              const statesStarting = _pull(
+                _difference(
+                  record[stateType].map((recordState) => {
+                    return recordState.state
+                  }),
+                  previousStates
+                ),
+                undefined,
+                null
+              )
+              const statesEnding = _pull(
+                _difference(
+                  previousStates,
+                  record[stateType].map((recordState) => {
+                    return recordState.state
+                  })
+                ),
+                undefined,
+                null
+              )
+              statesEnding.forEach((state) => {
+                const previousStateIndex = previousStates.indexOf(state)
+                data[state].push({
+                  x: tempBegin[previousStateIndex],
+                  x2: Date.parse(record.updated_at),
+                  y: _sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
+                  faction: faction
+                })
+                previousStates[previousStateIndex] = null
               })
-              previousStates[previousStateIndex] = null
-            })
-            statesStarting.forEach(state => {
-              for (let i = 0; i < previousStates.length; i++) {
-                if (!previousStates[i]) {
-                  previousStates[i] = state
-                  tempBegin[i] = Date.parse(record.updated_at)
-                  break
+              statesStarting.forEach((state) => {
+                for (let i = 0; i < previousStates.length; i++) {
+                  if (!previousStates[i]) {
+                    previousStates[i] = state
+                    tempBegin[i] = Date.parse(record.updated_at)
+                    break
+                  }
                 }
-              }
-            })
-          }
-        })
+              })
+            }
+          })
         previousStates.forEach((state, previousStateIndex) => {
           if (state) {
             data[state].push({
@@ -171,7 +195,7 @@ export default {
           }
         })
       })
-      states.forEach(state => {
+      states.forEach((state) => {
         series.push({
           name: state[1],
           pointWidth: 20,
@@ -188,21 +212,21 @@ export default {
           height: 130 + _sum(maxStatesConcurrent) * 40,
           type: 'xrange',
           events: {
-            render () {
-              let tickAbsolutePositions = this.yAxis[0].tickPositions.map(tickPosition => {
+            render() {
+              let tickAbsolutePositions = this.yAxis[0].tickPositions.map((tickPosition) => {
                 return +this.yAxis[0].ticks[tickPosition.toString()].gridLine.d.split(' ')[2]
               })
-              tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(tickAbsolutePositions)
+              tickAbsolutePositions = [+this.yAxis[0].ticks['-1'].gridLine.d.split(' ')[2]].concat(
+                tickAbsolutePositions
+              )
               const labelPositions = []
               for (let i = 1; i < tickAbsolutePositions.length; i++) {
                 labelPositions.push((tickAbsolutePositions[i] + tickAbsolutePositions[i - 1]) / 2)
               }
 
               factions.forEach((faction, index) => {
-                this.yAxis[0]
-                  .labelGroup.element.childNodes[index]
-                  .attributes.y.nodeValue = labelPositions[index] +
-                  12 / 2 // 12 is the font size in px of the y-axis labels
+                this.yAxis[0].labelGroup.element.childNodes[index].attributes.y.nodeValue =
+                  labelPositions[index] + 12 / 2 // 12 is the font size in px of the y-axis labels
               })
             }
           },
@@ -219,13 +243,13 @@ export default {
             text: 'Factions'
           },
           categories: factions,
-          tickPositioner () {
+          tickPositioner() {
             return tickPositions
           },
           startOnTick: false,
           reversed: true,
           labels: {
-            formatter () {
+            formatter() {
               const chart = this.chart
               const axis = this.axis
               let label
@@ -274,6 +298,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

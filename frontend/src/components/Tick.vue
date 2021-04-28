@@ -1,7 +1,6 @@
 <template>
   <div>
-    <ed-toolbar>
-    </ed-toolbar>
+    <ed-toolbar> </ed-toolbar>
     <v-main>
       <v-container fluid>
         <h1>Tick</h1>
@@ -27,32 +26,13 @@
                   readonly
                 ></v-text-field>
               </template>
-              <v-date-picker
-                v-model="changedFilterDates"
-                :show-current="currentUtcDate"
-                range
-                show-adjacent-months
-              >
+              <v-date-picker v-model="changedFilterDates" :show-current="currentUtcDate" range show-adjacent-months>
                 <v-row>
                   <v-col cols="12" sm="6">
-                    <v-btn
-                      block
-                      color="error"
-                      text
-                      @click="datePickerMenu = false"
-                    >
-                      Cancel
-                    </v-btn>
+                    <v-btn block color="error" text @click="datePickerMenu = false"> Cancel </v-btn>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-btn
-                      block
-                      color="success"
-                      text
-                      @click="$refs.datepickerRef.save(changedFilterDates)"
-                    >
-                      OK
-                    </v-btn>
+                    <v-btn block color="success" text @click="$refs.datepickerRef.save(changedFilterDates)"> OK </v-btn>
                   </v-col>
                 </v-row>
               </v-date-picker>
@@ -66,17 +46,14 @@
           :items-per-page="10"
           :loading="loading"
           class="elevation-1"
-          dense>
+          dense
+        >
         </v-data-table>
         <v-card>
-          <v-card-title>
-            Graphs
-          </v-card-title>
+          <v-card-title> Graphs </v-card-title>
           <v-expansion-panels v-model="chartsPanel" accordion multiple>
             <v-expansion-panel>
-              <v-expansion-panel-header class="py-0">
-                Tick Trend
-              </v-expansion-panel-header>
+              <v-expansion-panel-header class="py-0"> Tick Trend </v-expansion-panel-header>
               <v-expansion-panel-content class="custom-padding">
                 <tick-chart :tick-data="ticks"></tick-chart>
               </v-expansion-panel-content>
@@ -100,7 +77,7 @@ export default {
     'ed-toolbar': Toolbar,
     'tick-chart': TickChart
   },
-  data () {
+  data() {
     return {
       loading: false,
       filterDates: [],
@@ -108,22 +85,26 @@ export default {
       datePickerMenu: false,
       currentUtcDate: '',
       dateFormat: 'YYYY-MM-DD',
-      headers: [{
-        text: 'Tick At (UTC)',
-        value: 'time_formatted',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Tick At (Local)',
-        value: 'time_local',
-        filterable: false,
-        sortable: false
-      }, {
-        text: 'Last Updated At (UTC)',
-        value: 'updated_at_formatted',
-        filterable: false,
-        sortable: false
-      }],
+      headers: [
+        {
+          text: 'Tick At (UTC)',
+          value: 'time_formatted',
+          filterable: false,
+          sortable: false
+        },
+        {
+          text: 'Tick At (Local)',
+          value: 'time_local',
+          filterable: false,
+          sortable: false
+        },
+        {
+          text: 'Last Updated At (UTC)',
+          value: 'updated_at_formatted',
+          filterable: false,
+          sortable: false
+        }
+      ],
       tableFooter: {
         disableItemsPerPage: true,
         showFirstLastPage: true,
@@ -132,7 +113,7 @@ export default {
       chartsPanel: [0]
     }
   },
-  async created () {
+  async created() {
     this.filterDates = [
       moment().subtract(10, 'days').utc().format(this.dateFormat),
       moment().utc().format(this.dateFormat)
@@ -143,14 +124,14 @@ export default {
   },
   computed: {
     ...mapState({
-      ticks: state => state.ticks.ticks
+      ticks: (state) => state.ticks.ticks
     }),
-    datePickerDisplay () {
+    datePickerDisplay() {
       return `${this.filterDates[0]} - ${this.filterDates[1]}`
     }
   },
   methods: {
-    onChangedFilterDates (value) {
+    onChangedFilterDates(value) {
       if (value) {
         if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {
           value.reverse()
@@ -159,11 +140,16 @@ export default {
       }
       this.fetchTicks()
     },
-    async fetchTicks () {
+    async fetchTicks() {
       this.loading = true
       await this.$store.dispatch('fetchTicks', {
         timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
-        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat)
+          ? moment()
+          : moment(this.filterDates[1], this.dateFormat)
+        )
+          .toDate()
+          .getTime()
       })
       this.loading = false
     }
@@ -171,6 +157,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

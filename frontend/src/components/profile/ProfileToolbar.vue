@@ -23,8 +23,9 @@
         align-with-title
         background-color="accent"
         light
-        slider-color="secondary">
-        <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{name: tabItem.link}">
+        slider-color="secondary"
+      >
+        <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{ name: tabItem.link }">
           {{ tabItem.name }}
         </v-tab>
       </v-tabs>
@@ -38,12 +39,14 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'ProfileToolbar',
-  data () {
+  data() {
     return {
-      tabItems: [{
-        name: 'Profile',
-        link: 'profile-data'
-      }]
+      tabItems: [
+        {
+          name: 'Profile',
+          link: 'profile-data'
+        }
+      ]
     }
   },
   components: {
@@ -51,8 +54,8 @@ export default {
   },
   computed: {
     ...mapState({
-      authenticated: state => state.auth.authenticated,
-      authUser: state => state.auth.user
+      authenticated: (state) => state.auth.authenticated,
+      authUser: (state) => state.auth.user
     })
   }
 }

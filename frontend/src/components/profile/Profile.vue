@@ -16,10 +16,10 @@
 
 <template>
   <div>
-    <profile-toolbar/>
+    <profile-toolbar />
     <v-main>
       <v-container fluid>
-        <router-view/>
+        <router-view />
       </v-container>
     </v-main>
   </div>
@@ -36,6 +36,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

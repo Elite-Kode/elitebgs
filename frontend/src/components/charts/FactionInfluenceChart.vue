@@ -8,7 +8,7 @@ import _isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'FactionInfluenceChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -16,18 +16,18 @@ export default {
   props: {
     factionData: {
       type: Object,
-      default () {
+      default() {
         return null
       }
     }
   },
-  created () {
+  created() {
     if (this.factionData && !_isEmpty(this.factionData)) {
       this.createChart()
     }
   },
   watch: {
-    factionData (newVal, oldVal) {
+    factionData(newVal, oldVal) {
       if (this.$refs.chart) {
         this.$refs.chart.chart.reflow()
       }
@@ -37,10 +37,10 @@ export default {
     }
   },
   methods: {
-    createChart () {
+    createChart() {
       const history = this.factionData.history
       const allSystems = []
-      history.forEach(element => {
+      history.forEach((element) => {
         if (allSystems.indexOf(element.system) === -1) {
           allSystems.push(element.system)
         }
@@ -55,32 +55,28 @@ export default {
           return 0
         }
       })
-      allSystems.forEach(system => {
+      allSystems.forEach((system) => {
         const data = []
         let lastElement
-        history.forEach(element => {
+        history.forEach((element) => {
           if (element.system === system) {
-            data.push([
-              Date.parse(element.updated_at),
-              Number.parseFloat((element.influence * 100).toFixed(2))
-            ])
+            data.push([Date.parse(element.updated_at), Number.parseFloat((element.influence * 100).toFixed(2))])
             lastElement = element
           } else {
-            if (element.systems.findIndex(systemElement => {
-              return systemElement.name === system
-            }) === -1) {
+            if (
+              element.systems.findIndex((systemElement) => {
+                return systemElement.name === system
+              }) === -1
+            ) {
               data.push([Date.parse(element.updated_at), null])
             }
           }
         })
-        const latestUpdate = this.factionData.faction_presence.find(findSystem => {
+        const latestUpdate = this.factionData.faction_presence.find((findSystem) => {
           return findSystem.system_name === system
         })
         if (latestUpdate) {
-          data.push([
-            Date.parse(latestUpdate.updated_at),
-            Number.parseFloat((lastElement.influence * 100).toFixed(2))
-          ])
+          data.push([Date.parse(latestUpdate.updated_at), Number.parseFloat((lastElement.influence * 100).toFixed(2))])
         }
         series.push({
           name: system,
@@ -110,6 +106,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

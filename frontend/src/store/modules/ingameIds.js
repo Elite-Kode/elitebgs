@@ -14,12 +14,12 @@ const getters = {
   superpower: (state) => (superpower) => getName(state, 'superpower', superpower)
 }
 const mutations = {
-  setAllIds (state, allIds) {
+  setAllIds(state, allIds) {
     state.allIds = allIds
   }
 }
 const actions = {
-  async fetchAllIds ({ commit }) {
+  async fetchAllIds({ commit }) {
     let response = await axios.get('/api/ingameids/all')
     let allIds = response.data
     commit('setAllIds', allIds)

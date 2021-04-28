@@ -1,16 +1,16 @@
 <template>
   <!--Check for undefined to prevent flash of wrong element-->
-  <login-card v-if="!authenticated && authenticated!==undefined" class="login"/>
-  <div v-else-if="authenticated && authenticated!==undefined">
-    <div v-if="authUser.access===bannedAccess">
+  <login-card v-if="!authenticated && authenticated !== undefined" class="login" />
+  <div v-else-if="authenticated && authenticated !== undefined">
+    <div v-if="authUser.access === bannedAccess">
       <h1>You have been Banned from the website.</h1>
       <p>Please contact the developer for further details</p>
     </div>
     <div v-else>
       <section class="d-flex">
         <h1>Monitoring Factions</h1>
-        <v-spacer/>
-        <entity-add search-type="FACTION"/>
+        <v-spacer />
+        <entity-add search-type="FACTION" />
       </section>
       <section>
         <v-card class="my-3">
@@ -18,10 +18,11 @@
             <v-expansion-panel v-for="(faction, index) of factions" :key="faction._id">
               <v-expansion-panel-header class="py-0">
                 {{ faction.name }}
-                <v-spacer/>
+                <v-spacer />
                 <v-btn
-                  outlined color="primary"
-                  :to="{ name: 'faction-detail', params: { factionId: faction._id }}"
+                  outlined
+                  color="primary"
+                  :to="{ name: 'faction-detail', params: { factionId: faction._id } }"
                   class="flex-grow-0 mr-3"
                 >
                   Go to Faction
@@ -30,19 +31,15 @@
               <v-expansion-panel-content class="custom-padding">
                 <v-expansion-panels accordion multiple v-model="factionsDataPanel[index]">
                   <v-expansion-panel>
-                    <v-expansion-panel-header class="py-0">
-                      Current State
-                    </v-expansion-panel-header>
+                    <v-expansion-panel-header class="py-0"> Current State </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      <faction-table :system-details="systemDetails(faction)"/>
+                      <faction-table :system-details="systemDetails(faction)" />
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                   <v-expansion-panel>
-                    <v-expansion-panel-header class="py-0">
-                      Last 10 Days
-                    </v-expansion-panel-header>
+                    <v-expansion-panel-header class="py-0"> Last 10 Days </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      <faction-influence-chart :faction-data="faction"/>
+                      <faction-influence-chart :faction-data="faction" />
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -53,8 +50,8 @@
       </section>
       <section class="d-flex">
         <h1>Monitoring Systems</h1>
-        <v-spacer/>
-        <entity-add search-type="SYSTEM"/>
+        <v-spacer />
+        <entity-add search-type="SYSTEM" />
       </section>
       <section>
         <v-card class="my-3">
@@ -62,10 +59,11 @@
             <v-expansion-panel v-for="(system, index) of systems" :key="system._id">
               <v-expansion-panel-header class="py-0">
                 {{ system.name }}
-                <v-spacer/>
+                <v-spacer />
                 <v-btn
-                  outlined color="primary"
-                  :to="{ name: 'system-detail', params: { systemId: system._id }}"
+                  outlined
+                  color="primary"
+                  :to="{ name: 'system-detail', params: { systemId: system._id } }"
                   class="flex-grow-0 mr-3"
                 >
                   Go to System
@@ -74,19 +72,15 @@
               <v-expansion-panel-content class="custom-padding">
                 <v-expansion-panels accordion multiple v-model="systemsDataPanel[index]">
                   <v-expansion-panel>
-                    <v-expansion-panel-header class="py-0">
-                      Current State
-                    </v-expansion-panel-header>
+                    <v-expansion-panel-header class="py-0"> Current State </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      <system-table :faction-details="factionDetails(system)"/>
+                      <system-table :faction-details="factionDetails(system)" />
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                   <v-expansion-panel>
-                    <v-expansion-panel-header class="py-0">
-                      Last 10 Days
-                    </v-expansion-panel-header>
+                    <v-expansion-panel-header class="py-0"> Last 10 Days </v-expansion-panel-header>
                     <v-expansion-panel-content class="custom-padding">
-                      <system-influence-chart :system-data="system"/>
+                      <system-influence-chart :system-data="system" />
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -121,7 +115,7 @@ export default {
     'login-card': LoginCard
   },
   mixins: [componentMethods],
-  data () {
+  data() {
     return {
       bannedAccess: 'BANNED',
       normalAccess: 'NORMAL',
@@ -132,7 +126,7 @@ export default {
       systemsDataPanel: []
     }
   },
-  created () {
+  created() {
     if (this.authUser && !_isEmpty(this.authUser)) {
       this.fetchFactionWithHistoryById()
       this.fetchSystemWithHistoryById()
@@ -140,8 +134,8 @@ export default {
   },
   computed: {
     ...mapState({
-      authenticated: state => state.auth.authenticated,
-      authUser: state => state.auth.user
+      authenticated: (state) => state.auth.authenticated,
+      authUser: (state) => state.auth.user
     }),
     ...mapGetters({
       factions: 'friendlyUserFactions',
@@ -149,7 +143,7 @@ export default {
     })
   },
   watch: {
-    authUser () {
+    authUser() {
       if (this.authUser) {
         this.fetchFactionWithHistoryById()
         this.fetchSystemWithHistoryById()
@@ -157,11 +151,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'setUserFactions',
-      'setUserSystems'
-    ]),
-    async fetchFactionWithHistoryById () {
+    ...mapMutations(['setUserFactions', 'setUserSystems']),
+    async fetchFactionWithHistoryById() {
       // this.loading = true
       let factions = this.authUser.factions
       factions.sort((first, second) => first.name_lower > second.name_lower)
@@ -178,7 +169,7 @@ export default {
       this.setUserFactions(await Promise.all(factionPromises))
       // this.loading = false
     },
-    async fetchSystemWithHistoryById () {
+    async fetchSystemWithHistoryById() {
       // this.loading = true
       let systems = this.authUser.systems
       systems.sort((first, second) => first.name_lower > second.name_lower)
@@ -195,13 +186,13 @@ export default {
       this.setUserSystems(await Promise.all(systemPromises))
       // this.loading = false
     },
-    systemDetails (faction) {
-      return faction.faction_presence?.map(system => {
+    systemDetails(faction) {
+      return faction.faction_presence?.map((system) => {
         return this.systemDetailsTable(system, faction)
       })
     },
-    factionDetails (system) {
-      return system.factions?.map(faction => {
+    factionDetails(system) {
+      return system.factions?.map((faction) => {
         return this.factionDetailsTable(faction, system)
       })
     }
@@ -212,6 +203,6 @@ export default {
 <style scoped>
 .login {
   width: 360px;
-  margin: auto
+  margin: auto;
 }
 </style>

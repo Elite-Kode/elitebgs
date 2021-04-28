@@ -24,7 +24,7 @@
         light
         slider-color="secondary"
       >
-        <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{name: tabItem.link}">
+        <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{ name: tabItem.link }">
           {{ tabItem.name }}
         </v-tab>
       </v-tabs>
@@ -37,15 +37,18 @@ import Toolbar from '@/components/Toolbar'
 
 export default {
   name: 'AdminToolbar',
-  data () {
+  data() {
     return {
-      tabItems: [{
-        name: 'Overview',
-        link: 'admin-data'
-      }, {
-        name: 'Users',
-        link: 'admin-users'
-      }]
+      tabItems: [
+        {
+          name: 'Overview',
+          link: 'admin-data'
+        },
+        {
+          name: 'Users',
+          link: 'admin-users'
+        }
+      ]
     }
   },
   components: {

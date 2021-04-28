@@ -16,7 +16,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       specs: [
         // {
@@ -50,6 +50,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

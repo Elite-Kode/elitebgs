@@ -19,11 +19,7 @@
           <v-subheader>Discord Name</v-subheader>
         </v-col>
         <v-col cols="9">
-          <v-text-field
-            :value="`${authUser.username}#${authUser.discriminator}`"
-            dense
-            readonly>
-          </v-text-field>
+          <v-text-field :value="`${authUser.username}#${authUser.discriminator}`" dense readonly> </v-text-field>
         </v-col>
       </v-row>
       <v-row align="center">
@@ -31,20 +27,14 @@
           <v-subheader>ID</v-subheader>
         </v-col>
         <v-col cols="3">
-          <v-text-field
-            :value="authUser._id"
-            dense
-            readonly/>
+          <v-text-field :value="authUser._id" dense readonly />
         </v-col>
         <v-col cols="3">
           <!--          <v-subheader>Frontier ID</v-subheader>-->
           <v-subheader>Discord ID</v-subheader>
         </v-col>
         <v-col cols="3">
-          <v-text-field
-            :value="authUser.id"
-            dense
-            readonly/>
+          <v-text-field :value="authUser.id" dense readonly />
         </v-col>
       </v-row>
       <v-row align="center">
@@ -52,10 +42,7 @@
           <v-subheader>Access</v-subheader>
         </v-col>
         <v-col cols="3">
-          <v-text-field
-            :value="authUser.access"
-            dense
-            readonly/>
+          <v-text-field :value="authUser.access" dense readonly />
         </v-col>
         <!--        <v-col cols="3">-->
         <!--          <v-subheader>Trusted</v-subheader>-->
@@ -69,10 +56,10 @@
       </v-row>
       <v-row>
         <v-col cols="12" xs="12" sm="6">
-          <monitored-entities entity-name="Factions" :entities="authUser.factions" @delete="deleteFaction"/>
+          <monitored-entities entity-name="Factions" :entities="authUser.factions" @delete="deleteFaction" />
         </v-col>
         <v-col cols="12" xs="12" sm="6">
-          <monitored-entities entity-name="Systems" :entities="authUser.systems" @delete="deleteSystem"/>
+          <monitored-entities entity-name="Systems" :entities="authUser.systems" @delete="deleteSystem" />
         </v-col>
       </v-row>
     </v-form>
@@ -90,24 +77,22 @@ export default {
   },
   computed: {
     ...mapState({
-      authUser: state => state.auth.user
+      authUser: (state) => state.auth.user
     })
   },
-  created () {
+  created() {
     this.$store.dispatch('checkAuthenticated')
     this.$store.dispatch('fetchAuthUser')
   },
   methods: {
-    deleteFaction (id) {
+    deleteFaction(id) {
       this.$store.dispatch('deleteUserFaction', id)
     },
-    deleteSystem (id) {
+    deleteSystem(id) {
       this.$store.dispatch('deleteUserSystem', id)
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

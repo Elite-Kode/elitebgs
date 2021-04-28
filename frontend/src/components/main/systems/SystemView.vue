@@ -1,13 +1,9 @@
 <template>
   <div>
     <h1>{{ system.name }}</h1>
-    <v-btn-toggle max=0 multiple>
-      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor">
-        Stop Monitoring
-      </v-btn>
-      <v-btn v-else color="primary" @click="monitor">
-        Monitor System
-      </v-btn>
+    <v-btn-toggle max="0" multiple>
+      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor"> Stop Monitoring </v-btn>
+      <v-btn v-else color="primary" @click="monitor"> Monitor System </v-btn>
       <v-btn
         :href="`https://eddb.io/system/${system.eddb_id}`"
         color="primary"
@@ -18,31 +14,19 @@
       </v-btn>
     </v-btn-toggle>
     <v-row class="pt-8">
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Government : </b>{{ system.government }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Allegiance : </b>{{ system.allegiance }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Primary Economy : </b>{{ system.primary_economy }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Secondary Economy : </b>{{ system.secondary_economy }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>State : </b>{{ system.state }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Security : </b>{{ system.security }}
-      </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Government : </b>{{ system.government }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Allegiance : </b>{{ system.allegiance }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Primary Economy : </b>{{ system.primary_economy }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Secondary Economy : </b>{{ system.secondary_economy }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>State : </b>{{ system.state }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Security : </b>{{ system.security }} </v-col>
       <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Population : </b>
-        <vue-numeric v-model="system.population" read-only/>
+        <vue-numeric v-model="system.population" read-only />
       </v-col>
       <v-col cols="12" lg="4" md="6" sm="12" xl="3">
         <b>Controlling Faction : </b>
-        <router-link :to="{ name: 'faction-detail', params: { factionId: system.controlling_minor_faction_id }}">
+        <router-link :to="{ name: 'faction-detail', params: { factionId: system.controlling_minor_faction_id } }">
           {{ system.controlling_minor_faction_cased }}
         </router-link>
       </v-col>
@@ -54,10 +38,10 @@
         </v-col>
       </v-row>
     </v-form>
-    <system-table :faction-details="factionDetails" :loading="loading" :system-filter="systemFilter"/>
+    <system-table :faction-details="factionDetails" :loading="loading" :system-filter="systemFilter" />
     <h2 class="py-8">Conflicts</h2>
     <v-expansion-panels
-      v-if="system.conflicts && system.conflicts.length>0"
+      v-if="system.conflicts && system.conflicts.length > 0"
       v-model="conflictsPanel"
       accordion
       focusable
@@ -72,20 +56,20 @@
           <p>Conflict Status: {{ conflict.status }}</p>
           <v-simple-table class="elevation-1" dense>
             <thead>
-            <tr>
-              <th>{{ conflict.faction1.name }}</th>
-              <th>{{ conflict.faction2.name }}</th>
-            </tr>
+              <tr>
+                <th>{{ conflict.faction1.name }}</th>
+                <th>{{ conflict.faction2.name }}</th>
+              </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>{{ getConflictStakeMessage(conflict.faction1.stake) }}</td>
-              <td>{{ getConflictStakeMessage(conflict.faction2.stake) }}</td>
-            </tr>
-            <tr>
-              <td>{{ conflict.faction1.days_won }} days won</td>
-              <td>{{ conflict.faction2.days_won }} days won</td>
-            </tr>
+              <tr>
+                <td>{{ getConflictStakeMessage(conflict.faction1.stake) }}</td>
+                <td>{{ getConflictStakeMessage(conflict.faction2.stake) }}</td>
+              </tr>
+              <tr>
+                <td>{{ conflict.faction1.days_won }} days won</td>
+                <td>{{ conflict.faction2.days_won }} days won</td>
+              </tr>
             </tbody>
           </v-simple-table>
         </v-expansion-panel-content>
@@ -115,32 +99,13 @@
               readonly
             ></v-text-field>
           </template>
-          <v-date-picker
-            v-model="changedFilterDates"
-            :show-current="currentUtcDate"
-            range
-            show-adjacent-months
-          >
+          <v-date-picker v-model="changedFilterDates" :show-current="currentUtcDate" range show-adjacent-months>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-btn
-                  block
-                  color="error"
-                  text
-                  @click="datePickerMenu = false"
-                >
-                  Cancel
-                </v-btn>
+                <v-btn block color="error" text @click="datePickerMenu = false"> Cancel </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-btn
-                  block
-                  color="success"
-                  text
-                  @click="$refs.datepickerRef.save(changedFilterDates)"
-                >
-                  OK
-                </v-btn>
+                <v-btn block color="success" text @click="$refs.datepickerRef.save(changedFilterDates)"> OK </v-btn>
               </v-col>
             </v-row>
           </v-date-picker>
@@ -148,55 +113,41 @@
       </v-col>
     </v-row>
     <v-card>
-      <v-card-title>
-        Graphs
-      </v-card-title>
+      <v-card-title> Graphs </v-card-title>
 
       <v-expansion-panels v-model="chartsPanel" accordion multiple>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Influences
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Influences </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-influence-chart :system-data="system"></system-influence-chart>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-state-chart :system-data="system"></system-state-chart>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Active State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Active State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-state-apr-chart :system-data="system" type="active"></system-state-apr-chart>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Pending State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Pending State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-state-apr-chart :system-data="system" type="pending"></system-state-apr-chart>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Recovering State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Recovering State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-state-apr-chart :system-data="system" type="recovering"></system-state-apr-chart>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Happiness Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Happiness Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
             <system-happiness-chart :system-data="system"></system-happiness-chart>
           </v-expansion-panel-content>
@@ -226,7 +177,7 @@ export default {
     'system-happiness-chart': SystemHappinessChart
   },
   mixins: [componentMethods],
-  data () {
+  data() {
     return {
       loading: false,
       systemFilter: '',
@@ -245,7 +196,7 @@ export default {
       default: ''
     }
   },
-  async created () {
+  async created() {
     this.filterDates = [
       moment().subtract(10, 'days').utc().format(this.dateFormat),
       moment().utc().format(this.dateFormat)
@@ -260,25 +211,23 @@ export default {
       system: 'friendlySystem'
     }),
     ...mapState({
-      authUser: state => state.auth.user
+      authUser: (state) => state.auth.user
     }),
-    isMonitored () {
-      return this.authUser?.systems?.findIndex(system => system.id === this.system._id) !== -1
+    isMonitored() {
+      return this.authUser?.systems?.findIndex((system) => system.id === this.system._id) !== -1
     },
-    factionDetails () {
-      return this.system.factions?.map(faction => {
+    factionDetails() {
+      return this.system.factions?.map((faction) => {
         return this.factionDetailsTable(faction, this.system)
       })
     },
-    datePickerDisplay () {
+    datePickerDisplay() {
       return `${this.filterDates[0]} - ${this.filterDates[1]}`
     }
   },
   methods: {
-    ...mapMutations([
-      'setSelectedSystem'
-    ]),
-    onChangedFilterDates (value) {
+    ...mapMutations(['setSelectedSystem']),
+    onChangedFilterDates(value) {
       if (value) {
         if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {
           value.reverse()
@@ -287,14 +236,14 @@ export default {
       }
       this.fetchSystemWithHistoryById()
     },
-    getConflictStakeMessage (stake) {
+    getConflictStakeMessage(stake) {
       if (stake) {
         return `${stake} is at stake`
       } else {
         return `Nothing is at stake`
       }
     },
-    async checkRedirect () {
+    async checkRedirect() {
       if (this.systemId.toLowerCase().startsWith('eddbid-')) {
         let system = await this.$store.dispatch('fetchSystemByEddbId', {
           eddbId: this.systemId.slice(7)
@@ -302,12 +251,17 @@ export default {
         await this.$router.push({ name: 'system-detail', params: { systemId: system.docs[0]._id } })
       }
     },
-    async fetchSystemWithHistoryById () {
+    async fetchSystemWithHistoryById() {
       this.loading = true
       let systemsPaginated = await this.$store.dispatch('fetchSystemWithHistoryById', {
         id: this.systemId,
         timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
-        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat)
+          ? moment()
+          : moment(this.filterDates[1], this.dateFormat)
+        )
+          .toDate()
+          .getTime()
       })
       this.setSelectedSystem(systemsPaginated.docs[0])
       this.conflictsPanel = this.system.conflicts.map((conflict, index) => {
@@ -315,16 +269,14 @@ export default {
       })
       this.loading = false
     },
-    monitor () {
+    monitor() {
       this.$store.dispatch('saveUserSystems', [this.system._id])
     },
-    stopMonitor () {
+    stopMonitor() {
       this.$store.dispatch('deleteUserSystem', this.system._id)
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

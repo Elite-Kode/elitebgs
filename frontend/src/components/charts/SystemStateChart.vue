@@ -9,7 +9,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'SystemStateChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -17,32 +17,32 @@ export default {
   props: {
     systemData: {
       type: Object,
-      default () {
+      default() {
         return null
       }
     }
   },
-  created () {
+  created() {
     if (this.systemData && !_isEmpty(this.systemData)) {
       this.createChart()
     }
   },
   computed: {
     ...mapState({
-      allIds: state => state.ingameIds.allIds
+      allIds: (state) => state.ingameIds.allIds
     })
   },
   watch: {
-    systemData (newVal, oldVal) {
+    systemData(newVal, oldVal) {
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
     }
   },
   methods: {
-    async createChart () {
+    async createChart() {
       const allTimeFactions = []
-      this.systemData.faction_history.forEach(record => {
+      this.systemData.faction_history.forEach((record) => {
         if (allTimeFactions.indexOf(record.faction_name) === -1) {
           allTimeFactions.push(record.faction_name)
         }
@@ -59,20 +59,22 @@ export default {
       // const series: XRangeChartSeriesOptions[] = [];
       const series = []
       await this.$store.dispatch('fetchAllIds')
-      const states = Object.keys(this.allIds.state).filter(state => {
-        return state !== 'null'
-      }).map(state => {
-        return [state, this.allIds.state[state].name]
-      })
+      const states = Object.keys(this.allIds.state)
+        .filter((state) => {
+          return state !== 'null'
+        })
+        .map((state) => {
+          return [state, this.allIds.state[state].name]
+        })
       // let i = 0
-      states.forEach(state => {
+      states.forEach((state) => {
         // const data: DataPoint[] = [];
         const data = []
         allTimeFactions.forEach((faction, index) => {
           let previousState = ''
           let timeBegin = 0
           let timeEnd = 0
-          this.systemData.faction_history.forEach(record => {
+          this.systemData.faction_history.forEach((record) => {
             if (record.faction_name === faction) {
               if (previousState !== record.state) {
                 if (record.state === state[0]) {
@@ -153,6 +155,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

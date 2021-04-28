@@ -6,8 +6,8 @@ const state = {
   selectedFaction: {}
 }
 const getters = {
-  friendlyFactions (state) {
-    return state.factions.map(faction => {
+  friendlyFactions(state) {
+    return state.factions.map((faction) => {
       return {
         ...faction,
         government: titlify(faction.government),
@@ -15,28 +15,28 @@ const getters = {
       }
     })
   },
-  friendlyFaction (state, getters) {
+  friendlyFaction(state, getters) {
     return formattedFaction(state.selectedFaction, getters)
   }
 }
 const mutations = {
-  setFactions (state, factions) {
+  setFactions(state, factions) {
     state.factions = factions
   },
-  setSelectedFaction (state, faction) {
+  setSelectedFaction(state, faction) {
     state.selectedFaction = faction
   }
 }
 const actions = {
-  async fetchFactions (context, { page, beginsWith }) {
+  async fetchFactions(context, { page, beginsWith }) {
     let response = await axios.get('/api/ebgs/v5/factions', { params: { page, minimal: true, beginsWith } })
     return response.data
   },
-  async fetchFactionByEddbId (context, { eddbId }) {
+  async fetchFactionByEddbId(context, { eddbId }) {
     let response = await axios.get('/api/ebgs/v5/factions', { params: { eddbId, minimal: true } })
     return response.data
   },
-  async fetchFactionWithHistoryById (context, { id, timeMin, timeMax }) {
+  async fetchFactionWithHistoryById(context, { id, timeMin, timeMax }) {
     let response = await axios.get('/api/ebgs/v5/factions', {
       params: {
         id,

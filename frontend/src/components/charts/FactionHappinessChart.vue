@@ -9,7 +9,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'FactionHappinessChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -17,32 +17,32 @@ export default {
   props: {
     factionData: {
       type: Object,
-      default () {
+      default() {
         return null
       }
     }
   },
-  created () {
+  created() {
     if (this.factionData && !_isEmpty(this.factionData)) {
       this.createChart()
     }
   },
   computed: {
     ...mapState({
-      allIds: state => state.ingameIds.allIds
+      allIds: (state) => state.ingameIds.allIds
     })
   },
   watch: {
-    factionData (newVal, oldVal) {
+    factionData(newVal, oldVal) {
       if (this.factionData && !_isEmpty(this.factionData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
     }
   },
   methods: {
-    async createChart () {
+    async createChart() {
       const allSystems = []
-      this.factionData.history.forEach(record => {
+      this.factionData.history.forEach((record) => {
         if (allSystems.indexOf(record.system) === -1) {
           allSystems.push(record.system)
         }
@@ -59,18 +59,18 @@ export default {
       // const series: XRangeChartSeriesOptions[] = [];
       const series = []
       await this.$store.dispatch('fetchAllIds')
-      const happinesses = Object.keys(this.allIds.happiness).map(happiness => {
+      const happinesses = Object.keys(this.allIds.happiness).map((happiness) => {
         return [happiness, this.allIds.happiness[happiness].name]
       })
       // let i = 0
-      happinesses.forEach(happiness => {
+      happinesses.forEach((happiness) => {
         // const data: DataPoint[] = [];
         const data = []
         allSystems.forEach((system, index) => {
           let previousHappiness = ''
           let timeBegin = 0
           let timeEnd = 0
-          this.factionData.history.forEach(record => {
+          this.factionData.history.forEach((record) => {
             if (record.system === system) {
               if (previousHappiness !== record.happiness) {
                 if (record.happiness === happiness[0]) {
@@ -151,6 +151,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

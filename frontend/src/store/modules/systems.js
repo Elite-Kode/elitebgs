@@ -6,8 +6,8 @@ const state = {
   selectedSystem: {}
 }
 const getters = {
-  friendlySystems (state, getters) {
-    return state.systems.map(system => {
+  friendlySystems(state, getters) {
+    return state.systems.map((system) => {
       return {
         ...system,
         government: getters.government(system.government),
@@ -18,28 +18,28 @@ const getters = {
       }
     })
   },
-  friendlySystem (state, getters) {
+  friendlySystem(state, getters) {
     return formattedSystem(state.selectedSystem, getters)
   }
 }
 const mutations = {
-  setSystems (state, systems) {
+  setSystems(state, systems) {
     state.systems = systems
   },
-  setSelectedSystem (state, system) {
+  setSelectedSystem(state, system) {
     state.selectedSystem = system
   }
 }
 const actions = {
-  async fetchSystems (context, { page, beginsWith }) {
+  async fetchSystems(context, { page, beginsWith }) {
     let response = await axios.get('/api/ebgs/v5/systems', { params: { page, minimal: true, beginsWith } })
     return response.data
   },
-  async fetchSystemByEddbId (context, { eddbId }) {
+  async fetchSystemByEddbId(context, { eddbId }) {
     let response = await axios.get('/api/ebgs/v5/systems', { params: { eddbId, minimal: true } })
     return response.data
   },
-  async fetchSystemWithHistoryById (context, { id, timeMin, timeMax }) {
+  async fetchSystemWithHistoryById(context, { id, timeMin, timeMax }) {
     let response = await axios.get('/api/ebgs/v5/systems', {
       params: {
         id,

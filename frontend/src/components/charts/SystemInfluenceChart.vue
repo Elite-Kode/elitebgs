@@ -8,7 +8,7 @@ import _isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'SystemInfluenceChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -16,18 +16,18 @@ export default {
   props: {
     systemData: {
       type: Object,
-      default () {
+      default() {
         return null
       }
     }
   },
-  created () {
+  created() {
     if (this.systemData && !_isEmpty(this.systemData)) {
       this.createChart()
     }
   },
   watch: {
-    systemData (newVal, oldVal) {
+    systemData(newVal, oldVal) {
       if (this.$refs.chart) {
         this.$refs.chart.chart.reflow()
       }
@@ -37,9 +37,9 @@ export default {
     }
   },
   methods: {
-    createChart () {
+    createChart() {
       const allTimeFactions = []
-      this.systemData.faction_history.forEach(record => {
+      this.systemData.faction_history.forEach((record) => {
         if (allTimeFactions.indexOf(record.faction_name) === -1) {
           allTimeFactions.push(record.faction_name)
         }
@@ -54,28 +54,28 @@ export default {
         }
       })
       const series = []
-      allTimeFactions.forEach(faction => {
+      allTimeFactions.forEach((faction) => {
         const data = []
         let lastRecord
-        this.systemData.faction_history.forEach(record => {
+        this.systemData.faction_history.forEach((record) => {
           if (record.faction_name === faction) {
-            data.push([
-              Date.parse(record.updated_at),
-              Number.parseFloat((record.influence * 100).toFixed(2))
-            ])
+            data.push([Date.parse(record.updated_at), Number.parseFloat((record.influence * 100).toFixed(2))])
             lastRecord = record
           } else {
-            const indexInSystem = this.systemData.history.findIndex(element => {
+            const indexInSystem = this.systemData.history.findIndex((element) => {
               return element.updated_at === record.updated_at
             })
-            if (indexInSystem !== -1 && this.systemData.history[indexInSystem].factions.findIndex(element => {
-              return element.name_lower === faction.toLowerCase()
-            }) === -1) {
+            if (
+              indexInSystem !== -1 &&
+              this.systemData.history[indexInSystem].factions.findIndex((element) => {
+                return element.name_lower === faction.toLowerCase()
+              }) === -1
+            ) {
               data.push([Date.parse(record.updated_at), null])
             }
           }
         })
-        const latestUpdate = this.systemData.factions.find(findFaction => {
+        const latestUpdate = this.systemData.factions.find((findFaction) => {
           return findFaction.name === faction
         })
         if (latestUpdate) {
@@ -112,6 +112,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

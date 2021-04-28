@@ -1,23 +1,18 @@
 <template>
-  <div :class="{'fill-height': isHome && !authenticated}">
+  <div :class="{ 'fill-height': isHome && !authenticated }">
     <ed-toolbar>
       <template v-slot:toolbar-tabs>
-        <v-tabs
-          align-with-title
-          background-color="accent"
-          light
-          slider-color="secondary"
-        >
-          <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{name: tabItem.link}" :exact="tabItem.exact">
+        <v-tabs align-with-title background-color="accent" light slider-color="secondary">
+          <v-tab v-for="(tabItem, i) in tabItems" :key="i" :to="{ name: tabItem.link }" :exact="tabItem.exact">
             {{ tabItem.name }}
           </v-tab>
         </v-tabs>
       </template>
     </ed-toolbar>
-    <v-main :class="{'fill-height': isHome && !authenticated}">
-      <v-container fluid :class="{'fill-height': isHome && !authenticated}">
-        <home-view v-if="isHome"/>
-        <router-view/>
+    <v-main :class="{ 'fill-height': isHome && !authenticated }">
+      <v-container fluid :class="{ 'fill-height': isHome && !authenticated }">
+        <home-view v-if="isHome" />
+        <router-view />
       </v-container>
     </v-main>
   </div>
@@ -30,22 +25,27 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Home',
-  data () {
+  data() {
     return {
-      tabItems: [{
-        name: 'Home',
-        link: 'home',
-        exact: true
-      }, {
-        name: 'Systems',
-        link: 'systems'
-      }, {
-        name: 'Factions',
-        link: 'factions'
-      }, {
-        name: 'Stations',
-        link: 'stations'
-      }]
+      tabItems: [
+        {
+          name: 'Home',
+          link: 'home',
+          exact: true
+        },
+        {
+          name: 'Systems',
+          link: 'systems'
+        },
+        {
+          name: 'Factions',
+          link: 'factions'
+        },
+        {
+          name: 'Stations',
+          link: 'stations'
+        }
+      ]
     }
   },
   components: {
@@ -54,9 +54,9 @@ export default {
   },
   computed: {
     ...mapState({
-      authenticated: state => state.auth.authenticated
+      authenticated: (state) => state.auth.authenticated
     }),
-    isHome () {
+    isHome() {
       return this.$route.name === 'home'
     }
   }

@@ -1,13 +1,9 @@
 <template>
   <div>
     <h1>{{ faction.name }}</h1>
-    <v-btn-toggle max=0 multiple>
-      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor">
-        Stop Monitoring
-      </v-btn>
-      <v-btn v-else color="primary" @click="monitor">
-        Monitor Faction
-      </v-btn>
+    <v-btn-toggle max="0" multiple>
+      <v-btn v-if="isMonitored" color="primary" outlined @click="stopMonitor"> Stop Monitoring </v-btn>
+      <v-btn v-else color="primary" @click="monitor"> Monitor Faction </v-btn>
       <v-btn
         :href="`https://eddb.io/faction/${faction.eddb_id}`"
         color="primary"
@@ -18,18 +14,10 @@
       </v-btn>
     </v-btn-toggle>
     <v-row class="pt-8">
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Government : </b>{{ faction.government }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Allegiance : </b>{{ faction.allegiance }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Systems Presence : </b>{{ systemsPresence }}
-      </v-col>
-      <v-col cols="12" lg="4" md="6" sm="12" xl="3">
-        <b>Systems Controlled : </b>{{ systemsControlled }}
-      </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Government : </b>{{ faction.government }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Allegiance : </b>{{ faction.allegiance }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Systems Presence : </b>{{ systemsPresence }} </v-col>
+      <v-col cols="12" lg="4" md="6" sm="12" xl="3"> <b>Systems Controlled : </b>{{ systemsControlled }} </v-col>
     </v-row>
     <v-form>
       <v-row>
@@ -38,26 +26,24 @@
         </v-col>
       </v-row>
     </v-form>
-    <faction-table :faction-filter="factionFilter" :loading="loading" :system-details="systemDetails"/>
+    <faction-table :faction-filter="factionFilter" :loading="loading" :system-details="systemDetails" />
     <h2 class="py-8">Conflicts</h2>
     <v-data-table
-      v-if="conflicts && conflicts.length>0"
+      v-if="conflicts && conflicts.length > 0"
       :headers="conflictHeaders"
       :items="conflicts"
       class="elevation-1"
       dense
       hide-default-footer
     >
-      <template v-slot:item.stake="{item}">
+      <template v-slot:item.stake="{ item }">
         {{ getConflictStakeMessage(item.stake) }}
       </template>
-      <template v-slot:item.days_won="{item}">
+      <template v-slot:item.days_won="{ item }">
         <template v-if="item.days_won">
           {{ item.days_won }}
         </template>
-        <template v-else>
-          0
-        </template>
+        <template v-else> 0 </template>
       </template>
     </v-data-table>
     <p v-else-if="loading">Loading...</p>
@@ -84,32 +70,13 @@
               readonly
             ></v-text-field>
           </template>
-          <v-date-picker
-            v-model="changedFilterDates"
-            :show-current="currentUtcDate"
-            range
-            show-adjacent-months
-          >
+          <v-date-picker v-model="changedFilterDates" :show-current="currentUtcDate" range show-adjacent-months>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-btn
-                  block
-                  color="error"
-                  text
-                  @click="datePickerMenu = false"
-                >
-                  Cancel
-                </v-btn>
+                <v-btn block color="error" text @click="datePickerMenu = false"> Cancel </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-btn
-                  block
-                  color="success"
-                  text
-                  @click="$refs.datepickerRef.save(changedFilterDates)"
-                >
-                  OK
-                </v-btn>
+                <v-btn block color="success" text @click="$refs.datepickerRef.save(changedFilterDates)"> OK </v-btn>
               </v-col>
             </v-row>
           </v-date-picker>
@@ -117,56 +84,42 @@
       </v-col>
     </v-row>
     <v-card>
-      <v-card-title>
-        Graphs
-      </v-card-title>
+      <v-card-title> Graphs </v-card-title>
       <v-expansion-panels v-model="chartsPanel" accordion multiple>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Influences
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Influences </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-influence-chart :faction-data="faction"/>
+            <faction-influence-chart :faction-data="faction" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-chart :faction-data="faction"/>
+            <faction-state-chart :faction-data="faction" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Active State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Active State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="active"/>
+            <faction-state-apr-chart :faction-data="faction" type="active" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Pending State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Pending State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="pending"/>
+            <faction-state-apr-chart :faction-data="faction" type="pending" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Recovering State Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Recovering State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-state-apr-chart :faction-data="faction" type="recovering"/>
+            <faction-state-apr-chart :faction-data="faction" type="recovering" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header class="py-0">
-            Happiness Periods
-          </v-expansion-panel-header>
+          <v-expansion-panel-header class="py-0"> Happiness Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <faction-happiness-chart :faction-data="faction"/>
+            <faction-happiness-chart :faction-data="faction" />
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -194,7 +147,7 @@ export default {
     'faction-happiness-chart': FactionHappinessChart
   },
   mixins: [componentMethods],
-  data () {
+  data() {
     return {
       loading: false,
       conflicts: [],
@@ -207,25 +160,32 @@ export default {
       datePickerMenu: false,
       currentUtcDate: '',
       dateFormat: 'YYYY-MM-DD',
-      conflictHeaders: [{
-        text: 'System Name',
-        value: 'system_name'
-      }, {
-        text: 'Conflict Type',
-        value: 'type'
-      }, {
-        text: 'Conflict Status',
-        value: 'status'
-      }, {
-        text: 'Opponent Name',
-        value: 'opponent_name'
-      }, {
-        text: 'Stake',
-        value: 'stake'
-      }, {
-        text: 'Days Won',
-        value: 'days_won'
-      }],
+      conflictHeaders: [
+        {
+          text: 'System Name',
+          value: 'system_name'
+        },
+        {
+          text: 'Conflict Type',
+          value: 'type'
+        },
+        {
+          text: 'Conflict Status',
+          value: 'status'
+        },
+        {
+          text: 'Opponent Name',
+          value: 'opponent_name'
+        },
+        {
+          text: 'Stake',
+          value: 'stake'
+        },
+        {
+          text: 'Days Won',
+          value: 'days_won'
+        }
+      ],
       chartsPanel: [0, 1, 2, 3, 4, 5]
     }
   },
@@ -235,7 +195,7 @@ export default {
       default: ''
     }
   },
-  async created () {
+  async created() {
     this.filterDates = [
       moment().subtract(10, 'days').utc().format(this.dateFormat),
       moment().utc().format(this.dateFormat)
@@ -250,25 +210,23 @@ export default {
       faction: 'friendlyFaction'
     }),
     ...mapState({
-      authUser: state => state.auth.user
+      authUser: (state) => state.auth.user
     }),
-    isMonitored () {
-      return this.authUser?.factions?.findIndex(faction => faction.id === this.faction._id) !== -1
+    isMonitored() {
+      return this.authUser?.factions?.findIndex((faction) => faction.id === this.faction._id) !== -1
     },
-    systemDetails () {
-      return this.faction.faction_presence?.map(system => {
+    systemDetails() {
+      return this.faction.faction_presence?.map((system) => {
         return this.systemDetailsTable(system, this.faction)
       })
     },
-    datePickerDisplay () {
+    datePickerDisplay() {
       return `${this.filterDates[0]} - ${this.filterDates[1]}`
     }
   },
   methods: {
-    ...mapMutations([
-      'setSelectedFaction'
-    ]),
-    onChangedFilterDates (value) {
+    ...mapMutations(['setSelectedFaction']),
+    onChangedFilterDates(value) {
       if (value) {
         if (moment(value[0], this.dateFormat).isAfter(moment(value[1], this.dateFormat))) {
           value.reverse()
@@ -277,14 +235,14 @@ export default {
       }
       this.fetchFactionWithHistoryById()
     },
-    getConflictStakeMessage (stake) {
+    getConflictStakeMessage(stake) {
       if (stake) {
         return `${stake} is at stake`
       } else {
         return `Nothing is at stake`
       }
     },
-    async checkRedirect () {
+    async checkRedirect() {
       if (this.factionId.toLowerCase().startsWith('eddbid-')) {
         let faction = await this.$store.dispatch('fetchFactionByEddbId', {
           eddbId: this.factionId.slice(7)
@@ -292,12 +250,17 @@ export default {
         await this.$router.push({ name: 'faction-detail', params: { factionId: faction.docs[0]._id } })
       }
     },
-    async fetchFactionWithHistoryById () {
+    async fetchFactionWithHistoryById() {
       this.loading = true
       let factionsPaginated = await this.$store.dispatch('fetchFactionWithHistoryById', {
         id: this.factionId,
         timeMin: moment.utc(this.filterDates[0], this.dateFormat).toDate().getTime(),
-        timeMax: (this.filterDates[1] === moment().format(this.dateFormat) ? moment() : moment(this.filterDates[1], this.dateFormat)).toDate().getTime()
+        timeMax: (this.filterDates[1] === moment().format(this.dateFormat)
+          ? moment()
+          : moment(this.filterDates[1], this.dateFormat)
+        )
+          .toDate()
+          .getTime()
       })
       this.setSelectedFaction(factionsPaginated.docs[0])
       this.conflicts = this.faction.faction_presence.reduce((acc, system) => {
@@ -313,16 +276,14 @@ export default {
       }, 0)
       this.loading = false
     },
-    monitor () {
+    monitor() {
       this.$store.dispatch('saveUserFactions', [this.faction._id])
     },
-    stopMonitor () {
+    stopMonitor() {
       this.$store.dispatch('deleteUserFaction', this.faction._id)
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

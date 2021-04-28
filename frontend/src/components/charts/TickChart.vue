@@ -9,7 +9,7 @@ import moment from 'moment'
 
 export default {
   name: 'TickChart',
-  data () {
+  data() {
     return {
       options: null
     }
@@ -17,18 +17,18 @@ export default {
   props: {
     tickData: {
       type: Array,
-      default () {
+      default() {
         return []
       }
     }
   },
-  created () {
+  created() {
     if (this.tickData && !_isEmpty(this.tickData)) {
       this.createChart()
     }
   },
   watch: {
-    tickData (newVal, oldVal) {
+    tickData(newVal, oldVal) {
       if (this.$refs.chart) {
         this.$refs.chart.chart.reflow()
       }
@@ -38,18 +38,18 @@ export default {
     }
   },
   methods: {
-    async createChart () {
+    async createChart() {
       const data = []
       const series = []
       const firstTick = this.tickData[this.tickData.length - 1]
-      this.tickData.forEach(tick => {
+      this.tickData.forEach((tick) => {
         const tickMoment = moment(tick.time)
         const firstTickMoment = moment(firstTick.time)
-        const normalisedTime = moment(`${firstTickMoment.format('YYYY-MM-DD')} ${tickMoment.format('HH:mm:ss:SSSZZ')}`, 'YYYY-MM-DD HH:mm:ss:SSSZZ')
-        data.push([
-          Date.parse(tick.updated_at),
-          Date.parse(normalisedTime.toISOString())
-        ])
+        const normalisedTime = moment(
+          `${firstTickMoment.format('YYYY-MM-DD')} ${tickMoment.format('HH:mm:ss:SSSZZ')}`,
+          'YYYY-MM-DD HH:mm:ss:SSSZZ'
+        )
+        data.push([Date.parse(tick.updated_at), Date.parse(normalisedTime.toISOString())])
       })
       data.reverse()
       series.push({
@@ -82,8 +82,10 @@ export default {
           line: {
             tooltip: {
               headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-              pointFormatter () {
-                return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${moment(this.y).utc().format('HH:mm')} UTC</b><br/>`
+              pointFormatter() {
+                return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${moment(this.y)
+                  .utc()
+                  .format('HH:mm')} UTC</b><br/>`
               }
             }
           }
@@ -100,6 +102,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

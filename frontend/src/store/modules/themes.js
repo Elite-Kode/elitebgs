@@ -1,12 +1,9 @@
 const state = {
   theme: '',
-  themes: [
-    'light',
-    'dark'
-  ]
+  themes: ['light', 'dark']
 }
 const mutations = {
-  setTheme (state, theme) {
+  setTheme(state, theme) {
     state.theme = theme
   }
 }

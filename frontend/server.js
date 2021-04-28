@@ -29,8 +29,8 @@ const app = express()
 let bugsnagClientMiddleware = {}
 
 if (secrets.bugsnag_use) {
-    bugsnagClientMiddleware = bugsnagClient.getPlugin('express')
-    app.use(bugsnagClientMiddleware.requestHandler)
+  bugsnagClientMiddleware = bugsnagClient.getPlugin('express')
+  app.use(bugsnagClientMiddleware.requestHandler)
 }
 
 app.use(bodyParser.json())
@@ -38,39 +38,39 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'dist')))
 
 app.all('*', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
-});
+  res.status(200).sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 // error handlers
 if (secrets.bugsnag_use) {
-    app.use(bugsnagClientMiddleware.errorHandler)
+  app.use(bugsnagClientMiddleware.errorHandler)
 }
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(logger('dev'))
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500)
-        res.send({
-            message: err.message,
-            error: err
-        })
-        console.log(err)
+  app.use(logger('dev'))
+  app.use(function (err, req, res) {
+    res.status(err.status || 500)
+    res.send({
+      message: err.message,
+      error: err
     })
+    console.log(err)
+  })
 }
 
 // production error handler
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
-    app.use(logger('combined'))
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500)
-        res.send({
-            message: err.message,
-            error: {}
-        })
+  app.use(logger('combined'))
+  app.use(function (err, req, res) {
+    res.status(err.status || 500)
+    res.send({
+      message: err.message,
+      error: {}
     })
+  })
 }
 
 module.exports = app

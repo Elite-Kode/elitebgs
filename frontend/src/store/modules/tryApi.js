@@ -4,10 +4,10 @@ const state = {
   specDoc: null
 }
 const getters = {
-  getPaths (state) {
+  getPaths(state) {
     return state.specDoc ? Object.entries(state.specDoc.paths) : []
   },
-  getDefinitions (state) {
+  getDefinitions(state) {
     return state.specDoc ? Object.entries(state.specDoc.definitions) : []
   },
   getMethods: (state) => (path) => {
@@ -15,18 +15,18 @@ const getters = {
   }
 }
 const mutations = {
-  setSpecDoc (state, specDoc) {
+  setSpecDoc(state, specDoc) {
     state.specDoc = specDoc
   }
 }
 const actions = {
-  async fetchSpecDoc ({ commit }, { specLocation }) {
+  async fetchSpecDoc({ commit }, { specLocation }) {
     let response = await axios.get(specLocation)
     let specDoc = response.data
     commit('setSpecDoc', specDoc)
     return specDoc
   },
-  async fetchFromApiUrl (context, { url, method, data }) {
+  async fetchFromApiUrl(context, { url, method, data }) {
     let response = await axios({
       method,
       url,

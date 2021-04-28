@@ -15,18 +15,19 @@
   -->
 
 <template>
-    <div>
-        <h2>Owner Information</h2>
-        <p>Sayak Mukhopadhyay
-            <br> Plot No 205
-            <br> Hijli Coperative Society
-            <br> Kharagpur
-            <br> West Bengal - 721306
-            <br> India
-            <br>
-            <a href="mailto:contact@kodeblox.com">contact@kodeblox.com</a>
-        </p>
-    </div>
+  <div>
+    <h2>Owner Information</h2>
+    <p>
+      Sayak Mukhopadhyay <br />
+      Plot No 205 <br />
+      Hijli Coperative Society <br />
+      Kharagpur <br />
+      West Bengal - 721306 <br />
+      India
+      <br />
+      <a href="mailto:contact@kodeblox.com">contact@kodeblox.com</a>
+    </p>
+  </div>
 </template>
 
 <script>
@@ -35,6 +36,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

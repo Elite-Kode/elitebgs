@@ -38,153 +38,195 @@ export default new Router({
     {
       path: '/',
       component: MainLayout,
-      children: [{
-        path: '',
-        component: Home,
-        name: 'home',
-        children: [{
-          path: 'systems',
-          component: SystemList,
-          name: 'systems'
-        }, {
-          path: 'systems/:systemId',
-          component: SystemView,
-          name: 'system-detail',
-          props: true
-        }, {
-          path: 'factions',
-          component: FactionList,
-          name: 'factions'
-        }, {
-          path: 'factions/:factionId',
-          component: FactionView,
-          name: 'faction-detail',
-          props: true
-        }, {
-          path: 'stations',
-          component: StationList,
-          name: 'stations'
-        }, {
-          path: 'stations/:stationId',
-          component: StationView,
-          name: 'station-detail',
-          props: true
-        }]
-      }, {
-        path: '/eddb',
-        component: DocsLayout,
-        children: [{
+      children: [
+        {
           path: '',
-          component: EddbApiOverview,
-          name: 'eddb-api-overview'
-        }, {
-          path: 'docs/:version?',
-          component: EddbApiDocs,
-          props: true,
-          children: [{
-            path: '',
-            component: SwaggerHome,
-            name: 'eddb-api-docs'
-          }, {
-            path: 'paths/:path/:method?',
-            component: SwaggerPath,
-            props: true,
-            name: 'eddb-api-docs-path'
-          }, {
-            path: 'definitions/:definition',
-            component: SwaggerDefinition,
-            props: true,
-            name: 'eddb-api-docs-definition'
-          }]
-        }]
-      }, {
-        path: '/ebgs',
-        component: DocsLayout,
-        children: [{
-          path: '',
-          component: EliteBgsApiOverview,
-          name: 'ebgs-api-overview'
-        }, {
-          path: 'docs/:version?',
-          component: EliteBgsApiDocs,
-          props: true,
-          children: [{
-            path: '',
-            component: SwaggerHome,
-            name: 'ebgs-api-docs'
-          }, {
-            path: 'paths/:path/:method?',
-            component: SwaggerPath,
-            props: true,
-            name: 'ebgs-api-docs-path'
-          }, {
-            path: 'definitions/:definition',
-            component: SwaggerDefinition,
-            props: true,
-            name: 'ebgs-api-docs-definition'
-          }]
-        }]
-      }, {
-        path: '/bgsbot',
-        component: DocsLayout,
-        children: [{
-          path: '',
-          component: BgsBotOverview,
-          name: 'bgsbot-api-overview'
-        }, {
-          path: 'docs',
-          component: BgsBotDocs,
-          name: 'bgsbot-api-docs'
-        }]
-      }, {
-        path: '/admin',
-        component: Admin,
-        children: [{
-          path: '',
-          component: AdminData,
-          name: 'admin-data'
-        }, {
-          path: 'users',
-          component: AdminUserList,
-          name: 'admin-users'
-        }]
-      }, {
-        path: '/tick',
-        component: Tick,
-        name: 'tick'
-      }, {
-        path: '/profile',
-        component: Profile,
-        children: [{
-          path: '',
-          component: ProfileData,
-          name: 'profile-data'
-        }]
-      }, {
-        path: '/about',
-        component: About,
-        name: 'about'
-      }, {
-        path: '/about/termsandconditions',
-        component: TAndC,
-        name: 'tandc'
-      }, {
-        path: '/about/disclaimer',
-        component: Disclaimer,
-        name: 'disclaimer'
-      }, {
-        path: '/about/privacypolicy',
-        component: PrivacyPolicy,
-        name: 'privacy-policy'
-      }, {
-        path: '/donate',
-        component: Donate,
-        name: 'donate'
-      }, {
-        path: '/guide',
-        component: Guide,
-        name: 'guide'
-      }
+          component: Home,
+          name: 'home',
+          children: [
+            {
+              path: 'systems',
+              component: SystemList,
+              name: 'systems'
+            },
+            {
+              path: 'systems/:systemId',
+              component: SystemView,
+              name: 'system-detail',
+              props: true
+            },
+            {
+              path: 'factions',
+              component: FactionList,
+              name: 'factions'
+            },
+            {
+              path: 'factions/:factionId',
+              component: FactionView,
+              name: 'faction-detail',
+              props: true
+            },
+            {
+              path: 'stations',
+              component: StationList,
+              name: 'stations'
+            },
+            {
+              path: 'stations/:stationId',
+              component: StationView,
+              name: 'station-detail',
+              props: true
+            }
+          ]
+        },
+        {
+          path: '/eddb',
+          component: DocsLayout,
+          children: [
+            {
+              path: '',
+              component: EddbApiOverview,
+              name: 'eddb-api-overview'
+            },
+            {
+              path: 'docs/:version?',
+              component: EddbApiDocs,
+              props: true,
+              children: [
+                {
+                  path: '',
+                  component: SwaggerHome,
+                  name: 'eddb-api-docs'
+                },
+                {
+                  path: 'paths/:path/:method?',
+                  component: SwaggerPath,
+                  props: true,
+                  name: 'eddb-api-docs-path'
+                },
+                {
+                  path: 'definitions/:definition',
+                  component: SwaggerDefinition,
+                  props: true,
+                  name: 'eddb-api-docs-definition'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: '/ebgs',
+          component: DocsLayout,
+          children: [
+            {
+              path: '',
+              component: EliteBgsApiOverview,
+              name: 'ebgs-api-overview'
+            },
+            {
+              path: 'docs/:version?',
+              component: EliteBgsApiDocs,
+              props: true,
+              children: [
+                {
+                  path: '',
+                  component: SwaggerHome,
+                  name: 'ebgs-api-docs'
+                },
+                {
+                  path: 'paths/:path/:method?',
+                  component: SwaggerPath,
+                  props: true,
+                  name: 'ebgs-api-docs-path'
+                },
+                {
+                  path: 'definitions/:definition',
+                  component: SwaggerDefinition,
+                  props: true,
+                  name: 'ebgs-api-docs-definition'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: '/bgsbot',
+          component: DocsLayout,
+          children: [
+            {
+              path: '',
+              component: BgsBotOverview,
+              name: 'bgsbot-api-overview'
+            },
+            {
+              path: 'docs',
+              component: BgsBotDocs,
+              name: 'bgsbot-api-docs'
+            }
+          ]
+        },
+        {
+          path: '/admin',
+          component: Admin,
+          children: [
+            {
+              path: '',
+              component: AdminData,
+              name: 'admin-data'
+            },
+            {
+              path: 'users',
+              component: AdminUserList,
+              name: 'admin-users'
+            }
+          ]
+        },
+        {
+          path: '/tick',
+          component: Tick,
+          name: 'tick'
+        },
+        {
+          path: '/profile',
+          component: Profile,
+          children: [
+            {
+              path: '',
+              component: ProfileData,
+              name: 'profile-data'
+            }
+          ]
+        },
+        {
+          path: '/about',
+          component: About,
+          name: 'about'
+        },
+        {
+          path: '/about/termsandconditions',
+          component: TAndC,
+          name: 'tandc'
+        },
+        {
+          path: '/about/disclaimer',
+          component: Disclaimer,
+          name: 'disclaimer'
+        },
+        {
+          path: '/about/privacypolicy',
+          component: PrivacyPolicy,
+          name: 'privacy-policy'
+        },
+        {
+          path: '/donate',
+          component: Donate,
+          name: 'donate'
+        },
+        {
+          path: '/guide',
+          component: Guide,
+          name: 'guide'
+        }
       ]
     }
   ],

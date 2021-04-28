@@ -17,9 +17,10 @@
       :server-items-length="totalStations"
       :items-per-page="10"
       :footer-props="tableFooter"
-      :loading="loading">
-      <template v-slot:item.name="{item}">
-        <router-link :to="{ name: 'station-detail', params: { stationId: item._id }}">{{ item.name }}</router-link>
+      :loading="loading"
+    >
+      <template v-slot:item.name="{ item }">
+        <router-link :to="{ name: 'station-detail', params: { stationId: item._id } }">{{ item.name }}</router-link>
       </template>
     </v-data-table>
   </div>
@@ -35,31 +36,39 @@ export default {
   // metaInfo: {
   //   title: 'Station Search - Elite BGS'
   // },
-  data () {
+  data() {
     return {
       stationName: '',
-      headers: [{
-        text: 'Station Name',
-        value: 'name'
-      }, {
-        text: 'System Name',
-        value: 'system'
-      }, {
-        text: 'Station Type',
-        value: 'government'
-      }, {
-        text: 'Station Government',
-        value: 'government'
-      }, {
-        text: 'Allegiance',
-        value: 'allegiance'
-      }, {
-        text: 'Economy',
-        value: 'economy'
-      }, {
-        text: 'State',
-        value: 'state'
-      }],
+      headers: [
+        {
+          text: 'Station Name',
+          value: 'name'
+        },
+        {
+          text: 'System Name',
+          value: 'system'
+        },
+        {
+          text: 'Station Type',
+          value: 'government'
+        },
+        {
+          text: 'Station Government',
+          value: 'government'
+        },
+        {
+          text: 'Allegiance',
+          value: 'allegiance'
+        },
+        {
+          text: 'Economy',
+          value: 'economy'
+        },
+        {
+          text: 'State',
+          value: 'state'
+        }
+      ],
       tableFooter: {
         disableItemsPerPage: true,
         showFirstLastPage: true,
@@ -70,18 +79,20 @@ export default {
       loading: false
     }
   },
-  created () {
+  created() {
     this.fetchStations()
     this.$watchAsObservable('stationName')
       .pipe(debounceTime(300))
-      .pipe(switchMap(value => {
-        this.loading = true
-        return this.$store.dispatch('fetchStations', {
-          page: this.page,
-          beginsWith: value.newValue
+      .pipe(
+        switchMap((value) => {
+          this.loading = true
+          return this.$store.dispatch('fetchStations', {
+            page: this.page,
+            beginsWith: value.newValue
+          })
         })
-      }))
-      .subscribe(stationsPaginated => {
+      )
+      .subscribe((stationsPaginated) => {
         this.setStations(stationsPaginated.docs)
         this.totalStations = stationsPaginated.total
         this.loading = false
@@ -93,15 +104,13 @@ export default {
     })
   },
   watch: {
-    page () {
+    page() {
       this.fetchStations()
     }
   },
   methods: {
-    ...mapMutations([
-      'setStations'
-    ]),
-    async fetchStations () {
+    ...mapMutations(['setStations']),
+    async fetchStations() {
       this.loading = true
       let stationsPaginated = await this.$store.dispatch('fetchStations', {
         page: this.page,
@@ -115,6 +124,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

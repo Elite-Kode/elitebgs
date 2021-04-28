@@ -1,9 +1,7 @@
 <template>
   <v-navigation-drawer app clipped v-model="navState">
     <v-list expand>
-      <v-list-item :to="docsLink" exact>
-        Home
-      </v-list-item>
+      <v-list-item :to="docsLink" exact> Home </v-list-item>
       <v-list-group :value="true">
         <template v-slot:activator>
           <v-list-item-title>Paths</v-list-item-title>
@@ -43,7 +41,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       navState: this.value
     }
@@ -54,10 +52,10 @@ export default {
       definitions: 'getDefinitions',
       getMethods: 'getMethods'
     }),
-    rootLink () {
+    rootLink() {
       return this.$route.path.split('/')[1]
     },
-    docsLink () {
+    docsLink() {
       return {
         name: `${this.rootLink}-api-docs`,
         params: {
@@ -67,7 +65,7 @@ export default {
     }
   },
   methods: {
-    getPathLink (path) {
+    getPathLink(path) {
       return {
         name: `${this.rootLink}-api-docs-path`,
         params: {
@@ -76,7 +74,7 @@ export default {
         }
       }
     },
-    definitionLink (definition) {
+    definitionLink(definition) {
       return {
         name: `${this.rootLink}-api-docs-definition`,
         params: {
@@ -87,16 +85,14 @@ export default {
     }
   },
   watch: {
-    navState () {
+    navState() {
       this.$emit('input', this.navState)
     },
-    value () {
+    value() {
       this.navState = this.value
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

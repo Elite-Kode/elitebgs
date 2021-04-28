@@ -2,12 +2,10 @@
   <div>
     <h1>Overview</h1>
     <v-card class="mt-2">
-      <v-card-title>
-        User Overview
-      </v-card-title>
+      <v-card-title> User Overview </v-card-title>
       <v-card-text>
         Total Number of Users: {{ userCount }}
-        <br>
+        <br />
         Latest User: {{ latestUser }}
       </v-card-text>
     </v-card>
@@ -17,7 +15,7 @@
 <script>
 export default {
   name: 'AdminData',
-  data () {
+  data() {
     return {
       userCount: 0,
       latestUser: ''
@@ -26,6 +24,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

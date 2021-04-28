@@ -15,17 +15,16 @@
   -->
 
 <template>
-    <div>
-        <ed-toolbar>
-        </ed-toolbar>
-        <v-main>
-            <v-container fluid>
-                <owner-info/>
-                <h2>Disclaimer</h2>
-                <disclaimer-text/>
-            </v-container>
-        </v-main>
-    </div>
+  <div>
+    <ed-toolbar> </ed-toolbar>
+    <v-main>
+      <v-container fluid>
+        <owner-info />
+        <h2>Disclaimer</h2>
+        <disclaimer-text />
+      </v-container>
+    </v-main>
+  </div>
 </template>
 
 <script>
@@ -43,6 +42,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
