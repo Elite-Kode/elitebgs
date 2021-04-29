@@ -4,7 +4,12 @@
   "scripts": {
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint",
+    "lint": "run-s lint:vue lint:node",
+    "lint:vue": "vue-cli-service lint --no-fix -c .eslintrc.vue.js",
+    "lint:node": "eslint \"{server,bin}/**/*.js\" -c .eslintrc.node.js",
+    "lint:vue:fix": "vue-cli-service lint -c .eslintrc.vue.js",
+    "lint:node:fix": "eslint \"{server,bin}/**/*.js\" --fix -c .eslintrc.node.js",
+    "lint:fix": "run-s lint:vue:fix lint:node:fix",
     "builddev": "vue-cli-service build --watch",
     "buildprod": "vue-cli-service build",
     "dev": "vue-cli-service serve",

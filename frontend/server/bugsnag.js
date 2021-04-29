@@ -35,12 +35,12 @@ if (useBugsnag) {
 
 function bugsnagCaller(err, metaData, logToConsole = true) {
   if (useBugsnag) {
-    bugsnagClient.notify(err, event => {
-      event.addMetadata('Custom', metaData);
-    });
+    bugsnagClient.notify(err, (event) => {
+      event.addMetadata('Custom', metaData)
+    })
   }
   if (logToConsole) {
-    console.log(err);
+    console.log(err)
   }
 }
 
@@ -49,4 +49,4 @@ let bugsnagWrapper = {
   bugsnagClient
 }
 
-module.exports = bugsnagWrapper;
+module.exports = bugsnagWrapper
