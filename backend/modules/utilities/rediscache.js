@@ -28,14 +28,12 @@ class CacheNone {
 }
 
 class CacheRedis {
-  #redisReady
-
   constructor() {
-    this.#redisReady = false
+    this.redisReady = false
     redisClient = null
   }
 
-  connect = () => {
+  connect() {
     if (redis_use && redisClient === null) {
       console.log(`Attempting to connect to Redis at ${redis_host}:${redis_port}`)
       redisClient = redis.createClient(redis_port, redis_host)
@@ -46,17 +44,17 @@ class CacheRedis {
 
       redisClient.on('connected', () => {
         console.log('Connected to Redis')
-        this.#redisReady = true
+        this.redisReady = true
       })
 
       redisClient.on('ready', () => {
         console.log('Redis is ready')
-        this.#redisReady = true
+        this.redisReady = true
       })
 
       //log error to the console if any occurs
       redisClient.on('error', (err) => {
-        this.#redisReady = false
+        this.redisReady = false
         console.log('Redis error: disabling Redis')
         redisClient.quit()
         redisClient = null
@@ -67,9 +65,9 @@ class CacheRedis {
     return redisClient
   }
 
-  getKey = (key) =>
-    new Promise((resolve, reject) => {
-      if (redis_use && redisClient !== null && this.#redisReady) {
+  getKey(key) {
+    return new Promise((resolve, reject) => {
+      if (redis_use && redisClient !== null && this.redisReady) {
         redisClient.get(key, (err, data) => {
           if (err) return reject(err)
           return resolve(data)
@@ -78,9 +76,10 @@ class CacheRedis {
         return null
       }
     })
+  }
 
-  setKey = (urlHash, data) => {
-    if (redis_use && redisClient !== null && this.#redisReady) {
+  setKey(urlHash, data) {
+    if (redis_use && redisClient !== null && this.redisReady) {
       redisClient.setex(urlHash, redis_timeout, data)
     }
   }
