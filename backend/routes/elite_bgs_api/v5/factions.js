@@ -208,12 +208,12 @@ router.get('/', cors(), async (req, res, next) => {
         }
       }
     }
-    if (req.query.influenceGT && req.query.influenceGT) {
+    if (req.query.influenceGT && req.query.influenceLT) {
       query['faction_presence'] = {
         $elemMatch: {
           influence: {
-            $gt: +request.query.influenceGT,
-            $lt: +request.query.influenceLT
+            $gt: +req.query.influenceGT,
+            $lt: +req.query.influenceLT
           }
         }
       }
@@ -221,7 +221,7 @@ router.get('/', cors(), async (req, res, next) => {
       query['faction_presence'] = {
         $elemMatch: {
           influence: {
-            $gt: +request.query.influenceGT
+            $gt: +req.query.influenceGT
           }
         }
       }
@@ -229,7 +229,7 @@ router.get('/', cors(), async (req, res, next) => {
       query['faction_presence'] = {
         $elemMatch: {
           influence: {
-            $gt: +request.query.influenceLT
+            $gt: +req.query.influenceLT
           }
         }
       }

@@ -23,8 +23,8 @@ const _ = require('lodash')
 
 const ebgsUsers = require('../models/ebgs_users')
 
-let bannedAccess = 'BANNED'
-let normalAccess = 'NORMAL'
+// let bannedAccess = 'BANNED'
+// let normalAccess = 'NORMAL'
 let adminAccess = 'ADMIN'
 
 let router = express.Router()
@@ -81,7 +81,7 @@ router.put('/users', async (req, res, next) => {
       let body = req.body
       body.$unset = {}
       for (const key in body) {
-        if (body.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(body, key)) {
           const element = body[key]
           if (element === null) {
             delete body[key]

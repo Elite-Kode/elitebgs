@@ -18,8 +18,8 @@
 
 const express = require('express')
 
-let bannedAccess = 'BANNED'
-let normalAccess = 'NORMAL'
+// let bannedAccess = 'BANNED'
+// let normalAccess = 'NORMAL'
 let adminAccess = 'ADMIN'
 
 let router = express.Router()

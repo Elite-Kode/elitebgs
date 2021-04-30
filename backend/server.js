@@ -100,27 +100,27 @@ if (app.get('env') === 'development') {
   app.use(cors())
 }
 
-app.use('/api/ebgs/v1/api-docs.json', (req, res, next) => {
+app.use('/api/ebgs/v1/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv1)
 })
 
-app.use('/api/ebgs/v2/api-docs.json', (req, res, next) => {
+app.use('/api/ebgs/v2/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv2)
 })
 
-app.use('/api/ebgs/v3/api-docs.json', (req, res, next) => {
+app.use('/api/ebgs/v3/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv3)
 })
 
-app.use('/api/ebgs/v4/api-docs.json', (req, res, next) => {
+app.use('/api/ebgs/v4/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv4)
 })
 
-app.use('/api/ebgs/v5/api-docs.json', (req, res, next) => {
+app.use('/api/ebgs/v5/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv5)
 })
@@ -148,7 +148,7 @@ if (secrets.bugsnag_use) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(logger('dev'))
-  app.use(function (err, req, res, next) {
+  app.use(function (err, req, res) {
     res.status(err.status || 500)
     res.send({
       message: err.message,
@@ -162,7 +162,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
   app.use(logger('combined'))
-  app.use(function (err, req, res, next) {
+  app.use(function (err, req, res) {
     res.status(err.status || 500)
     res.send({
       message: err.message,
@@ -185,7 +185,7 @@ passport.deserializeUser(async (id, done) => {
   }
 })
 
-let onAuthentication = async (accessToken, refreshToken, profile, done, type) => {
+let onAuthentication = async (accessToken, refreshToken, profile, done) => {
   try {
     let model = require('./models/ebgs_users')
     let user = await model.findOne({ id: profile.id }).lean()
