@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsHistorySystem = new mongoose.Schema({
+let ebgsHistorySystem = new mongoose.Schema(
+  {
     system_id: { type: ObjectId, index: true },
     system_name_lower: { type: String, lowercase: true },
     updated_at: { type: Date, index: true },
@@ -31,32 +32,38 @@ let ebgsHistorySystem = new mongoose.Schema({
     state: { type: String, lowercase: true },
     security: { type: String, lowercase: true },
     controlling_minor_faction: { type: String, lowercase: true },
-    factions: [{
+    factions: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }],
-    conflicts: [{
+      }
+    ],
+    conflicts: [
+      {
         _id: false,
         type: { type: String, lowercase: true },
         status: { type: String, lowercase: true },
         faction1: {
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         },
         faction2: {
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         }
-    }]
-}, { runSettersOnQuery: true });
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsHistorySystem.plugin(mongoosePaginate);
+ebgsHistorySystem.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsHistorySystemV4', ebgsHistorySystem);
+module.exports = mongoose.model('ebgsHistorySystemV4', ebgsHistorySystem)

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ebgsSystem = new mongoose.Schema({
+let ebgsSystem = new mongoose.Schema(
+  {
     eddb_id: { type: Number, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
@@ -33,36 +34,42 @@ let ebgsSystem = new mongoose.Schema({
     security: { type: String, lowercase: true, index: true },
     primary_economy: { type: String, lowercase: true, index: true },
     secondary_economy: { type: String, lowercase: true, index: true },
-    needs_permit: Boolean,      // Not in Journal
-    reserve_type: { type: String, lowercase: true },    // Not in Journal
+    needs_permit: Boolean, // Not in Journal
+    reserve_type: { type: String, lowercase: true }, // Not in Journal
     controlling_minor_faction: { type: String, lowercase: true, index: true },
-    factions: [{
+    factions: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }],
-    conflicts: [{
+      }
+    ],
+    conflicts: [
+      {
         _id: false,
         type: { type: String, lowercase: true },
         status: { type: String, lowercase: true },
         faction1: {
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         },
         faction2: {
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         }
-    }],
+      }
+    ],
     updated_at: { type: Date, index: true }
-}, { runSettersOnQuery: true });
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsSystem.plugin(mongoosePaginate);
+ebgsSystem.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsSystemV4', ebgsSystem);
+module.exports = mongoose.model('ebgsSystemV4', ebgsSystem)

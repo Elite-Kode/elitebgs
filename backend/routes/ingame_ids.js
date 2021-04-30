@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 
 const FDevIDs = require('../fdevids')
 
-let router = express.Router();
+let router = express.Router()
 
 router.get('/all', (req, res) => {
-    res.send(FDevIDs);
+  res.send(FDevIDs)
 })
 
 router.get('/:entity', (req, res) => {
-    res.send(FDevIDs[req.params.entity]);
-});
+  res.send(FDevIDs[req.params.entity])
+})
 
-module.exports = router;
+module.exports = router

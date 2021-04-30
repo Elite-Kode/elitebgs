@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
-const passport = require('passport');
+const express = require('express')
+const passport = require('passport')
 
-let router = express.Router();
+let router = express.Router()
 
-router.get('/', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }));
+router.get('/', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }))
 
-router.get('/callback', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }));
+router.get('/callback', passport.authenticate('discord', { successRedirect: '/', failureRedirect: '/' }))
 
-module.exports = router;
+module.exports = router

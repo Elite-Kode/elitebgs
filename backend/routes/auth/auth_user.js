@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 
 let bannedAccess = 'BANNED'
 let normalAccess = 'NORMAL'
 let adminAccess = 'ADMIN'
 
-let router = express.Router();
+let router = express.Router()
 
 router.get('/', (req, res) => {
-    if (req.user) {
-        res.send(req.user);
-    } else {
-        res.send({});
-    }
-});
+  if (req.user) {
+    res.send(req.user)
+  } else {
+    res.send({})
+  }
+})
 
 router.post('/monitor/factions', async (req, res, next) => {
   if (req.user) {
@@ -38,26 +38,35 @@ router.post('/monitor/factions', async (req, res, next) => {
       let users = require('../../models/ebgs_users')
       let user = req.user
       let newFactions = []
-      await Promise.all(arrayfy(req.body.factions).filter(faction => {
-        return user.factions.findIndex(element => {
-          return element.id.toString() === faction
-        }) === -1
-      }).map(async faction => {
-        let model = require('../../models/ebgs_factions_v5')
-        let factionGot = await model.findOne({
-          _id: faction
-        }).lean()
-        if (factionGot) {
-          newFactions.push({
-            id: factionGot._id,
-            name: factionGot.name,
-            name_lower: factionGot.name_lower
+      await Promise.all(
+        arrayfy(req.body.factions)
+          .filter((faction) => {
+            return (
+              user.factions.findIndex((element) => {
+                return element.id.toString() === faction
+              }) === -1
+            )
           })
-        } else {
-          throw new Error('Faction not present')
-        }
-      }))
-      await users.findOneAndUpdate({
+          .map(async (faction) => {
+            let model = require('../../models/ebgs_factions_v5')
+            let factionGot = await model
+              .findOne({
+                _id: faction
+              })
+              .lean()
+            if (factionGot) {
+              newFactions.push({
+                id: factionGot._id,
+                name: factionGot.name,
+                name_lower: factionGot.name_lower
+              })
+            } else {
+              throw new Error('Faction not present')
+            }
+          })
+      )
+      await users.findOneAndUpdate(
+        {
           _id: req.user._id
         },
         {
@@ -70,7 +79,8 @@ router.post('/monitor/factions', async (req, res, next) => {
         {
           upsert: false,
           runValidators: true
-        })
+        }
+      )
       res.send(true)
     } catch (err) {
       console.log(err)
@@ -86,26 +96,35 @@ router.post('/monitor/systems', async (req, res, next) => {
       let users = require('../../models/ebgs_users')
       let user = req.user
       let newSystems = []
-      await Promise.all(arrayfy(req.body.systems).filter(system => {
-        return user.systems.findIndex(element => {
-          return element.id.toString() === system
-        }) === -1
-      }).map(async system => {
-        let model = require('../../models/ebgs_systems_v5')
-        let systemGot = await model.findOne({
-          _id: system
-        }).lean()
-        if (systemGot) {
-          newSystems.push({
-            id: systemGot._id,
-            name: systemGot.name,
-            name_lower: systemGot.name_lower
+      await Promise.all(
+        arrayfy(req.body.systems)
+          .filter((system) => {
+            return (
+              user.systems.findIndex((element) => {
+                return element.id.toString() === system
+              }) === -1
+            )
           })
-        } else {
-          throw new Error('System not present')
-        }
-      }))
-      await users.findOneAndUpdate({
+          .map(async (system) => {
+            let model = require('../../models/ebgs_systems_v5')
+            let systemGot = await model
+              .findOne({
+                _id: system
+              })
+              .lean()
+            if (systemGot) {
+              newSystems.push({
+                id: systemGot._id,
+                name: systemGot.name,
+                name_lower: systemGot.name_lower
+              })
+            } else {
+              throw new Error('System not present')
+            }
+          })
+      )
+      await users.findOneAndUpdate(
+        {
           _id: req.user._id
         },
         {
@@ -118,7 +137,8 @@ router.post('/monitor/systems', async (req, res, next) => {
         {
           upsert: false,
           runValidators: true
-        })
+        }
+      )
       res.send(true)
     } catch (err) {
       console.log(err)
@@ -133,7 +153,8 @@ router.delete('/monitor/factions', async (req, res, next) => {
     try {
       let users = require('../../models/ebgs_users')
       if (req.query.faction) {
-        await users.findOneAndUpdate({
+        await users.findOneAndUpdate(
+          {
             _id: req.user._id
           },
           {
@@ -146,7 +167,8 @@ router.delete('/monitor/factions', async (req, res, next) => {
           {
             upsert: false,
             runValidators: true
-          })
+          }
+        )
       }
       res.send(true)
     } catch (err) {
@@ -162,7 +184,8 @@ router.delete('/monitor/systems', async (req, res, next) => {
     try {
       let users = require('../../models/ebgs_users')
       if (req.query.system) {
-        await users.findOneAndUpdate({
+        await users.findOneAndUpdate(
+          {
             _id: req.user._id
           },
           {
@@ -175,7 +198,8 @@ router.delete('/monitor/systems', async (req, res, next) => {
           {
             upsert: false,
             runValidators: true
-          })
+          }
+        )
       }
       res.send(true)
     } catch (err) {
@@ -187,28 +211,28 @@ router.delete('/monitor/systems', async (req, res, next) => {
 })
 
 router.delete('/delete', async (req, res, next) => {
-    if (req.user && (req.user._id === req.query.userid || req.user.access === adminAccess)) {
-        try {
-            let users = require('../../models/ebgs_users');
-            await users.findByIdAndRemove(req.query.userid)
-            res.send(true);
-        } catch (err) {
-            console.log(err);
-            res.send(false);
-            next(err);
-        }
+  if (req.user && (req.user._id === req.query.userid || req.user.access === adminAccess)) {
+    try {
+      let users = require('../../models/ebgs_users')
+      await users.findByIdAndRemove(req.query.userid)
+      res.send(true)
+    } catch (err) {
+      console.log(err)
+      res.send(false)
+      next(err)
     }
-});
+  }
+})
 
-let arrayfy = requestParam => {
-    let regex = /\s*,\s*/;
-    let mainArray = requestParam.split(regex);
+let arrayfy = (requestParam) => {
+  let regex = /\s*,\s*/
+  let mainArray = requestParam.split(regex)
 
-    mainArray.forEach((element, index, allElements) => {
-        allElements[index] = element;
-    });
+  mainArray.forEach((element, index, allElements) => {
+    allElements[index] = element
+  })
 
-    return mainArray;
+  return mainArray
 }
 
-module.exports = router;
+module.exports = router

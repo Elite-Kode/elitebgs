@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    faction_id: { type: "string" },
-    name: { type: "string" },
-    name_lower: { type: "string" },
-    faction_details: {
-        $ref: '#/definitions/EBGSFactionsV5'
-    }
+  faction_id: { type: 'string' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' },
+  faction_details: {
+    $ref: '#/definitions/EBGSFactionsV5'
+  }
 }

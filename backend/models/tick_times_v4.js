@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
+'use strict'
+const mongoose = require('mongoose')
 
 let tickTimes = new mongoose.Schema({
-    time: Date,
-    updated_at: Date
-});
+  time: Date,
+  updated_at: Date
+})
 
-module.exports = mongoose.model('tickTimesV4', tickTimes);
+module.exports = mongoose.model('tickTimesV4', tickTimes)

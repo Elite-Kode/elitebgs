@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    type: { type: "string" },
-    status: { type: "string" },
-    faction1: {
-        $ref: '#/definitions/EBGSConflictSystemFactionV5'
-    },
-    faction2: {
-        $ref: '#/definitions/EBGSConflictSystemFactionV5'
-    }
+  type: { type: 'string' },
+  status: { type: 'string' },
+  faction1: {
+    $ref: '#/definitions/EBGSConflictSystemFactionV5'
+  },
+  faction2: {
+    $ref: '#/definitions/EBGSConflictSystemFactionV5'
+  }
 }

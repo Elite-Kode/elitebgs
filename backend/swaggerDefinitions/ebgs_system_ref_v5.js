@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    system_id: { type: "string" },
-    name: { type: "string" },
-    name_lower: { type: "string" }
+  system_id: { type: 'string' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' }
 }

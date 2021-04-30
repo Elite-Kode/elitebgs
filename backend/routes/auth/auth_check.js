@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 
-let router = express.Router();
+let router = express.Router()
 
 router.get('/', (req, res) => {
-    res.send(req.isAuthenticated());
-});
+  res.send(req.isAuthenticated())
+})
 
-module.exports = router;
+module.exports = router

@@ -14,38 +14,38 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    eddb_id: { type: "integer" },
-    edsm_id: { type: "integer" },
-    name: { type: "string" },
-    name_lower: { type: "string" },
-    x: { type: "integer" },
-    y: { type: "integer" },
-    z: { type: "integer" },
-    population: { type: "integer" },
-    government: { type: "string" },
-    allegiance: { type: "string" },
-    state: { type: "string" },
-    security: { type: "string" },
-    primary_economy: { type: "string" },
-    power: {
-        type: 'array',
-        items: { type: "string" }
-    },
-    power_state: { type: "string" },
-    needs_permit: { type: "boolean" },
-    updated_at: { type: "string" },
-    simbad_ref: { type: "string" },
-    controlling_minor_faction: { type: "string" },
-    reserve_type: { type: "string" },
-    minor_faction_presences: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSSystemPresence'
-        }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  eddb_id: { type: 'integer' },
+  edsm_id: { type: 'integer' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' },
+  x: { type: 'integer' },
+  y: { type: 'integer' },
+  z: { type: 'integer' },
+  population: { type: 'integer' },
+  government: { type: 'string' },
+  allegiance: { type: 'string' },
+  state: { type: 'string' },
+  security: { type: 'string' },
+  primary_economy: { type: 'string' },
+  power: {
+    type: 'array',
+    items: { type: 'string' }
+  },
+  power_state: { type: 'string' },
+  needs_permit: { type: 'boolean' },
+  updated_at: { type: 'string' },
+  simbad_ref: { type: 'string' },
+  controlling_minor_faction: { type: 'string' },
+  reserve_type: { type: 'string' },
+  minor_faction_presences: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSSystemPresence'
     }
+  }
 }

@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    system_name: { type: "string" },
-    system_name_lower: { type: "string" },
-    system_id: { type: "string" },
-    state: { type: "string" },
-    influence: { type: "integer" },
-    happiness: { type: "string" },
-    active_states: {
-        type: "array",
-        items: {
-            $ref: '#/definitions/EBGSStateActiveV5'
-        }
-    },
-    pending_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV5'
-        }
-    },
-    recovering_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV5'
-        }
-    },
-    conflicts: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSConflictFactionV5'
-        }
-    },
-    system_details: {
-        $ref: '#/definitions/EBGSSystemsV5'
-    },
-    updated_at: { type: "string" }
+  system_name: { type: 'string' },
+  system_name_lower: { type: 'string' },
+  system_id: { type: 'string' },
+  state: { type: 'string' },
+  influence: { type: 'integer' },
+  happiness: { type: 'string' },
+  active_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateActiveV5'
+    }
+  },
+  pending_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV5'
+    }
+  },
+  recovering_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV5'
+    }
+  },
+  conflicts: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSConflictFactionV5'
+    }
+  },
+  system_details: {
+    $ref: '#/definitions/EBGSSystemsV5'
+  },
+  updated_at: { type: 'string' }
 }

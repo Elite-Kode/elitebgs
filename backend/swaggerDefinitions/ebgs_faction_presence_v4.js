@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    system_name: { type: "string" },
-    system_name_lower: { type: "string" },
-    state: { type: "string" },
-    influence: { type: "integer" },
-    pending_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV4'
-        }
-    },
-    recovering_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV4'
-        }
+  system_name: { type: 'string' },
+  system_name_lower: { type: 'string' },
+  state: { type: 'string' },
+  influence: { type: 'integer' },
+  pending_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV4'
     }
+  },
+  recovering_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV4'
+    }
+  }
 }

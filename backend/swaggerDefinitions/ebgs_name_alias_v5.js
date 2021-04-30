@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    name: { type: "string" },
-    name_lower: { type: "string" }
+  name: { type: 'string' },
+  name_lower: { type: 'string' }
 }

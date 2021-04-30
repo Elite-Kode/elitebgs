@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    last_tick: { type: "string" },
-    updated_at: { type: "string" },
-    history:{
-        type:'array',
-        items:{
-            $ref:'#/definitions/TickTimesHistoryV5'
-        }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  last_tick: { type: 'string' },
+  updated_at: { type: 'string' },
+  history: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/TickTimesHistoryV5'
     }
+  }
 }

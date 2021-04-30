@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    updated_at: { type: "string" },
-    updated_by: { type: "string" },
-    system: { type: "string" },
-    system_lower: { type: "string" },
-    state: { type: "string" },
-    influence: { type: "integer" },
-    pending_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV4'
-        }
-    },
-    recovering_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV4'
-        }
-    },
-    systems:{
-        type:'array',
-        items:{
-            $ref:'#/definitions/EBGSSystemPresenceV4'
-        }
+  _id: { type: 'string' },
+  updated_at: { type: 'string' },
+  updated_by: { type: 'string' },
+  system: { type: 'string' },
+  system_lower: { type: 'string' },
+  state: { type: 'string' },
+  influence: { type: 'integer' },
+  pending_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV4'
     }
+  },
+  recovering_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV4'
+    }
+  },
+  systems: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSSystemPresenceV4'
+    }
+  }
 }

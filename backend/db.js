@@ -14,48 +14,47 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-let mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+let mongoose = require('mongoose')
+mongoose.Promise = global.Promise
 
-const bugsnagCaller = require('./bugsnag').bugsnagCaller;
-let elite_bgs_url = require('./secrets').elite_bgs_db_url;
+const bugsnagCaller = require('./bugsnag').bugsnagCaller
+let elite_bgs_url = require('./secrets').elite_bgs_db_url
 let elite_bgs_db_user = require('./secrets').elite_bgs_db_user
 let elite_bgs_db_pwd = require('./secrets').elite_bgs_db_pwd
 
 let options = {
-    keepAlive: true,
-    keepAliveInitialDelay: 120000,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    user: elite_bgs_db_user,
-    pass: elite_bgs_db_pwd
+  keepAlive: true,
+  keepAliveInitialDelay: 120000,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  user: elite_bgs_db_user,
+  pass: elite_bgs_db_pwd
 }
 
-mongoose.connect(elite_bgs_url, options, err => {
-    if (err) {
-        bugsnagCaller(err);
-        console.log(err);
-    }
-});
-
+mongoose.connect(elite_bgs_url, options, (err) => {
+  if (err) {
+    bugsnagCaller(err)
+    console.log(err)
+  }
+})
 
 mongoose.connection.on('connected', () => {
-    console.log(`Connected to ${elite_bgs_url}`);
-});
+  console.log(`Connected to ${elite_bgs_url}`)
+})
 
-mongoose.connection.on('error', err => {
-    bugsnagCaller(err);
-    console.log(`Mongoose error ${err}`);
-});
+mongoose.connection.on('error', (err) => {
+  bugsnagCaller(err)
+  console.log(`Mongoose error ${err}`)
+})
 
 mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose connection disconnected');
-});
+  console.log('Mongoose connection disconnected')
+})
 
 process.on('SIGINT', async () => {
-    await mongoose.connection.close();
-    console.log(`Connection to ${elite_bgs_url} closed via app termination`);
-    process.exit(0);
-});
+  await mongoose.connection.close()
+  console.log(`Connection to ${elite_bgs_url} closed via app termination`)
+  process.exit(0)
+})

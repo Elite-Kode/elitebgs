@@ -14,47 +14,47 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    updated_at: { type: "string" },
-    updated_by: { type: "string" },
-    faction_name: { type: "string" },
-    faction_name_lower: { type: "string" },
-    faction_id: { type: "string" },
-    state: { type: "string" },
-    influence: { type: "integer" },
-    happiness: { type: "string" },
-    active_states: {
-        type: "array",
-        items: {
-            $ref: '#/definitions/EBGSStateActiveV5'
-        }
-    },
-    pending_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV5'
-        }
-    },
-    recovering_states: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStateV5'
-        }
-    },
-    conflicts: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSConflictFactionV5'
-        }
-    },
-    systems:{
-        type:'array',
-        items:{
-            $ref:'#/definitions/EBGSSystemRefV5'
-        }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  updated_at: { type: 'string' },
+  updated_by: { type: 'string' },
+  faction_name: { type: 'string' },
+  faction_name_lower: { type: 'string' },
+  faction_id: { type: 'string' },
+  state: { type: 'string' },
+  influence: { type: 'integer' },
+  happiness: { type: 'string' },
+  active_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateActiveV5'
     }
+  },
+  pending_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV5'
+    }
+  },
+  recovering_states: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStateV5'
+    }
+  },
+  conflicts: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSConflictFactionV5'
+    }
+  },
+  systems: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSSystemRefV5'
+    }
+  }
 }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsHistoryFaction = new mongoose.Schema({
+let ebgsHistoryFaction = new mongoose.Schema(
+  {
     faction_id: { type: ObjectId, index: true },
     faction_name: String,
     faction_name_lower: { type: String, lowercase: true },
@@ -31,21 +32,28 @@ let ebgsHistoryFaction = new mongoose.Schema({
     state: { type: String, lowercase: true },
     influence: Number,
     happiness: { type: String, lowercase: true },
-    active_states: [{
+    active_states: [
+      {
         _id: false,
         state: { type: String, lowercase: true }
-    }],
-    pending_states: [{
+      }
+    ],
+    pending_states: [
+      {
         _id: false,
         state: { type: String, lowercase: true },
         trend: Number
-    }],
-    recovering_states: [{
+      }
+    ],
+    recovering_states: [
+      {
         _id: false,
         state: { type: String, lowercase: true },
         trend: Number
-    }],
-    conflicts: [{
+      }
+    ],
+    conflicts: [
+      {
         _id: false,
         type: { type: String, lowercase: true },
         status: { type: String, lowercase: true },
@@ -54,14 +62,19 @@ let ebgsHistoryFaction = new mongoose.Schema({
         stake: String,
         stake_lower: { type: String, lowercase: true },
         days_won: Number
-    }],
-    systems: [{
+      }
+    ],
+    systems: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }]
-}, { runSettersOnQuery: true });
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsHistoryFaction.plugin(mongoosePaginate);
+ebgsHistoryFaction.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsHistoryFactionV4', ebgsHistoryFaction);
+module.exports = mongoose.model('ebgsHistoryFactionV4', ebgsHistoryFaction)

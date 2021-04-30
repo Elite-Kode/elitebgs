@@ -14,98 +14,98 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 const cors = require('cors')
-const _ = require('lodash');
+const _ = require('lodash')
 
-const redisCache = require('../../../modules/utilities/rediscache');
-const crypto = require('crypto');
+const redisCache = require('../../../modules/utilities/rediscache')
+const crypto = require('crypto')
 
-let router = express.Router();
+let router = express.Router()
 
 /**
-   * @swagger
-   * /ticks:
-   *   get:
-   *     description: Get the last tick time and tick history
-   *     produces:
-   *       - application/json
-   *     parameters:
-   *       - name: timeMin
-   *         description: Minimum time for the tick history in milliseconds (Checks updated_at).
-   *         in: query
-   *         type: string
-   *       - name: timeMax
-   *         description: Maximum time for the tick history in milliseconds (Checks updated_at).
-   *         in: query
-   *         type: string
-   *     responses:
-   *       200:
-   *         description: An array of systems with historical data
-   *         schema:
-   *           type: array
-   *           items:
-   *             $ref: '#/definitions/TickTimesV5'
-   */
+ * @swagger
+ * /ticks:
+ *   get:
+ *     description: Get the last tick time and tick history
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: timeMin
+ *         description: Minimum time for the tick history in milliseconds (Checks updated_at).
+ *         in: query
+ *         type: string
+ *       - name: timeMax
+ *         description: Maximum time for the tick history in milliseconds (Checks updated_at).
+ *         in: query
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: An array of systems with historical data
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/TickTimesV5'
+ */
 router.get('/', cors(), async (req, res, next) => {
-    // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
-    let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
+  // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
+  let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest('hex')
 
-    // Check the in memory object cache for the URL
-    const tickData = await redisCache.objCache.getKey(urlHash)
-    if (tickData != null) {
-        res.status(200).send(JSON.parse(tickData));
-        return
+  // Check the in memory object cache for the URL
+  const tickData = await redisCache.objCache.getKey(urlHash)
+  if (tickData != null) {
+    res.status(200).send(JSON.parse(tickData))
+    return
+  }
+
+  try {
+    let query = {}
+
+    if (req.query.timeMin && req.query.timeMax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(req.query.timeMax)),
+          $gte: new Date(Number(req.query.timeMin))
+        }
+      }
     }
-
-    try {
-        let query = {};
-
-        if (req.query.timeMin && req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timeMax)),
-                    $gte: new Date(Number(req.query.timeMin))
-                }
-            }
+    if (req.query.timeMin && !req.query.timeMax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(+req.query.timeMin + 604800000)), // Adding seven days worth of miliseconds
+          $gte: new Date(Number(req.query.timeMin))
         }
-        if (req.query.timeMin && !req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(+req.query.timeMin + 604800000)),    // Adding seven days worth of miliseconds
-                    $gte: new Date(Number(req.query.timeMin))
-                }
-            }
-        }
-        if (!req.query.timeMin && req.query.timeMax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timeMax)),
-                    $gte: new Date(Number(+req.query.timeMax - 604800000))    // Subtracting seven days worth of miliseconds
-                }
-            }
-        }
-        let result = await getTicks(query);
-
-        // Store the result in redis
-        redisCache.objCache.setKey(urlHash, JSON.stringify(result))
-
-        res.status(200).json(result);
-    } catch (err) {
-        next(err);
+      }
     }
-});
+    if (!req.query.timeMin && req.query.timeMax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(req.query.timeMax)),
+          $gte: new Date(Number(+req.query.timeMax - 604800000)) // Subtracting seven days worth of miliseconds
+        }
+      }
+    }
+    let result = await getTicks(query)
+
+    // Store the result in redis
+    redisCache.objCache.setKey(urlHash, JSON.stringify(result))
+
+    res.status(200).json(result)
+  } catch (err) {
+    next(err)
+  }
+})
 
 async function getTicks(query) {
-    let tickTimesV4Model = require('../../../models/tick_times_v4');
-    let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
-    if (_.isEmpty(query)) {
-        return tickTimesResult.limit(1);
-    } else {
-        return tickTimesResult;
-    }
+  let tickTimesV4Model = require('../../../models/tick_times_v4')
+  let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean()
+  if (_.isEmpty(query)) {
+    return tickTimesResult.limit(1)
+  } else {
+    return tickTimesResult
+  }
 }
 
-module.exports = router;
+module.exports = router

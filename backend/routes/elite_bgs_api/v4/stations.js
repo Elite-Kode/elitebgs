@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 var cors = require('cors')
-const _ = require('lodash');
+const _ = require('lodash')
 
-let router = express.Router();
+let router = express.Router()
 
 /**
  * @swagger
@@ -96,129 +96,141 @@ let router = express.Router();
  *     deprecated: true
  */
 router.get('/', cors(), async (req, res, next) => {
-    try {
-        let query = new Object;
-        let page = 1;
-        let history = false;
-        let greaterThanTime;
-        let lesserThanTime;
-        let count;
+  try {
+    let query = new Object()
+    let page = 1
+    let history = false
+    let greaterThanTime
+    let lesserThanTime
+    let count
 
-        if (req.query.id) {
-            query._id = req.query.id;
-        }
-        if (req.query.eddbId) {
-            query.eddb_id = req.query.eddbId;
-        }
-        if (req.query.name) {
-            query.name_lower = req.query.name.toLowerCase();
-        }
-        if (req.query.type) {
-            query.type = req.query.type.toLowerCase();
-        }
-        if (req.query.system) {
-            query.system_lower = req.query.system.toLowerCase();
-        }
-        if (req.query.economy) {
-            query.economy = req.query.economy.toLowerCase();
-        }
-        if (req.query.allegiance) {
-            query.allegiance = req.query.allegiance.toLowerCase();
-        }
-        if (req.query.government) {
-            query.government = req.query.government.toLowerCase();
-        }
-        if (req.query.state) {
-            query.state = req.query.state.toLowerCase();
-        }
-        if (req.query.beginsWith) {
-            query.name_lower = {
-                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-            }
-        }
-        if (req.query.page) {
-            page = req.query.page;
-        }
-        if (req.query.timemin && req.query.timemax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(req.query.timemax));
-        }
-        if (req.query.timemin && !req.query.timemax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timemin));
-            lesserThanTime = new Date(Number(+req.query.timemin + 604800000));      // Adding seven days worth of miliseconds
-        }
-        if (!req.query.timemin && req.query.timemax) {
-            history = true;
-            greaterThanTime = new Date(Number(+req.query.timemax - 604800000));     // Subtracting seven days worth of miliseconds
-            lesserThanTime = new Date(Number(req.query.timemax));
-        }
-        if (req.query.count) {
-            history = true
-            count = +req.query.count
-        }
-        if (history) {
-            let result = await getStations(query, {
-                greater: greaterThanTime,
-                lesser: lesserThanTime,
-                count: count
-            }, page);
-            res.status(200).json(result);
-        } else {
-            let result = await getStations(query, {}, page);
-            res.status(200).json(result);
-        }
-    } catch (err) {
-        next(err);
+    if (req.query.id) {
+      query._id = req.query.id
     }
-});
+    if (req.query.eddbId) {
+      query.eddb_id = req.query.eddbId
+    }
+    if (req.query.name) {
+      query.name_lower = req.query.name.toLowerCase()
+    }
+    if (req.query.type) {
+      query.type = req.query.type.toLowerCase()
+    }
+    if (req.query.system) {
+      query.system_lower = req.query.system.toLowerCase()
+    }
+    if (req.query.economy) {
+      query.economy = req.query.economy.toLowerCase()
+    }
+    if (req.query.allegiance) {
+      query.allegiance = req.query.allegiance.toLowerCase()
+    }
+    if (req.query.government) {
+      query.government = req.query.government.toLowerCase()
+    }
+    if (req.query.state) {
+      query.state = req.query.state.toLowerCase()
+    }
+    if (req.query.beginsWith) {
+      query.name_lower = {
+        $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
+      }
+    }
+    if (req.query.page) {
+      page = req.query.page
+    }
+    if (req.query.timemin && req.query.timemax) {
+      history = true
+      greaterThanTime = new Date(Number(req.query.timemin))
+      lesserThanTime = new Date(Number(req.query.timemax))
+    }
+    if (req.query.timemin && !req.query.timemax) {
+      history = true
+      greaterThanTime = new Date(Number(req.query.timemin))
+      lesserThanTime = new Date(Number(+req.query.timemin + 604800000)) // Adding seven days worth of miliseconds
+    }
+    if (!req.query.timemin && req.query.timemax) {
+      history = true
+      greaterThanTime = new Date(Number(+req.query.timemax - 604800000)) // Subtracting seven days worth of miliseconds
+      lesserThanTime = new Date(Number(req.query.timemax))
+    }
+    if (req.query.count) {
+      history = true
+      count = +req.query.count
+    }
+    if (history) {
+      let result = await getStations(
+        query,
+        {
+          greater: greaterThanTime,
+          lesser: lesserThanTime,
+          count: count
+        },
+        page
+      )
+      res.status(200).json(result)
+    } else {
+      let result = await getStations(query, {}, page)
+      res.status(200).json(result)
+    }
+  } catch (err) {
+    next(err)
+  }
+})
 
 async function getStations(query, history, page) {
-    let paginateOptions = {
-        select: { history: 0 },
-        lean: true,
-        leanWithId: false,
-        page: page,
-        limit: 10
-    };
-    if (_.isEmpty(query)) {
-        throw new Error("Add at least 1 query parameter to limit traffic");
-    }
-    let stationModel = require('../../../models/ebgs_stations_v4');
-    let stationResult = await stationModel.paginate(query, paginateOptions);
-    if (!_.isEmpty(history)) {
-        let historyModel = require('../../../models/ebgs_history_station_v4');
-        let historyPromises = [];
-        stationResult.docs.forEach(station => {
-            historyPromises.push((async () => {
-                let record;
-                if (history.count) {
-                    record = await historyModel.find({
-                        station_id: station._id
-                    }).sort({
-                        updated_at: -1
-                    }).limit(history.count).lean();
-                } else {
-                    record = await historyModel.find({
-                        station_id: station._id,
-                        updated_at: {
-                            $lte: history.lesser,
-                            $gte: history.greater
-                        }
-                    }).lean();
+  let paginateOptions = {
+    select: { history: 0 },
+    lean: true,
+    leanWithId: false,
+    page: page,
+    limit: 10
+  }
+  if (_.isEmpty(query)) {
+    throw new Error('Add at least 1 query parameter to limit traffic')
+  }
+  let stationModel = require('../../../models/ebgs_stations_v4')
+  let stationResult = await stationModel.paginate(query, paginateOptions)
+  if (!_.isEmpty(history)) {
+    let historyModel = require('../../../models/ebgs_history_station_v4')
+    let historyPromises = []
+    stationResult.docs.forEach((station) => {
+      historyPromises.push(
+        (async () => {
+          let record
+          if (history.count) {
+            record = await historyModel
+              .find({
+                station_id: station._id
+              })
+              .sort({
+                updated_at: -1
+              })
+              .limit(history.count)
+              .lean()
+          } else {
+            record = await historyModel
+              .find({
+                station_id: station._id,
+                updated_at: {
+                  $lte: history.lesser,
+                  $gte: history.greater
                 }
-                record.forEach(history => {
-                    delete history.station_id;
-                    delete history.station_name_lower;
-                });
-                station.history = record;
-                return record;
-            })());
-        });
-        await Promise.all(historyPromises);
-    }
-    return stationResult;
+              })
+              .lean()
+          }
+          record.forEach((history) => {
+            delete history.station_id
+            delete history.station_name_lower
+          })
+          station.history = record
+          return record
+        })()
+      )
+    })
+    await Promise.all(historyPromises)
+  }
+  return stationResult
 }
 
-module.exports = router;
+module.exports = router

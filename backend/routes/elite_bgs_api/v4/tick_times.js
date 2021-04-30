@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 var cors = require('cors')
-const _ = require('lodash');
+const _ = require('lodash')
 
-let router = express.Router();
+let router = express.Router()
 
 /**
  * @swagger
@@ -48,48 +48,48 @@ let router = express.Router();
  *     deprecated: true
  */
 router.get('/', cors(), async (req, res, next) => {
-    try {
-        let query = new Object;
+  try {
+    let query = new Object()
 
-        if (req.query.timemin && req.query.timemax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timemax)),
-                    $gte: new Date(Number(req.query.timemin))
-                }
-            }
+    if (req.query.timemin && req.query.timemax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(req.query.timemax)),
+          $gte: new Date(Number(req.query.timemin))
         }
-        if (req.query.timemin && !req.query.timemax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(+req.query.timemin + 604800000)),    // Adding seven days worth of miliseconds
-                    $gte: new Date(Number(req.query.timemin))
-                }
-            }
-        }
-        if (!req.query.timemin && req.query.timemax) {
-            query = {
-                updated_at: {
-                    $lte: new Date(Number(req.query.timemax)),
-                    $gte: new Date(Number(+req.query.timemax - 604800000))    // Subtracting seven days worth of miliseconds
-                }
-            }
-        }
-        let result = await getTicks(query);
-        res.status(200).json(result);
-    } catch (err) {
-        next(err);
+      }
     }
-});
+    if (req.query.timemin && !req.query.timemax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(+req.query.timemin + 604800000)), // Adding seven days worth of miliseconds
+          $gte: new Date(Number(req.query.timemin))
+        }
+      }
+    }
+    if (!req.query.timemin && req.query.timemax) {
+      query = {
+        updated_at: {
+          $lte: new Date(Number(req.query.timemax)),
+          $gte: new Date(Number(+req.query.timemax - 604800000)) // Subtracting seven days worth of miliseconds
+        }
+      }
+    }
+    let result = await getTicks(query)
+    res.status(200).json(result)
+  } catch (err) {
+    next(err)
+  }
+})
 
 async function getTicks(query) {
-    let tickTimesV4Model = require('../../../models/tick_times_v4');
-    let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean();
-    if (_.isEmpty(query)) {
-        return tickTimesResult.limit(1);
-    } else {
-        return tickTimesResult;
-    }
+  let tickTimesV4Model = require('../../../models/tick_times_v4')
+  let tickTimesResult = tickTimesV4Model.find(query).sort({ time: -1 }).lean()
+  if (_.isEmpty(query)) {
+    return tickTimesResult.limit(1)
+  } else {
+    return tickTimesResult
+  }
 }
 
-module.exports = router;
+module.exports = router

@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    eddb_id: { type: "integer" },
-    name: { type: "string" },
-    name_lower: { type: "string" },
-    type: { type: "string" },
-    system: { type: "string" },
-    system_lower: { type: "string" },
-    government: { type: "string" },
-    economy: { type: "string" },
-    allegiance: { type: "string" },
-    state: { type: "string" },
-    distance_from_star: { type: "integer" },
-    updated_at: { type: "string" },
-    controlling_minor_faction: { type: "string" },
-    services: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStationServicesV4'
-        }
-    },
-    history: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStationHistoryV4'
-        }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  eddb_id: { type: 'integer' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' },
+  type: { type: 'string' },
+  system: { type: 'string' },
+  system_lower: { type: 'string' },
+  government: { type: 'string' },
+  economy: { type: 'string' },
+  allegiance: { type: 'string' },
+  state: { type: 'string' },
+  distance_from_star: { type: 'integer' },
+  updated_at: { type: 'string' },
+  controlling_minor_faction: { type: 'string' },
+  services: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStationServicesV4'
     }
+  },
+  history: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStationHistoryV4'
+    }
+  }
 }

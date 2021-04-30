@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    updated_at: { type: "string" },
-    updated_by: { type: "string" },
-    government: { type: "string" },
-    allegiance: { type: "string" },
-    state: { type: "string" },
-    controlling_minor_faction_cased: { type: "string" },
-    controlling_minor_faction: { type: "string" },
-    controlling_minor_faction_id: { type: "string" },
-    services: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSStationServicesV5'
-        }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  updated_at: { type: 'string' },
+  updated_by: { type: 'string' },
+  government: { type: 'string' },
+  allegiance: { type: 'string' },
+  state: { type: 'string' },
+  controlling_minor_faction_cased: { type: 'string' },
+  controlling_minor_faction: { type: 'string' },
+  controlling_minor_faction_id: { type: 'string' },
+  services: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSStationServicesV5'
     }
+  }
 }

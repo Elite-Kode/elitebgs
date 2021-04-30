@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const _ = require('lodash');
+const express = require('express')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const _ = require('lodash')
 
-const redisCache = require('../../../modules/utilities/rediscache');
-const crypto = require('crypto');
+const redisCache = require('../../../modules/utilities/rediscache')
+const crypto = require('crypto')
 
-const utilities = require('../../../modules/utilities');
+const utilities = require('../../../modules/utilities')
 
-let router = express.Router();
-let ObjectId = mongoose.Types.ObjectId;
-let recordsPerPage = 10;
+let router = express.Router()
+let ObjectId = mongoose.Types.ObjectId
+let recordsPerPage = 10
 let aggregateOptions = {
-    maxTimeMS: 60000
+  maxTimeMS: 60000
 }
 
 /**
@@ -110,191 +110,197 @@ let aggregateOptions = {
  *             $ref: '#/definitions/EBGSStationsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
-    // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
-    let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest("hex")
+  // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
+  let urlHash = crypto.createHash('sha256').update(req.originalUrl).digest('hex')
 
-    // Check the in memory object cache for the URL
-    const stationData = await redisCache.objCache.getKey(urlHash)
-    if (stationData != null) {
-        res.status(200).send(JSON.parse(stationData));
-        return
+  // Check the in memory object cache for the URL
+  const stationData = await redisCache.objCache.getKey(urlHash)
+  if (stationData != null) {
+    res.status(200).send(JSON.parse(stationData))
+    return
+  }
+
+  try {
+    let query = {}
+    let page = 1
+    let history = false
+    let greaterThanTime
+    let lesserThanTime
+    let count
+
+    if (req.query.id) {
+      query._id = utilities.arrayOrNot(req.query.id, ObjectId)
     }
-
-    try {
-        let query = {};
-        let page = 1;
-        let history = false;
-        let greaterThanTime;
-        let lesserThanTime;
-        let count;
-
-        if (req.query.id) {
-            query._id = utilities.arrayOrNot(req.query.id, ObjectId);
-        }
-        if (req.query.eddbId) {
-            query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt);
-        }
-        if (req.query.name) {
-            query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower);
-        }
-        if (req.query.type) {
-            query.type = utilities.arrayOrNot(req.query.type, _.toLower);
-        }
-        if (req.query.system) {
-            query.system_lower = utilities.arrayOrNot(req.query.system, _.toLower);
-        }
-        if (req.query.systemId) {
-            query.system_id = utilities.arrayOrNot(req.query.systemId, ObjectId);
-        }
-        if (req.query.economy) {
-            query.economy = utilities.arrayOrNot(req.query.economy, _.toLower);
-        }
-        if (req.query.allegiance) {
-            query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower);
-        }
-        if (req.query.government) {
-            query.government = utilities.arrayOrNot(req.query.government, _.toLower);
-        }
-        if (req.query.state) {
-            query.state = utilities.arrayOrNot(req.query.state, _.toLower);
-        }
-        if (req.query.beginsWith || (req.query.beginsWith === "" && req.query.page)) {
-            query.name_lower = {
-                $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
-            }
-        }
-        if (req.query.page) {
-            page = req.query.page;
-        }
-        if (req.query.timeMin && req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timeMin));
-            lesserThanTime = new Date(Number(req.query.timeMax));
-        }
-        if (req.query.timeMin && !req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(req.query.timeMin));
-            lesserThanTime = new Date(Number(+req.query.timeMin + 604800000));      // Adding seven days worth of milliseconds
-        }
-        if (!req.query.timeMin && req.query.timeMax) {
-            history = true;
-            greaterThanTime = new Date(Number(+req.query.timeMax - 604800000));     // Subtracting seven days worth of milliseconds
-            lesserThanTime = new Date(Number(req.query.timeMax));
-        }
-        if (req.query.count) {
-            history = true
-            count = +req.query.count
-        }
-        if (history) {
-            let result = await getStations(query, {
-                greater: greaterThanTime,
-                lesser: lesserThanTime,
-                count: count
-            }, page);
-
-            // Store the result in redis
-            redisCache.objCache.setKey(urlHash, JSON.stringify(result))
-
-            res.status(200).json(result);
-        } else {
-            let result = await getStations(query, {}, page);
-
-            // Store the result in redis
-            redisCache.objCache.setKey(urlHash, JSON.stringify(result))
-
-            res.status(200).json(result);
-        }
-    } catch (err) {
-        next(err);
+    if (req.query.eddbId) {
+      query.eddb_id = utilities.arrayOrNot(req.query.eddbId, parseInt)
     }
-});
+    if (req.query.name) {
+      query.name_lower = utilities.arrayOrNot(req.query.name, _.toLower)
+    }
+    if (req.query.type) {
+      query.type = utilities.arrayOrNot(req.query.type, _.toLower)
+    }
+    if (req.query.system) {
+      query.system_lower = utilities.arrayOrNot(req.query.system, _.toLower)
+    }
+    if (req.query.systemId) {
+      query.system_id = utilities.arrayOrNot(req.query.systemId, ObjectId)
+    }
+    if (req.query.economy) {
+      query.economy = utilities.arrayOrNot(req.query.economy, _.toLower)
+    }
+    if (req.query.allegiance) {
+      query.allegiance = utilities.arrayOrNot(req.query.allegiance, _.toLower)
+    }
+    if (req.query.government) {
+      query.government = utilities.arrayOrNot(req.query.government, _.toLower)
+    }
+    if (req.query.state) {
+      query.state = utilities.arrayOrNot(req.query.state, _.toLower)
+    }
+    if (req.query.beginsWith || (req.query.beginsWith === '' && req.query.page)) {
+      query.name_lower = {
+        $regex: new RegExp(`^${_.escapeRegExp(req.query.beginsWith.toLowerCase())}`)
+      }
+    }
+    if (req.query.page) {
+      page = req.query.page
+    }
+    if (req.query.timeMin && req.query.timeMax) {
+      history = true
+      greaterThanTime = new Date(Number(req.query.timeMin))
+      lesserThanTime = new Date(Number(req.query.timeMax))
+    }
+    if (req.query.timeMin && !req.query.timeMax) {
+      history = true
+      greaterThanTime = new Date(Number(req.query.timeMin))
+      lesserThanTime = new Date(Number(+req.query.timeMin + 604800000)) // Adding seven days worth of milliseconds
+    }
+    if (!req.query.timeMin && req.query.timeMax) {
+      history = true
+      greaterThanTime = new Date(Number(+req.query.timeMax - 604800000)) // Subtracting seven days worth of milliseconds
+      lesserThanTime = new Date(Number(req.query.timeMax))
+    }
+    if (req.query.count) {
+      history = true
+      count = +req.query.count
+    }
+    if (history) {
+      let result = await getStations(
+        query,
+        {
+          greater: greaterThanTime,
+          lesser: lesserThanTime,
+          count: count
+        },
+        page
+      )
+
+      // Store the result in redis
+      redisCache.objCache.setKey(urlHash, JSON.stringify(result))
+
+      res.status(200).json(result)
+    } else {
+      let result = await getStations(query, {}, page)
+
+      // Store the result in redis
+      redisCache.objCache.setKey(urlHash, JSON.stringify(result))
+
+      res.status(200).json(result)
+    }
+  } catch (err) {
+    next(err)
+  }
+})
 
 async function getStations(query, history, page) {
-    let stationModel = require('../../../models/ebgs_stations_v5');
-    let aggregate = stationModel.aggregate().option(aggregateOptions);
-    aggregate.match(query);
+  let stationModel = require('../../../models/ebgs_stations_v5')
+  let aggregate = stationModel.aggregate().option(aggregateOptions)
+  aggregate.match(query)
 
-    let countAggregate = stationModel.aggregate().option(aggregateOptions);
-    countAggregate.match(query);
+  let countAggregate = stationModel.aggregate().option(aggregateOptions)
+  countAggregate.match(query)
 
-    if (!_.isEmpty(history)) {
-        let lookupMatchAndArray = [{
-            $eq: ["$station_id", "$$id"]
-        }];
-        if (history.count) {
-            aggregate.lookup({
-                from: "ebgshistorystationv5",
-                as: "history",
-                let: { "id": "$_id" },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: lookupMatchAndArray
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            station_id: 0,
-                            station_name: 0,
-                            station_name_lower: 0
-                        }
-                    },
-                    {
-                        $limit: history.count
-                    }
-                ]
-            });
-        } else {
-            lookupMatchAndArray.push(
-                {
-                    $gte: ["$updated_at", new Date(history.greater)]
-                },
-                {
-                    $lte: ["$updated_at", new Date(history.lesser)]
-                }
-            );
-
-            aggregate.lookup({
-                from: "ebgshistorystationv5",
-                as: "history",
-                let: { "id": "$_id" },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: lookupMatchAndArray
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            station_id: 0,
-                            station_name: 0,
-                            station_name_lower: 0
-                        }
-                    }
-                ]
-            });
+  if (!_.isEmpty(history)) {
+    let lookupMatchAndArray = [
+      {
+        $eq: ['$station_id', '$$id']
+      }
+    ]
+    if (history.count) {
+      aggregate.lookup({
+        from: 'ebgshistorystationv5',
+        as: 'history',
+        let: { id: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: lookupMatchAndArray
+              }
+            }
+          },
+          {
+            $project: {
+              station_id: 0,
+              station_name: 0,
+              station_name_lower: 0
+            }
+          },
+          {
+            $limit: history.count
+          }
+        ]
+      })
+    } else {
+      lookupMatchAndArray.push(
+        {
+          $gte: ['$updated_at', new Date(history.greater)]
+        },
+        {
+          $lte: ['$updated_at', new Date(history.lesser)]
         }
+      )
+
+      aggregate.lookup({
+        from: 'ebgshistorystationv5',
+        as: 'history',
+        let: { id: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: lookupMatchAndArray
+              }
+            }
+          },
+          {
+            $project: {
+              station_id: 0,
+              station_name: 0,
+              station_name_lower: 0
+            }
+          }
+        ]
+      })
     }
+  }
 
-    if (_.isEmpty(query)) {
-        throw new Error("Add at least 1 query parameter to limit traffic");
+  if (_.isEmpty(query)) {
+    throw new Error('Add at least 1 query parameter to limit traffic')
+  }
+
+  aggregate.allowDiskUse(true)
+
+  return stationModel.aggregatePaginate(aggregate, {
+    page,
+    countQuery: countAggregate,
+    limit: recordsPerPage,
+    customLabels: {
+      totalDocs: 'total',
+      totalPages: 'pages'
     }
-
-    aggregate.allowDiskUse(true);
-
-    return stationModel.aggregatePaginate(aggregate, {
-        page,
-        countQuery: countAggregate,
-        limit: recordsPerPage,
-        customLabels: {
-            totalDocs: "total",
-            totalPages: "pages"
-        }
-    });
+  })
 }
 
-module.exports = router;
+module.exports = router

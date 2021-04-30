@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    type: { type: "string" },
-    status: { type: "string" },
-    opponent_name: { type: "string" },
-    opponent_name_lower: { type: "string" },
-    opponent_faction_id: { type: "string" },
-    station_id: { type: "string" },
-    stake: { type: "string" },
-    stake_lower: { type: "string" },
-    days_won: { type: "integer" }
+  type: { type: 'string' },
+  status: { type: 'string' },
+  opponent_name: { type: 'string' },
+  opponent_name_lower: { type: 'string' },
+  opponent_faction_id: { type: 'string' },
+  station_id: { type: 'string' },
+  stake: { type: 'string' },
+  stake_lower: { type: 'string' },
+  days_won: { type: 'integer' }
 }

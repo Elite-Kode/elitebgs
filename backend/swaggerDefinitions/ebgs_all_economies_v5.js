@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    name: { type: "string" },
-    proportion: { type: "integer" }
+  name: { type: 'string' },
+  proportion: { type: 'integer' }
 }

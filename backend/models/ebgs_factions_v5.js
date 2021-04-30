@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsFaction = new mongoose.Schema({
+let ebgsFaction = new mongoose.Schema(
+  {
     eddb_id: { type: Number, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
     updated_at: { type: Date, index: true },
     government: { type: String, lowercase: true, index: true },
     allegiance: { type: String, lowercase: true, index: true },
-    home_system_name: { type: String, lowercase: true },    // Not in Journal
-    is_player_faction: Boolean,     // Not in Journal
-    faction_presence: [{
+    home_system_name: { type: String, lowercase: true }, // Not in Journal
+    is_player_faction: Boolean, // Not in Journal
+    faction_presence: [
+      {
         _id: false,
         system_name: String,
         system_name_lower: { type: String, lowercase: true },
@@ -38,21 +40,28 @@ let ebgsFaction = new mongoose.Schema({
         state: { type: String, lowercase: true },
         influence: Number,
         happiness: { type: String, lowercase: true },
-        active_states: [{
+        active_states: [
+          {
             _id: false,
             state: { type: String, lowercase: true }
-        }],
-        pending_states: [{
+          }
+        ],
+        pending_states: [
+          {
             _id: false,
             state: { type: String, lowercase: true },
             trend: Number
-        }],
-        recovering_states: [{
+          }
+        ],
+        recovering_states: [
+          {
             _id: false,
             state: { type: String, lowercase: true },
             trend: Number
-        }],
-        conflicts: [{
+          }
+        ],
+        conflicts: [
+          {
             _id: false,
             type: { type: String, lowercase: true },
             status: { type: String, lowercase: true },
@@ -63,12 +72,16 @@ let ebgsFaction = new mongoose.Schema({
             stake: String,
             stake_lower: { type: String, lowercase: true },
             days_won: Number
-        }],
+          }
+        ],
         updated_at: { type: Date, index: true }
-    }]
-}, { runSettersOnQuery: true });
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsFaction.plugin(mongoosePaginate);
-ebgsFaction.plugin(mongooseAggregatePaginate);
+ebgsFaction.plugin(mongoosePaginate)
+ebgsFaction.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsFactionV5', ebgsFaction);
+module.exports = mongoose.model('ebgsFactionV5', ebgsFaction)

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    time: { type: "string" },
-    updated_at: { type: "string" }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  time: { type: 'string' },
+  updated_at: { type: 'string' }
 }

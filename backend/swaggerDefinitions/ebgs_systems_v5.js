@@ -14,59 +14,59 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    __v: { type: "integer" },
-    eddb_id: { type: "integer" },
-    name: { type: "string" },
-    name_lower: { type: "string" },
-    name_aliases: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSNameAliasV5'
-        }
-    },
-    x: { type: "integer" },
-    y: { type: "integer" },
-    z: { type: "integer" },
-    system_address: { type: "string" },
-    population: { type: "integer" },
-    government: { type: "string" },
-    allegiance: { type: "string" },
-    state: { type: "string" },
-    security: { type: "string" },
-    primary_economy: { type: "string" },
-    secondary_economy: { type: "string" },
-    needs_permit: { type: "boolean" },
-    reserve_type: { type: "string" },
-    controlling_minor_faction_cased: { type: "string" },
-    controlling_minor_faction: { type: "string" },
-    controlling_minor_faction_id: { type: "string" },
-    factions: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSFactionRefV5'
-        }
-    },
-    conflicts: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSConflictSystemV5'
-        }
-    },
-    faction_history: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSFactionHistorySystemV5'
-        }
-    },
-    history: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSSystemHistoryV5'
-        }
-    },
-    updated_at: { type: "string" }
+  _id: { type: 'string' },
+  __v: { type: 'integer' },
+  eddb_id: { type: 'integer' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' },
+  name_aliases: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSNameAliasV5'
+    }
+  },
+  x: { type: 'integer' },
+  y: { type: 'integer' },
+  z: { type: 'integer' },
+  system_address: { type: 'string' },
+  population: { type: 'integer' },
+  government: { type: 'string' },
+  allegiance: { type: 'string' },
+  state: { type: 'string' },
+  security: { type: 'string' },
+  primary_economy: { type: 'string' },
+  secondary_economy: { type: 'string' },
+  needs_permit: { type: 'boolean' },
+  reserve_type: { type: 'string' },
+  controlling_minor_faction_cased: { type: 'string' },
+  controlling_minor_faction: { type: 'string' },
+  controlling_minor_faction_id: { type: 'string' },
+  factions: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSFactionRefV5'
+    }
+  },
+  conflicts: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSConflictSystemV5'
+    }
+  },
+  faction_history: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSFactionHistorySystemV5'
+    }
+  },
+  history: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSSystemHistoryV5'
+    }
+  },
+  updated_at: { type: 'string' }
 }

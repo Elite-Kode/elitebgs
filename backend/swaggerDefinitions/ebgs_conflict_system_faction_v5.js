@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    faction_id: { type: "string" },
-    name: { type: "string" },
-    name_lower: { type: "string" },
-    station_id: { type: "string" },
-    stake:{ type: "string" },
-    stake_lower: { type: "string" },
-    days_won: { type: "integer" }
+  faction_id: { type: 'string' },
+  name: { type: 'string' },
+  name_lower: { type: 'string' },
+  station_id: { type: 'string' },
+  stake: { type: 'string' },
+  stake_lower: { type: 'string' },
+  days_won: { type: 'integer' }
 }

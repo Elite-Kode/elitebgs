@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    _id: { type: "string" },
-    updated_at: { type: "string" },
-    updated_by: { type: "string" },
-    population: { type: "integer" },
-    government: { type: "string" },
-    allegiance: { type: "string" },
-    state: { type: "string" },
-    security: { type: "string" },
-    controlling_minor_faction: { type: "string" },
-    factions: {
-        type: 'array',
-        items: {
-            $ref: '#/definitions/EBGSSystemPresenceV4'
-        }
+  _id: { type: 'string' },
+  updated_at: { type: 'string' },
+  updated_by: { type: 'string' },
+  population: { type: 'integer' },
+  government: { type: 'string' },
+  allegiance: { type: 'string' },
+  state: { type: 'string' },
+  security: { type: 'string' },
+  controlling_minor_faction: { type: 'string' },
+  factions: {
+    type: 'array',
+    items: {
+      $ref: '#/definitions/EBGSSystemPresenceV4'
     }
+  }
 }

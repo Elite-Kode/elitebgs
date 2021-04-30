@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
 module.exports = {
-    state: { type: "string" },
-    trend: { type: "integer" }
+  state: { type: 'string' },
+  trend: { type: 'integer' }
 }
