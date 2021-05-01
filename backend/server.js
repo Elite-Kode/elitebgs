@@ -148,7 +148,7 @@ if (secrets.bugsnag_use) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(logger('dev'))
-  app.use(function (err, req, res) {
+  app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({
       message: err.message,
@@ -162,7 +162,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
   app.use(logger('combined'))
-  app.use(function (err, req, res) {
+  app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({
       message: err.message,

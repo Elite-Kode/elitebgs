@@ -17,16 +17,17 @@
 'use strict'
 
 const express = require('express')
+const cors = require('cors')
 
 const FDevIDs = require('../fdevids')
 
 let router = express.Router()
 
-router.get('/all', (req, res) => {
+router.get('/all', cors(), (req, res) => {
   res.send(FDevIDs)
 })
 
-router.get('/:entity', (req, res) => {
+router.get('/:entity', cors(), (req, res) => {
   res.send(FDevIDs[req.params.entity])
 })
 
