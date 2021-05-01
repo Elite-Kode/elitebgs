@@ -4,12 +4,20 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "start": "node ./bin/start.js"
+    "start": "node ./bin/start.js",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint **/*.js --fix"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "~4.16.1",
     "http-proxy-middleware": "^1.1.0",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.2.1"
   }
 }

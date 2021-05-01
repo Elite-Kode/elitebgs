@@ -17,11 +17,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(logger('dev'))
+  // eslint-disable-next-line no-unused-vars
   app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({
       message: err.message,
-      error: JSON.parse(JSON.stringify(err, getCircularReplacer()))
+      error: err
     })
     console.log(err)
   })
@@ -31,6 +32,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
   app.use(logger('combined'))
+  // eslint-disable-next-line no-unused-vars
   app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({
