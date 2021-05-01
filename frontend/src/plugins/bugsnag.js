@@ -2,7 +2,7 @@ import Vue from 'vue'
 import bugsnag from '@bugsnag/js'
 import BugsnagPluginVue from '@bugsnag/plugin-vue'
 import secrets from '../secrets'
-import version from '../version'
+import version from '../../version'
 
 if (secrets.bugsnag_use) {
   bugsnag.start({
