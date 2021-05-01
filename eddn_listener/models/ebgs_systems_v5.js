@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsSystem = new mongoose.Schema({
+let ebgsSystem = new mongoose.Schema(
+  {
     eddb_id: { type: Number, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
-    name_aliases: [{
+    name_aliases: [
+      {
         _id: false,
         name: String,
         name_lower: String
-    }],
+      }
+    ],
     x: Number,
     y: Number,
     z: Number,
@@ -41,44 +44,50 @@ let ebgsSystem = new mongoose.Schema({
     security: { type: String, lowercase: true, index: true },
     primary_economy: { type: String, lowercase: true, index: true },
     secondary_economy: { type: String, lowercase: true, index: true },
-    needs_permit: Boolean,      // Not in Journal
-    reserve_type: { type: String, lowercase: true },    // Not in Journal
+    needs_permit: Boolean, // Not in Journal
+    reserve_type: { type: String, lowercase: true }, // Not in Journal
     controlling_minor_faction_cased: String,
     controlling_minor_faction: { type: String, lowercase: true, index: true },
     controlling_minor_faction_id: { type: ObjectId, index: true },
-    factions: [{
+    factions: [
+      {
         _id: false,
         faction_id: { type: ObjectId, index: true },
         name: String,
         name_lower: { type: String, lowercase: true }
-    }],
-    conflicts: [{
+      }
+    ],
+    conflicts: [
+      {
         _id: false,
         type: { type: String, lowercase: true },
         status: { type: String, lowercase: true },
         faction1: {
-            faction_id: { type: ObjectId, index: true },
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            station_id: { type: ObjectId, index: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          faction_id: { type: ObjectId, index: true },
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          station_id: { type: ObjectId, index: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         },
         faction2: {
-            faction_id: { type: ObjectId, index: true },
-            name: String,
-            name_lower: { type: String, lowercase: true },
-            station_id: { type: ObjectId, index: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
+          faction_id: { type: ObjectId, index: true },
+          name: String,
+          name_lower: { type: String, lowercase: true },
+          station_id: { type: ObjectId, index: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
         }
-    }],
+      }
+    ],
     updated_at: { type: Date, index: true }
-}, { runSettersOnQuery: true });
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsSystem.plugin(mongoosePaginate);
-ebgsSystem.plugin(mongooseAggregatePaginate);
+ebgsSystem.plugin(mongoosePaginate)
+ebgsSystem.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsSystemV5', ebgsSystem);
+module.exports = mongoose.model('ebgsSystemV5', ebgsSystem)

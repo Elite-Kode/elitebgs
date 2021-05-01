@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate')
 
-let ebgsSystem = new mongoose.Schema({
+let ebgsSystem = new mongoose.Schema(
+  {
     eddb_id: Number,
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
@@ -32,16 +33,19 @@ let ebgsSystem = new mongoose.Schema({
     state: { type: String, lowercase: true, index: true },
     security: { type: String, lowercase: true, index: true },
     primary_economy: { type: String, lowercase: true, index: true },
-    needs_permit: Boolean,      // Not in Journal
-    reserve_type: { type: String, lowercase: true },    // Not in Journal
+    needs_permit: Boolean, // Not in Journal
+    reserve_type: { type: String, lowercase: true }, // Not in Journal
     controlling_minor_faction: { type: String, lowercase: true, index: true },
-    factions: [{
+    factions: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }],
+      }
+    ],
     updated_at: Date,
-    history: [{
+    history: [
+      {
         updated_at: Date,
         updated_by: String,
         population: Number,
@@ -50,15 +54,20 @@ let ebgsSystem = new mongoose.Schema({
         state: { type: String, lowercase: true },
         security: { type: String, lowercase: true },
         controlling_minor_faction: { type: String, lowercase: true },
-        factions: [{
+        factions: [
+          {
             _id: false,
             name: String,
             name_lower: { type: String, lowercase: true }
-        }]
-    }]
-}, { runSettersOnQuery: true });
+          }
+        ]
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsSystem.plugin(mongoosePaginate);
-ebgsSystem.plugin(mongooseAggregatePaginate);
+ebgsSystem.plugin(mongoosePaginate)
+ebgsSystem.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsSystemV3', ebgsSystem);
+module.exports = mongoose.model('ebgsSystemV3', ebgsSystem)

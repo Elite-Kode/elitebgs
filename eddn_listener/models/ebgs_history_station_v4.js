@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsHistoryStation = new mongoose.Schema({
+let ebgsHistoryStation = new mongoose.Schema(
+  {
     station_id: { type: ObjectId, index: true },
     station_name_lower: { type: String, lowercase: true },
     updated_at: { type: Date, index: true },
@@ -29,13 +30,17 @@ let ebgsHistoryStation = new mongoose.Schema({
     allegiance: { type: String, lowercase: true },
     state: { type: String, lowercase: true },
     controlling_minor_faction: { type: String, lowercase: true },
-    services: [{
+    services: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }]
-}, { runSettersOnQuery: true });
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsHistoryStation.plugin(mongoosePaginate);
+ebgsHistoryStation.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsHistoryStationV4', ebgsHistoryStation);
+module.exports = mongoose.model('ebgsHistoryStationV4', ebgsHistoryStation)

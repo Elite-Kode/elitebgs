@@ -14,57 +14,57 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
-const logger = require('morgan');
-const secrets = require('./secrets');
+const express = require('express')
+const logger = require('morgan')
+const secrets = require('./secrets')
 
-const bugsnagClient = require('./bugsnag').bugsnagClient;
+const bugsnagClient = require('./bugsnag').bugsnagClient
 
-require('./listener');
+require('./listener')
 
-const app = express();
+const app = express()
 
 require('./db')
 
 let bugsnagClientMiddleware = {}
 
 if (secrets.bugsnag_use) {
-    bugsnagClientMiddleware = bugsnagClient.getPlugin('express');
-    app.use(bugsnagClientMiddleware.requestHandler);
+  bugsnagClientMiddleware = bugsnagClient.getPlugin('express')
+  app.use(bugsnagClientMiddleware.requestHandler)
 }
 
 // error handlers
 if (secrets.bugsnag_use) {
-    app.use(bugsnagClientMiddleware.errorHandler);
+  app.use(bugsnagClientMiddleware.errorHandler)
 }
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(logger('dev'));
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500);
-        res.send({
-            message: err.message,
-            error: err
-        });
-        console.log(err);
-    });
+  app.use(logger('dev'))
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500)
+    res.send({
+      message: err.message,
+      error: err
+    })
+    console.log(err)
+  })
 }
 
 // production error handler
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
-    app.use(logger('combined'));
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500);
-        res.send({
-            message: err.message,
-            error: {}
-        });
-    });
+  app.use(logger('combined'))
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500)
+    res.send({
+      message: err.message,
+      error: {}
+    })
+  })
 }
 
-module.exports = app;
+module.exports = app

@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const bugsnag = require('@bugsnag/js');
-const bugsnagExpress = require('@bugsnag/plugin-express');
+const bugsnag = require('@bugsnag/js')
+const bugsnagExpress = require('@bugsnag/plugin-express')
 
-const processVars = require('./processVars');
-const useBugsnag = require('./secrets').bugsnag_use;
+const processVars = require('./processVars')
+const useBugsnag = require('./secrets').bugsnag_use
 
 let bugsnagClient = {}
 
 if (useBugsnag) {
-    bugsnagClient = bugsnag.start({
-        apiKey: require('./secrets').bugsnag_token,
-        enabledReleaseStages: ['development', 'production'],
-        plugins: [bugsnagExpress],
-        appVersion: processVars.version
-    });
+  bugsnagClient = bugsnag.start({
+    apiKey: require('./secrets').bugsnag_token,
+    enabledReleaseStages: ['development', 'production'],
+    plugins: [bugsnagExpress],
+    appVersion: processVars.version
+  })
 }
 
 function bugsnagCaller(err, metaData, logToConsole = true) {
-    if (useBugsnag) {
-        bugsnagClient.notify(err, event => {
-            event.addMetadata('Custom', metaData);
-        });
-    }
-    if (logToConsole) {
-        console.log(err);
-    }
+  if (useBugsnag) {
+    bugsnagClient.notify(err, (event) => {
+      event.addMetadata('Custom', metaData)
+    })
+  }
+  if (logToConsole) {
+    console.log(err)
+  }
 }
 
 let bugsnagWrapper = {
-    bugsnagCaller,
-    bugsnagClient
+  bugsnagCaller,
+  bugsnagClient
 }
 
-module.exports = bugsnagWrapper;
+module.exports = bugsnagWrapper

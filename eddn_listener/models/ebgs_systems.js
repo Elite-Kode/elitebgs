@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ebgsSystem = new mongoose.Schema({
+let ebgsSystem = new mongoose.Schema(
+  {
     eddb_id: Number,
     edsm_id: Number,
     name: String,
@@ -39,13 +40,17 @@ let ebgsSystem = new mongoose.Schema({
     simbad_ref: { type: String, lowercase: true },
     controlling_minor_faction: { type: String, lowercase: true },
     reserve_type: { type: String, lowercase: true },
-    minor_faction_presences: [{
+    minor_faction_presences: [
+      {
         _id: false,
         name: String,
         name_lower: { type: String, lowercase: true }
-    }]
-}, { runSettersOnQuery: true });
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsSystem.plugin(mongoosePaginate);
+ebgsSystem.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsSystem', ebgsSystem);
+module.exports = mongoose.model('ebgsSystem', ebgsSystem)

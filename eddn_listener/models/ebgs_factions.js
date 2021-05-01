@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ebgsFaction = new mongoose.Schema({
+let ebgsFaction = new mongoose.Schema(
+  {
     eddb_id: Number,
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
@@ -27,31 +28,41 @@ let ebgsFaction = new mongoose.Schema({
     allegiance: { type: String, lowercase: true, index: true },
     home_system_name: { type: String, lowercase: true },
     is_player_faction: Boolean,
-    faction_presence: [{
+    faction_presence: [
+      {
         _id: false,
         system_name: String,
         system_name_lower: { type: String, lowercase: true }
-    }],
-    history: [{
+      }
+    ],
+    history: [
+      {
         _id: false,
         updated_at: Date,
         system: String,
         system_lower: { type: String, lowercase: true },
         state: { type: String, lowercase: true },
         influence: Number,
-        pending_states: [{
+        pending_states: [
+          {
             _id: false,
             state: { type: String, lowercase: true },
             trend: Number
-        }],
-        recovering_states: [{
+          }
+        ],
+        recovering_states: [
+          {
             _id: false,
             state: { type: String, lowercase: true },
             trend: Number
-        }]
-    }]
-}, { runSettersOnQuery: true });
+          }
+        ]
+      }
+    ]
+  },
+  { runSettersOnQuery: true }
+)
 
-ebgsFaction.plugin(mongoosePaginate);
+ebgsFaction.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsFaction', ebgsFaction);
+module.exports = mongoose.model('ebgsFaction', ebgsFaction)

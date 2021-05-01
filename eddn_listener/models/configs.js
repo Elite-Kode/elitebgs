@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
+'use strict'
+const mongoose = require('mongoose')
 
 let config = new mongoose.Schema({
-    guild_id: String,
-    admin_channel_id: String,
-    user_role_id: String,
-    blacklisted_software: [String],
-    version_software: [{
-        name: String,
-        version: String
-    }],
-    whitelisted_software: [String],
-    time_offset: Number
-});
+  guild_id: String,
+  admin_channel_id: String,
+  user_role_id: String,
+  blacklisted_software: [String],
+  version_software: [
+    {
+      name: String,
+      version: String
+    }
+  ],
+  whitelisted_software: [String],
+  time_offset: Number
+})
 
-module.exports = mongoose.model('configs', config);
+module.exports = mongoose.model('configs', config)
