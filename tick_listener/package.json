@@ -2,7 +2,9 @@
     "name": "elitebgs-tick-listener",
     "scripts": {
         "start": "cross-env PORT=4014 pm2 start process.json --env production",
-        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9429 ./bin/start.js"
+        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9429 ./bin/start.js",
+        "lint": "eslint **/*.js",
+        "lint:fix": "eslint **/*.js --fix"
     },
     "private": true,
     "dependencies": {
@@ -19,7 +21,11 @@
         "@bugsnag/core": "^7.9.0",
         "@types/node": "^12.11.1",
         "cross-env": "^7.0.2",
+        "eslint": "^7.25.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.0",
         "nodemon": "^2.0.4",
-        "pm2": "^4.5.6"
+        "pm2": "^4.5.6",
+        "prettier": "^2.2.1"
     }
 }
