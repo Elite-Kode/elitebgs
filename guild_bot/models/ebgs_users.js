@@ -14,38 +14,44 @@
  * limitations under the License.
  */
 
-"use strict";
-const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+'use strict'
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate')
 
-let ObjectId = mongoose.Schema.Types.ObjectId;
+let ObjectId = mongoose.Schema.Types.ObjectId
 
 let user = new mongoose.Schema({
-    id: String,
-    username: String,
-    avatar: String,
-    discriminator: String,
-    access: { type: String, enum: ['NORMAL', 'BANNED', 'ADMIN'], uppercase: true },
-    factions: [{
-        _id: false,
-        id: { type: ObjectId, index: true },
-        name: String,
-        name_lower: String
-    }],
-    systems: [{
-        _id: false,
-        id: { type: ObjectId, index: true },
-        name: String,
-        name_lower: String
-    }],
-    stations: [{
-        _id: false,
-        id: { type: ObjectId, index: true },
-        name: String,
-        name_lower: String
-    }]
-});
+  id: String,
+  username: String,
+  avatar: String,
+  discriminator: String,
+  access: { type: String, enum: ['NORMAL', 'BANNED', 'ADMIN'], uppercase: true },
+  factions: [
+    {
+      _id: false,
+      id: { type: ObjectId, index: true },
+      name: String,
+      name_lower: String
+    }
+  ],
+  systems: [
+    {
+      _id: false,
+      id: { type: ObjectId, index: true },
+      name: String,
+      name_lower: String
+    }
+  ],
+  stations: [
+    {
+      _id: false,
+      id: { type: ObjectId, index: true },
+      name: String,
+      name_lower: String
+    }
+  ]
+})
 
-user.plugin(mongoosePaginate);
+user.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('ebgsUsers', user);
+module.exports = mongoose.model('ebgsUsers', user)

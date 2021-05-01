@@ -2,7 +2,9 @@
     "name": "elitebgs-guild-bot",
     "scripts": {
         "start": "cross-env PORT=4015 pm2 start process.json --env production",
-        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9529 ./bin/start.js"
+        "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9529 ./bin/start.js",
+        "lint": "eslint **/*.js",
+        "lint:fix": "eslint **/*.js --fix"
     },
     "private": true,
     "dependencies": {

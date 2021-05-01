@@ -14,47 +14,47 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const discord = require('discord.js');
-const bugsnagCaller = require('./bugsnag').bugsnagCaller;
-const secrets = require('./secrets');
+const discord = require('discord.js')
+const bugsnagCaller = require('./bugsnag').bugsnagCaller
+const secrets = require('./secrets')
 
-const client = new discord.Client();
+const client = new discord.Client()
 
-client.login(secrets.discord_token);
+client.login(secrets.discord_token)
 
-client.on("ready", () => {
-    console.log("Elite BGS Bot ready");
-});
-
-client.on("guildMemberAdd", async member => {
-    try {
-        let model = require('./models/ebgs_users');
-        let user = await model.findOne({
-            id: member.id
-        });
-        let configModel = require('./models/configs');
-        let config = await configModel.findOne();
-        await member.roles.add(config.user_role_id);
-        let guild = await client.guilds.fetch(config.guild_id)
-        if (guild.available) {
-            let announcementChannel = guild.channels.cache.get(config.admin_channel_id);
-            if (announcementChannel.type === 'text') {
-                if (user) {
-                    announcementChannel.send("Registered user " + member.id + " has joined");
-                } else {
-                    announcementChannel.send("Unregistered user " + member.id + " has joined");
-                }
-            }
-        }
-    } catch (err) {
-        bugsnagCaller(err);
-    }
-});
-
-client.on("error", err => {
-    bugsnagCaller(err);
+client.on('ready', () => {
+  console.log('Elite BGS Bot ready')
 })
 
-module.exports = client;
+client.on('guildMemberAdd', async (member) => {
+  try {
+    let model = require('./models/ebgs_users')
+    let user = await model.findOne({
+      id: member.id
+    })
+    let configModel = require('./models/configs')
+    let config = await configModel.findOne()
+    await member.roles.add(config.user_role_id)
+    let guild = await client.guilds.fetch(config.guild_id)
+    if (guild.available) {
+      let announcementChannel = guild.channels.cache.get(config.admin_channel_id)
+      if (announcementChannel.type === 'text') {
+        if (user) {
+          announcementChannel.send('Registered user ' + member.id + ' has joined')
+        } else {
+          announcementChannel.send('Unregistered user ' + member.id + ' has joined')
+        }
+      }
+    }
+  } catch (err) {
+    bugsnagCaller(err)
+  }
+})
+
+client.on('error', (err) => {
+  bugsnagCaller(err)
+})
+
+module.exports = client

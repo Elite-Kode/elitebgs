@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict'
 
-const express = require('express');
+const express = require('express')
 const discordClient = require('../client')
 
-let router = express.Router();
+let router = express.Router()
 
 router.post('/', async (req, res) => {
-    let configModel = require('../models/configs');
-    let config = await configModel.findOne();
-    let guild = await discordClient.guilds.fetch(config.guild_id)
-    if (guild.available) {
-        let announcementChannel = guild.channels.cache.get(config.admin_channel_id);
-        if (announcementChannel.type === 'text') {
-            announcementChannel.send("User " + req.body.id + " has joined Elite BGS");
-        }
+  let configModel = require('../models/configs')
+  let config = await configModel.findOne()
+  let guild = await discordClient.guilds.fetch(config.guild_id)
+  if (guild.available) {
+    let announcementChannel = guild.channels.cache.get(config.admin_channel_id)
+    if (announcementChannel.type === 'text') {
+      announcementChannel.send('User ' + req.body.id + ' has joined Elite BGS')
     }
-    res.sendStatus(200)
+  }
+  res.sendStatus(200)
 })
 
-module.exports = router;
+module.exports = router
