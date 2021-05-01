@@ -14,37 +14,39 @@
  * limitations under the License.
  */
 
-"use strict";
-const io = require('socket.io-client');
-const _ = require('lodash');
-const tickTimesV4Model = require('./models/tick_times_v4');
+'use strict'
+const io = require('socket.io-client')
+const _ = require('lodash')
+const tickTimesV4Model = require('./models/tick_times_v4')
 
-const socket = io('http://tick.phelbore.com:31173');
+const socket = io('http://tick.phelbore.com:31173')
 
 socket.on('connect', () => {
-    console.log('Connected to Tick Detector');
-});
+  console.log('Connected to Tick Detector')
+})
 
 socket.on('message', (data) => {
-    let tickTime = new Date(data);
-    saveTick(tickTime);
-});
+  let tickTime = new Date(data)
+  saveTick(tickTime)
+})
 
-let saveTick = async tickTime => {
-    try {
-        let existingTicks = await tickTimesV4Model.find({
-            time: {
-                $gte: tickTime
-            }
-        }).lean();
-        if (_.isEmpty(existingTicks)) {
-            let document = new tickTimesV4Model({
-                time: tickTime,
-                updated_at: new Date(Date.now())
-            });
-            document.save();
+let saveTick = async (tickTime) => {
+  try {
+    let existingTicks = await tickTimesV4Model
+      .find({
+        time: {
+          $gte: tickTime
         }
-    } catch (err) {
-        console.log(err);
+      })
+      .lean()
+    if (_.isEmpty(existingTicks)) {
+      let document = new tickTimesV4Model({
+        time: tickTime,
+        updated_at: new Date(Date.now())
+      })
+      document.save()
     }
+  } catch (err) {
+    console.log(err)
+  }
 }
