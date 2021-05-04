@@ -8,8 +8,10 @@
     </h3>
     <h2>Invite</h2>
     <v-btn
-      to="https://discordapp.com/oauth2/authorize?&client_id=332846508888031232&scope=bot&permissions=0"
+      href="https://discordapp.com/oauth2/authorize?&client_id=332846508888031232&scope=bot&permissions=0"
       color="primary"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       Invite
     </v-btn>
