@@ -28,9 +28,9 @@ module.exports = {
       $ref: '#/definitions/EBGSNameAliasV5'
     }
   },
-  x: { type: 'integer' },
-  y: { type: 'integer' },
-  z: { type: 'integer' },
+  x: { type: 'number', format: 'double' },
+  y: { type: 'number', format: 'double' },
+  z: { type: 'number', format: 'double' },
   system_address: { type: 'string' },
   population: { type: 'integer', format: 'int64' },
   government: { type: 'string' },
