@@ -26,7 +26,7 @@ module.exports = {
   x: { type: 'number', format: 'double' },
   y: { type: 'number', format: 'double' },
   z: { type: 'number', format: 'double' },
-  population: { type: 'integer' },
+  population: { type: 'integer', format: 'int64' },
   government: { type: 'string' },
   allegiance: { type: 'string' },
   state: { type: 'string' },
