@@ -20,7 +20,7 @@ module.exports = {
   _id: { type: 'string' },
   updated_at: { type: 'string' },
   updated_by: { type: 'string' },
-  population: { type: 'integer' },
+  population: { type: 'integer', format: 'int64' },
   government: { type: 'string' },
   allegiance: { type: 'string' },
   state: { type: 'string' },

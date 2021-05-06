@@ -19,26 +19,6 @@ export default {
   data() {
     return {
       specs: [
-        // {
-        //   versionName: 'V1',
-        //   specLocation: '/api/ebgs/v1/api-docs.json',
-        //   swaggerLocation: '/api/ebgs/v1/docs'
-        // },
-        // {
-        //   versionName: 'V2',
-        //   specLocation: '/api/ebgs/v2/api-docs.json',
-        //   swaggerLocation: '/api/ebgs/v2/docs'
-        // },
-        // {
-        //   versionName: 'V3',
-        //   specLocation: '/api/ebgs/v3/api-docs.json',
-        //   swaggerLocation: '/api/ebgs/v3/docs'
-        // },
-        // {
-        //   versionName: 'V4',
-        //   specLocation: '/api/ebgs/v4/api-docs.json',
-        //   swaggerLocation: '/api/ebgs/v4/docs'
-        // },
         {
           versionName: 'V5',
           specLocation: '/api/ebgs/v5/api-docs.json',

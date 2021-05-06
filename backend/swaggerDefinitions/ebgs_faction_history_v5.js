@@ -25,7 +25,7 @@ module.exports = {
   system_lower: { type: 'string' },
   system_id: { type: 'string' },
   state: { type: 'string' },
-  influence: { type: 'integer' },
+  influence: { type: 'number', format: 'double' },
   happiness: { type: 'string' },
   active_states: {
     type: 'array',

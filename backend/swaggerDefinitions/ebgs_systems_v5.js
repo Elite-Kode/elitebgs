@@ -32,7 +32,7 @@ module.exports = {
   y: { type: 'integer' },
   z: { type: 'integer' },
   system_address: { type: 'string' },
-  population: { type: 'integer' },
+  population: { type: 'integer', format: 'int64' },
   government: { type: 'string' },
   allegiance: { type: 'string' },
   state: { type: 'string' },
