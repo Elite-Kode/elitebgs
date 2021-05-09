@@ -40,7 +40,6 @@ connectToEDDN()
 sock.on('message', (topic) => {
   timer = Date.now()
   let message = JSON.parse(zlib.inflateSync(topic))
-  let journal = new schemas.journal()
   let journalV5 = new schemas.journalV5()
 
   switch (message['$schemaRef']) {
@@ -52,13 +51,9 @@ sock.on('message', (topic) => {
     // let commodity = new Commodity(message.message);
     // commodity.display();
     // break;
-    case journal.schemaId[0]:
-    case journal.schemaId[1]:
-      // journal.trackSystem(message.message);
-      // journal.trackSystemV3(message.message);
-      // journal.trackSystemV4(message.message, message.header);
+    case journalV5.schemaId[0]:
+    case journalV5.schemaId[1]:
       journalV5.trackSystem(message.message, message.header)
-      // journal.display();
       break
     // case Outfitting.schemaId:
     // let outfitting = new Outfitting(message.message);
