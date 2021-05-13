@@ -1,6 +1,6 @@
 {
     "name": "elitebgs",
-    "version": "8.0.0",
+    "version": "8.0.1",
     "license": "Apache-2.0",
     "scripts": {
         "startdev": "run-p startdevbackend startdeveddnlistener startdevfrontend startdevguildbot startdevticklistener",
