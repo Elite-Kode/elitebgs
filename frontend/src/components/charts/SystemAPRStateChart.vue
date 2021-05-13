@@ -8,7 +8,7 @@ import _isEmpty from 'lodash/isEmpty'
 import _difference from 'lodash/difference'
 import _pull from 'lodash/pull'
 import _sum from 'lodash/sum'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'SystemAPRStateChart',
@@ -37,6 +37,9 @@ export default {
   computed: {
     ...mapState({
       allIds: (state) => state.ingameIds.allIds
+    }),
+    ...mapGetters({
+      className: 'themeClass'
     })
   },
   watch: {
@@ -44,6 +47,9 @@ export default {
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
+    },
+    className() {
+      this.createChart()
     }
   },
   methods: {
@@ -209,6 +215,7 @@ export default {
       this.options = {
         chart: {
           colorCount: 21,
+          className: this.className,
           height: 130 + _sum(maxStatesConcurrent) * 40,
           type: 'xrange',
           events: {
@@ -298,4 +305,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="sass">
+@import '~@/assets/styles/highcharts/fonts.scss'
+@import '~highcharts/css/highcharts'
+</style>

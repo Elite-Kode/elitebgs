@@ -5,6 +5,7 @@
 <script>
 import _isEqual from 'lodash/isEqual'
 import _isEmpty from 'lodash/isEmpty'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SystemInfluenceChart',
@@ -26,6 +27,11 @@ export default {
       this.createChart()
     }
   },
+  computed: {
+    ...mapGetters({
+      className: 'themeClass'
+    })
+  },
   watch: {
     systemData(newVal, oldVal) {
       if (this.$refs.chart) {
@@ -34,6 +40,9 @@ export default {
       if (this.systemData && !_isEmpty(this.systemData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
+    },
+    className() {
+      this.createChart()
     }
   },
   methods: {
@@ -92,6 +101,7 @@ export default {
       this.options = {
         chart: {
           colorCount: 21,
+          className: this.className,
           styledMode: true
         },
         xAxis: { type: 'datetime' },
@@ -112,4 +122,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="sass">
+@import '~@/assets/styles/highcharts/fonts.scss'
+@import '~highcharts/css/highcharts'
+</style>

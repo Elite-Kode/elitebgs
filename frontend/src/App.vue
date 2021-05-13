@@ -60,9 +60,11 @@ export default {
 .tab-background.theme--light.v-tabs > .v-tabs-bar
   background-color: map-deep-get($material-light, 'background') !important
 
+@import '~@/assets/styles/highcharts/fonts.scss'
+
 .theme--light
-  @import '~@/assets/styles/light.scss'
+  @import '~@/assets/styles/highcharts/light.scss'
 
 .theme--dark
-  @import '~@/assets/styles/dark.scss'
+  @import '~@/assets/styles/highcharts/dark.scss'
 </style>

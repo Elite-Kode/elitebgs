@@ -6,6 +6,7 @@
 import _isEqual from 'lodash/isEqual'
 import _isEmpty from 'lodash/isEmpty'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'TickChart',
@@ -27,6 +28,11 @@ export default {
       this.createChart()
     }
   },
+  computed: {
+    ...mapGetters({
+      className: 'themeClass'
+    })
+  },
   watch: {
     tickData(newVal, oldVal) {
       if (this.$refs.chart) {
@@ -35,6 +41,9 @@ export default {
       if (this.tickData && !_isEmpty(this.tickData) && !_isEqual(newVal, oldVal)) {
         this.createChart()
       }
+    },
+    className() {
+      this.createChart()
     }
   },
   methods: {
@@ -59,6 +68,7 @@ export default {
       this.options = {
         chart: {
           colorCount: 21,
+          className: this.className,
           styledMode: true
         },
         xAxis: { type: 'datetime' },
@@ -102,4 +112,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="sass">
+@import '~@/assets/styles/highcharts/fonts.scss'
+@import '~highcharts/css/highcharts'
+</style>
