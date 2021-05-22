@@ -37,5 +37,8 @@ module.exports = [
   'Tiana Fortune',
   "Tod 'The Blaster' McQuinn",
   'Trin Falcour',
-  'Zacariah Nemo'
+  'Zacariah Nemo',
+  'Jude Navarro',
+  'Domino Green',
+  'Hero Ferrari'
 ]
