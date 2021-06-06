@@ -1,6 +1,6 @@
 {
     "name": "elitebgs",
-    "version": "8.0.1",
+    "version": "8.0.2",
     "license": "Apache-2.0",
     "scripts": {
         "start:dev": "run-p start:dev:backend start:dev:eddn_listener start:dev:frontend start:dev:guild_bot start:dev:tick_listener",
