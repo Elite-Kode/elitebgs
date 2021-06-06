@@ -40,20 +40,6 @@ const frontEnd = require('./routes/front_end')
 
 const redisCache = require('./modules/utilities/rediscache')
 
-// const ebgsFactionsV1 = require('./routes/elite_bgs_api/v1/factions');
-// const ebgsSystemsV1 = require('./routes/elite_bgs_api/v1/systems');
-//
-// const ebgsFactionsV2 = require('./routes/elite_bgs_api/v2/factions');
-// const ebgsSystemsV2 = require('./routes/elite_bgs_api/v2/systems');
-//
-// const ebgsFactionsV3 = require('./routes/elite_bgs_api/v3/factions');
-// const ebgsSystemsV3 = require('./routes/elite_bgs_api/v3/systems');
-
-// const ebgsFactionsV4 = require('./routes/elite_bgs_api/v4/factions');
-// const ebgsSystemsV4 = require('./routes/elite_bgs_api/v4/systems');
-// const ebgsStationsV4 = require('./routes/elite_bgs_api/v4/stations');
-// const tickTimesV4 = require('./routes/elite_bgs_api/v4/tick_times');
-
 const ebgsFactionsV5 = require('./routes/elite_bgs_api/v5/factions')
 const ebgsSystemsV5 = require('./routes/elite_bgs_api/v5/systems')
 const ebgsStationsV5 = require('./routes/elite_bgs_api/v5/stations')
@@ -100,35 +86,11 @@ if (app.get('env') === 'development') {
   app.use(cors())
 }
 
-app.use('/api/ebgs/v1/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  res.send(swagger.EBGSAPIv1)
-})
-
-app.use('/api/ebgs/v2/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  res.send(swagger.EBGSAPIv2)
-})
-
-app.use('/api/ebgs/v3/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  res.send(swagger.EBGSAPIv3)
-})
-
-app.use('/api/ebgs/v4/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  res.send(swagger.EBGSAPIv4)
-})
-
 app.use('/api/ebgs/v5/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swagger.EBGSAPIv5)
 })
 
-app.use('/api/ebgs/v1/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv1))
-app.use('/api/ebgs/v2/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv2))
-app.use('/api/ebgs/v3/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv3))
-app.use('/api/ebgs/v4/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv4))
 app.use('/api/ebgs/v5/docs', swaggerUi.serve, swaggerUi.setup(swagger.EBGSAPIv5))
 
 app.use('/api/ebgs/v5/factions', ebgsFactionsV5)

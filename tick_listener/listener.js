@@ -17,7 +17,7 @@
 'use strict'
 const io = require('socket.io-client')
 const _ = require('lodash')
-const tickTimesV4Model = require('./models/tick_times_v4')
+const tickTimesV5Model = require('./models/tick_times_v5')
 
 const socket = io('http://tick.phelbore.com:31173')
 
@@ -32,7 +32,7 @@ socket.on('message', (data) => {
 
 let saveTick = async (tickTime) => {
   try {
-    let existingTicks = await tickTimesV4Model
+    let existingTicks = await tickTimesV5Model
       .find({
         time: {
           $gte: tickTime
@@ -40,7 +40,7 @@ let saveTick = async (tickTime) => {
       })
       .lean()
     if (_.isEmpty(existingTicks)) {
-      let document = new tickTimesV4Model({
+      let document = new tickTimesV5Model({
         time: tickTime,
         updated_at: new Date(Date.now())
       })
