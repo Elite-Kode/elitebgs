@@ -4,7 +4,10 @@
   "endOfLine": "lf",
   "trailingComma": "none",
   "printWidth": 120,
-  ["error", {
-     "endOfLine":"auto"
-  }]
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
 }

@@ -27,7 +27,7 @@ let makeSwaggerSpec = (params, security) => {
     host: processVars.host,
     basePath: params.basePath,
     definitions: params.definitions,
-    schemes: [ processVars.protocol ]
+    schemes: [processVars.protocol]
   }
 
   if (security) {

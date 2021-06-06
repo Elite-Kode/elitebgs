@@ -27,7 +27,7 @@ let ebgsHistorySystem = new mongoose.Schema(
     system_name_lower: { type: String, lowercase: true },
     updated_at: { type: Date, index: true },
     updated_by: String,
-    population: { type: Number },
+    population: Number,
     government: { type: String, lowercase: true },
     allegiance: { type: String, lowercase: true },
     state: { type: String, lowercase: true },

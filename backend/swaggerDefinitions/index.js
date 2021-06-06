@@ -16,12 +16,6 @@
 
 'use strict'
 
-module.exports.ebgsFactionHistory = require('./ebgs_faction_history')
-module.exports.ebgsFactionPresence = require('./ebgs_faction_presence')
-module.exports.ebgsFactions = require('./ebgs_factions')
-module.exports.ebgsState = require('./ebgs_state')
-module.exports.ebgsSystemPresence = require('./ebgs_system_presence')
-module.exports.ebgsSystems = require('./ebgs_systems')
 module.exports.pagination = require('./pagination')
 
 module.exports.ebgsAllEconomiesV5 = require('./ebgs_all_economies_v5')
