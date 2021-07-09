@@ -17,6 +17,7 @@
 'use strict'
 
 const express = require('express')
+const cors = require('cors')
 const logger = require('morgan')
 const secrets = require('./secrets')
 
@@ -25,8 +26,12 @@ const bugsnagClient = require('./bugsnag').bugsnagClient
 require('./listener')
 
 const app = express()
+app.use(cors())
 
 require('./db')
+
+// Tick Detector
+require('./ticks')
 
 let bugsnagClientMiddleware = {}
 

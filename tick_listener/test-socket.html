@@ -1,0 +1,18 @@
+<html>
+
+<head>
+	<title>Elite Tick Detector</title>
+</head>
+
+<body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+	<script>
+		const socket = io('http://localhost:31173');
+		socket.on('message', (data) => { document.getElementById('tick').innerHTML = data });
+		socket.on('tick', (data) => alert(`New tick: ${data}`));
+	</script>
+	<div id="tick">
+	</div>
+</body>
+
+</html>
