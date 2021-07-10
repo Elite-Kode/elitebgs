@@ -53,6 +53,9 @@ mongoose.connection.on('disconnected', () => {
   console.log('Mongoose connection disconnected')
 })
 
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
+
 process.on('SIGINT', async () => {
   await mongoose.connection.close()
   console.log(`Connection to ${elite_bgs_url} closed via app termination`)
