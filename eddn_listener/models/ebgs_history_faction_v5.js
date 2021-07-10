@@ -23,15 +23,16 @@ let ObjectId = mongoose.Schema.Types.ObjectId
 let ebgsHistoryFaction = new mongoose.Schema(
   {
     faction_id: { type: ObjectId, index: true },
-    faction_name: String,
+    faction_name: { type: String, index: true },
     faction_name_lower: { type: String, lowercase: true },
     updated_at: { type: Date, index: true },
     updated_by: String,
+    delta: { type: Number, index: true },
     system: String,
-    system_lower: { type: String, lowercase: true },
+    system_lower: { type: String, lowercase: true, index: true },
     system_id: { type: ObjectId, index: true },
     state: { type: String, lowercase: true },
-    influence: Number,
+    influence: { type: Number, index: true },
     happiness: { type: String, lowercase: true },
     active_states: [
       {
