@@ -570,6 +570,9 @@ function Journal() {
               }
             })
 
+            // Obtain the delta in seconds between the message timestamp
+            // let delta = await this.getFactionHistoryDelta(systemHistory, message.timestamp, messageFaction.Influence)
+
             let historyObject = {
               updated_at: message.timestamp,
               updated_by: 'EDDN',
@@ -1239,7 +1242,13 @@ function Journal() {
   }
 
   // Used in V4
+  // TODO: Add delta calculation to this code
   this.setFactionHistory = async (historyObject) => {
+    // TODO: Find the previous history document for this {faction, system}
+
+    // let delta = diff lastRecord.updated_at historyObject.updated_at
+    // store delta in historyObject let historyObject.delta = delta
+
     let document = new ebgsHistoryFactionV5Model(historyObject)
     await document.save()
   }
