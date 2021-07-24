@@ -45,7 +45,7 @@ let ebgsSystem = new mongoose.Schema(
     primary_economy: { type: String, lowercase: true, index: true },
     secondary_economy: { type: String, lowercase: true, index: true },
     controlling_faction_name: String,
-    controlling_faction__name_lower: { type: String, lowercase: true, index: true },
+    controlling_faction_name_lower: { type: String, lowercase: true, index: true },
     controlling_faction_id: { type: ObjectId, index: true },
     updated_at: { type: Date, index: true }
   },
