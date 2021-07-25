@@ -23,20 +23,15 @@ let ObjectId = mongoose.Schema.Types.ObjectId
 
 let ebgsSystem = new mongoose.Schema(
   {
-    eddb_id: { type: Number, index: true },
+    system_address: { type: String, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
-    name_aliases: [
-      {
-        _id: false,
-        name: String,
-        name_lower: String
-      }
-    ],
+    eddb_id: { type: Number, index: true },
+    edsm_id: { type: Number, index: true },
+    inara_id: { type: Number, index: true },
     x: Number,
     y: Number,
     z: Number,
-    system_address: { type: String, index: true },
     population: Number,
     government: { type: String, lowercase: true, index: true },
     allegiance: { type: String, lowercase: true, index: true },
@@ -44,8 +39,6 @@ let ebgsSystem = new mongoose.Schema(
     security: { type: String, lowercase: true, index: true },
     primary_economy: { type: String, lowercase: true, index: true },
     secondary_economy: { type: String, lowercase: true, index: true },
-    controlling_faction_name: String,
-    controlling_faction_name_lower: { type: String, lowercase: true, index: true },
     controlling_faction_id: { type: ObjectId, index: true },
     updated_at: { type: Date, index: true }
   },

@@ -19,21 +19,34 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate')
 const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
-let ebgsFaction = new mongoose.Schema(
+let ObjectId = mongoose.Schema.Types.ObjectId
+
+let ebgsSystemHistory = new mongoose.Schema(
   {
+    record_id: { type: ObjectId, index: true },
+    system_address: { type: String, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
     eddb_id: { type: Number, index: true },
     edsm_id: { type: Number, index: true },
     inara_id: { type: Number, index: true },
+    x: Number,
+    y: Number,
+    z: Number,
+    population: Number,
     government: { type: String, lowercase: true, index: true },
     allegiance: { type: String, lowercase: true, index: true },
+    state: { type: String, lowercase: true, index: true },
+    security: { type: String, lowercase: true, index: true },
+    primary_economy: { type: String, lowercase: true, index: true },
+    secondary_economy: { type: String, lowercase: true, index: true },
+    controlling_faction_id: { type: ObjectId, index: true },
     updated_at: { type: Date, index: true }
   },
   { runSettersOnQuery: true }
 )
 
-ebgsFaction.plugin(mongoosePaginate)
-ebgsFaction.plugin(mongooseAggregatePaginate)
+ebgsSystemHistory.plugin(mongoosePaginate)
+ebgsSystemHistory.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsFactionV6', ebgsFaction)
+module.exports = mongoose.model('ebgsSystemHistoryV6', ebgsSystemHistory)

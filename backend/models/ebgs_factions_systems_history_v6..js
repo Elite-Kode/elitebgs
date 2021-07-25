@@ -21,8 +21,9 @@ const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
 let ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsFactionSystem = new mongoose.Schema(
+let ebgsFactionSystemHistory = new mongoose.Schema(
   {
+    record_id: { type: ObjectId, index: true },
     faction_id: { type: ObjectId, index: true },
     faction_name: String,
     faction_name_lower: { type: String, lowercase: true },
@@ -57,7 +58,7 @@ let ebgsFactionSystem = new mongoose.Schema(
   { runSettersOnQuery: true }
 )
 
-ebgsFactionSystem.plugin(mongoosePaginate)
-ebgsFactionSystem.plugin(mongooseAggregatePaginate)
+ebgsFactionSystemHistory.plugin(mongoosePaginate)
+ebgsFactionSystemHistory.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsFactionSystemV6', ebgsFactionSystem)
+module.exports = mongoose.model('ebgsFactionSystemHistoryV6', ebgsFactionSystemHistory)

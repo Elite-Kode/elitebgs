@@ -19,8 +19,11 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate')
 const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
-let ebgsFaction = new mongoose.Schema(
+let ObjectId = mongoose.Schema.Types.ObjectId
+
+let ebgsFactionHistory = new mongoose.Schema(
   {
+    record_id: { type: ObjectId, index: true },
     name: String,
     name_lower: { type: String, lowercase: true, index: true },
     eddb_id: { type: Number, index: true },
@@ -33,7 +36,7 @@ let ebgsFaction = new mongoose.Schema(
   { runSettersOnQuery: true }
 )
 
-ebgsFaction.plugin(mongoosePaginate)
-ebgsFaction.plugin(mongooseAggregatePaginate)
+ebgsFactionHistory.plugin(mongoosePaginate)
+ebgsFactionHistory.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsFactionV6', ebgsFaction)
+module.exports = mongoose.model('ebgsFactionHistoryV6', ebgsFactionHistory)
