@@ -21,7 +21,7 @@
       <v-container fluid>
         <v-row>
           <v-col cols="12" lg="5" md="6">
-            <v-img :src="require('@/assets/BGSv1.svg')" alt="Elite BGS Logo" contain height="50vh" />
+            <v-img :src="require('@/assets/bgs-logo.svg')" alt="Elite BGS Logo" contain height="50vh" />
           </v-col>
           <v-col cols="12" lg="7" md="6">
             <h1 class="display-3">Elite BGS</h1>

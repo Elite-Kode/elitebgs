@@ -11,7 +11,7 @@
     >
       <v-btn class="ml-4" exact icon large :to="{ name: 'home' }">
         <v-avatar>
-          <v-img :src="require('@/assets/BGSv1.svg')" alt="Elite BGS" />
+          <v-img :src="require('@/assets/bgs-logo.svg')" alt="Elite BGS" />
         </v-avatar>
       </v-btn>
       <v-toolbar-title class="headline text-uppercase pr-2">
