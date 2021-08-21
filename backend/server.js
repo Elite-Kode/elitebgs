@@ -70,7 +70,9 @@ app.use(
     name: 'EliteBGS',
     secret: secrets.session_secret,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
-    store: new mongoStore({ mongooseConnection: mongoose.connection })
+    store: new mongoStore({ mongooseConnection: mongoose.connection }),
+    resave: true,
+    saveUninitialized: false
   })
 )
 app.use(passport.initialize())
