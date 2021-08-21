@@ -18,9 +18,9 @@
 import * as mongoose from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
-let ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsHistoryFaction = new mongoose.Schema(
+const ebgsHistoryFaction = new mongoose.Schema(
   {
     faction_id: { type: ObjectId, index: true },
     faction_name: { type: String, index: true },

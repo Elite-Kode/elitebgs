@@ -19,9 +19,9 @@ import * as mongoose from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
-let ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsSystem = new mongoose.Schema(
+const ebgsSystem = new mongoose.Schema(
   {
     eddb_id: { type: Number, index: true },
     name: String,

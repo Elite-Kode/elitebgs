@@ -43,5 +43,4 @@ const nonBgsFactions = [
   'Hero Ferrari'
 ]
 
-export { nonBgsFactions
-}
+export { nonBgsFactions }

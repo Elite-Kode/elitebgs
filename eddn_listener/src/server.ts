@@ -18,6 +18,7 @@
 
 import * as express from 'express'
 import * as logger from 'morgan'
+
 import * as secrets from './secrets'
 import * as bugsnag from './bugsnag'
 
@@ -29,15 +30,10 @@ const app = express()
 
 import './db'
 
-let bugsnagClientMiddleware = {}
-
 if (secrets.bugsnag_use) {
-  bugsnagClientMiddleware = bugsnagClient.getPlugin('express')
+  // For more information, please consult https://docs.bugsnag.com/platforms/javascript/express/
+  const bugsnagClientMiddleware = bugsnagClient.getPlugin('express')
   app.use(bugsnagClientMiddleware.requestHandler)
-}
-
-// error handlers
-if (secrets.bugsnag_use) {
   app.use(bugsnagClientMiddleware.errorHandler)
 }
 
@@ -45,7 +41,7 @@ if (secrets.bugsnag_use) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(logger('dev'))
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({
@@ -60,7 +56,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
   app.use(logger('combined'))
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use(function (err, req, res, next) {
     res.status(err.status || 500)
     res.send({

@@ -17,7 +17,7 @@
 'use strict'
 import * as mongoose from 'mongoose'
 
-let config = new mongoose.Schema({
+const config = new mongoose.Schema({
   guild_id: String,
   admin_channel_id: String,
   user_role_id: String,

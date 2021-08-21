@@ -24,28 +24,25 @@ import * as bugsnag from '../bugsnag'
 
 const bugsnagCaller = bugsnag.bugsnagCaller
 
-import * as  ebgsFactionsV5Model from '../repository/mongoose-model/ebgs_factions_v5'
-
-import * as  ebgsSystemsV5Model from '../repository/mongoose-model/ebgs_systems_v5')
-import * as  ebgsStationsV5Model from '../repository/mongoose-model/ebgs_stations_v5')
-import * as  ebgsHistoryFactionV5Model from '../repository/mongoose-model/ebgs_history_faction_v5')
-import * as  ebgsHistorySystemV5Model from '../repository/mongoose-model/ebgs_history_system_v5')
-import * as  ebgsHistoryStationV5Model from '../repository/mongoose-model/ebgs_history_station_v5')
-import * as  configModel from '../repository/mongoose-model/configs')
+import * as ebgsFactionsV5Model from '../repository/mongoose-model/ebgs_factions_v5'
+import * as ebgsSystemsV5Model from '../repository/mongoose-model/ebgs_systems_v5'
+import * as ebgsStationsV5Model from '../repository/mongoose-model/ebgs_stations_v5'
+import * as ebgsHistoryFactionV5Model from '../repository/mongoose-model/ebgs_history_faction_v5'
+import * as ebgsHistorySystemV5Model from '../repository/mongoose-model/ebgs_history_system_v5'
+import * as ebgsHistoryStationV5Model from '../repository/mongoose-model/ebgs_history_station_v5'
+import * as configModel from '../repository/mongoose-model/configs'
 
 import './nonBGSFactions'
 
-
-
 function Journal() {
   this.schemaId = [
-    // "http://schemas.elite-markets.net/eddn/journal/1",
     'https://eddn.edcd.io/schemas/journal/1'
+    // "http://schemas.elite-markets.net/eddn/journal/1",
     // "https://eddn.edcd.io/schemas/journal/1/test"
   ]
 
   this.trackSystem = async (message, header) => {
-    let mongoSession = await mongoose.startSession()
+    const mongoSession = await mongoose.startSession()
     if (message.event === 'FSDJump' || message.event === 'Location' || message.event === 'CarrierJump') {
       try {
         // Check if the message is well formed
@@ -77,10 +74,10 @@ function Journal() {
           }
 
           // Get the faction records next
-          let factions = await Promise.all(
+          const factions = await Promise.all(
             message.Factions.map(async (messageFaction) => {
               // First try to get the faction data
-              let factionNameLower = messageFaction.Name.toLowerCase()
+              const factionNameLower = messageFaction.Name.toLowerCase()
               let faction = await ebgsFactionsV5Model
                 .findOne({
                   name_lower: factionNameLower
@@ -100,7 +97,7 @@ function Journal() {
           )
 
           // Generate the faction array that needs to be inserted
-          let factionArray = message.Factions.map((faction) => {
+          const factionArray = message.Factions.map((faction) => {
             return {
               name: faction.Name,
               name_lower: faction.Name.toLowerCase(),
@@ -111,13 +108,13 @@ function Journal() {
           })
 
           // Get the list of stations that are at stake in an ongoing conflict
-          let stationsAtStake = _.flatten(
+          const stationsAtStake = _.flatten(
             message.Conflicts.map((conflict) => {
               return [conflict.Faction1.Stake.toLowerCase(), conflict.Faction2.Stake.toLowerCase()]
             })
           )
           // Get the station records of the stations that are at stake
-          let stations = await ebgsStationsV5Model
+          const stations = await ebgsStationsV5Model
             .find({
               name_lower: {
                 $in: stationsAtStake
@@ -129,7 +126,7 @@ function Journal() {
             .lean()
 
           // Generate the conflicts array that needs to be inserted
-          let conflictsArray = message.Conflicts.map((conflict) => {
+          const conflictsArray = message.Conflicts.map((conflict) => {
             return {
               type: conflict.WarType,
               status: conflict.Status,
@@ -175,7 +172,7 @@ function Journal() {
               }
             }
           })
-          let returnedSystem = await this.formAndSetSystemRecord(message, system, factionArray, conflictsArray)
+          const returnedSystem = await this.formAndSetSystemRecord(message, system, factionArray, conflictsArray)
           // The above function returns undefined when an update operation hasn't happened.
           if (returnedSystem) {
             system = returnedSystem
@@ -198,7 +195,7 @@ function Journal() {
         await this.checkMessageDock(message, header)
 
         // Create the array to store the station services
-        let serviceArray = message.StationServices.map((service) => {
+        const serviceArray = message.StationServices.map((service) => {
           return {
             name: service,
             name_lower: service.toLowerCase()
@@ -206,13 +203,13 @@ function Journal() {
         })
         await mongoSession.withTransaction(async () => {
           // First, try to get the system record for this station which matches the system address
-          let system = await ebgsSystemsV5Model
+          const system = await ebgsSystemsV5Model
             .findOne({
               system_address: message.SystemAddress
             })
             .lean()
           // Try to get the faction record for the station owner
-          let faction = await ebgsFactionsV5Model
+          const faction = await ebgsFactionsV5Model
             .findOne({
               name_lower: message.StationFaction.Name.toLowerCase()
             })
@@ -268,7 +265,7 @@ function Journal() {
     // Check if all the parameters are valid
     if (message && system && factionArray.length > 0 && conflictsArray) {
       // Get the faction id of the controlling faction
-      let controllingFactionId = _.get(
+      const controllingFactionId = _.get(
         factionArray.find((currentFaction) => {
           return currentFaction.name_lower === message.SystemFaction.Name.toLowerCase()
         }),
@@ -344,9 +341,9 @@ function Journal() {
           ) ||
           !_.isEqual(_.sortBy(system.factions, ['name_lower']), _.sortBy(factionArray, ['name_lower']))
         ) {
-          let timeNow = Date.now()
+          const timeNow = Date.now()
           // Get all history records which are less than 48 hours old
-          let systemHistory = await ebgsHistorySystemV5Model
+          const systemHistory = await ebgsHistorySystemV5Model
             .find({
               system_id: system._id,
               updated_at: {
@@ -394,7 +391,7 @@ function Journal() {
           system.updated_at = message.timestamp
         }
 
-        let systemRecord = await this.setSystemRecord(message.SystemAddress, system)
+        const systemRecord = await this.setSystemRecord(message.SystemAddress, system)
         if (!_.isEmpty(historyObject)) {
           // Update the history only when the object is not empty
           await this.setSystemHistory(historyObject)
@@ -418,7 +415,7 @@ function Journal() {
     // Check if all the parameters are valid
     if (message && system && factions.length > 0 && stations) {
       // Get all factions from the db which has the current system as a presence system
-      let allFactionsPresentInSystemDB = await ebgsFactionsV5Model
+      const allFactionsPresentInSystemDB = await ebgsFactionsV5Model
         .find({
           faction_presence: {
             $elemMatch: { system_id: system._id }
@@ -428,14 +425,14 @@ function Journal() {
 
       // Get the difference between the factions present initially vs in the message
       // These factions needs to be removed
-      let toRemove = _.differenceWith(allFactionsPresentInSystemDB, factions, (existingInDB, fetchedByMessages) => {
+      const toRemove = _.differenceWith(allFactionsPresentInSystemDB, factions, (existingInDB, fetchedByMessages) => {
         return existingInDB.name_lower === fetchedByMessages.name_lower
       })
 
       // To remove are those factions which are not present in this system anymore
       // Such factions need to be updated too
       // Todo: This doesnt take into consideration old and cached records
-      for (let factionObject of toRemove) {
+      for (const factionObject of toRemove) {
         // Filtering out the current system from the faction presence list of this faction
         factionObject.faction_presence = factionObject.faction_presence.filter(
           (system) => system.system_name_lower !== message.StarSystem.toLowerCase()
@@ -455,7 +452,7 @@ function Journal() {
       }
 
       // All factions are already created, either earlier or in their basic form above so we need to update them
-      for (let factionObject of factions) {
+      for (const factionObject of factions) {
         // The faction_presence can be null if created as basic
         if (!factionObject.faction_presence) {
           factionObject.faction_presence = []
@@ -469,7 +466,7 @@ function Journal() {
           null
         )
 
-        let messageFaction = message.Factions.find((faction) => {
+        const messageFaction = message.Factions.find((faction) => {
           return faction.Name.toLowerCase() === factionObject.name_lower
         })
 
@@ -481,7 +478,7 @@ function Journal() {
           // Ignore old records but accept if the updated at is null since it might be so for a basic record
           // Decide whether to update the faction record or not
           // Also decide whether to update the main time or not
-          let getDoFactionUpdate = await this.doFactionUpdate(
+          const getDoFactionUpdate = await this.doFactionUpdate(
             messageFaction,
             factionObject,
             message,
@@ -489,13 +486,13 @@ function Journal() {
             stations,
             system
           )
-          let activeStates = getDoFactionUpdate.activeStates
-          let pendingStates = getDoFactionUpdate.pendingStates
-          let recoveringStates = getDoFactionUpdate.recoveringStates
-          let conflicts = getDoFactionUpdate.conflicts
-          let happiness = getDoFactionUpdate.happiness
-          let doUpdate = getDoFactionUpdate.doUpdate
-          let doUpdateTime = getDoFactionUpdate.doUpdateTime
+          const activeStates = getDoFactionUpdate.activeStates
+          const pendingStates = getDoFactionUpdate.pendingStates
+          const recoveringStates = getDoFactionUpdate.recoveringStates
+          const conflicts = getDoFactionUpdate.conflicts
+          const happiness = getDoFactionUpdate.happiness
+          const doUpdate = getDoFactionUpdate.doUpdate
+          const doUpdateTime = getDoFactionUpdate.doUpdateTime
           let factionPresence = []
           if (doUpdate || doUpdateTime) {
             // If doUpdateTime is set to false set the updated at time
@@ -563,7 +560,7 @@ function Journal() {
           }
           if (doUpdate) {
             // Create the faction history element for storing current systems
-            let systemHistory = factionPresence.map((faction) => {
+            const systemHistory = factionPresence.map((faction) => {
               return {
                 system_id: system._id,
                 name: faction.system_name,
@@ -574,7 +571,7 @@ function Journal() {
             // Obtain the delta in seconds between the message timestamp
             // let delta = await this.getFactionHistoryDelta(systemHistory, message.timestamp, messageFaction.Influence)
 
-            let historyObject = {
+            const historyObject = {
               updated_at: message.timestamp,
               updated_by: 'EDDN',
               system: message.StarSystem,
@@ -686,9 +683,9 @@ function Journal() {
           nameIsDifferent ||
           !_.isEqual(_.sortBy(station.services, ['name_lower']), _.sortBy(serviceArray, ['name_lower']))
         ) {
-          let timeNow = Date.now()
+          const timeNow = Date.now()
           // Get all history records which are less than 48 hours old
-          let stationHistory = await ebgsHistoryStationV5Model
+          const stationHistory = await ebgsHistoryStationV5Model
             .find({
               station_id: station._id,
               updated_at: {
@@ -777,10 +774,10 @@ function Journal() {
       if (!message.Conflicts) {
         message.Conflicts = []
       }
-      let configRecord = await configModel.findOne({}).lean()
+      const configRecord = await configModel.findOne({}).lean()
       if (
         configRecord.blacklisted_software.findIndex((software) => {
-          let regexp = new RegExp(software, 'i')
+          const regexp = new RegExp(software, 'i')
           return regexp.test(header.softwareName)
         }) !== -1
       ) {
@@ -799,15 +796,15 @@ function Journal() {
       }
       if (
         configRecord.whitelisted_software.findIndex((software) => {
-          let regexp = new RegExp(software, 'i')
+          const regexp = new RegExp(software, 'i')
           return regexp.test(header.softwareName)
         }) === -1
       ) {
         throw new Error('Message not from whitelisted software ' + header.softwareName)
       }
-      let messageTimestamp = new Date(message.timestamp)
-      let oldestTimestamp = new Date('2017-10-07T00:00:00Z')
-      let currentTimestamp = new Date(Date.now() + configRecord.time_offset)
+      const messageTimestamp = new Date(message.timestamp)
+      const oldestTimestamp = new Date('2017-10-07T00:00:00Z')
+      const currentTimestamp = new Date(Date.now() + configRecord.time_offset)
       if (messageTimestamp < oldestTimestamp || messageTimestamp > currentTimestamp) {
         throw new Error('Message timestamp too old or in the future')
       }
@@ -854,10 +851,10 @@ function Journal() {
       if (!message.StationAllegiance) {
         message.StationAllegiance = 'Independent'
       }
-      let configRecord = await configModel.findOne({}).lean()
+      const configRecord = await configModel.findOne({}).lean()
       if (
         configRecord.blacklisted_software.findIndex((software) => {
-          let regexp = new RegExp(software, 'i')
+          const regexp = new RegExp(software, 'i')
           return regexp.test(header.softwareName)
         }) !== -1
       ) {
@@ -865,7 +862,7 @@ function Journal() {
       }
       let pass = true
       configRecord.version_software.forEach((software) => {
-        let regexp = new RegExp(software.name, 'i')
+        const regexp = new RegExp(software.name, 'i')
         if (regexp.test(header.softwareName)) {
           if (semver.lt(semver.coerce(header.softwareVersion), semver.coerce(software.version))) {
             pass = false
@@ -877,15 +874,15 @@ function Journal() {
       }
       if (
         configRecord.whitelisted_software.findIndex((software) => {
-          let regexp = new RegExp(software, 'i')
+          const regexp = new RegExp(software, 'i')
           return regexp.test(header.softwareName)
         }) === -1
       ) {
         throw new Error('Message not from whitelisted software ' + header.softwareName)
       }
-      let messageTimestamp = new Date(message.timestamp)
-      let oldestTimestamp = new Date('2017-10-07T00:00:00Z')
-      let currentTimestamp = new Date(Date.now() + configRecord.time_offset)
+      const messageTimestamp = new Date(message.timestamp)
+      const oldestTimestamp = new Date('2017-10-07T00:00:00Z')
+      const currentTimestamp = new Date(Date.now() + configRecord.time_offset)
       if (messageTimestamp < oldestTimestamp || messageTimestamp > currentTimestamp) {
         throw new Error('Message timestamp too old or in the future')
       }
@@ -896,7 +893,7 @@ function Journal() {
 
   // Used in V4
   this.checkSystemWHistory = (message, history, factionArray, conflictsArray) => {
-    for (let item of history) {
+    for (const item of history) {
       if (
         item.government === message.SystemGovernment.toLowerCase() &&
         item.allegiance === message.SystemAllegiance.toLowerCase() &&
@@ -927,7 +924,7 @@ function Journal() {
     recoveringStates,
     conflicts
   ) => {
-    for (let item of history) {
+    for (const item of history) {
       if (
         item.system_lower === message.StarSystem.toLowerCase() &&
         item.state === messageFaction.FactionState.toLowerCase() &&
@@ -947,7 +944,7 @@ function Journal() {
 
   // Used in V4
   this.checkStationWHistory = (message, history, serviceArray) => {
-    for (let item of history) {
+    for (const item of history) {
       if (
         item.government === message.StationGovernment.toLowerCase() &&
         item.allegiance === message.StationAllegiance.toLowerCase() &&
@@ -998,7 +995,7 @@ function Journal() {
         }
       })
     }
-    let factionName = dbFaction.name_lower
+    const factionName = dbFaction.name_lower
     // Form the conflicts array
     let conflicts = []
     if (message.Conflicts) {
@@ -1020,8 +1017,8 @@ function Journal() {
           stake = conflict.Faction2.Stake
           daysWon = +conflict.Faction2.WonDays
         }
-        let opponentId = factions.find((faction) => faction.name_lower === opponent.toLowerCase())._id
-        let station = stations.find((station) => station.name_lower === stake.toLowerCase())
+        const opponentId = factions.find((faction) => faction.name_lower === opponent.toLowerCase())._id
+        const station = stations.find((station) => station.name_lower === stake.toLowerCase())
         let stationId = null
         // An explicit check is needed since the station at stake might not be in the database
         // This could be because nobody has sent sent data yet or it is a non dockable base
@@ -1053,7 +1050,7 @@ function Journal() {
     }
 
     // Get the faction presence element that needs to be updated
-    let factionPresenceElement = dbFaction.faction_presence.find((presence) => {
+    const factionPresenceElement = dbFaction.faction_presence.find((presence) => {
       return presence.system_name_lower === message.StarSystem.toLowerCase()
     })
 
@@ -1074,8 +1071,8 @@ function Journal() {
       // The presence data in the master record is the same as the incoming message so dont update
       doUpdate = false
     } else {
-      let timeNow = Date.now()
-      let factionHistory = await ebgsHistoryFactionV5Model
+      const timeNow = Date.now()
+      const factionHistory = await ebgsHistoryFactionV5Model
         .find({
           faction_id: dbFaction._id,
           system_id: system._id,
@@ -1111,60 +1108,61 @@ function Journal() {
 
   // Used in V3 and V4
   this.correctCoordinates = (value) => {
-    let floatValue = Number.parseFloat(value)
-    let intValue = Math.round(floatValue * 32)
+    const floatValue = Number.parseFloat(value)
+    const intValue = Math.round(floatValue * 32)
     return intValue / 32
   }
 
   // Used in V5
   this.getSystemEDDBIdByAddress = async (systemAddress) => {
-    let requestOptions = {
-      url: 'https://eddbapi.kodeblox.com/api/v4/populatedsystems',
-      qs: {
+    const url = 'https://eddbapi.kodeblox.com/api/v4/populatedsystems'
+    const requestConfig: axios.AxiosRequestConfig = {
+      url: url,
+      params: {
         systemaddress: systemAddress
-      },
-      json: true,
-      resolveWithFullResponse: true
-    }
-    let response = await request.get(requestOptions)
-    if (response.statusCode === 200) {
-      let responseObject = response.body
-      if (responseObject.total > 0) {
-        return responseObject.docs[0].id
-      } else {
-        throw new Error(response)
       }
-    } else {
-      throw new Error(response)
+    }
+    try {
+      const response = await axios.default.get(url, requestConfig)
+      if (response.status === 200) {
+        const responseObject = JSON.parse(response.data)
+
+        if (responseObject.count > 0) {
+          return responseObject.docs[0].id
+        }
+      }
+    } catch (error) {
+      throw new Error(error)
     }
   }
 
   // Used in V3 and V4 and v5
   this.getFactionEDDBId = async (name) => {
-    let requestOptions = {
-      url: 'https://eddbapi.kodeblox.com/api/v4/factions',
-      qs: {
+    const url = 'https://eddbapi.kodeblox.com/api/v4/factions'
+    const requestConfig: axios.AxiosRequestConfig = {
+      url: url,
+      params: {
         name: name.toLowerCase()
-      },
-      json: true,
-      resolveWithFullResponse: true
-    }
-    let response = await request.get(requestOptions)
-    if (response.statusCode === 200) {
-      let responseObject = response.body
-      if (responseObject.total > 0) {
-        return responseObject.docs[0].id
-      } else {
-        throw new Error(response)
       }
-    } else {
-      throw new Error(response)
+    }
+
+    try {
+      const response = await axios.default.get(url, requestConfig)
+      if (response.status === 200) {
+        const responseObject = JSON.parse(response.data)
+
+        if (responseObject.count > 0) {
+          return responseObject.docs[0].id
+        }
+      }
+    } catch (error) {
+      throw new Error(error)
     }
   }
 
   // Used in V5
   this.getStationEDDBIdByMarketId = async (marketId) => {
-    let requestOptions = {
+    const requestOptions = {
       url: 'https://eddbapi.kodeblox.com/api/v4/stations',
       qs: {
         marketid: marketId
@@ -1172,9 +1170,9 @@ function Journal() {
       json: true,
       resolveWithFullResponse: true
     }
-    let response = await request.get(requestOptions)
+    const response = await request.get(requestOptions)
     if (response.statusCode === 200) {
-      let responseObject = response.body
+      const responseObject = response.body
       if (responseObject.total > 0) {
         return responseObject.docs[0].id
       } else {
@@ -1238,7 +1236,7 @@ function Journal() {
 
   // Used in V4
   this.setSystemHistory = async (historyObject) => {
-    let document = new ebgsHistorySystemV5Model(historyObject)
+    const document = new ebgsHistorySystemV5Model(historyObject)
     await document.save()
   }
 
@@ -1250,16 +1248,15 @@ function Journal() {
     // let delta = diff lastRecord.updated_at historyObject.updated_at
     // store delta in historyObject let historyObject.delta = delta
 
-    let document = new ebgsHistoryFactionV5Model(historyObject)
+    const document = new ebgsHistoryFactionV5Model(historyObject)
     await document.save()
   }
 
   // Used in V4
   this.setStationHistory = async (historyObject) => {
-    let document = new ebgsHistoryStationV5Model(historyObject)
+    const document = new ebgsHistoryStationV5Model(historyObject)
     await document.save()
   }
 }
-
 
 export { Journal }

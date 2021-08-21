@@ -17,7 +17,7 @@
 'use strict'
 import * as mongoose from 'mongoose'
 
-let tickTimes = new mongoose.Schema({
+const tickTimes = new mongoose.Schema({
   time: Date,
   updated_at: Date
 })

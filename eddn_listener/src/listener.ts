@@ -23,7 +23,7 @@ import * as axios from 'axios'
 import * as schemas from './schemas'
 import * as bugsnag from './bugsnag'
 
-bugsnagCaller = bugsnag.bugsnagCaller
+const bugsnagCaller = bugsnag.bugsnagCaller
 
 const sock = zmq.socket('sub')
 
@@ -41,27 +41,26 @@ connectToEDDN()
 
 sock.on('message', (topic) => {
   timer = Date.now()
-  let message = JSON.parse(zlib.inflateSync(topic).toString())
-  let journalV5 = new schemas.journalV5()
+  const message = JSON.parse(zlib.inflateSync(topic).toString())
+  const journalV5 = new schemas.journalV5()
 
   switch (message['$schemaRef']) {
-
     case journalV5.schemaId[0]:
     case journalV5.schemaId[1]:
       journalV5.trackSystem(message.message, message.header)
       break
 
-    default: 
-      console.log("Schema not Found" + message['$schemaRef']);
+    default:
+      console.log('Schema not Found' + message['$schemaRef'])
   }
 })
 
 setInterval(async () => {
   if (Date.now() - timer > 300000) {
     try {
-      let response = await axios.default.get('https://hosting.zaonce.net/launcher-status/status.json')
+      const response = await axios.default.get('https://hosting.zaonce.net/launcher-status/status.json')
       if (response.status === 200) {
-        let responseObject = JSON.parse(response.data)
+        const responseObject = JSON.parse(response.data)
         if (responseObject.status === 2) {
           bugsnagCaller(new Error('No message received from EDDN for more than 5 minutes'))
           connectToEDDN()

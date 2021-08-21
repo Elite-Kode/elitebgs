@@ -18,7 +18,7 @@
 import * as mongoose from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
-let ebgsFaction = new mongoose.Schema(
+const ebgsFaction = new mongoose.Schema(
   {
     eddb_id: Number,
     name: String,

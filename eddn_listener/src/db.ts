@@ -16,21 +16,23 @@
 
 'use strict'
 
-let mongoose = require('mongoose')
-mongoose.Promise = global.Promise
+import * as mongoose from 'mongoose'
+;(<any>mongoose).Promise = global.Promise
 
-const bugsnagCaller = require('./bugsnag').bugsnagCaller
-let elite_bgs_url = require('./secrets').elite_bgs_db_url
-let elite_bgs_db_user = require('./secrets').elite_bgs_db_user
-let elite_bgs_db_pwd = require('./secrets').elite_bgs_db_pwd
+import * as bugsnag from './bugsnag'
+import * as secrets from './secrets'
 
-let options = {
+const bugsnagCaller = bugsnag.bugsnagCaller
+
+const elite_bgs_url = secrets.elite_bgs_db_url
+
+const options = {
   keepAlive: true,
   keepAliveInitialDelay: 120000,
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  user: elite_bgs_db_user,
-  pass: elite_bgs_db_pwd
+  user: secrets.elite_bgs_db_user,
+  pass: secrets.elite_bgs_db_pwd
 }
 
 mongoose.connect(elite_bgs_url, options, (err) => {
@@ -53,8 +55,8 @@ mongoose.connection.on('disconnected', () => {
   console.log('Mongoose connection disconnected')
 })
 
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true)
+mongoose.set('useFindAndModify', false)
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close()

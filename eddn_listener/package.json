@@ -3,8 +3,8 @@
     "scripts": {
         "start": "cross-env PORT=4013 pm2 start process.json --env production",
         "startdev": "cross-env NODE_ENV=development nodemon --inspect=localhost:9329 ./bin/start.js",
-        "lint": "eslint **/*.js",
-        "lint:fix": "eslint **/*.js --fix"
+        "lint": "eslint **/*.ts",
+        "lint:fix": "eslint **/*.ts --fix"
     },
     "private": true,
     "dependencies": {

@@ -16,25 +16,27 @@
 
 'use strict'
 
-import * as bugsnag from '@bugsnag/js'
-import * as bugsnagExpress from '@bugsnag/plugin-express'
-import * as processVars from './processVars'
+import Bugsnag from '@bugsnag/js'
+import BugsnagPluginExpress from '@bugsnag/plugin-express'
+
+import { version } from './processVars'
 import * as secrets from './secrets'
 
 const useBugsnag = secrets.bugsnag_use
+const bugsnagToken = secrets.bugsnag_token
 
-let bugsnagClient = {}
+let bugsnagClient: any
 
 if (useBugsnag) {
-  bugsnagClient = bugsnag.start({
-    apiKey: require('./secrets').bugsnag_token,
+  bugsnagClient = Bugsnag.start({
+    apiKey: bugsnagToken,
     enabledReleaseStages: ['development', 'production'],
-    plugins: [bugsnagExpress],
-    appVersion: processVars.version
+    plugins: [BugsnagPluginExpress],
+    appVersion: version.default.version
   })
 }
 
-function bugsnagCaller(err, metaData, logToConsole = true) {
+function bugsnagCaller(err: any, metaData?: any, logToConsole = true) {
   if (useBugsnag) {
     bugsnagClient.notify(err, (event) => {
       event.addMetadata('Custom', metaData)
@@ -45,10 +47,9 @@ function bugsnagCaller(err, metaData, logToConsole = true) {
   }
 }
 
-let bugsnagWrapper = {
+const bugsnagWrapper = {
   bugsnagCaller,
   bugsnagClient
 }
 
-export { bugsnagCaller, bugsnagClient, bugsnagWrapper }
-
+export { bugsnagWrapper, bugsnagClient, bugsnagCaller }
