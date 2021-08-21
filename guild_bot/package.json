@@ -8,26 +8,27 @@
     },
     "private": true,
     "dependencies": {
-        "@bugsnag/core": "^7.11.0",
         "@bugsnag/js": "^7.11.0",
         "@bugsnag/plugin-express": "^7.11.0",
-        "@types/mongoose-paginate": "^5.0.10",
-        "@types/node": "^12.20.20",
         "body-parser": "^1.19.0",
-        "cross-env": "^7.0.2",
         "discord.js": "^12.5.3",
-        "eslint": "^7.32.0",
-        "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-prettier": "^3.4.1",
         "express": "^4.17.1",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
         "mongoose": "^5.13.7",
         "mongoose-paginate": "^5.0.3",
-        "morgan": "^1.10.0",
+        "morgan": "^1.10.0"
+    },
+    "devDependencies": {
+        "@bugsnag/core": "^7.11.0",
+        "@types/mongoose-paginate": "^5.0.10",
+        "@types/node": "^12.20.20",
+        "cross-env": "^7.0.2",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.1",
         "nodemon": "^2.0.12",
         "pm2": "^5.1.1",
         "prettier": "^2.3.2"
-    },
-    "devDependencies": {}
+    }
 }
