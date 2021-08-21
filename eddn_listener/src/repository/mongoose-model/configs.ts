@@ -16,8 +16,24 @@
 
 'use strict'
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 
-const config = new mongoose.Schema({
+export interface IConfig extends Document {
+  guild_id: string
+  admin_channel_id: string
+  user_role_id: string
+  blacklisted_software: [string]
+  version_software: [
+    {
+      name: string
+      version: string
+    }
+  ]
+  whitelisted_software: [string]
+  time_offset: number
+}
+
+const configSchema: Schema = new Schema({
   guild_id: String,
   admin_channel_id: String,
   user_role_id: String,
@@ -32,4 +48,4 @@ const config = new mongoose.Schema({
   time_offset: Number
 })
 
-module.exports = mongoose.model('configs', config)
+export default mongoose.model<IConfig>('configs', configSchema)

@@ -17,72 +17,127 @@
 'use strict'
 
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
-let ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
-let ebgsFaction = new mongoose.Schema(
-  {
-    eddb_id: { type: Number, index: true },
-    name: String,
-    name_lower: { type: String, lowercase: true, index: true },
-    updated_at: { type: Date, index: true },
-    government: { type: String, lowercase: true, index: true },
-    allegiance: { type: String, lowercase: true, index: true },
-    home_system_name: { type: String, lowercase: true }, // Not in Journal
-    is_player_faction: Boolean, // Not in Journal
-    faction_presence: [
-      {
-        _id: false,
-        system_name: String,
-        system_name_lower: { type: String, lowercase: true },
-        system_id: { type: ObjectId, index: true },
-        state: { type: String, lowercase: true },
-        influence: Number,
-        happiness: { type: String, lowercase: true },
-        active_states: [
-          {
-            _id: false,
-            state: { type: String, lowercase: true }
-          }
-        ],
-        pending_states: [
-          {
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-          }
-        ],
-        recovering_states: [
-          {
-            _id: false,
-            state: { type: String, lowercase: true },
-            trend: Number
-          }
-        ],
-        conflicts: [
-          {
-            _id: false,
-            type: { type: String, lowercase: true },
-            status: { type: String, lowercase: true },
-            opponent_name: String,
-            opponent_name_lower: { type: String, lowercase: true },
-            opponent_faction_id: { type: ObjectId, index: true },
-            station_id: { type: ObjectId, index: true },
-            stake: String,
-            stake_lower: { type: String, lowercase: true },
-            days_won: Number
-          }
-        ],
-        updated_at: { type: Date, index: true }
-      }
-    ]
-  },
-  { runSettersOnQuery: true }
-)
+export interface IFactionV5Schema extends Document {
+  eddb_id: number
+  name: string
+  name_lower: string
+  updated_at: Date
+  government: string
+  allegiance: string
+  home_system_name: string // Not in Journal
+  is_player_faction: boolean // Not in Journal
+  faction_presence: [
+    {
+      _id: boolean
+      system_name: string
+      system_name_lower: string
+      system_id: mongoose.ObjectId
+      state: string
+      influence: number
+      happiness: string
+      active_states: [
+        {
+          _id: false
+          state: string
+        }
+      ]
+      pending_states: [
+        {
+          _id: false
+          state: string
+          trend: number
+        }
+      ]
+      recovering_states: [
+        {
+          _id: false
+          state: string
+          trend: number
+        }
+      ]
+      conflicts: [
+        {
+          _id: boolean
+          type: string
+          status: string
+          opponent_name: string
+          opponent_name_lower: string
+          opponent_faction_id: mongoose.ObjectId
+          station_id: mongoose.ObjectId
+          stake: string
+          stake_lower: string
+          days_won: number
+        }
+      ]
+      updated_at: Date
+    }
+  ]
+}
+
+const ebgsFaction: Schema = new mongoose.Schema({
+  eddb_id: { type: Number, index: true },
+  name: String,
+  name_lower: { type: String, lowercase: true, index: true },
+  updated_at: { type: Date, index: true },
+  government: { type: String, lowercase: true, index: true },
+  allegiance: { type: String, lowercase: true, index: true },
+  home_system_name: { type: String, lowercase: true }, // Not in Journal
+  is_player_faction: Boolean, // Not in Journal
+  faction_presence: [
+    {
+      _id: false,
+      system_name: String,
+      system_name_lower: { type: String, lowercase: true },
+      system_id: { type: ObjectId, index: true },
+      state: { type: String, lowercase: true },
+      influence: Number,
+      happiness: { type: String, lowercase: true },
+      active_states: [
+        {
+          _id: false,
+          state: { type: String, lowercase: true }
+        }
+      ],
+      pending_states: [
+        {
+          _id: false,
+          state: { type: String, lowercase: true },
+          trend: Number
+        }
+      ],
+      recovering_states: [
+        {
+          _id: false,
+          state: { type: String, lowercase: true },
+          trend: Number
+        }
+      ],
+      conflicts: [
+        {
+          _id: false,
+          type: { type: String, lowercase: true },
+          status: { type: String, lowercase: true },
+          opponent_name: String,
+          opponent_name_lower: { type: String, lowercase: true },
+          opponent_faction_id: { type: ObjectId, index: true },
+          station_id: { type: ObjectId, index: true },
+          stake: String,
+          stake_lower: { type: String, lowercase: true },
+          days_won: Number
+        }
+      ],
+      updated_at: { type: Date, index: true }
+    }
+  ]
+})
 
 ebgsFaction.plugin(mongoosePaginate)
 ebgsFaction.plugin(mongooseAggregatePaginate)
 
-export { mongoose.model('ebgsFactionV5', ebgsFaction) }
+export default mongoose.model<IFactionV5Schema>('ebgsFactionV5', ebgsFaction)

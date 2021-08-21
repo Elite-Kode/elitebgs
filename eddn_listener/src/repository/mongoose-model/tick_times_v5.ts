@@ -16,10 +16,16 @@
 
 'use strict'
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 
-const tickTimes = new mongoose.Schema({
+export interface ITickTime extends Document {
+  time: Date,
+  updated_at: Date
+}
+
+const tickTimesSchema: Schema = new mongoose.Schema({
   time: Date,
   updated_at: Date
 })
 
-module.exports = mongoose.model('tickTimesV4', tickTimes)
+export default mongoose.model<ITickTime>('tickTimesV4', tickTimesSchema)

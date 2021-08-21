@@ -16,6 +16,7 @@
 
 'use strict'
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
 const ObjectId = mongoose.Schema.Types.ObjectId

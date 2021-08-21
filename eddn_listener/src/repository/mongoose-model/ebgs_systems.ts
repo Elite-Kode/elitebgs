@@ -16,41 +16,69 @@
 
 'use strict'
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
-const ebgsSystem = new mongoose.Schema(
-  {
-    eddb_id: Number,
-    edsm_id: Number,
-    name: String,
-    name_lower: { type: String, lowercase: true, index: true },
-    x: Number,
-    y: Number,
-    z: Number,
-    population: Number,
-    government: { type: String, lowercase: true, index: true },
-    allegiance: { type: String, lowercase: true, index: true },
-    state: { type: String, lowercase: true, index: true },
-    security: { type: String, lowercase: true, index: true },
-    primary_economy: { type: String, lowercase: true, index: true },
-    power: [{ type: String, lowercase: true }],
-    power_state: { type: String, lowercase: true, index: true },
-    needs_permit: Boolean,
-    updated_at: Date,
-    simbad_ref: { type: String, lowercase: true },
-    controlling_minor_faction: { type: String, lowercase: true },
-    reserve_type: { type: String, lowercase: true },
-    minor_faction_presences: [
-      {
-        _id: false,
-        name: String,
-        name_lower: { type: String, lowercase: true }
-      }
-    ]
-  },
-  { runSettersOnQuery: true }
-)
+export interface ISystemSchema extends Document {
+  eddb_id: number,
+  edsm_id: number,
+  name: string,
+  name_lower: string,
+  x: number,
+  y: number,
+  z: number,
+  population: number,
+  government: string,
+  allegiance: string,
+  state: string,
+  security: string,
+  primary_economy: string,
+  power: [string],
+  power_state: string
+  needs_permit: boolean,
+  updated_at: Date,
+  simbad_ref: string,
+  controlling_minor_faction: string,
+  reserve_type: string,
+  minor_faction_presences: [
+    {
+      _id: boolean,
+      name: string,
+      name_lower: string
+    }
+  ]
+}
 
-ebgsSystem.plugin(mongoosePaginate)
+const ebgsSystemSchema = new mongoose.Schema({
+  eddb_id: Number,
+  edsm_id: Number,
+  name: String,
+  name_lower: { type: String, lowercase: true, index: true },
+  x: Number,
+  y: Number,
+  z: Number,
+  population: Number,
+  government: { type: String, lowercase: true, index: true },
+  allegiance: { type: String, lowercase: true, index: true },
+  state: { type: String, lowercase: true, index: true },
+  security: { type: String, lowercase: true, index: true },
+  primary_economy: { type: String, lowercase: true, index: true },
+  power: [{ type: String, lowercase: true }],
+  power_state: { type: String, lowercase: true, index: true },
+  needs_permit: Boolean,
+  updated_at: Date,
+  simbad_ref: { type: String, lowercase: true },
+  controlling_minor_faction: { type: String, lowercase: true },
+  reserve_type: { type: String, lowercase: true },
+  minor_faction_presences: [
+    {
+      _id: false,
+      name: String,
+      name_lower: { type: String, lowercase: true }
+    }
+  ]
+})
 
-module.exports = mongoose.model('ebgsSystem', ebgsSystem)
+ebgsSystemSchema.plugin(mongoosePaginate)
+
+export default mongoose.model<ISystemSchema>('ebgsSystem', ebgsSystemSchema)

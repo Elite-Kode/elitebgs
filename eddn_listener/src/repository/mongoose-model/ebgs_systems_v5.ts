@@ -16,10 +16,74 @@
 
 'use strict'
 import * as mongoose from 'mongoose'
+import { Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
 const ObjectId = mongoose.Schema.Types.ObjectId
+
+export interface ISystemSchema extends Document {
+  eddb_id: number,
+    name: string,
+    name_lower: string,
+    name_aliases: [
+      {
+        _id: boolean,
+        name: string,
+        name_lower: string
+      }
+    ],
+    x: number,
+    y: number,
+    z: number,
+    system_address: string,
+    population: number,
+    government: string,
+    allegiance: string,
+    state: string,
+    security: string,
+    primary_economy: string,
+    secondary_economy: string,
+    needs_permit: boolean, // Not in Journal
+    reserve_type: string, // Not in Journal
+    controlling_minor_faction_cased: string,
+    controlling_minor_faction: string,
+    controlling_minor_faction_id: mongoose.ObjectId,
+    factions: [
+      {
+        _id: false,
+        faction_id: mongoose.ObjectId,
+        name: String,
+        name_lower: string
+      }
+    ],
+    conflicts: [
+      {
+        _id: false,
+        type: string,
+        status: string,
+        faction1: {
+          faction_id: mongoose.ObjectId,
+          name: string,
+          name_lower: string,
+          station_id: mongoose.ObjectId,
+          stake: string,
+          stake_lower: string,
+          days_won: number
+        },
+        faction2: {
+          faction_id: mongoose.ObjectId,
+          name: string,
+          name_lower: string,
+          station_id: mongoose.ObjectId,
+          stake: String,
+          stake_lower: string,
+          days_won: number
+        }
+      }
+    ],
+    updated_at: Date
+}
 
 const ebgsSystem = new mongoose.Schema(
   {
@@ -83,8 +147,7 @@ const ebgsSystem = new mongoose.Schema(
       }
     ],
     updated_at: { type: Date, index: true }
-  },
-  { runSettersOnQuery: true }
+  }
 )
 
 ebgsSystem.plugin(mongoosePaginate)
