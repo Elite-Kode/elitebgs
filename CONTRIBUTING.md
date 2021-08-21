@@ -10,7 +10,7 @@ Elite BGS requires a few things to get going:
 2. A recent Node.js LTS version, v12.18.2 (Erbium) and above
 3. MongoDB 4.0 and above
 4. Redis 6.2 (stable) and above
-5. Configure secrets for `frontend`, `backend`, `eddn_listener`, `guild_bot` and `tick_listener`
+5. Configure secrets for `frontend`, `backend`, `eddn_listener`, and `guild_bot`
 6. A Discord account for OAuth authentication (required) and a Discord "guild" (server) if `guild_bot` is required
 
 On the server or development workstation, Node.js, MongoDB, and Redis must be installed and correctly working. Otherwise, these instructions may fail. If you develop on Windows, you will need to install Redis in Windows Subsystem For Linux (WSL2), a Docker container, or a virtual machine, as there are no current native Windows ports.
@@ -171,7 +171,6 @@ There are five major components to Elite BGS:
 - `eddn_listener` listens to the EDDN firehose via a socket. It parses messages it is interested in and stores them in various MongoDB collections. It will throw errors if it sees records it doesn't necessarily care about, but these are warnings and not fatal
 - `frontend` is an Angular application written in TypeScript that is the user interface that most users are familiar with.
 - `guild_bot` is a Node.js application that provides admin notifications to a Discord server run by you, an Elite BGS administrator. This is not BGS Bot - that's an entirely different project.
-- `tick_listener` is a small node.js application that watches for ticks from Cmdr Phelbore's tick service. In the future, this code will likely adopt Cmdr Phelbore's code, but for now, it relies upon monitoring a socket to determine when the tick occurs.
 
 ### Install dependencies
 
@@ -186,8 +185,6 @@ Let's first get all the dependencies needed to build and run the underlying serv
     foo@bar:~$ cd ../frontend
     foo@bar:~$ npm i
     foo@bar:~$ cd ../guild_bot
-    foo@bar:~$ npm i
-    foo@bar:~$ cd ../tick_listener
     foo@bar:~$ npm i
 ```
 
@@ -274,21 +271,6 @@ Create a new `secrets.js` file for each service in their respective folders with
   module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
   
   module.exports.discord_token = "[Discord bot token]";
-
-  module.exports.bugsnag_use = [true/false];
-  module.exports.bugsnag_token = "[Bugsnag token for backend express app]";
-```
-
-#### tick_listener/secrets.js
-
-```js
-  "use strict";
-  
-  // Authenticated MongoDB (not default, strongly recommended in prod). Comment out if not using authentication
-  module.exports.elite_bgs_db_user = "[username for elite_bgs db]";
-  module.exports.elite_bgs_db_pwd = "[password for elite_bgs db]";
-  
-  module.exports.elite_bgs_db_url = "mongodb://localhost:27017/elite_bgs";
 
   module.exports.bugsnag_use = [true/false];
   module.exports.bugsnag_token = "[Bugsnag token for backend express app]";
@@ -457,13 +439,12 @@ In each `secrets.js` file in `backend`, `eddn_listener`, `frontend`, `guild_bot`
 
 ### Ports
 
-As Elite BGS is split into five parts, the following default HTTP ports are used:
+As Elite BGS is split into four parts, the following default HTTP ports are used:
 
 | Service | Prod | Dev | Debug |
 | -- | -- | -- | -- |
 | backend API | 4010 | 3010 | 9029 |
 | eddn_listener | 4011 | 3011 | 9129 |
-| tick_listener | 4012 | 3012 | 9229 |
 | guild_bot | 4013 | 3013 | 9329 |
 | frontend app + accompanying backend | 4014 | 3014 | 9429 |
 
