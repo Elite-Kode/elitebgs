@@ -19,7 +19,7 @@ import * as mongoose from 'mongoose'
 import { Schema, Document } from 'mongoose'
 
 export interface ITickTime extends Document {
-  time: Date,
+  time: Date
   updated_at: Date
 }
 

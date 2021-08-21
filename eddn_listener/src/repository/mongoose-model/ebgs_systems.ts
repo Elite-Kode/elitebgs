@@ -20,36 +20,36 @@ import { Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
 export interface ISystemSchema extends Document {
-  eddb_id: number,
-  edsm_id: number,
-  name: string,
-  name_lower: string,
-  x: number,
-  y: number,
-  z: number,
-  population: number,
-  government: string,
-  allegiance: string,
-  state: string,
-  security: string,
-  primary_economy: string,
-  power: [string],
+  eddb_id: number
+  edsm_id: number
+  name: string
+  name_lower: string
+  x: number
+  y: number
+  z: number
+  population: number
+  government: string
+  allegiance: string
+  state: string
+  security: string
+  primary_economy: string
+  power: [string]
   power_state: string
-  needs_permit: boolean,
-  updated_at: Date,
-  simbad_ref: string,
-  controlling_minor_faction: string,
-  reserve_type: string,
+  needs_permit: boolean
+  updated_at: Date
+  simbad_ref: string
+  controlling_minor_faction: string
+  reserve_type: string
   minor_faction_presences: [
     {
-      _id: boolean,
-      name: string,
+      _id: boolean
+      name: string
       name_lower: string
     }
   ]
 }
 
-const ebgsSystemSchema = new mongoose.Schema({
+const ebgsSystemSchema: Schema = new mongoose.Schema({
   eddb_id: Number,
   edsm_id: Number,
   name: String,

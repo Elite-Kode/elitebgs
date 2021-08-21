@@ -16,7 +16,7 @@
 
 'use strict'
 
-import Bugsnag from '@bugsnag/js'
+import Bugsnag, { Client } from '@bugsnag/js'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 
 import { version } from './processVars'
@@ -25,7 +25,7 @@ import * as secrets from './secrets'
 const useBugsnag = secrets.bugsnag_use
 const bugsnagToken = secrets.bugsnag_token
 
-let bugsnagClient: any
+let bugsnagClient: Client
 
 if (useBugsnag) {
   bugsnagClient = Bugsnag.start({

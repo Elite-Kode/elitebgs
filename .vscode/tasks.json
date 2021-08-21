@@ -10,6 +10,16 @@
 			],
 			"label": "npm: lint - eddn_listener",
 			"detail": "eslint **/*.ts"
+		},
+		{
+			"type": "npm",
+			"script": "lint:fix",
+			"path": "eddn_listener/",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "npm: lint:fix - eddn_listener",
+			"detail": "eslint **/*.ts --fix"
 		}
 	]
 }

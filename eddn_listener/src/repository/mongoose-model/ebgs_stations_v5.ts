@@ -22,51 +22,89 @@ import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
 const ObjectId = mongoose.Schema.Types.ObjectId
 
-const ebgsStation = new mongoose.Schema(
-  {
-    eddb_id: { type: Number, index: true },
-    name: String,
-    name_lower: { type: String, lowercase: true, index: true },
-    name_aliases: [
-      {
-        _id: false,
-        name: String,
-        name_lower: String
-      }
-    ],
-    market_id: { type: String, index: true },
-    type: { type: String, lowercase: true, index: true },
-    system: String,
-    system_lower: { type: String, lowercase: true, index: true },
-    system_id: { type: ObjectId, index: true },
-    updated_at: { type: Date, index: true },
-    government: { type: String, lowercase: true, index: true },
-    economy: { type: String, lowercase: true, index: true },
-    all_economies: [
-      {
-        _id: false,
-        name: { type: String, lowercase: true },
-        proportion: Number
-      }
-    ],
-    allegiance: { type: String, lowercase: true, index: true },
-    state: { type: String, lowercase: true, index: true },
-    distance_from_star: Number,
-    controlling_minor_faction_cased: String,
-    controlling_minor_faction: { type: String, lowercase: true, index: true },
-    controlling_minor_faction_id: { type: ObjectId, index: true },
-    services: [
-      {
-        _id: false,
-        name: String,
-        name_lower: { type: String, lowercase: true }
-      }
-    ]
-  },
-  { runSettersOnQuery: true }
-)
+export interface IStationV5Schema extends Document {
+  eddb_id: number
+  name: string
+  name_lower: string
+  name_aliases: [
+    {
+      _id: boolean
+      name: string
+      name_lower: string
+    }
+  ]
+  market_id: string
+  type: string
+  system: string
+  system_lower: string
+  system_id: mongoose.ObjectId
+  updated_at: Date
+  government: string
+  economy: string
+  all_economies: [
+    {
+      _id: boolean
+      name: string
+      proportion: number
+    }
+  ]
+  allegiance: string
+  state: string
+  distance_from_star: number
+  controlling_minor_faction_cased: string
+  controlling_minor_faction: string
+  controlling_minor_faction_id: mongoose.ObjectId
+  services: [
+    {
+      _id: boolean
+      name: string
+      name_lower: string
+    }
+  ]
+}
+
+const ebgsStation: Schema = new mongoose.Schema({
+  eddb_id: { type: Number, index: true },
+  name: String,
+  name_lower: { type: String, lowercase: true, index: true },
+  name_aliases: [
+    {
+      _id: false,
+      name: String,
+      name_lower: String
+    }
+  ],
+  market_id: { type: String, index: true },
+  type: { type: String, lowercase: true, index: true },
+  system: String,
+  system_lower: { type: String, lowercase: true, index: true },
+  system_id: { type: ObjectId, index: true },
+  updated_at: { type: Date, index: true },
+  government: { type: String, lowercase: true, index: true },
+  economy: { type: String, lowercase: true, index: true },
+  all_economies: [
+    {
+      _id: false,
+      name: { type: String, lowercase: true },
+      proportion: Number
+    }
+  ],
+  allegiance: { type: String, lowercase: true, index: true },
+  state: { type: String, lowercase: true, index: true },
+  distance_from_star: Number,
+  controlling_minor_faction_cased: String,
+  controlling_minor_faction: { type: String, lowercase: true, index: true },
+  controlling_minor_faction_id: { type: ObjectId, index: true },
+  services: [
+    {
+      _id: false,
+      name: String,
+      name_lower: { type: String, lowercase: true }
+    }
+  ]
+})
 
 ebgsStation.plugin(mongoosePaginate)
 ebgsStation.plugin(mongooseAggregatePaginate)
 
-module.exports = mongoose.model('ebgsStationV5', ebgsStation)
+export default mongoose.model<IStationV5Schema>('ebgsStationV5', ebgsStation)
