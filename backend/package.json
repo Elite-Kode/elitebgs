@@ -28,9 +28,7 @@
         "request-promise-native": "^1.0.9",
         "swagger-jsdoc": "^6.1.0",
         "swagger-ui-express": "^4.1.4",
-        "un-eval": "^1.2.0"
-    },
-    "devDependencies": {
+        "un-eval": "^1.2.0",
         "@types/mongoose-paginate": "^5.0.10",
         "@types/node": "^12.20.20",
         "@types/swagger-schema-official": "^2.0.22",
@@ -44,5 +42,6 @@
         "nodemon": "^2.0.12",
         "pm2": "^5.1.1",
         "prettier": "^2.3.2"
-    }
+    },
+    "devDependencies": {}
 }
