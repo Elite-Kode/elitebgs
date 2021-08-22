@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 'use strict'
 
-import * as mongoose from 'mongoose'
-import { Schema, Document } from 'mongoose'
+import { model, Model, Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
-
-const ObjectId = mongoose.Schema.Types.ObjectId
 
 export interface IFactionV5Schema extends Document {
   eddb_id: number
@@ -37,7 +34,7 @@ export interface IFactionV5Schema extends Document {
       _id: boolean
       system_name: string
       system_name_lower: string
-      system_id: mongoose.ObjectId
+      system_id: Schema.Types.ObjectId
       state: string
       influence: number
       happiness: string
@@ -68,8 +65,8 @@ export interface IFactionV5Schema extends Document {
           status: string
           opponent_name: string
           opponent_name_lower: string
-          opponent_faction_id: mongoose.ObjectId
-          station_id: mongoose.ObjectId
+          opponent_faction_id: Schema.Types.ObjectId
+          station_id: Schema.Types.ObjectId
           stake: string
           stake_lower: string
           days_won: number
@@ -80,7 +77,7 @@ export interface IFactionV5Schema extends Document {
   ]
 }
 
-const ebgsFaction: Schema = new mongoose.Schema({
+const ebgsFaction: Schema = new Schema({
   eddb_id: { type: Number, index: true },
   name: String,
   name_lower: { type: String, lowercase: true, index: true },
@@ -94,7 +91,7 @@ const ebgsFaction: Schema = new mongoose.Schema({
       _id: false,
       system_name: String,
       system_name_lower: { type: String, lowercase: true },
-      system_id: { type: ObjectId, index: true },
+      system_id: { type: Schema.Types.ObjectId, index: true },
       state: { type: String, lowercase: true },
       influence: Number,
       happiness: { type: String, lowercase: true },
@@ -125,8 +122,8 @@ const ebgsFaction: Schema = new mongoose.Schema({
           status: { type: String, lowercase: true },
           opponent_name: String,
           opponent_name_lower: { type: String, lowercase: true },
-          opponent_faction_id: { type: ObjectId, index: true },
-          station_id: { type: ObjectId, index: true },
+          opponent_faction_id: { type: Schema.Types.ObjectId, index: true },
+          station_id: { type: Schema.Types.ObjectId, index: true },
           stake: String,
           stake_lower: { type: String, lowercase: true },
           days_won: Number
@@ -140,4 +137,6 @@ const ebgsFaction: Schema = new mongoose.Schema({
 ebgsFaction.plugin(mongoosePaginate)
 ebgsFaction.plugin(mongooseAggregatePaginate)
 
-export default mongoose.model<IFactionV5Schema>('ebgsFactionV5', ebgsFaction)
+export const FactionModel: Model<IFactionV5Schema> = model<IFactionV5Schema>('ebgsFactionV5', ebgsFaction)
+
+export default model<IFactionV5Schema>('ebgsFactionV5', ebgsFaction)

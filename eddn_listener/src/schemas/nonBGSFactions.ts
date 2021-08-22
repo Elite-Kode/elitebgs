@@ -1,4 +1,4 @@
-const nonBgsFactions = [
+export const nonBGSFactions = [
   'Aegis Defense',
   'Alliance Incarceration Concern',
   'Bill Turner',
@@ -42,5 +42,3 @@ const nonBgsFactions = [
   'Domino Green',
   'Hero Ferrari'
 ]
-
-export { nonBgsFactions }

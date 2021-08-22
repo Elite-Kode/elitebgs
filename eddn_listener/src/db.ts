@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 'use strict'
 
 import * as mongoose from 'mongoose'
-;(<any>mongoose).Promise = global.Promise
 
 import * as bugsnag from './bugsnag'
 import * as secrets from './secrets'

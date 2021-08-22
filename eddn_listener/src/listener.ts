@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ const sock = zmq.socket('sub')
 
 let timer = Date.now()
 
-const connectToEDDN = () => {
+function connectToEDDN() {
   sock.connect('tcp://eddn.edcd.io:9500')
   console.log('Connected to EDDN relay at port 9500')
 

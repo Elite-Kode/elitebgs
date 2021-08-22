@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
  */
 
 'use strict'
-import * as mongoose from 'mongoose'
-import { Schema, Document } from 'mongoose'
+import { model, Model, Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 import * as mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
-
-const ObjectId = mongoose.Schema.Types.ObjectId
 
 export interface IStationV5Schema extends Document {
   eddb_id: number
@@ -37,7 +34,7 @@ export interface IStationV5Schema extends Document {
   type: string
   system: string
   system_lower: string
-  system_id: mongoose.ObjectId
+  system_id: Schema.Types.ObjectId
   updated_at: Date
   government: string
   economy: string
@@ -53,7 +50,7 @@ export interface IStationV5Schema extends Document {
   distance_from_star: number
   controlling_minor_faction_cased: string
   controlling_minor_faction: string
-  controlling_minor_faction_id: mongoose.ObjectId
+  controlling_minor_faction_id: Schema.Types.ObjectId
   services: [
     {
       _id: boolean
@@ -63,7 +60,7 @@ export interface IStationV5Schema extends Document {
   ]
 }
 
-const ebgsStation: Schema = new mongoose.Schema({
+const ebgsStation: Schema = new Schema({
   eddb_id: { type: Number, index: true },
   name: String,
   name_lower: { type: String, lowercase: true, index: true },
@@ -78,7 +75,7 @@ const ebgsStation: Schema = new mongoose.Schema({
   type: { type: String, lowercase: true, index: true },
   system: String,
   system_lower: { type: String, lowercase: true, index: true },
-  system_id: { type: ObjectId, index: true },
+  system_id: { type: Schema.Types.ObjectId, index: true },
   updated_at: { type: Date, index: true },
   government: { type: String, lowercase: true, index: true },
   economy: { type: String, lowercase: true, index: true },
@@ -94,7 +91,7 @@ const ebgsStation: Schema = new mongoose.Schema({
   distance_from_star: Number,
   controlling_minor_faction_cased: String,
   controlling_minor_faction: { type: String, lowercase: true, index: true },
-  controlling_minor_faction_id: { type: ObjectId, index: true },
+  controlling_minor_faction_id: { type: Schema.Types.ObjectId, index: true },
   services: [
     {
       _id: false,
@@ -107,4 +104,5 @@ const ebgsStation: Schema = new mongoose.Schema({
 ebgsStation.plugin(mongoosePaginate)
 ebgsStation.plugin(mongooseAggregatePaginate)
 
-export default mongoose.model<IStationV5Schema>('ebgsStationV5', ebgsStation)
+export const StationModel: Model<IStationV5Schema> = model<IStationV5Schema>('ebgsStationV5', ebgsStation)
+export default model<IStationV5Schema>('ebgsStationV5', ebgsStation)

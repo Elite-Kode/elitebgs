@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
  */
 
 'use strict'
-import * as mongoose from 'mongoose'
-import { Schema, Document } from 'mongoose'
+
+import { model, Schema, Document } from 'mongoose'
 
 export interface ITickTime extends Document {
   time: Date
   updated_at: Date
 }
 
-const tickTimesSchema: Schema = new mongoose.Schema({
+const tickTimesSchema: Schema = new Schema({
   time: Date,
   updated_at: Date
 })
 
-export default mongoose.model<ITickTime>('tickTimesV4', tickTimesSchema)
+export default model<ITickTime>('tickTimesV4', tickTimesSchema)

@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,11 @@
  */
 
 'use strict'
-import * as mongoose from 'mongoose'
-import { Schema, Document } from 'mongoose'
+import { model, Model, Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
-const ObjectId = mongoose.Schema.Types.ObjectId
-
 export interface IHistorySystemV5Schema extends Document {
-  system_id: mongoose.ObjectId
+  system_id: Schema.Types.ObjectId
   system_name: string
   system_name_lower: string
   updated_at: Date
@@ -34,11 +31,11 @@ export interface IHistorySystemV5Schema extends Document {
   security: string
   controlling_minor_faction_cased: string
   controlling_minor_faction: string
-  controlling_minor_faction_id: mongoose.ObjectId
+  controlling_minor_faction_id: Schema.Types.ObjectId
   factions: [
     {
       _id: boolean
-      faction_id: mongoose.ObjectId
+      faction_id: Schema.Types.ObjectId
       name: string
       name_lower: string
     }
@@ -49,19 +46,19 @@ export interface IHistorySystemV5Schema extends Document {
       type: string
       status: string
       faction1: {
-        faction_id: mongoose.ObjectId
+        faction_id: Schema.Types.ObjectId
         name: string
         name_lower: string
-        station_id: mongoose.ObjectId
+        station_id: Schema.Types.ObjectId
         stake: string
         stake_lower: string
         days_won: number
       }
       faction2: {
-        faction_id: mongoose.ObjectId
+        faction_id: Schema.Types.ObjectId
         name: string
         name_lower: string
-        station_id: mongoose.ObjectId
+        station_id: Schema.Types.ObjectId
         stake: string
         stake_lower: string
         days_won: number
@@ -70,8 +67,8 @@ export interface IHistorySystemV5Schema extends Document {
   ]
 }
 
-const ebgsHistorySystem: Schema = new mongoose.Schema({
-  system_id: { type: ObjectId, index: true },
+const ebgsHistorySystem: Schema = new Schema({
+  system_id: { type: Schema.Types.ObjectId, index: true },
   system_name: String,
   system_name_lower: { type: String, lowercase: true },
   updated_at: { type: Date, index: true },
@@ -83,11 +80,11 @@ const ebgsHistorySystem: Schema = new mongoose.Schema({
   security: { type: String, lowercase: true },
   controlling_minor_faction_cased: String,
   controlling_minor_faction: { type: String, lowercase: true },
-  controlling_minor_faction_id: { type: ObjectId, index: true },
+  controlling_minor_faction_id: { type: Schema.Types.ObjectId, index: true },
   factions: [
     {
       _id: false,
-      faction_id: { type: ObjectId, index: true },
+      faction_id: { type: Schema.Types.ObjectId, index: true },
       name: String,
       name_lower: { type: String, lowercase: true }
     }
@@ -98,19 +95,19 @@ const ebgsHistorySystem: Schema = new mongoose.Schema({
       type: { type: String, lowercase: true },
       status: { type: String, lowercase: true },
       faction1: {
-        faction_id: { type: ObjectId, index: true },
+        faction_id: { type: Schema.Types.ObjectId, index: true },
         name: String,
         name_lower: { type: String, lowercase: true },
-        station_id: { type: ObjectId, index: true },
+        station_id: { type: Schema.Types.ObjectId, index: true },
         stake: String,
         stake_lower: { type: String, lowercase: true },
         days_won: Number
       },
       faction2: {
-        faction_id: { type: ObjectId, index: true },
+        faction_id: { type: Schema.Types.ObjectId, index: true },
         name: String,
         name_lower: { type: String, lowercase: true },
-        station_id: { type: ObjectId, index: true },
+        station_id: { type: Schema.Types.ObjectId, index: true },
         stake: String,
         stake_lower: { type: String, lowercase: true },
         days_won: Number
@@ -121,4 +118,8 @@ const ebgsHistorySystem: Schema = new mongoose.Schema({
 
 ebgsHistorySystem.plugin(mongoosePaginate)
 
-export default mongoose.model<IHistorySystemV5Schema>('ebgsHistorySystemV5', ebgsHistorySystem)
+export const HistorySystemModel: Model<IHistorySystemV5Schema> = model<IHistorySystemV5Schema>(
+  'ebgsHistorySystemV5',
+  ebgsHistorySystem
+)
+export default model<IHistorySystemV5Schema>('ebgsHistorySystemV5', ebgsHistorySystem)

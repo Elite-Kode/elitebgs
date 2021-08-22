@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import * as logger from 'morgan'
 import * as secrets from './secrets'
 import * as bugsnag from './bugsnag'
 
-const bugsnagClient = bugsnag.bugsnagClient
-
 import './listener'
 
-const app = express()
-
 import './db'
+
+const bugsnagClient = bugsnag.bugsnagClient
+
+const app = express()
 
 if (secrets.bugsnag_use) {
   // For more information, please consult https://docs.bugsnag.com/platforms/javascript/express/

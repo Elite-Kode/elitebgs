@@ -1,5 +1,5 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Elite Kode development team, Kode Blox, and Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,11 @@
  */
 
 'use strict'
-import * as mongoose from 'mongoose'
-import { Schema, Document } from 'mongoose'
+import { model, Model, Schema, Document } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate'
 
-const ObjectId = mongoose.Schema.Types.ObjectId
-
 export interface IHistoryStationV5Schema extends Document {
-  station_id: mongoose.ObjectId
+  station_id: Schema.Types.ObjectId
   station_name: string
   station_name_lower: string
   updated_at: Date
@@ -33,7 +30,7 @@ export interface IHistoryStationV5Schema extends Document {
   state: string
   controlling_minor_faction_cased: string
   controlling_minor_faction: string
-  controlling_minor_faction_id: mongoose.ObjectId
+  controlling_minor_faction_id: Schema.Types.ObjectId
   services: [
     {
       _id: boolean
@@ -43,8 +40,8 @@ export interface IHistoryStationV5Schema extends Document {
   ]
 }
 
-const ebgsHistoryStation: Schema = new mongoose.Schema({
-  station_id: { type: ObjectId, index: true },
+const ebgsHistoryStation: Schema = new Schema({
+  station_id: { type: Schema.Types.ObjectId, index: true },
   station_name: String,
   station_name_lower: { type: String, lowercase: true },
   updated_at: { type: Date, index: true },
@@ -55,7 +52,7 @@ const ebgsHistoryStation: Schema = new mongoose.Schema({
   state: { type: String, lowercase: true },
   controlling_minor_faction_cased: String,
   controlling_minor_faction: { type: String, lowercase: true },
-  controlling_minor_faction_id: { type: ObjectId, index: true },
+  controlling_minor_faction_id: { type: Schema.Types.ObjectId, index: true },
   services: [
     {
       _id: false,
@@ -66,5 +63,8 @@ const ebgsHistoryStation: Schema = new mongoose.Schema({
 })
 
 ebgsHistoryStation.plugin(mongoosePaginate)
-
-export default mongoose.model<IHistoryStationV5Schema>('ebgsHistoryStationV5', ebgsHistoryStation)
+export const HistoryStationModel: Model<IHistoryStationV5Schema> = model<IHistoryStationV5Schema>(
+  'ebgsHistoryStationV5',
+  ebgsHistoryStation
+)
+export default model<IHistoryStationV5Schema>('ebgsHistoryStationV5', ebgsHistoryStation)
