@@ -2,8 +2,8 @@
   <v-data-table
     class="elevation-1"
     :headers="headers"
-    :items="systemDetails"
-    :items-per-page="systemDetails.length"
+    :items="tableDetails"
+    :items-per-page="tableDetails.length"
     :search="factionFilter"
     hide-default-footer
     :loading="loading"
@@ -50,7 +50,7 @@
     </template>
     <template v-slot:item.updated_at="{ item }">
       {{ formatDate(item.updated_at) }}
-      <v-chip small :color="item.age_flag" dark>
+      <v-chip small :color="item.isCurrentTick ? 'success' : 'error'" dark>
         {{ item.from_now }}
       </v-chip>
     </template>
@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { mapState } from 'vuex'
 import componentMethods from '@/mixins/componentMethods'
 
 export default {
@@ -115,6 +117,19 @@ export default {
           filterable: false
         }
       ]
+    }
+  },
+  computed: {
+    ...mapState({
+      currentTick: (state) => state.ticks.currentTick
+    }),
+    tableDetails() {
+      return this.systemDetails.map((d) => {
+        return {
+          ...d,
+          isCurrentTick: moment(this.currentTick.time).isBefore(moment(d.system_updated_at))
+        }
+      })
     }
   },
   mixins: [componentMethods],
