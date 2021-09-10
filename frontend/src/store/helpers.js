@@ -75,8 +75,8 @@ const systemDetailsTable = (system, faction) => {
     name: system.system_name,
     population: system.system_details.population,
     system_id: system.system_id,
-    from_now: moment(system.updated_at).fromNow(true),
-    age_flag: getChipColour(-(moment().diff(moment(system.updated_at), 'days', true) - 1))
+    system_updated_at: system.updated_at,
+    from_now: moment(system.updated_at).fromNow(true)
   }
 }
 
@@ -134,10 +134,8 @@ const factionDetailsTable = (faction, system) => {
     influence: faction.faction_details.faction_presence.influence * 100,
     name: faction.name,
     faction_id: faction.faction_id,
-    from_now: moment(faction.faction_details.faction_presence.updated_at).fromNow(true),
-    age_flag: getChipColour(
-      -(moment().diff(moment(faction.faction_details.faction_presence.updated_at), 'days', true) - 1)
-    )
+    system_updated_at: faction.faction_details.faction_presence.updated_at,
+    from_now: moment(faction.faction_details.faction_presence.updated_at).fromNow(true)
   }
 }
 
