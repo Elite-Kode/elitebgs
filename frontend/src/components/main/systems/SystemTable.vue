@@ -118,7 +118,7 @@ export default {
       currentTick: (state) => state.ticks.currentTick
     }),
     tableDetails() {
-      return this.systemDetails.map((d) => {
+      return this.factionDetails.map((d) => {
         return {
           ...d,
           isCurrentTick: moment(this.currentTick.time).isBefore(moment(d.system_updated_at))
