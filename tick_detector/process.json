@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "elitebgs-tick-detector",
+      "namespace": "elitebgs",
+      "script": "./bin/start.js",
+      "watch": false,
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
