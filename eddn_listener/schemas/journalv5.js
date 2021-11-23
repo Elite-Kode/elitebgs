@@ -99,8 +99,15 @@ function Journal() {
               return faction
             })
           )
-
-          await this.formAndSetTickDetectorRecord(message, system, factions)
+          try {
+            await this.formAndSetTickDetectorRecord(message, system, factions)
+          } catch (err) {
+            bugsnagCaller(err, {
+              metaData: {
+                message: message
+              }
+            })
+          }
 
           // Generate the faction array that needs to be inserted
           let factionArray = message.Factions.map((faction) => {
