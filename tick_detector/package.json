@@ -1,7 +1,8 @@
 {
   "name": "elitebgs-tick-detector",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "pm2 start process.json --env production",
+    "startdev": "ts-node src/index.ts",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "lint": "eslint \"{src,test}/**/*.ts\"",
