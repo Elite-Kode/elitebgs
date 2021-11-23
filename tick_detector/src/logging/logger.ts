@@ -1,11 +1,11 @@
 /*
- * KodeBlox Copyright 2021 Sayak Mukhopadhyay
+ * Copyright 2021 Sayak Mukhopadhyay
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http: //www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-'use strict'
-const mongoose = require('mongoose')
+export interface Logger {
+  loggerName: string;
 
-let ObjectId = mongoose.Schema.Types.ObjectId
+  log(data: string | Error | unknown, metadata?: unknown): void;
 
-let tickDetector = new mongoose.Schema({
-  faction_id: { type: ObjectId, index: true },
-  system_id: { type: ObjectId, index: true },
-  influence: { type: Number, index: true },
-  first_seen: Date,
-  last_seen: Date,
-  count: Number,
-  delta: Number
-})
-
-module.exports = mongoose.model('tickDetector', tickDetector)
+  error(data: string | Error | unknown, metadata?: unknown): void;
+}

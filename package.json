@@ -9,19 +9,22 @@
         "start:dev:frontend": "npm run startdev --prefix frontend",
         "start:dev:guild_bot": "npm run startdev --prefix guild_bot",
         "start:dev:tick_listener": "npm run startdev --prefix tick_listener",
+        "start:dev:tick_detector": "npm run startdev --prefix tick_detector",
         "start": "run-p start:frontend start:backend start:eddn_listener start:guild_bot start:tick_listener",
         "start:backend": "npm run start --prefix backend",
         "start:eddn_listener": "npm run start --prefix eddn_listener",
         "start:frontend": "npm run build --prefix frontend",
         "start:guild_bot": "npm run start --prefix guild_bot",
         "start:tick_listener": "npm run start --prefix tick_listener",
+        "start:tick_detector": "npm run start --prefix tick_detector",
         "versionfile": "node ./versionFile.js",
         "lint:fix": "run-p lint:fix:backend lint:fix:eddn_listener lint:fix:frontend lint:fix:guild_bot lint:fix:tick_listener",
         "lint:fix:backend": "npm run lint:fix --prefix backend",
         "lint:fix:eddn_listener": "npm run lint:fix --prefix eddn_listener",
         "lint:fix:frontend": "npm run lint:fix --prefix frontend",
         "lint:fix:guild_bot": "npm run lint:fix --prefix guild_bot",
-        "lint:fix:tick_listener": "npm run lint:fix --prefix tick_listener"
+        "lint:fix:tick_listener": "npm run lint:fix --prefix tick_listener",
+        "lint:fix:tick_detector": "npm run lint:fix --prefix tick_detector"
     },
     "private": true,
     "devDependencies": {

@@ -1,8 +1,11 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  root: true,
   env: {
-    commonjs: true,
-    es2017: true,
-    node: true
-  },
-  extends: ['eslint:recommended', 'plugin:prettier/recommended']
-}
+    es2020: true,
+    node: true,
+    jest: true
+  }
+};

@@ -1,13 +1,5 @@
 {
-  "semi": false,
-  "singleQuote": true,
-  "endOfLine": "lf",
   "trailingComma": "none",
-  "printWidth": 120,
-  "prettier/prettier": [
-    "error",
-    {
-      "endOfLine": "auto"
-    }
-  ]
+  "singleQuote": true,
+  "printWidth": 120
 }
