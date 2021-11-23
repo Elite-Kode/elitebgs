@@ -38,4 +38,4 @@ export const TickDetectorSchema = new Schema<ITickDetectorSchema>({
   delta: Number
 });
 
-export const TickDetectorModel = model('TickDetector', TickDetectorSchema, 'tickDetector');
+export const TickDetectorModel = model('TickDetector', TickDetectorSchema, 'tick_detector');

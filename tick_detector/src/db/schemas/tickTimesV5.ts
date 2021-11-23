@@ -28,4 +28,4 @@ export const TickTimesSchema = new Schema<ITickTimesSchema>({
   updated_at: Date
 });
 
-export const TickTimesModel = model('TickTimes', TickTimesSchema, 'tickTimesV4');
+export const TickTimesModel = model('TickTimes', TickTimesSchema, 'ticktimesv4');

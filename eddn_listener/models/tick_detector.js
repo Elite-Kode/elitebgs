@@ -29,4 +29,4 @@ let tickDetector = new mongoose.Schema({
   delta: Number
 })
 
-module.exports = mongoose.model('tickDetector', tickDetector)
+module.exports = mongoose.model('tickDetector', tickDetector, 'tick_detector')
