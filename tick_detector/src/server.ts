@@ -20,7 +20,7 @@ import http, { Server } from 'http';
 import { AddressInfo } from 'net';
 import { Db, DbOptions } from './db';
 import { LoggingClient } from './logging';
-import { initiateSocket } from './detector';
+import { Detector } from './detector';
 
 export type Options = {
   port?: number;
@@ -34,6 +34,7 @@ export class AppServer {
   public express: Application;
   public port: number;
   public db: Db;
+  public detector: Detector;
   private readonly _server: Server;
   private readonly freshness = 14400;
   private readonly threshold = 5;
@@ -53,7 +54,10 @@ export class AppServer {
     this._server.on('error', this.onError.bind(this));
     this._server.on('listening', this.onListening.bind(this));
 
-    initiateSocket(this._server, this.freshness, this.threshold, this.delta);
+    this.detector = new Detector(this._server, this.freshness, this.threshold, this.delta);
+
+    this.detector.check();
+    setInterval(this.detector.check, 60000);
   }
 
   private onError(error: NodeJS.ErrnoException): void {
