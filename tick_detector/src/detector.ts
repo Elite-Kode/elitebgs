@@ -44,7 +44,6 @@ export class Detector {
   }
 
   public async check(): Promise<void> {
-    console.log('Checking...');
     const mongoSession = await mongoose.startSession();
     await mongoSession.withTransaction(async () => {
       let start: string | Date = moment().subtract(1, 'month').format('YYYY-MM-DDTHH:mm:ssZ');
@@ -90,6 +89,7 @@ export class Detector {
             `Tick - ${start.format('YYYY-MM-DD HH:mm:ss')} - ${detected.format('YYYY-MM-DD HH:mm:ss')} - ${size} items`
           );
           this.socket.emit('tick', start.format('YYYY-MM-DDTHH:mm:ssZ'));
+          console.log(start.format('YYYY-MM-DDTHH:mm:ssZ'));
         }
       }
     });
