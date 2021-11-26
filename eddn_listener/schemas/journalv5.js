@@ -762,7 +762,7 @@ function Journal() {
     if (message && system && factions && factions.length > 0) {
       // Sanity Check
       for (const faction of factions) {
-        const factionPresence = faction.faction_presence.find((system) => system.system_id.equals(system._id))
+        const factionPresence = faction.faction_presence.find((presence) => presence.system_id.equals(system._id))
         if (factionPresence) {
           const existing = await tickDetector
             .find({
