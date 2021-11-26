@@ -23,6 +23,7 @@ import { TickTimesModel } from './db/schemas/tickTimesV5';
 import { ITickDetectorSchema, TickDetectorModel } from './db/schemas/tickDetector';
 import { Server } from 'http';
 import * as console from 'console';
+import { TickSchema } from './typings/elitebgs';
 
 export class Detector {
   private socket;
@@ -46,10 +47,10 @@ export class Detector {
   public async check(): Promise<void> {
     const mongoSession = await mongoose.startSession();
     await mongoSession.withTransaction(async () => {
-      let start: string | Date = moment().subtract(1, 'month').format('YYYY-MM-DDTHH:mm:ssZ');
-      const lastTick = TickTimesModel.find({}).sort({ time: -1 }).limit(1).lean()[0];
-      if (lastTick) {
-        start = moment(lastTick).toDate();
+      let start = moment().subtract(1, 'month').toDate();
+      const lastTick: TickSchema = (await TickTimesModel.find({}).sort({ time: -1 }).limit(1).lean())[0];
+      if (lastTick && lastTick.time) {
+        start = moment(lastTick.time).toDate();
       }
 
       // @ts-ignore

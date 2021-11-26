@@ -762,34 +762,37 @@ function Journal() {
     if (message && system && factions && factions.length > 0) {
       // Sanity Check
       for (const faction of factions) {
-        const existing = await tickDetector
-          .find({
-            system_id: system._id,
-            faction_id: faction._id,
-            influence: faction.influence
-          })
-          .sort({ first_seen: -1 })
-          .limit(7)
-          .lean()
-        if (existing && existing.length > 0) {
-          for (let index in existing) {
-            const record = existing[index]
-            const diff = moment(record.last_seen).diff(message.timestamp, 'seconds')
-            if (index === 0 && diff > 0) {
-              await tickDetector.findByIdAndUpdate(record._id, {
-                first_seen: record.first_seen,
-                last_seen: message.timestamp,
-                count: record.count + 1,
-                delta: null
-              })
-              await this.updateTickDelta(system, faction)
+        const factionPresence = faction.faction_presence.find((system) => system.system_id === system._id)
+        if (factionPresence) {
+          const existing = await tickDetector
+            .find({
+              system_id: system._id,
+              faction_id: faction._id,
+              influence: factionPresence.influence
+            })
+            .sort({ first_seen: -1 })
+            .limit(7)
+            .lean()
+          if (existing && existing.length > 0) {
+            for (let index in existing) {
+              const record = existing[index]
+              const diff = moment(record.last_seen).diff(message.timestamp, 'seconds')
+              if (index === 0 && diff > 0) {
+                await tickDetector.findByIdAndUpdate(record._id, {
+                  first_seen: record.first_seen,
+                  last_seen: message.timestamp,
+                  count: record.count + 1,
+                  delta: null
+                })
+                await this.updateTickDelta(system, faction)
+              }
             }
+            return
           }
-        } else {
           const tickDoc = new tickDetector({
             system_id: system._id,
             faction_id: faction._id,
-            influence: faction.influence,
+            influence: factionPresence.influence,
             first_seen: message.timestamp,
             last_seen: message.timestamp,
             count: 1
