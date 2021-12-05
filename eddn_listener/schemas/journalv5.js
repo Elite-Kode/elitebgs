@@ -1320,7 +1320,7 @@ function Journal() {
     if (existing && existing.length > 1) {
       for (let i = existing.length - 1; i >= 1; i--) {
         let delta = new moment(existing[i - 1].first_seen).diff(existing[i].last_seen, 'seconds')
-        tickDetector.findByIdAndUpdate(existing[i - 1]._id, {
+        await tickDetector.findByIdAndUpdate(existing[i - 1]._id, {
           delta
         })
       }
