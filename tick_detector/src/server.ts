@@ -57,7 +57,7 @@ export class AppServer {
     this.detector = new Detector(this._server, this.freshness, this.threshold, this.delta);
 
     this.detector.check();
-    setInterval(this.detector.check, 60000);
+    setInterval(this.detector.check.bind(this), 60000);
   }
 
   private onError(error: NodeJS.ErrnoException): void {
