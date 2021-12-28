@@ -50,10 +50,17 @@ Update npm:
 - Install [MongoDB](https://www.mongodb.com/what-is-mongodb), and use the default port 27017
 - Enabling [access control](https://docs.mongodb.com/manual/tutorial/enable-authentication/) is essential for production environments and optional for development environments.
 - Create a database in the MongoDB instance, `elite_bgs` containing a single collection called `configs`
+
+```js
+$ mongo
+> use elite_bgs
+> db.createCollection('configs')
+```
+
 - Add a single document in the `configs` collection with the following data:
 
- ```json
-    { 
+ ```js
+    db.configs.insert({ 
         "time_offset" : 60000, 
         "guild_id" : "", 
         "admin_channel_id" : "",
@@ -61,7 +68,7 @@ Update npm:
         "blacklisted_software" : [], 
         "version_software" : [],
         "whitelisted_software" : []
-    }
+    })
   ```
 
 - `time_offset` is an integer, where `eddn_listener` will reject records older than that many milliseconds
@@ -118,7 +125,7 @@ Update npm:
 
 If you're not going to use blacklisted software in your testing, you can leave `blacklisted_software`, `version_software` and `whitelisted_software` as empty arrays as in the first definition.
 
-### Install Redis
+### Optional: Install Redis
 
 For Mac or Linux systems, follow the instructions at [https://redis.io/download](https://redis.io/download) and install the most recent stable Redis on your system. Make sure it is enabled and started:
 
@@ -336,17 +343,15 @@ The front end is a bit more complicated than the other Elite BGS components, whi
 
 Ensure the same `secrets.js` file installed above is at `frontend/secrets.js`. This is used to run a small node.js server used by the front end code for Discord oAuth integration and other frontend-y stuff.
 
-Create a file called `frontend/src/secrets.ts` (should be at the same level as `main.ts`), which will contain all the secret tokens used by the Angular frontend. These include a random secret for the router (not currently used) and your private BugSnag API key.
+Create a file called `frontend/src/secrets.js` (should be at the same level as `main.ts`), which will contain all the secret tokens used by the Angular frontend. These include a random secret for the router (not currently used) and your private BugSnag API key.
 
-The new `secrets.ts` file needs to have the following content:
+The new `secrets.js` file needs to have the following content:
 
-```ts
-class Bugsnag {
-    public static readonly token: string = '[Bugsnag token for frontend angular app]';
-    public static readonly use: boolean = [true/false]
+```js
+export default {
+  token: '[BugSnag Token]',
+  use: [true/false]
 }
-
-export { Bugsnag };
 ```
 
 - `use` when true enables BugSnag. Set it to `false` if not needed
@@ -382,7 +387,7 @@ export { Bugsnag };
 If both `ng` and `tsc` work, we can go ahead and build frontend:
 
 ```console
-    foo@bar:~$ npm run build
+    foo@bar:~$ npm run builddev
 ```
 
 You will see a prompt on your first compile:
