@@ -16,6 +16,6 @@
 
 export interface TickSchema {
   _id: string;
-  time: string;
+  time: Date;
   updated_at: string;
 }

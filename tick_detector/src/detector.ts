@@ -50,7 +50,7 @@ export class Detector {
       let start = moment().subtract(1, 'month').toDate();
       const lastTick: TickSchema = (await TickTimesModel.find({}).sort({ time: -1 }).limit(1).lean())[0];
       if (lastTick && lastTick.time) {
-        start = moment(lastTick.time).toDate();
+        start = moment(lastTick.time).subtract(1, 'day').toDate();
       }
 
       // @ts-ignore
@@ -66,6 +66,7 @@ export class Detector {
         .lean();
 
       const data = tickData
+        // Filter out any duplicates, just for my sanity
         .filter(
           (element: ITickDetectorSchema, i: number, data: ITickDetectorSchema[]) =>
             data.findIndex(
@@ -76,6 +77,8 @@ export class Detector {
             ) === i
         )
         .map((element: ITickDetectorSchema) => [+moment(element.first_seen).format('X')]);
+
+      console.log(`Scanning ${tickData.length} items`);
 
       const dbscan = new DBSCAN();
       const clusters = dbscan.run(data, this.delta, this.threshold);
@@ -89,8 +92,6 @@ export class Detector {
           console.log(
             `Tick - ${start.format('YYYY-MM-DD HH:mm:ss')} - ${detected.format('YYYY-MM-DD HH:mm:ss')} - ${size} items`
           );
-          this.socket.emit('tick', start.format('YYYY-MM-DDTHH:mm:ssZ'));
-          console.log(start.format('YYYY-MM-DDTHH:mm:ssZ'));
         }
       }
     });

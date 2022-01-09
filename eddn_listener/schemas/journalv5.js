@@ -776,8 +776,8 @@ function Journal() {
           if (existing && existing.length > 0) {
             for (let index in existing) {
               const record = existing[index]
-              const diff = moment(record.last_seen).diff(message.timestamp, 'seconds')
-              if (index === 0 && diff > 0) {
+              const diff = moment(message.timestamp).diff(record.last_seen, 'seconds')
+              if (+index === 0 && diff > 0) {
                 await tickDetector.findByIdAndUpdate(record._id, {
                   first_seen: record.first_seen,
                   last_seen: message.timestamp,
@@ -787,7 +787,7 @@ function Journal() {
                 await this.updateTickDelta(system, faction)
               }
             }
-            return
+            continue
           }
           const tickDoc = new tickDetector({
             system_id: system._id,

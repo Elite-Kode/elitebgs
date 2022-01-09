@@ -9,6 +9,9 @@
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix"
   },
   "private": true,
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
     "@bugsnag/js": "^7.11.0",
     "@bugsnag/plugin-express": "^7.11.0",
