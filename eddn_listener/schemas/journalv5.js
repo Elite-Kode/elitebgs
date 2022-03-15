@@ -1172,7 +1172,7 @@ function Journal() {
   // Used in V5
   this.getSystemEDDBIdByAddress = async (systemAddress) => {
     let requestOptions = {
-      url: 'https://eddbapi.kodeblox.com/api/v4/populatedsystems',
+      url: 'https://eddbapi.elitebgs.app/api/v4/populatedsystems',
       qs: {
         systemaddress: systemAddress
       },
@@ -1195,7 +1195,7 @@ function Journal() {
   // Used in V3 and V4 and v5
   this.getFactionEDDBId = async (name) => {
     let requestOptions = {
-      url: 'https://eddbapi.kodeblox.com/api/v4/factions',
+      url: 'https://eddbapi.elitebgs.app/api/v4/factions',
       qs: {
         name: name.toLowerCase()
       },
@@ -1218,7 +1218,7 @@ function Journal() {
   // Used in V5
   this.getStationEDDBIdByMarketId = async (marketId) => {
     let requestOptions = {
-      url: 'https://eddbapi.kodeblox.com/api/v4/stations',
+      url: 'https://eddbapi.elitebgs.app/api/v4/stations',
       qs: {
         marketid: marketId
       },

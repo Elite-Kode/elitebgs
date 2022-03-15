@@ -16,13 +16,13 @@
       <v-card-text>
         <div>
           <h3>Factions</h3>
-          <code>https://eddbapi.kodeblox.com/api/v4/factions?&lt;params&gt;</code>
+          <code>https://eddbapi.elitebgs.app/api/v4/factions?&lt;params&gt;</code>
           <h3>Populated Systems</h3>
-          <code>https://eddbapi.kodeblox.com/api/v4/populatedsystems?&lt;params&gt;</code>
+          <code>https://eddbapi.elitebgs.app/api/v4/populatedsystems?&lt;params&gt;</code>
           <h3>Stations</h3>
-          <code>https://eddbapi.kodeblox.com/api/v4/stations?&lt;params&gt;</code>
+          <code>https://eddbapi.elitebgs.app/api/v4/stations?&lt;params&gt;</code>
           <h3>Systems</h3>
-          <code>https://eddbapi.kodeblox.com/api/v4/systems?&lt;params&gt;</code>
+          <code>https://eddbapi.elitebgs.app/api/v4/systems?&lt;params&gt;</code>
         </div>
         <div>*Please note that the endpoints have been changed to their own subdomain.</div>
       </v-card-text>

@@ -21,23 +21,23 @@ export default {
       specs: [
         // {
         //   versionName: 'V1',
-        //   specLocation: 'https://eddbapi.kodeblox.com/api/v1/api-docs.json',
-        //   swaggerLocation: 'https://eddbapi.kodeblox.com/api/v1/docs'
+        //   specLocation: 'https://eddbapi.elitebgs.app/api/v1/api-docs.json',
+        //   swaggerLocation: 'https://eddbapi.elitebgs.app/api/v1/docs'
         // },
         // {
         //   versionName: 'V2',
-        //   specLocation: 'https://eddbapi.kodeblox.com/api/v2/api-docs.json',
-        //   swaggerLocation: 'https://eddbapi.kodeblox.com/api/v2/docs'
+        //   specLocation: 'https://eddbapi.elitebgs.app/api/v2/api-docs.json',
+        //   swaggerLocation: 'https://eddbapi.elitebgs.app/api/v2/docs'
         // },
         // {
         //   versionName: 'V3',
-        //   specLocation: 'https://eddbapi.kodeblox.com/api/v3/api-docs.json',
-        //   swaggerLocation: 'https://eddbapi.kodeblox.com/api/v3/docs'
+        //   specLocation: 'https://eddbapi.elitebgs.app/api/v3/api-docs.json',
+        //   swaggerLocation: 'https://eddbapi.elitebgs.app/api/v3/docs'
         // },
         {
           versionName: 'V4',
-          specLocation: 'https://eddbapi.kodeblox.com/api/v4/api-docs.json',
-          swaggerLocation: 'https://eddbapi.kodeblox.com/api/v4/docs'
+          specLocation: 'https://eddbapi.elitebgs.app/api/v4/api-docs.json',
+          swaggerLocation: 'https://eddbapi.elitebgs.app/api/v4/docs'
         }
       ]
     }
