@@ -13,7 +13,7 @@
         "express": "^4.17.1",
         "lodash": "^4.17.20",
         "lodash-es": "^4.17.15",
-        "moment": "^2.29.1",
+        "moment": "^2.29.2",
         "mongoose": "^5.12.3",
         "mongoose-aggregate-paginate": "^2.0.1",
         "mongoose-aggregate-paginate-v2": "^1.0.42",
