@@ -58,7 +58,7 @@ export default {
           `${firstTickMoment.format('YYYY-MM-DD')} ${tickMoment.format('HH:mm:ss:SSSZZ')}`,
           'YYYY-MM-DD HH:mm:ss:SSSZZ'
         )
-        data.push([Date.parse(tick.updated_at), Date.parse(normalisedTime.toISOString())])
+        data.push([Date.parse(tick.time), Date.parse(normalisedTime.toISOString())])
       })
       data.reverse()
       series.push({
