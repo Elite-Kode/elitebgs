@@ -111,7 +111,7 @@
         <p>
           A major feature of Elite BGS is that you can update system data manually. Elite BGS gets its data
           automatically through
-          <a href="https://github.com/EDSM-NET/EDDN">EDDN</a> but that means one needs to actually make a jump into the
+          <a href="https://github.com/EDCD/EDDN">EDDN</a> but that means one needs to actually make a jump into the
           system for the database to get updated. Now you can update the system data by seeing the System Map itself.
           Great for monitoring those fringe systems nobody visits.
         </p>

@@ -200,7 +200,7 @@
             </a>
           </v-col>
           <v-col cols="12" lg="2" md="3" sm="6" xs="12">
-            <a href="https://github.com/EDSM-NET/EDDN">
+            <a href="https://github.com/EDCD/EDDN">
               <v-img contain src="@/assets/eddn-logo.svg" alt="EDDN Logo" />
             </a>
           </v-col>
