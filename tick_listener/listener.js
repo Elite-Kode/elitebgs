@@ -19,7 +19,7 @@ const io = require('socket.io-client')
 const _ = require('lodash')
 const tickTimesV5Model = require('./models/tick_times_v5')
 
-const socket = io('http://tick.phelbore.com:31173')
+const socket = io('https://tick.edcd.io/')
 
 socket.on('connect', () => {
   console.log('Connected to Tick Detector')
