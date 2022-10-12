@@ -25,6 +25,10 @@ socket.on('connect', () => {
   console.log('Connected to Tick Detector')
 })
 
+socket.on('connect_error', (error) => {
+  console.log('Connection Error', error)
+})
+
 socket.on('message', (data) => {
   let tickTime = new Date(data)
   saveTick(tickTime)
