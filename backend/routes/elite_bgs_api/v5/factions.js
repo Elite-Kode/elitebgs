@@ -123,11 +123,9 @@ let aggregateOptions = {
  *         type: integer
  *     responses:
  *       200:
- *         description: An array of factions with historical data
+ *         description: An page of factions with historical data
  *         schema:
- *           type: array
- *           items:
- *             $ref: '#/definitions/EBGSFactionsPageV5'
+ *           $ref: '#/definitions/EBGSFactionsPageV5'
  */
 router.get('/', cors(), async (req, res, next) => {
   // SHA 256 is a strong hash function that will produce unique hashes on even similar URLs
