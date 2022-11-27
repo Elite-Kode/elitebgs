@@ -47,6 +47,9 @@ function Journal() {
 
   this.trackSystem = async (message, header) => {
     let mongoSession = await mongoose.startSession()
+    if (parseFloat(header.gameversion) < 4) {
+      throw new Error('Message from Legacy Game Version ' + header.gameversion)
+    }
     if (message.event === 'FSDJump' || message.event === 'Location' || message.event === 'CarrierJump') {
       try {
         // Check if the message is well formed
