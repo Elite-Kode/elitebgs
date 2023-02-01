@@ -13,7 +13,7 @@
         "express": "^4.17.1",
         "lodash-es": "^4.17.15",
         "lodash": "^4.17.20",
-        "mongoose": "^5.13.7",
+        "mongoose": "^5.13.15",
         "morgan": "^1.10.0",
         "socket.io-client": "^2.4.0"
     },
