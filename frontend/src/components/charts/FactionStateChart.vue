@@ -20,6 +20,10 @@ export default {
       default() {
         return null
       }
+    },
+    endDate: {
+      type: String,
+      default: ''
     }
   },
   created() {
@@ -101,7 +105,7 @@ export default {
           if (previousState === state[0]) {
             data.push({
               x: timeBegin,
-              x2: Date.now(),
+              x2: this.endDate === '' ? Date.now() : new Date(this.endDate).getTime() + 86400000, // End day is set to the start of the next day
               y: index
             })
           }

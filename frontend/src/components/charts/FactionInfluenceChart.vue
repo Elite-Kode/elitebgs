@@ -20,6 +20,10 @@ export default {
       default() {
         return null
       }
+    },
+    endToday: {
+      type: Boolean,
+      default: true
     }
   },
   created() {
@@ -84,7 +88,7 @@ export default {
         const latestUpdate = this.factionData.faction_presence.find((findSystem) => {
           return findSystem.system_name === system
         })
-        if (latestUpdate) {
+        if (latestUpdate && this.endToday) {
           data.push([Date.parse(latestUpdate.updated_at), Number.parseFloat((lastElement.influence * 100).toFixed(2))])
         }
         series.push({

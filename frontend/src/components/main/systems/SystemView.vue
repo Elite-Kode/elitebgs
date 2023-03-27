@@ -119,37 +119,37 @@
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> Influences </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-influence-chart :system-data="system"></system-influence-chart>
+            <system-influence-chart :system-data="system" :end-today="changedFilterDates[1] === currentUtcDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-state-chart :system-data="system"></system-state-chart>
+            <system-state-chart :system-data="system" :end-date="endDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> Active State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-state-apr-chart :system-data="system" type="active"></system-state-apr-chart>
+            <system-state-apr-chart :system-data="system" type="active" :end-date="endDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> Pending State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-state-apr-chart :system-data="system" type="pending"></system-state-apr-chart>
+            <system-state-apr-chart :system-data="system" type="pending" :end-date="endDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> Recovering State Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-state-apr-chart :system-data="system" type="recovering"></system-state-apr-chart>
+            <system-state-apr-chart :system-data="system" type="recovering" :end-date="endDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
           <v-expansion-panel-header class="py-0"> Happiness Periods </v-expansion-panel-header>
           <v-expansion-panel-content class="custom-padding">
-            <system-happiness-chart :system-data="system"></system-happiness-chart>
+            <system-happiness-chart :system-data="system" :end-date="endDate" />
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -223,6 +223,9 @@ export default {
     },
     datePickerDisplay() {
       return `${this.filterDates[0]} - ${this.filterDates[1]}`
+    },
+    endDate() {
+      return this.changedFilterDates[1] !== this.currentUtcDate ? this.changedFilterDates[1] : ''
     }
   },
   methods: {

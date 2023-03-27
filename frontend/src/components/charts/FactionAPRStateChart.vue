@@ -27,6 +27,10 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    endDate: {
+      type: String,
+      default: ''
     }
   },
   created() {
@@ -193,7 +197,7 @@ export default {
           if (state) {
             data[state].push({
               x: tempBegin[previousStateIndex],
-              x2: Date.now(),
+              x2: this.endDate === '' ? Date.now() : new Date(this.endDate).getTime() + 86400000, // End day is set to the start of the next day
               y: _sum(maxStatesConcurrent.slice(0, index)) + previousStateIndex,
               system: system
             })
