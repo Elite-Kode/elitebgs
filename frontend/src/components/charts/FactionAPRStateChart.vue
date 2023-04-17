@@ -57,6 +57,9 @@ export default {
     }
   },
   methods: {
+    async createColor(){
+      return await this.$store.dispatch('fetchColor')
+    },
     async createChart() {
       let stateType
       let stateTitle
