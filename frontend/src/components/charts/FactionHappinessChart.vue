@@ -50,6 +50,9 @@ export default {
     }
   },
   methods: {
+    async getName(){
+      return this.factionData.name
+    },
     async createChart() {
       const allSystems = []
       this.factionData.history.forEach((record) => {
