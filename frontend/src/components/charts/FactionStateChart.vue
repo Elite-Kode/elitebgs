@@ -24,6 +24,10 @@ export default {
     endDate: {
       type: String,
       default: ''
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
   created() {
