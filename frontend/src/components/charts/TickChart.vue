@@ -47,6 +47,9 @@ export default {
     }
   },
   methods: {
+    async getChart(){
+      return this.$refs.chart.chart
+    },
     async createChart() {
       const data = []
       const series = []
