@@ -54,6 +54,9 @@ export default {
     },
     className() {
       this.createChart()
+    },
+    endDate() {
+      this.createChart()
     }
   },
   methods: {
