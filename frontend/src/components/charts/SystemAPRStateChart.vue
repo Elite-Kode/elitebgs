@@ -89,6 +89,7 @@ export default {
           allTimeFactions.push(record.faction_name)
         }
       })
+      console.log(data)
       allTimeFactions.forEach((faction) => {
         const allStates = []
         let maxStates = 0
