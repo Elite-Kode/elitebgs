@@ -90,31 +90,6 @@ export default {
         }
       })
       console.log(data)
-      allTimeFactions.forEach((faction) => {
-        const allStates = []
-        let maxStates = 0
-        this.systemData.faction_history.forEach((record, recordIndex, records) => {
-          if (record.faction_name === faction && record[stateType]) {
-            if (record[stateType].length === 0) {
-              records[recordIndex][stateType].push({
-                state: 'none',
-                trend: 0
-              })
-            }
-            record[stateType].forEach((recordState) => {
-              if (allStates.indexOf(recordState.state) === -1) {
-                allStates.push(recordState.state)
-              }
-            })
-            maxStates = record[stateType].length > maxStates ? record[stateType].length : maxStates
-          }
-        })
-        allTimeStates.push(allStates)
-        if (maxStates === 0) {
-          maxStates = 1
-        }
-        maxStatesConcurrent.push(maxStates)
-      })
       this.systemData.faction_history.sort((a, b) => {
         if (a.updated_at < b.updated_at) {
           return -1
