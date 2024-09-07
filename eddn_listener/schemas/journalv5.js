@@ -509,6 +509,7 @@ function Journal() {
           let happiness = getDoFactionUpdate.happiness
           let doUpdate = getDoFactionUpdate.doUpdate
           let doUpdateTime = getDoFactionUpdate.doUpdateTime
+          let lastHistoryRecord = getDoFactionUpdate.lastHistoryRecord
           let factionPresence = []
           if (doUpdate || doUpdateTime) {
             // If doUpdateTime is set to false set the updated at time
@@ -573,6 +574,40 @@ function Journal() {
             }
             // Do the actual db operation
             await this.setFactionRecord(factionObject.name_lower, factionObject)
+          } else {
+            if (lastHistoryRecord.updated_at > factionPresenceUpdatedAt) {
+              let factionPresentSystemObject = {}
+              factionPresence = factionObject.faction_presence
+
+              // Faction presence can be null when a basic record is created
+              if (!factionPresence) {
+                factionPresence = []
+              }
+
+              factionPresence.forEach((factionPresenceObject, index, factionPresenceArray) => {
+                if (factionPresenceObject.system_id.equals(lastHistoryRecord.system_id)) {
+                  // Iterates over all existing faction presences to create a new faction presence object for the current faction
+                  // This new object is then reapplied over the existing array element to update it
+                  factionPresentSystemObject = {
+                    system_name: lastHistoryRecord.system,
+                    system_name_lower: lastHistoryRecord.system_lower,
+                    system_id: lastHistoryRecord.system_id,
+                    state: lastHistoryRecord.state,
+                    influence: lastHistoryRecord.influence,
+                    happiness: lastHistoryRecord.happiness,
+                    active_states: lastHistoryRecord.active_states,
+                    pending_states: lastHistoryRecord.pending_states,
+                    recovering_states: lastHistoryRecord.recovering_states,
+                    conflicts: lastHistoryRecord.conflicts,
+                    updated_at: lastHistoryRecord.updated_at
+                  }
+                  factionPresenceArray[index] = factionPresentSystemObject
+                }
+              })
+
+              factionObject.faction_presence = factionPresence
+              await this.setFactionRecord(factionObject.name_lower, factionObject)
+            }
           }
           if (doUpdate) {
             // Create the faction history element for storing current systems
@@ -1055,6 +1090,7 @@ function Journal() {
       })
     }
     let factionName = dbFaction.name_lower
+    let lastHistoryRecord = {}
     // Form the conflicts array
     let conflicts = []
     if (message.Conflicts) {
@@ -1142,6 +1178,7 @@ function Journal() {
         })
         .sort({ updated_at: -1 })
         .lean()
+      lastHistoryRecord = factionHistory.length > 0 ? factionHistory[0] : {}
       // Check if the incoming details is the same as any record present in the last 2 days
       // This prevents caching issues
       if (
@@ -1162,7 +1199,16 @@ function Journal() {
 
     // doUpdate indicate if the new record should be added into the history and the master record data updated
     // doUpdateTime indicate if the master record's update time should be updated
-    return { activeStates, pendingStates, recoveringStates, conflicts, happiness, doUpdate, doUpdateTime }
+    return {
+      activeStates,
+      pendingStates,
+      recoveringStates,
+      conflicts,
+      happiness,
+      doUpdate,
+      doUpdateTime,
+      lastHistoryRecord
+    }
   }
 
   // Used in V3 and V4
