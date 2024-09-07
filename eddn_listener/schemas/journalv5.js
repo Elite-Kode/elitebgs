@@ -48,7 +48,12 @@ function Journal() {
   this.trackSystem = async (message, header) => {
     let mongoSession = await mongoose.startSession()
     if (!header.gameversion || parseFloat(header.gameversion) < 4) {
-      throw new Error('Message from Legacy Game Version ' + header.gameversion)
+      const errorMessage = 'Message from Legacy Game Version ' + header.gameversion
+      bugsnagCaller(new Error(errorMessage), {
+        metaData: {
+          message: errorMessage
+        }
+      })
     }
     if (message.event === 'FSDJump' || message.event === 'Location' || message.event === 'CarrierJump') {
       try {
